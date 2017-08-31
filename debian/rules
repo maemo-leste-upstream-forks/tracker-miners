@@ -49,8 +49,8 @@ override_dh_auto_configure:
 		--disable-static \
 		--libexecdir=\$${prefix}/lib/tracker
 
-override_dh_install:
-	dh_install -X.la --list-missing
+override_dh_missing:
+	dh_missing -X.la --list-missing
 
 override_dh_auto_test:
 ifeq (, $(filter nocheck, $(DEB_BUILD_OPTIONS)))
