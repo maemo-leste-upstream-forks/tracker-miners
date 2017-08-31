@@ -313,19 +313,23 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	TrackerResource *metadata;
 	GFile *file;
 	gchar *uri;
-	const char *mimetype;
 
 	file = tracker_extract_info_get_file (info);
-	mimetype = tracker_extract_info_get_mimetype (info);
 	uri = g_file_get_uri (file);
 
-#ifdef USING_UNZIPPSFILES
-	if (strcmp (mimetype, "application/x-gzpostscript") == 0) {
-		metadata = extract_ps_gz (uri);
-	} else
-#endif /* USING_UNZIPPSFILES */
 	{
-		metadata = extract_ps (uri);
+#ifdef USING_UNZIPPSFILES
+		const char *mimetype;
+
+		mimetype = tracker_extract_info_get_mimetype (info);
+
+		if (strcmp (mimetype, "application/x-gzpostscript") == 0) {
+			metadata = extract_ps_gz (uri);
+		} else
+#endif /* USING_UNZIPPSFILES */
+		{
+			metadata = extract_ps (uri);
+		}
 	}
 
 	g_free (uri);

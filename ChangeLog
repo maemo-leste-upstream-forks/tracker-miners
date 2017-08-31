@@ -1,3 +1,92 @@
+2017-08-22  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 1.99.3
+
+	extract/mp3: Add missing continue
+	Jump to the next frame, as announced in the g_debug() call right
+	above. This current frame shouldn't be further processed.
+	Pointed out by Philip Withnall at
+	https://bugzilla.gnome.org/show_bug.cgi?id=786539#c5.
+
+2017-08-21  Carlos Garnacho  <carlosg@gnome.org>
+
+	meson: Correct toggle for ps.gz extractor
+	It was inverted.
+
+	extract/html: Use correct check on elements of strv
+	The == '\0' check happened on keywords[i], not the first char of
+	keywords[i] as it would be expected on a strv.
+
+2017-08-20  Carlos Garnacho  <carlosg@gnome.org>
+
+	extract/mp3: Assert that the reader position is within mmap boundaries
+	The 'pos' variable is always at the start of a frame, which means pos
+	can't surpass the mmap size minus the frame size. This just happens
+	implicitly, and is a programming error if we let that ever happen, so
+	let's make it really sure this isn't possible.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786539
+
+	extract/mp3: Make clearer checks on offsets read from file
+	Put these on one side of the operand without added values.
+
+	Spotted by Coverity (CID #162187) (Tentative fix)
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786539
+
+	extract/mp3: Check for experimental flag right after fetching flags
+	No need to do further operations here if the experimental flag is
+	enabled.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786539
+
+2017-08-18  Marek Cernocky  <marek_cernocky@conel.cz>
+
+	Updated Czech translation
+
+2017-08-17  Pawan Chitrakar  <chautari@gmail.com>
+
+	Add Nepali translation
+
+2017-08-17  Fran Dieguez  <frandieguez@gnome.org>
+
+	Update Galician translation
+
+2017-08-14  Kukuh Syafaat  <syafaatkukuh@gmail.com>
+
+	Update Indonesian translation
+
+2017-08-14  Мирослав Николић  <miroslavnikolic@rocketmail.com>
+
+	Updated Serbian translation
+
+2017-08-13  Philip Withnall  <withnall@endlessm.com>
+
+	tracker-extract: Turn a runtime warning into a compile-time failure
+	If we can’t work out the host byte order at compile time, all this code
+	is doomed to failure anyway. Might as well explode at compilation time
+	rather than runtime.
+
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786213
+
+2017-08-12  Philip Withnall  <withnall@endlessm.com>
+
+	tests: Add more assertions in the tests
+	Add assertions to various syscalls which could fail (and would mess up
+	the test state if they did), as spotted by Coverity.
+
+	Fixes CIDs: 162185, 162186, 162188–162191.
+
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786171
+
+2017-08-11  Piotr Drąg  <piotrdrag@gmail.com>
+
+	Update Polish translation
+
+	Fix a typo in translatable strings
+
 2017-08-07  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 1.99.2
