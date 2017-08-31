@@ -10,10 +10,6 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "tracker-date-time.h" */
-GType tracker_date_error_get_type (void) G_GNUC_CONST;
-#define TRACKER_TYPE_DATE_ERROR (tracker_date_error_get_type ())
-
 /* enumerations from "tracker-dbus.h" */
 GType tracker_dbus_events_type_get_type (void) G_GNUC_CONST;
 #define TRACKER_TYPE_DBUS_EVENTS_TYPE (tracker_dbus_events_type_get_type ())
@@ -27,6 +23,10 @@ GType tracker_sched_idle_get_type (void) G_GNUC_CONST;
 #define TRACKER_TYPE_SCHED_IDLE (tracker_sched_idle_get_type ())
 GType tracker_serialization_format_get_type (void) G_GNUC_CONST;
 #define TRACKER_TYPE_SERIALIZATION_FORMAT (tracker_serialization_format_get_type ())
+
+/* enumerations from "tracker-date-time.h" */
+GType tracker_date_error_get_type (void) G_GNUC_CONST;
+#define TRACKER_TYPE_DATE_ERROR (tracker_date_error_get_type ())
 
 /* enumerations from "tracker-locale.h" */
 GType tracker_locale_id_get_type (void) G_GNUC_CONST;

@@ -4,30 +4,6 @@
 #include <config.h>
 
 #include "tracker-enum-types.h"
-
-/* enumerations from "tracker-date-time.h" */
-#include "tracker-date-time.h"
-GType
-tracker_date_error_get_type (void)
-{
-  static volatile gsize g_define_type_id__volatile = 0;
- 
-  if (g_once_init_enter (&g_define_type_id__volatile)) {
-    static const GEnumValue values[] = {
-      { TRACKER_DATE_ERROR_OFFSET, "TRACKER_DATE_ERROR_OFFSET", "offset" },
-      { TRACKER_DATE_ERROR_INVALID_ISO8601, "TRACKER_DATE_ERROR_INVALID_ISO8601", "invalid-iso8601" },
-      { TRACKER_DATE_ERROR_EMPTY, "TRACKER_DATE_ERROR_EMPTY", "empty" },
-      { 0, NULL, NULL }
-    };
-    GType g_define_type_id = 
-       g_enum_register_static (g_intern_static_string ("TrackerDateError"), values);
-      
-    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);
-  }
-    
-  return g_define_type_id__volatile;
-}
-
 /* enumerations from "tracker-dbus.h" */
 #include "tracker-dbus.h"
 GType
@@ -50,7 +26,6 @@ tracker_dbus_events_type_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
 GType
 tracker_dbus_error_get_type (void)
 {
@@ -71,7 +46,6 @@ tracker_dbus_error_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
 /* enumerations from "tracker-enums.h" */
 #include "tracker-enums.h"
 GType
@@ -95,7 +69,6 @@ tracker_verbosity_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
 GType
 tracker_sched_idle_get_type (void)
 {
@@ -116,7 +89,6 @@ tracker_sched_idle_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
 GType
 tracker_serialization_format_get_type (void)
 {
@@ -136,7 +108,28 @@ tracker_serialization_format_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
+/* enumerations from "tracker-date-time.h" */
+#include "tracker-date-time.h"
+GType
+tracker_date_error_get_type (void)
+{
+  static volatile gsize g_define_type_id__volatile = 0;
+ 
+  if (g_once_init_enter (&g_define_type_id__volatile)) {
+    static const GEnumValue values[] = {
+      { TRACKER_DATE_ERROR_OFFSET, "TRACKER_DATE_ERROR_OFFSET", "offset" },
+      { TRACKER_DATE_ERROR_INVALID_ISO8601, "TRACKER_DATE_ERROR_INVALID_ISO8601", "invalid-iso8601" },
+      { TRACKER_DATE_ERROR_EMPTY, "TRACKER_DATE_ERROR_EMPTY", "empty" },
+      { 0, NULL, NULL }
+    };
+    GType g_define_type_id = 
+       g_enum_register_static (g_intern_static_string ("TrackerDateError"), values);
+      
+    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);
+  }
+    
+  return g_define_type_id__volatile;
+}
 /* enumerations from "tracker-locale.h" */
 #include "tracker-locale.h"
 GType
@@ -162,7 +155,6 @@ tracker_locale_id_get_type (void)
     
   return g_define_type_id__volatile;
 }
-
 
 
 /* Generated data ends here */

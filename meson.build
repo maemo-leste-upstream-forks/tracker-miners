@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', 'cpp', version: '1.99.2')
+project('tracker-miners', 'c', 'vala', 'cpp', version: '1.99.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -314,7 +314,7 @@ conf = configuration_data()
 
 # Config that goes in config.h
 conf.set('DISABLE_JOURNAL', get_option('journal') == false)
-conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == false)
+conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == true)
 
 conf.set('HAVE_TRACKER_EXTRACT', enable_extract)
 conf.set('HAVE_TRACKER_WRITEBACK', enable_writeback)

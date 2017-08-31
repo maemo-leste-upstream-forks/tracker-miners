@@ -66,7 +66,7 @@ static GOptionEntry entries[] = {
 	  NULL },
 	{ "domain-ontology", 'd', 0,
 	  G_OPTION_ARG_STRING, &domain_ontology_name,
-	  N_("Runs for an specific domain ontology"),
+	  N_("Runs for a specific domain ontology"),
 	  NULL },
 	{ "version", 'V', 0,
 	  G_OPTION_ARG_NONE, &version,

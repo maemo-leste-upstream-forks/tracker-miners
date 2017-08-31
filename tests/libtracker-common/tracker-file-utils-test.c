@@ -38,8 +38,11 @@
 static void
 ensure_file_exists (const gchar *filename)
 {
+        g_autoptr(GError) error = NULL;
+
         if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-                g_file_set_contents (filename, "Just some stuff", -1, NULL);
+                g_file_set_contents (filename, "Just some stuff", -1, &error);
+                g_assert_no_error (error);
         }
 }
 
@@ -47,7 +50,7 @@ static void
 remove_file (const gchar *filename)
 {
         g_assert (g_file_test (filename, G_FILE_TEST_EXISTS));
-        g_remove (filename);
+        g_assert_cmpint (g_remove (filename), ==, 0);
 }
 
 static GSList *
@@ -296,7 +299,7 @@ test_file_utils_get_size ()
         size = tracker_file_get_size (TEST_FILENAME);
         g_assert_cmpint (size, >, 0);
 
-        stat (TEST_FILENAME, &st);
+        g_assert_cmpint (stat (TEST_FILENAME, &st), ==, 0);
         g_assert_cmpint (size, ==, st.st_size);
 
         /* File doesn't exist */
@@ -314,7 +317,7 @@ test_file_utils_get_mtime ()
         mtime = tracker_file_get_mtime (TEST_FILENAME);
         g_assert_cmpint (mtime, >, 0);
 
-        stat (TEST_FILENAME, &st);
+        g_assert_cmpint (stat (TEST_FILENAME, &st), ==, 0);
         // This comparison could lead a problem in 32/64 bits?
         g_assert_cmpint (mtime, ==, st.st_mtime);
 
@@ -373,7 +376,7 @@ test_file_exists_and_writable ()
         const gchar *path = "./test-dir-remove-afterwards";
 
         if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-                g_remove (path);
+                g_assert_cmpint (g_remove (path), ==, 0);
         }
 
         /* This should create the directory with write access*/
@@ -383,7 +386,7 @@ test_file_exists_and_writable ()
         /* This time exists and has write access */
         g_assert (tracker_path_has_write_access_or_was_created (path));
 
-        chmod (path, S_IRUSR & S_IRGRP);
+        g_assert_cmpint (chmod (path, S_IRUSR & S_IRGRP), ==, 0);
 
         /* Exists but is not writable */
         g_assert (!tracker_path_has_write_access_or_was_created (path));

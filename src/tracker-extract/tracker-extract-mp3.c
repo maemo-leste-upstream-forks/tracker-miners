@@ -473,7 +473,7 @@ extract_uint32_7bit (gconstpointer data)
 	        ((ptr[2] & 0x7F) << 14) |
 	        ((ptr[3] & 0x7F) << 21));
 #else
-	g_warning ("Can't figure endianness");
+	#error "Can’t figure endianness"
 	return 0;
 #endif
 }
@@ -492,7 +492,7 @@ extract_uint32_3byte (gconstpointer data)
 	        (ptr[1] << 8) |
 	        (ptr[2] << 16));
 #else
-	g_warning ("Can't figure endianness");
+	#error "Can’t figure endianness"
 	return 0;
 #endif
 }
@@ -1835,6 +1835,12 @@ parse_id3v24 (const gchar           *data,
 	ext_header = (data[5] & 0x40) > 0;
 	experimental = (data[5] & 0x20) > 0;
 
+	/* We don't handle experimental cases */
+	if (experimental) {
+		g_message ("[v24] Experimental MP3s are not extracted, doing nothing");
+		return;
+	}
+
 	/* Get the complete tag size (zz) in the header:
 	 * Tag size is size of the complete tag after
 	 * unsychronisation, including padding, excluding the header
@@ -1842,17 +1848,11 @@ parse_id3v24 (const gchar           *data,
 	 */
 	tsize = extract_uint32_7bit (&data[6]);
 
-	/* We don't handle experimental cases */
-	if (experimental) {
-		g_message ("[v24] Experimental MP3s are not extracted, doing nothing");
-		return;
-	}
-
 	/* Check if we can read even the first frame, The complete
 	 * tag size (tsize) does not include the header which is 10
 	 * bytes, so we check that there is some content AFTER the
 	 * headers. */
-	if (tsize + header_size > size) {
+	if (tsize > size - header_size) {
 		g_message ("[v24] Expected MP3 tag size and header size to be within file size boundaries");
 		return;
 	}
@@ -1874,7 +1874,7 @@ parse_id3v24 (const gchar           *data,
 		 * simply the total tag size excluding the frames and
 		 * the headers, in other words the padding.
 		 */
-		if (tsize + header_size + ext_header_size > size) {
+		if (ext_header_size > size - header_size - tsize) {
 			g_message ("[v24] Expected MP3 tag size and extended header size to be within file size boundaries");
 			return;
 		}
@@ -1887,6 +1887,8 @@ parse_id3v24 (const gchar           *data,
 		id3v24frame frame;
 		size_t csize;
 		unsigned short flags;
+
+		g_assert (pos <= size - frame_size);
 
 		/* Frames are 10 bytes each and made up of:
 		 *   Frame ID       $xx xx xx xx (4 chars)
@@ -1917,7 +1919,7 @@ parse_id3v24 (const gchar           *data,
 
 		csize = (size_t) extract_uint32_7bit (&data[pos + 4]);
 
-		if (pos + frame_size + csize > size) {
+		if (csize > size - frame_size - pos) {
 			g_debug ("[v24] Size of current frame '%s' (%" G_GSIZE_FORMAT ") "
 			         "exceeds file boundaries (%" G_GSIZE_FORMAT "), "
 			         "not processing any more frames",
@@ -2037,6 +2039,12 @@ parse_id3v23 (const gchar          *data,
 	ext_header = (data[5] & 0x40) > 0;
 	experimental = (data[5] & 0x20) > 0;
 
+	/* We don't handle experimental cases */
+	if (experimental) {
+		g_message ("[v23] Experimental MP3s are not extracted, doing nothing");
+		return;
+	}
+
 	/* Get the complete tag size (zz) in the header:
 	 * Tag size is size of the complete tag after
 	 * unsychronisation, including padding, excluding the header
@@ -2044,17 +2052,11 @@ parse_id3v23 (const gchar          *data,
 	 */
 	tsize = extract_uint32_7bit (&data[6]);
 
-	/* We don't handle experimental cases */
-	if (experimental) {
-		g_message ("[v23] Experimental MP3s are not extracted, doing nothing");
-		return;
-	}
-
 	/* Check if we can read even the first frame, The complete
 	 * tag size (tsize) does not include the header which is 10
 	 * bytes, so we check that there is some content AFTER the
 	 * headers. */
-	if (tsize + header_size > size) {
+	if (tsize > size - header_size) {
 		g_message ("[v23] Expected MP3 tag size and header size to be within file size boundaries");
 		return;
 	}
@@ -2076,7 +2078,7 @@ parse_id3v23 (const gchar          *data,
 		 * simply the total tag size excluding the frames and
 		 * the headers, in other words the padding.
 		 */
-		if (tsize + header_size + ext_header_size > size) {
+		if (ext_header_size > size - header_size - tsize) {
 			g_message ("[v23] Expected MP3 tag size and extended header size to be within file size boundaries");
 			return;
 		}
@@ -2089,6 +2091,8 @@ parse_id3v23 (const gchar          *data,
 		id3v24frame frame;
 		size_t csize;
 		unsigned short flags;
+
+		g_assert (pos <= size - frame_size);
 
 		/* Frames are 10 bytes each and made up of:
 		 *   Frame ID       $xx xx xx xx (4 chars)
@@ -2113,7 +2117,7 @@ parse_id3v23 (const gchar          *data,
 
 		csize = (size_t) extract_uint32 (&data[pos + 4]);
 
-		if (pos + frame_size + csize > size) {
+		if (csize > size - frame_size - pos) {
 			g_debug ("[v23] Size of current frame '%s' (%" G_GSIZE_FORMAT ") "
 			         "exceeds file boundaries (%" G_GSIZE_FORMAT "), "
 			         "not processing any more frames",
@@ -2141,6 +2145,7 @@ parse_id3v23 (const gchar          *data,
 			break;
 		} else if (csize == 0) {
 			g_debug ("[v23] Content size was 0, moving to next frame");
+			continue;
 		}
 
 		/* Frame flags expected are in format of:
@@ -2225,6 +2230,8 @@ parse_id3v20 (const gchar          *data,
 		const char *frame_name;
 		id3v2frame frame;
 		size_t csize;
+
+		g_assert (pos <= size - frame_size);
 
 		if (pos + frame_size > tsize + header_size)  {
 			g_message ("[v20] Expected MP3 frame size (%d) to be within tag size (%d) boundaries, position = %d",

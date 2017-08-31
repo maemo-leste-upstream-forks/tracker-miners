@@ -1,3 +1,15 @@
+NEW in 1.99.3 - 2017-08-22
+==========================
+
+  WARNING: This is unstable development towards 2.0. There are API and
+           ABI incompatibilities that might affect you.
+
+  * Add more assertions to testcases (CIDs 162185, 162186, 162188–162191)
+  * Protect further the MP3 parser against out-of-bounds reads (CID #162187)
+  * Fixed typos, and other code and build improvements.
+
+Translations: cs, gl, id, ne, pl, sr, sr@latin
+
 NEW in 1.99.2 - 2017-08-07
 ==========================
 

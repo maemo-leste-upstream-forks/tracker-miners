@@ -154,7 +154,7 @@ parser_start_element (void           *data,
 				keywords = g_strsplit (content, ",", -1);
 				if (keywords) {
 					for (i = 0; keywords[i] != NULL; i++) {
-						if (!keywords[i] || keywords[i] == '\0') {
+						if (!keywords[i] || keywords[i][0] == '\0') {
 							continue;
 						}
 
