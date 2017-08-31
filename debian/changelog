@@ -1,5 +1,12 @@
-tracker-miners (1.99.3-1) UNRELEASED; urgency=medium
+tracker-miners (1.99.3-1) experimental; urgency=medium
 
+  [ Jeremy Bicha ]
   * Initial release (Closes: #871738)
 
- -- Jeremy Bicha <jbicha@debian.org>  Tue, 08 Aug 2017 14:59:58 -0400
+  [ Michael Biebl ]
+  * Trim down unnecessary Build-Depends
+  * Switch to new dh_missing helper
+  * Switch to --fail-missing
+  * Set Debian GNOME team as Maintainer
+
+ -- Michael Biebl <biebl@debian.org>  Thu, 31 Aug 2017 11:58:40 +0200
