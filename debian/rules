@@ -50,7 +50,11 @@ override_dh_auto_configure:
 		--libexecdir=\$${prefix}/lib/tracker
 
 override_dh_missing:
-	dh_missing -X.la --list-missing
+	find debian/tmp -name '*.la' -print -delete
+	find debian/tmp -name libtracker-extract.so -print -delete
+	find debian/tmp -name 01-writeback.py -print -delete
+	find debian/tmp -name tracker-tests -print -delete
+	dh_missing --fail-missing
 
 override_dh_auto_test:
 ifeq (, $(filter nocheck, $(DEB_BUILD_OPTIONS)))
