@@ -1,8 +1,8 @@
 Source: tracker-miners
 Section: utils
 Priority: optional
-Maintainer: Michael Biebl <biebl@debian.org>
-Uploader: Jeremy Bicha <jbicha@debian.org>
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Uploaders: Michael Biebl <biebl@debian.org>, Jeremy Bicha <jbicha@debian.org>
 Build-Depends: debhelper (>= 10.3),
                dpkg-dev (>= 1.17.14),
                pkg-config,
