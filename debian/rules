@@ -58,5 +58,5 @@ override_dh_missing:
 
 override_dh_auto_test:
 ifeq (, $(filter nocheck, $(DEB_BUILD_OPTIONS)))
-	dbus-run-session -- $(MAKE) check -k VERBOSE=1 || true
+	dbus-run-session -- dh_auto_test
 endif
