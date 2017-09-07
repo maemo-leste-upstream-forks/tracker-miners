@@ -3,22 +3,252 @@ Upstream-Name: tracker-miners
 Source: https://download.gnome.org/sources/tracker-miners
 
 Files: *
-Copyright: 2008-2011 Nokia <ivan.frade@nokia.com>
-           2006 Jamie McCracken <jamiemcc@gnome.org>
-           2014 Lanedo <martyn@lanedo.com>
-License: GPL-2.0+
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+           2008-2011 Nokia <ivan.frade@nokia.com>
+           2008-2017 Carlos Garnacho <carlosg@gnome.org>
+           2011 Sam Thursfield <sam.thursfield@codethink.co.uk>
+License: GPL-2+
 
-Files: src/libtracker-*/*
-       src/tracker-extract/*
+Files: src/libtracker-common/*
+Copyright: 2008-2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/libtracker-common/tracker-date-time.*
+       src/libtracker-common/tracker-file-utils.*
+       src/libtracker-common/tracker-language.*
+       src/libtracker-common/tracker-type-utils.*
+       src/libtracker-common/tracker-utils.*
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+           2008-2010 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/libtracker-common/tracker-domain-ontology.*
+Copyright: 2017, Red Hat, Inc.
+License: LGPL-2.1+
+
+Files: src/libtracker-common/tracker-ioprio.c
+Copyright: 2005 Novell, Inc.
+           2006 Anders Aagaard
+           2006 Jamie McCracken <jamiemcc@gnome.org>
+License: Expat
+
+Files: src/libtracker-common/tracker-ioprio.h
+Copyright: 2006 Anders Aagaard
+           2008 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/libtracker-common/tracker-seccomp.*
+Copyright: 2016 Red Hat Inc.
+License: LGPL-2.1+
+
+Files: src/libtracker-extract/*
+Copyright: 2009-2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/libtracker-extract/tracker-encoding-libicu.*
+Copyright: 2013 Carlos Garnacho <carlos@lanedo.com>
+License: LGPL-2.1+
+
+Files: src/libtracker-extract/tracker-resource-helpers.*
+Copyright: 2016 Sam Thursfield <sam@afuera.me.uk>
+License: LGPL-2.1+
+
+Files: src/libtracker-extract/tracker-xmp.c
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+License: LGPL-2.1+
+
+Files: src/libtracker-extract/tracker-xmp.h
+Copyright: 2006, Jamie McCracken <jamiemcc@gnome.org>
+           2009 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/miners/apps/*
+       src/miners/fs/*
+Copyright: 2008, 2010 Nokia <ivan.frade@nokia.com>
+License: GPL-2+
+
+Files: src/miners/apps/tracker-main.c
+Copyright: 2014 Lanedo GmbH. <martyn@lanedo.com>
+License: GPL-2+
+
+Files: src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
+       src/miners/fs/tracker-power.h
+       src/miners/fs/tracker-storage.*
+       src/miners/fs/tracker-thumbnailer.*
+Copyright: 2008, 2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/miners/fs/tracker-config.c
+Copyright: 2009 Nokia <ivan.frade@nokia.com>
+           2014 Lanedo <martyn@lanedo.com>
+License: GPL-2+
+
+Files: src/miners/fs/tracker-miner-files-peer-listener.*
+Copyright: 2015, Carlos Garnacho
+License: GPL-2+
+
+Files: src/miners/fs/tracker-power-hal.c
+       src/miners/fs/tracker-power-upower.c
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+           2008 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/miners/fs/tracker-extract-watchdog.*
+Copyright: 2016, Red Hat Inc.
+License: LGPL-2.1+
+
+Files: src/miners/rss/*
+Copyright: 2009-2010 Roberto Guido <madbob@users.barberaware.org>
+           2009-2010 Michele Tameni <michele@amdplanet.it>
+License: GPL-2+
+
+Files: src/tracker-extract/*
 Copyright: 2008-2011 Nokia <ivan.frade@nokia.com>
            2006 Jamie McCracken <jamiemcc@gnome.org>
 License: LGPL-2.1+
 
-Files: debian/*
-Copyright: 2006-2014 Michael Biebl <biebl@debian.org>
-License: GPL-2.0+
+Files: src/tracker-extract/tracker-config.c
+Copyright: 2009 Nokia <ivan.frade@nokia.com>
+           2014 Lanedo <martyn@lanedo.com>
+License: LGPL-2.1+
 
-License: GPL-2.0+
+Files: src/tracker-extract/tracker-cue-sheet.*
+Copyright: 2011 ARQ Media <sam.thursfield@codethink.co.uk>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-bmp.c
+       src/tracker-extract/tracker-extract-dummy.c
+       src/tracker-extract/tracker-extract-libav.c
+Copyright: 2013-2014, Jolla Ltd. <andrew.den.exter@jollamobile.com>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-controller.*
+Copyright: 2014 Collabora Ltd.
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-decorator.*
+       src/tracker-extract/tracker-extract-persistence.*
+Copyright: 2014 Carlos Garnacho <carlosg@gnome.org>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-dvi.c
+Copyright: 2000 Matias Atria
+           2012 Red Hat, Inc.
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-flac.c
+Copyright: 2010 Intel Corporation
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-gstreamer.c
+Copyright: 2006 Laurent Aguerreche <laurent.aguerreche@free.fr>
+           2007 Jamie McCracken <jamiemcc@gnome.org>
+           2008 Nokia <ivan.frade@nokia.com>
+           2016 Sam Thursfield <sam@afuera.me.uk>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-html.c
+Copyright: 2007 Jason Kivlighn <jkivlighn@gmail.com>
+           2008-2009 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-iso.c
+       src/tracker-extract/tracker-extract-xps.c
+Copyright: 2011, 2012, 2014, Red Hat, Inc
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-msoffice.c
+Copyright: 2006 Edward Duffy <eduffy@gmail.com>
+           2006 Laurent Aguerreche <laurent.aguerreche@free.fr>
+           2008 Nokia <ivan.frade@nokia.com>
+           2009, Microsoft Corporation
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-pdf.c
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+           2008-2011 Nokia <ivan.frade@nokia.com>
+           2010 Amit Aggarwal <amitcs06@gmail.com>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-vorbis.c
+Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
+License: LGPL-2.1+
+
+Files: src/tracker-extract/tracker-extract-xmp.c
+Copyright: 2007 Jason Kivlighn <jkivlighn@gmail.com>
+License: LGPL-2.1+
+
+Files: src/tracker-writeback/*.c
+       src/tracker-writeback/*.h
+Copyright: 2009-2011 Nokia <ivan.frade@nokia.com>
+License: GPL-2+
+
+Files: src/tracker-writeback/tracker-config.c
+Copyright: 2009 Nokia <ivan.frade@nokia.com>
+           2014 Lanedo <martyn@lanedo.com>
+License: GPL-2+
+
+Files: src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in
+Copyright: 2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: tests/functional-tests/*.py
+Copyright: 2010 Nokia <ivan.frade@nokia.com>
+License: GPL-2+
+
+Files: tests/functional-tests/300-miner-basic-ops.py
+       tests/functional-tests/301-miner-resource-removal.py
+       tests/functional-tests/500-writeback.py
+       tests/functional-tests/501-writeback-details.py
+Copyright: 2010-2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: tests/functional-tests/410-extractor-decorator.py
+Copyright: 2016, Sam Thursfield (sam@afuera.me.uk)
+License: LGPL-2.1+
+
+Files: tests/functional-tests/common/utils/cdwritebacktest.py
+Copyright: 2008-2011 Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+Files: tests/functional-tests/common/utils/expectedFailure.py
+Copyright: 1999-2003 Steve Purcell
+           2003-2010 Python Software Foundation
+           2010 Nokia <ivan.frade@nokia.com>
+License: Python
+
+Files: tests/functional-tests/unittest2/*
+Copyright: 1999-2003 Steve Purcell
+           2003-2010 Python Software Foundation
+License: Python
+
+Files: tests/libtracker-extract/tracker-exif-test.c
+       tests/libtracker-extract/tracker-extract-info-test.c
+       tests/libtracker-extract/tracker-guarantee-test.c
+       tests/libtracker-extract/tracker-iptc-test.c
+Copyright: 2011, Nokia <ivan.frade@nokia.com>
+License: LGPL-2.1+
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+
+License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
@@ -51,3 +281,19 @@ License: LGPL-2.1+
  .
  On Debian systems, the complete text of the GNU Lesser General
  Public License can be found in "/usr/share/common-licenses/LGPL-2.1".
+
+License: Python
+ This module is free software, and you may redistribute it and/or modify
+ it under the same terms as Python itself, so long as this copyright message
+ and disclaimer are retained in their original form.
+ .
+ IN NO EVENT SHALL THE AUTHOR BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
+ SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
+ THIS CODE, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+ .
+ THE AUTHOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE.  THE CODE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS,
+ AND THERE IS NO OBLIGATION WHATSOEVER TO PROVIDE MAINTENANCE,
+ SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
