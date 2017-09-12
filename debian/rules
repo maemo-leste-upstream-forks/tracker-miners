@@ -45,11 +45,14 @@ override_dh_auto_configure:
 		--disable-static \
 		--libexecdir=\$${prefix}/lib/tracker
 
-override_dh_missing:
+override_dh_install:
 	find debian/tmp -name '*.la' -print -delete
 	find debian/tmp -name libtracker-extract.so -print -delete
 	find debian/tmp -name 01-writeback.py -print -delete
 	find debian/tmp -name tracker-tests -print -delete
+	dh_install
+
+override_dh_missing:
 	dh_missing --fail-missing
 
 override_dh_auto_test:
