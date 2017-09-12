@@ -91,9 +91,6 @@
 /* Define if we have libgxps */
 #undef HAVE_LIBGXPS
 
-/* libicu Unicode support library */
-#undef HAVE_LIBICU
-
 /* ICU language detection aid */
 #undef HAVE_LIBICU_CHARSET_DETECTION
 
@@ -120,9 +117,6 @@
 
 /* Define if we have libtiff */
 #undef HAVE_LIBTIFF
-
-/* libunistring Unicode support library */
-#undef HAVE_LIBUNISTRING
 
 /* Define if we have libvorbis */
 #undef HAVE_LIBVORBIS

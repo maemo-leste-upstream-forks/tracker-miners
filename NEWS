@@ -1,3 +1,24 @@
+NEW in 2.0.0 - 2017-09-12
+==========================
+
+  * Tracker shall from now on use semantic versioning
+  * autotools/meson cleanups
+
+  Translations: ca, da, de, eu, es, fur, hu, it, ko, lt, lv, nl, pt_BR, sk,
+                sv, tr, zh_TW
+
+  Overview of changes since 1.12:
+  * Tracker core (store, libraries) and miners have been split, this source
+    tree contains the latter.
+  * tracker-miner-fs is now noticeably faster on large filesystem hierarchies.
+  * tracker-miner-rss now handles enclosures.
+  * Meson build instructions have been added.
+  * Evolution/Thunderbird/Firefox/Nautilus plugins have been removed, they
+    were either broken, unused, unmaintained, or all three.
+  * All GUI (preferences, needle) has been removed too. Both were in a bad
+    state of maintenance and visually outdated. The reasons to keep those
+    are dubious with more capable UIs using Tracker out there.
+
 NEW in 1.99.3 - 2017-08-22
 ==========================
 

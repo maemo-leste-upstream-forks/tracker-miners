@@ -27,7 +27,7 @@ tracker_common_dependencies = [glib, gio, gio_unix, libmath]
 
 libtracker_common = library('tracker-common',
   tracker_common_sources,
-  dependencies: tracker_common_dependencies + [unicode_library],
+  dependencies: tracker_common_dependencies + [charset_library],
   c_args: tracker_c_args,
   include_directories: [configinc, srcinc],
   install: true,

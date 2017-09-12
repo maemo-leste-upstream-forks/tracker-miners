@@ -60,9 +60,6 @@
 /* Define if we have libexif */
 #mesondefine HAVE_LIBEXIF
 
-/* libicu Unicode support library */
-#mesondefine HAVE_LIBICU
-
 /* ICU language detection aid */
 #mesondefine HAVE_LIBICU_CHARSET_DETECTION
 
@@ -71,9 +68,6 @@
 
 /* Define if we have libstemmer */
 #mesondefine HAVE_LIBSTEMMER
-
-/* libunistring Unicode support library */
-#mesondefine HAVE_LIBUNISTRING
 
 /* Define if we have NetworkManager for network status detection */
 #mesondefine HAVE_NETWORK_MANAGER

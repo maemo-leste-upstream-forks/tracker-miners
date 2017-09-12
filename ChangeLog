@@ -1,3 +1,95 @@
+2017-09-12  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.0.0
+	Semantic versioning is now effective.
+
+2017-09-11  Daniel Mustieles  <daniel.mustieles@gmail.com>
+
+	Update Spanish translation
+
+2017-09-10  Ask Hjorth Larsen  <asklarsen@gmail.com>
+
+	Updated Danish translation
+
+2017-09-10  Balázs Meskó  <meskobalazs@fedoraproject.org>
+
+	Update Hungarian translation
+
+2017-09-10  Jordi Mas  <jmas@softcatala.org>
+
+	Fixes to Catalan translation
+
+2017-09-09  Inaki Larranaga Murgoitio  <dooteo@zundan.com>
+
+	Update Basque language
+
+2017-09-09  Jordi Mas  <jmas@softcatala.org>
+
+	Update Catalan translation
+
+2017-09-08  Çağatay Yiğit Şahin  <cyigitsahin@outlook.com>
+
+	Update Turkish translation
+
+2017-09-08  hanniedu  <hannie@ubuntu-nl.org>
+
+	Updated Dutch translation Master 3.26
+
+2017-09-03  Rafael Fontenelle  <rafaelff@gnome.org>
+
+	Update Brazilian Portuguese translation
+
+2017-09-02  Dušan Kazik  <prescott66@gmail.com>
+
+	Update Slovak translation
+
+2017-09-02  Seong-ho Cho  <shcho@gnome.org>
+
+	Update Korean translation
+
+2017-09-01  Cheng-Chia Tseng  <pswo10680@gmail.com>
+
+	Update Chinese (Taiwan) translation
+
+2017-08-31  Anders Jonsson  <anders.jonsson@norsjovallen.se>
+
+	Update Swedish translation
+
+2017-08-31  Carlos Garnacho  <carlosg@gnome.org>
+
+	configure: Remove pre-split leftovers
+
+	meson: Remove pre-split leftovers
+
+2017-08-31  Michael Biebl  <biebl@debian.org>
+
+	build: Remove unused _REQUIRED versions
+	https://bugzilla.gnome.org/show_bug.cgi?id=787065
+
+2017-08-28  Ask Hjorth Larsen  <asklarsen@gmail.com>
+
+	Updated Danish translation
+
+2017-08-27  Rūdolfs Mazurs  <rudolfsm@src.gnome.org>
+
+	Update Latvian translation
+
+2017-08-27  Mario Blättermann  <mario.blaettermann@gmail.com>
+
+	Update German translation
+
+2017-08-25  Milo Casagrande  <milo@ubuntu.com>
+
+	Update Italian translation
+
+2017-08-23  Fabio Tomat  <f.t.public@gmail.com>
+
+	Update Friulian translation
+
+2017-08-22  Aurimas Černius  <aurisc4@gmail.com>
+
+	Updated Lithuanian translation
+
 2017-08-22  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 1.99.3
