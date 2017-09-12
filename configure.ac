@@ -11,9 +11,9 @@ AC_PREREQ([2.64])
 # if any functions have been added, set TRACKER_INTERFACE_AGE to 0.
 # if backwards compatibility has been broken,
 # set TRACKER_BINARY_AGE and TRACKER_INTERFACE_AGE to 0.
-m4_define([tracker_major_version], [1])
-m4_define([tracker_minor_version], [99])
-m4_define([tracker_micro_version], [3])
+m4_define([tracker_major_version], [2])
+m4_define([tracker_minor_version], [0])
+m4_define([tracker_micro_version], [0])
 m4_define([tracker_interface_age], [0])
 m4_define([tracker_binary_age],
           [m4_eval(100 * tracker_minor_version + tracker_micro_version)])
@@ -209,7 +209,6 @@ PYTHON_REQUIRED=2.6
 # Library required versions
 DBUS_REQUIRED=1.3.1
 GLIB_REQUIRED=2.44.0
-GTK_REQUIRED=3.0.0
 LIBXML2_REQUIRED=2.6
 HAL_REQUIRED=0.5
 UPOWER_REQUIRED=0.9.0
@@ -230,8 +229,6 @@ LIBGRSS_REQUIRED=0.7
 GSTREAMER_REQUIRED=0.10.31
 GUPNP_DLNA_REQUIRED=0.9.4
 LIBPNG_REQUIRED=1.2
-JSON_GLIB_REQUIRED=1.0
-LIBSOUP_REQUIRED=2.40
 TRACKER_CORE_REQUIRED=1.99
 
 GLIB_PREFIX="`$PKG_CONFIG --variable=prefix glib-2.0`"
@@ -617,98 +614,6 @@ fi
 AM_CONDITIONAL(HAVE_HAL, test "x$have_hal" = "xyes")
 
 ##################################################################
-# Check for libtracker-data and libtracker-fts: Unicode support
-#
-# By default, AUTO with this order of preference:
-#  1)  libunistring
-#  2)  libicu
-##################################################################
-
-# Check for libunistring...
-AC_CHECK_HEADER(uniwbrk.h,
-                AC_CHECK_LIB([unistring],
-                             [u8_wordbreaks],
-                             [have_libunistring=yes],
-                             [have_libunistring=no]))
-LIBUNISTRING_CFLAGS=""
-LIBUNISTRING_LIBS="-lunistring"
-
-# Check for libicu...
-PKG_CHECK_MODULES(LIBICU,
-                  [icu-i18n >= $LIBICU_REQUIRED icu-uc >= $LIBICU_REQUIRED],
-                  [have_libicu=yes],
-                  [have_libicu=no])
-
-# Configure option
-AC_ARG_WITH([unicode-support],
-            AS_HELP_STRING([--with-unicode-support],
-                           [Unicode support library? (libunistring|libicu) [[default=auto]]]),
-            [with_unicode_support=$withval],
-            [with_unicode_support=auto])
-
-# If auto, decide ourselves
-if test "x$with_unicode_support" = "xauto"; then
-   if test "x$have_libicu" = "xyes"; then
-      with_unicode_support=libicu
-   else
-      if test "x$have_libunistring" = "xyes"; then
-         with_unicode_support=libunistring
-      else
-         AC_MSG_ERROR([Could not find either libunistring or libicu])
-      fi
-   fi
-fi
-
-UNICODE_SUPPORT_CFLAGS=
-UNICODE_SUPPORT_LIBS=
-
-case "x$with_unicode_support" in
-     # Use libunistring
-     "xlibunistring")
-        UNICODE_SUPPORT_CFLAGS=$LIBUNISTRING_CFLAGS
-        UNICODE_SUPPORT_LIBS=$LIBUNISTRING_LIBS
-        if test "x$have_libunistring" = "xyes"; then
-           AC_DEFINE(HAVE_LIBUNISTRING, [1], [libunistring Unicode support library])
-        else
-           AC_MSG_ERROR([Could not find libunistring])
-        fi
-     ;;
-     # Use libicu
-     "xlibicu")
-        UNICODE_SUPPORT_CFLAGS=$LIBICU_CFLAGS
-        UNICODE_SUPPORT_LIBS=$LIBICU_LIBS
-        if test "x$have_libicu" = "xyes"; then
-          AC_DEFINE(HAVE_LIBICU, [1], [libicu Unicode support library])
-        else
-          AC_MSG_ERROR([Could not find libicu])
-        fi
-     ;;
-     # Invalid option value
-     *) AC_MSG_ERROR([Wrong value for --with-unicode-support: $with_unicode_support]) ;;
-esac
-
-AM_CONDITIONAL(HAVE_LIBICU, test "x$have_libicu" = "xyes")
-
-# Add to libtracker-common
-LIBTRACKER_COMMON_CFLAGS="$LIBTRACKER_COMMON_CFLAGS $UNICODE_SUPPORT_CFLAGS"
-LIBTRACKER_COMMON_LIBS="$LIBTRACKER_COMMON_LIBS $UNICODE_SUPPORT_LIBS"
-
-# Add to libtracker-fts
-LIBTRACKER_FTS_CFLAGS="$LIBTRACKER_FTS_CFLAGS $UNICODE_SUPPORT_CFLAGS"
-LIBTRACKER_FTS_LIBS="$LIBTRACKER_FTS_LIBS $UNICODE_SUPPORT_LIBS"
-
-# Add to libtracker-data
-LIBTRACKER_DATA_CFLAGS="$LIBTRACKER_DATA_CFLAGS $UNICODE_SUPPORT_CFLAGS"
-LIBTRACKER_DATA_LIBS="$LIBTRACKER_DATA_LIBS $UNICODE_SUPPORT_LIBS"
-
-# Add to libtracker-extract
-LIBTRACKER_EXTRACT_CFLAGS="$LIBTRACKER_EXTRACT_CFLAGS $UNICODE_SUPPORT_CFLAGS"
-LIBTRACKER_EXTRACT_LIBS="$LIBTRACKER_EXTRACT_LIBS $UNICODE_SUPPORT_LIBS"
-
-AM_CONDITIONAL(BUILD_LIBUNISTRING_PARSER, test "x$with_unicode_support" = "xlibunistring")
-AM_CONDITIONAL(BUILD_LIBICU_PARSER, test "x$with_unicode_support" = "xlibicu")
-
-##################################################################
 # Check for libtracker-extract: libexif
 ##################################################################
 
@@ -1003,6 +908,12 @@ AC_ARG_ENABLE(icu-charset-detection,
                              [enable libicu for charset detection in MP3s [[default=auto]]]),
               [enable_icu_charset_detection=$enableval],
               [enable_icu_charset_detection=auto])
+
+# Check for libicu...
+PKG_CHECK_MODULES(LIBICU,
+                  [icu-i18n >= $LIBICU_REQUIRED icu-uc >= $LIBICU_REQUIRED],
+                  [have_libicu=yes],
+                  [have_libicu=no])
 
 if test "x$have_libicu" = "xyes"; then
 	if test "x$enable_icu_charset_detection" != "xno"; then

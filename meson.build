@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', 'cpp', version: '1.99.3')
+project('tracker-miners', 'c', 'vala', version: '2.0.0')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -14,8 +14,6 @@ tracker_miner = dependency('tracker-miner-2.0', version: '>= 1.99.0', required: 
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
 avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
 avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
-cairo = dependency('cairo', version: '> 1.0')
-camel = dependency('camel-1.2', version: '> 2.32.0', required: false)
 dbus = dependency('dbus-1', version: '> 1.3.1')
 exempi = dependency('exempi-2.0', version: '> 2.1.0', required: false)
 flac = dependency('flac', version: '> 1.2.1', required: false)
@@ -28,15 +26,11 @@ gobject_introspection = dependency('gobject-introspection-1.0')
 gstreamer = dependency('gstreamer-1.0', required: false)
 gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
 gstreamer_tag = dependency('gstreamer-tag-1.0', required: false)
-gtk3 = dependency('gtk+-3.0', version: '> 3.0.0', required: false)
 gupnp_dlna = dependency('gupnp-dlna-2.0', version: '> 0.9.4', required: false)
 gupnp_dlna_gst = dependency('gupnp-dlna-gst-2.0', version: '> 0.9.4', required: false)
 icu_i18n = dependency('icu-i18n', version: '> 4.8.1.1', required: false)
 icu_uc = dependency('icu-uc', version: '> 4.8.1.1', required: false)
-json_glib = dependency('json-glib-1.0', version: '>= 1.0', required: true)
 libcue = dependency('libcue', required: false)
-libemail_utils = dependency('libemail-utils', required: false)
-libemail_engine = dependency('libemail-engine', required: false)
 libexif = dependency('libexif', version: '> 0.6', required: false)
 libgrss = dependency('libgrss', version: '> 0.7', required: false)
 libgsf = dependency('libgsf-1', version: '> 1.14.24', required: false)
@@ -44,7 +38,6 @@ libgxps = dependency('libgxps', required: false)
 libiptcdata = dependency('libiptcdata', required: false)
 libosinfo = dependency('libosinfo', version: '> 0.2.9', required: false)
 libpng = dependency('libpng', version: '> 0.89', required: false)
-libsoup = dependency('libsoup-2.4', version: '> 2.40', required: true)
 libtiff = dependency('libtiff-4', required: false)
 libxml2 = dependency('libxml-2.0', version: '> 2.6')
 libvorbis = dependency('vorbisfile', version: '> 0.22')
@@ -121,45 +114,6 @@ if battery_detection_library_name == ''
   endif
 endif
 
-##################################################################
-# Check for libtracker-data and libtracker-fts: Unicode support
-#
-# By default, AUTO with this order of preference:
-#  1)  libunistring
-#  2)  libicu
-##################################################################
-
-have_libicu = false
-unicode_library_name = ''
-
-if icu_i18n.found() and icu_uc.found()
-  have_libicu = true
-endif
-
-if have_libicu
-  if get_option('unicode_support') == 'auto' or get_option('unicode_support') == 'icu'
-    unicode_library = declare_dependency(
-        dependencies: [icu_uc, icu_i18n]
-    )
-    unicode_library_name = 'icu'
-  endif
-elif get_option('unicode_support') == 'icu'
-  error('libicu explicitly requested, but icu-i18n and icu-uc libraries were not found')
-endif
-
-if unicode_library_name == ''
-  libunistring = cc.find_library('libunistring', required: false)
-
-  if libunistring.found()
-    unicode_library = libunistring
-    unicode_library_name = 'unistring'
-  elif get_option('unicode_support') == 'unistring'
-    error('libunistring explicitly requested, but not found')
-  else
-    error('Neither libicu or libunistring were found for Unicode support.')
-  endif
-endif
-
 ####################################################################
 # This section is for tracker-extract dependencies
 ####################################################################
@@ -173,6 +127,11 @@ endif
 ##########################################################################
 
 charset_library_name = 'none'
+have_libicu = false
+
+if icu_i18n.found() and icu_uc.found()
+  have_libicu = true
+endif
 
 if have_libicu
   if get_option('charset_detection') == 'auto' or get_option('charset_detection') == 'icu'
@@ -327,12 +286,10 @@ conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DNLA')
 conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
 conf.set('HAVE_LIBCUE', libcue.found())
 conf.set('HAVE_LIBCUE2', libcue.version() >= '2.0.0')
-conf.set10('HAVE_LIBICU', unicode_library_name == 'icu')
 conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
 conf.set('HAVE_LIBSTEMMER', have_libstemmer)
-conf.set('HAVE_LIBUNISTRING', unicode_library_name == 'unistring')
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 
 conf.set('HAVE_GETLINE', cc.has_function('getline', prefix : '#include <stdio.h>'))
