@@ -41,7 +41,7 @@ ensure_file_exists (const gchar *filename)
         g_autoptr(GError) error = NULL;
 
         if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-                g_file_set_contents (filename, "Just some stuff", -1, &error);
+                g_assert (g_file_set_contents (filename, "Just some stuff", -1, &error) == TRUE);
                 g_assert_no_error (error);
         }
 }

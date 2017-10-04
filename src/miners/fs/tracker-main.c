@@ -55,12 +55,7 @@
 #define DBUS_NAME_SUFFIX "Miner.Files"
 #define DBUS_PATH "/org/freedesktop/Tracker1/Miner/Files"
 
-static void miner_handle_next (void);
-
 static GMainLoop *main_loop;
-static GSList *miners;
-static GSList *current_miner;
-static gboolean finished_miners;
 
 static gint verbosity = -1;
 static gint initial_sleep = -1;
@@ -246,62 +241,40 @@ should_crawl (TrackerConfig *config,
 }
 
 static void
-miner_handle_next (void)
+miner_do_start (TrackerMiner *miner)
 {
-	if (finished_miners) {
-		return;
-	}
-
-	if (!current_miner) {
-		current_miner = miners;
-	} else {
-		current_miner = current_miner->next;
-	}
-
-	if (!current_miner) {
-		finished_miners = TRUE;
-
-		g_message ("All miners are now finished");
-
-		/* We're not sticking around for file updates, so stop
-		 * the mainloop and exit.
-		 */
-		if (no_daemon && main_loop) {
-			g_main_loop_quit (main_loop);
-		}
-
-		return;
-	}
-
-	if (!tracker_miner_is_started (current_miner->data)) {
-		g_message ("Starting next miner...");
-		tracker_miner_start (current_miner->data);
+	if (!tracker_miner_is_started (miner)) {
+		g_message ("Starting filesystem miner...");
+		tracker_miner_start (miner);
 	}
 }
 
 static gboolean
-miner_handle_first_cb (gpointer data)
+miner_start_idle_cb (gpointer data)
 {
+	TrackerMiner *miner = data;
+
 	miners_timeout_id = 0;
-	miner_handle_next ();
-	return FALSE;
+	miner_do_start (miner);
+	return G_SOURCE_REMOVE;
 }
 
 static void
-miner_handle_first (TrackerConfig *config,
-		    gboolean       do_mtime_checking)
+miner_start (TrackerMiner  *miner,
+	     TrackerConfig *config,
+	     gboolean       do_mtime_checking)
 {
 	gint initial_sleep;
 
 	if (!do_mtime_checking) {
 		g_debug ("Avoiding initial sleep, no mtime check needed");
-		miner_handle_next ();
+		miner_do_start (miner);
 		return;
 	}
 
 	/* If requesting to run as no-daemon, start right away */
 	if (no_daemon) {
-		miner_handle_next ();
+		miner_do_start (miner);
 		return;
 	}
 
@@ -309,14 +282,14 @@ miner_handle_first (TrackerConfig *config,
 	initial_sleep = tracker_config_get_initial_sleep (config);
 
 	if (initial_sleep <= 0) {
-		miner_handle_next ();
+		miner_do_start (miner);
 		return;
 	}
 
 	g_debug ("Performing initial sleep of %d seconds",
 	         initial_sleep);
 	miners_timeout_id = g_timeout_add_seconds (initial_sleep,
-						   miner_handle_first_cb,
+						   miner_start_idle_cb,
 						   NULL);
 }
 
@@ -334,17 +307,16 @@ miner_finished_cb (TrackerMinerFS *fs,
 	        total_directories_found,
 	        total_files_found);
 
-	if (TRACKER_IS_MINER_FILES (fs) && do_crawling) {
+	if (do_crawling) {
 		tracker_miner_files_set_last_crawl_done (TRUE);
 	}
 
-	miner_handle_next ();
-}
-
-static void
-finalize_miner (TrackerMiner *miner)
-{
-	g_object_unref (G_OBJECT (miner));
+	/* We're not sticking around for file updates, so stop
+	 * the mainloop and exit.
+	 */
+	if (no_daemon && main_loop) {
+		g_main_loop_quit (main_loop);
+	}
 }
 
 static GList *
@@ -646,8 +618,7 @@ miner_needs_check (TrackerMiner *miner,
 	 *    available, but the miner is actually done.
 	 */
 	if (!tracker_miner_is_paused (miner)) {
-		if (TRACKER_IS_MINER_FS (miner) &&
-		    tracker_miner_fs_has_items_to_process (TRACKER_MINER_FS (miner))) {
+		if (tracker_miner_fs_has_items_to_process (TRACKER_MINER_FS (miner))) {
 			/* There are items left to process */
 			return TRUE;
 		}
@@ -882,10 +853,8 @@ main (gint argc, gchar *argv[])
 			  G_CALLBACK (miner_finished_cb),
 			  NULL);
 
-	miners = g_slist_prepend (miners, miner_files);
-
 	if (do_crawling)
-		miner_handle_first (config, do_mtime_checking);
+		miner_start (miner_files, config, do_mtime_checking);
 
 	initialize_signal_handler ();
 
@@ -905,8 +874,7 @@ main (gint argc, gchar *argv[])
 	g_object_unref (config);
 	g_object_unref (miner_files_index);
 
-	g_slist_foreach (miners, (GFunc) finalize_miner, NULL);
-	g_slist_free (miners);
+	g_object_unref (miner_files);
 
 	g_object_unref (proxy);
 	g_object_unref (connection);

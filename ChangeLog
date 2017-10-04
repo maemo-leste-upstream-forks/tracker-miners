@@ -1,4 +1,76 @@
+2017-10-04  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.0.1
+
+	tracker-miner-fs: Remove remainings from running multiple TrackerMiners
+	Apps and filesystem miners used to be handled by the same process. This
+	was split long ago, but the handling of multiple miners remained.
+
+2017-10-02  Debarshi Ray  <debarshir@gnome.org>
+
+	libtracker-extract: Fix insertion of white balance value
+	https://bugzilla.gnome.org/show_bug.cgi?id=787774
+
+2017-09-30  Piotr Drąg  <piotrdrag@gmail.com>
+
+	gschema: Fix gettext-domain
+
+2017-09-29  Carlos Garnacho  <carlosg@gnome.org>
+
+	tests: Add assert around g_file_set_contents() call
+	Spotted through coverity (CID: #162189)
+
+	tracker-miner-fs: Explicitly ignore non-native mounts
+	tracker-miner-fs does rely in a few places to index local content
+	exclusively. Make it explicitly ignore non-native mounts, they won't
+	be indexed anyway, but we can spare trying to create the tracker:Volume
+	and mount root's nfo:FileDataObject for these.
+
+	Fixes nie:url constraint errors and other warnings when trying to deal
+	with those.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786132
+
+	applications: Ignore broken symlinks
+	We still do need to query mtime from the symlink itself in order to keep
+	filesystem accounting happy, so wait for ENOENT while doing
+	g_key_file_load_from_file() in order to figure out we are dealing with
+	a broken link (or a no longer existing file, which is also possible). This
+	avoids spewing any warnings with those.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=786132
+
+2017-09-28  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	Fix builddir != srcdir builds
+	Builds were failing to find the generated tracker-enum-types.h header
+	when building out-of-tree.
+
+2017-09-25  Jean-Baptiste Holcroft  <jean-baptiste@holcroft.fr>
+
+	Update French translation
+
+2017-09-20  Debarshi Ray  <debarshir@gnome.org>
+
+	tracker-extract: Fix insertion of white balance values
+	https://bugzilla.gnome.org/show_bug.cgi?id=787774
+
+2017-09-20  Matej Urbančič  <mateju@svn.gnome.org>
+
+	Added Slovenian translation
+
+2017-09-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	tracker-extract: Remove declaration of undefined function
+	This function is long gone.
+
 2017-09-12  Carlos Garnacho  <carlosg@gnome.org>
+
+	tracker-extract: Skip over virtual elements
+	It is possible to fool tracker-extract into processing virtual elements
+	that aren't backed up by files. Those can be safely ignored instead.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=785853
 
 	Release 2.0.0
 	Semantic versioning is now effective.

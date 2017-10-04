@@ -1,3 +1,14 @@
+NEW in 2.0.1 - 2017-10-04
+=========================
+
+  * tracker-miner-apps: Ignore broken .desktop file symlinks
+  * tracker-miner-fs: Ignore non-native mounts
+  * tracker-extract: Fix insertion of white balance values in images
+  * Compile warnings and Coverity issue fixes
+  * Fix srcdir!=builddir builds
+
+Translations: fr, sl
+
 NEW in 2.0.0 - 2017-09-12
 ==========================
 

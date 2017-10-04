@@ -264,6 +264,12 @@ decorator_next_item_cb (TrackerDecorator *decorator,
 
 		g_clear_error (&error);
 		return;
+	} else if (!tracker_decorator_info_get_url (info)) {
+		/* Skip virtual elements with no real file representation */
+		priv->n_extracting_files--;
+		tracker_decorator_info_unref (info);
+		decorator_get_next_file (decorator);
+		return;
 	}
 
 	data = g_new0 (ExtractData, 1);
