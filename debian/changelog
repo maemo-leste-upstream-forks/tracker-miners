@@ -1,8 +1,8 @@
-tracker-miners (2.0.1-1) UNRELEASED; urgency=medium
+tracker-miners (2.0.1-1) unstable; urgency=medium
 
   * New upstream version 2.0.1
 
- -- Michael Biebl <biebl@debian.org>  Wed, 04 Oct 2017 23:04:15 +0200
+ -- Michael Biebl <biebl@debian.org>  Wed, 04 Oct 2017 23:07:58 +0200
 
 tracker-miners (2.0.0-3) unstable; urgency=medium
 
