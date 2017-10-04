@@ -2,6 +2,8 @@ AM_CPPFLAGS =                                          \
 	$(BUILD_CFLAGS)                                \
 	-I$(top_srcdir)/src                            \
 	-I$(top_builddir)/src                          \
+	-I$(top_srcdir)/src/libtracker-common/         \
+	-I$(top_builddir)/src/libtracker-common/       \
 	-DSHAREDIR=\""$(datadir)"\"                    \
 	-DLOCALEDIR=\""$(localedir)"\"                 \
 	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
