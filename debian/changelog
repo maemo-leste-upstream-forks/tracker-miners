@@ -1,9 +1,9 @@
-tracker-miners (2.0.2-1) UNRELEASED; urgency=medium
+tracker-miners (2.0.2-1) unstable; urgency=medium
 
   * New upstream version 2.0.2
   * Bump Standards-Version to 4.1.1
 
- -- Jeremy Bicha <jbicha@debian.org>  Wed, 04 Oct 2017 17:53:38 -0400
+ -- Jeremy Bicha <jbicha@debian.org>  Thu, 05 Oct 2017 21:08:45 -0400
 
 tracker-miners (2.0.1-1) unstable; urgency=medium
 
