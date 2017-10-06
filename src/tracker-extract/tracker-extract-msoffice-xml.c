@@ -434,7 +434,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_title) {
 			g_warning ("Avoiding additional title (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_title = TRUE;
 			tracker_resource_set_string (info->metadata, "nie:title", text);
 		}
@@ -444,7 +444,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_subject) {
 			g_warning ("Avoiding additional subject (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_subject = TRUE;
 			tracker_resource_set_string (info->metadata, "nie:subject", text);
 		}
@@ -454,7 +454,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_publisher) {
 			g_warning ("Avoiding additional publisher (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			TrackerResource *publisher = tracker_extract_new_contact (text);
 
 			info->has_publisher = TRUE;
@@ -468,7 +468,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_comment) {
 			g_warning ("Avoiding additional comment (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_comment = TRUE;
 			tracker_resource_set_string (info->metadata, "nie:comment", text);
 		}
@@ -478,7 +478,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_content_created) {
 			g_warning ("Avoiding additional creation time (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			gchar *date;
 
 			date = tracker_date_guess (text);
@@ -497,7 +497,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_generator) {
 			g_warning ("Avoiding additional generator (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_generator = TRUE;
 			tracker_resource_set_string (info->metadata, "nie:generator", text);
 		}
@@ -514,7 +514,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_content_last_modified) {
 			g_warning ("Avoiding additional last modification time (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			gchar *date;
 
 			date = tracker_date_guess (text);
@@ -533,7 +533,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_page_count) {
 			g_warning ("Avoiding additional page count (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_page_count = TRUE;
 			tracker_resource_set_string (info->metadata, "nfo:pageCount", text);
 		}
@@ -543,7 +543,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_char_count) {
 			g_warning ("Avoiding additional character count (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_char_count = TRUE;
 			tracker_resource_set_string (info->metadata, "nfo:characterCount", text);
 		}
@@ -553,7 +553,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_word_count) {
 			g_warning ("Avoiding additional word count (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_word_count = TRUE;
 			tracker_resource_set_string (info->metadata, "nfo:wordCount", text);
 		}
@@ -563,7 +563,7 @@ msoffice_xml_metadata_parse (GMarkupParseContext  *context,
 		if (info->has_line_count) {
 			g_warning ("Avoiding additional line count (%s) in MsOffice XML document '%s'",
 			           text, info->uri);
-		} else {
+		} else if (text[0] != '\0') {
 			info->has_line_count = TRUE;
 			tracker_resource_set_string (info->metadata, "nfo:lineCount", text);
 		}

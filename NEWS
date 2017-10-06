@@ -1,3 +1,11 @@
+NEW in 2.0.2 - 2017-10-05
+=========================
+
+  * tracker-miner-fs: Fix initialization when there's a startup timeout.
+  * tracker-extract: Don't store 0-length strings on MSOffice metadata.
+
+Translations: ca@valencia
+
 NEW in 2.0.1 - 2017-10-04
 =========================
 

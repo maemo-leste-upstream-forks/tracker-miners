@@ -1,3 +1,42 @@
+2017-10-05  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.0.2
+
+	tracker-miner-fs: Fix miner startup when there's a timeout
+	The idle func expects the TrackerMiner as user data, it no longer looks
+	for global stuff.
+
+2017-10-05  Xavi Ivars  <xavi.ivars@gmail.com>
+
+	[l10n] Updated Catalan (Valencian) translation
+
+2017-10-04  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	extract/msoffice-xml: Treat zero-length strings as unset properties
+	The MS Office extractor has been producing stuff like this:
+
+	    <file:///home/sam/Downloads/spreadsheet.xls> nie:comment "" ;
+	      nie:contentLastModified "2016-06-13T14:19:50Z" ;
+	      nie:contentCreated "2016-05-14T10:17:05Z" ;
+	      nie:plainTextContent "..." ;
+	      nie:subject "" ;
+	      a nfo:PaginatedTextDocument ;
+	      nie:title "" .
+
+	This breaks queries which use COALESCE to do things like this:
+
+	    SELECT COALESCE(?nie_title, ?filename) as ?title
+
+	If ?nie_title is unset then ?title will be set to the contents of
+	?filename; but if ?nie_title is present and set to an empty string then
+	?title will set to that empty string, which is not at all useful.
+
+	The extractor will now ignore zero-length strings. Rather than
+	using strlen() (which has to search to the end of the string)
+	we just check if the first byte is 0.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=788298
+
 2017-10-04  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 2.0.1
