@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', version: '2.0.2')
+project('tracker-miners', 'c', 'vala', version: '2.0.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -38,6 +38,7 @@ libgxps = dependency('libgxps', required: false)
 libiptcdata = dependency('libiptcdata', required: false)
 libosinfo = dependency('libosinfo', version: '> 0.2.9', required: false)
 libpng = dependency('libpng', version: '> 0.89', required: false)
+libseccomp = dependency('libseccomp', version: '>= 2.0', required: false)
 libtiff = dependency('libtiff-4', required: false)
 libxml2 = dependency('libxml-2.0', version: '> 2.6')
 libvorbis = dependency('vorbisfile', version: '> 0.22')
@@ -63,9 +64,6 @@ uuid = cc.find_library('uuid')
 # modules, it's not worth adding casts everywhere so we disable the warning.
 add_project_arguments('-Wno-pointer-sign', language: 'c')
 add_project_arguments('-DTRACKER_COMPILATION', language: 'c')
-
-enable_extract = get_option('extract')
-enable_writeback = get_option('writeback')
 
 ##################################################################
 # Check for libtracker-common, make sure libstemmer exists
@@ -213,6 +211,14 @@ if generic_media_handler_name == 'gstreamer'
   endif
 endif
 
+##################################################################
+# Check for libseccomp
+##################################################################
+
+if not libseccomp.found() and host_machine.system() == 'linux'
+  error('Libseccomp is mandatory for sandboxed metadata extraction')
+endif
+
 ####################################################################
 # D-Bus service files
 ####################################################################
@@ -244,27 +250,6 @@ else
   systemd_user_services_dir = get_option('systemd_user_services')
 endif
 
-####################################################################
-# bash-completion
-####################################################################
-
-install_bash_completion = false
-if get_option('bash_completion') == 'yes' or get_option('bash_completion') == 'auto'
-  bash_completion_package = dependency('bash-completion', required: false)
-  if bash_completion_package.found()
-    bash_completion_dir = bash_completion_package.get_pkgconfig_variable('completionsdir')
-  else
-    bash_completion_dir = join_paths(get_option('prefix'), get_option('datadir'), 'bash-completion', 'completions')
-  endif
-  install_bash_completion = true
-elif get_option('bash_completion') == 'no' or get_option('bash_completion') == ''
-  install_bash_completion = false
-  bash_completion_dir = '(disabled)'
-else
-  install_bash_completion = true
-  bash_completion_dir = get_option('bash_completion')
-endif
-
 tracker_major_version = meson.project_version().split('.')[0].to_int()
 tracker_minor_version = meson.project_version().split('.')[1].to_int()
 tracker_micro_version = meson.project_version().split('.')[2].to_int()
@@ -274,9 +259,6 @@ conf = configuration_data()
 # Config that goes in config.h
 conf.set('DISABLE_JOURNAL', get_option('journal') == false)
 conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == true)
-
-conf.set('HAVE_TRACKER_EXTRACT', enable_extract)
-conf.set('HAVE_TRACKER_WRITEBACK', enable_writeback)
 
 conf.set('HAVE_ENCA', charset_library_name == 'enca')
 conf.set('HAVE_EXEMPI', exempi.found())
@@ -290,6 +272,7 @@ conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
 conf.set('HAVE_LIBSTEMMER', have_libstemmer)
+conf.set('HAVE_LIBSECCOMP', libseccomp.found())
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 
 conf.set('HAVE_GETLINE', cc.has_function('getline', prefix : '#include <stdio.h>'))
@@ -334,11 +317,11 @@ tracker_c_args = [
   '-D_LARGEFILE64_SOURCE',
 ]
 
-have_tracker_miner_fs = true
-have_tracker_miner_apps = true
-have_tracker_miner_rss = true
-have_tracker_extract = true
-have_tracker_writeback = true
+have_tracker_extract = get_option('extract')
+have_tracker_miner_apps = get_option('miner_apps')
+have_tracker_miner_fs = get_option('miner_fs')
+have_tracker_miner_rss = get_option('miner_rss')
+have_tracker_writeback = get_option('writeback')
 
 configinc = include_directories('./')
 srcinc = include_directories('src/')
@@ -352,7 +335,10 @@ tracker_extract_rules_dir = join_paths(get_option('prefix'), get_option('datadir
 tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker/miners')
 tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/writeback-modules'.format(tracker_api_version))
 
+gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
 vapi_dir = join_paths(get_option('prefix'), get_option('datadir'), 'vala', 'vapi')
+
+glib_mkenums = find_program('glib-mkenums')
 
 subdir('src')
 

@@ -25,9 +25,15 @@ tracker_common_sources = [
 # FIXME: need to link against -lkvm on OpenBSD, see configure.ac
 tracker_common_dependencies = [glib, gio, gio_unix, libmath]
 
+tracker_common_private_dependencies = [charset_library]
+if libseccomp.found()
+  tracker_common_private_dependencies += [libseccomp]
+endif
+
+
 libtracker_common = library('tracker-common',
   tracker_common_sources,
-  dependencies: tracker_common_dependencies + [charset_library],
+  dependencies: tracker_common_dependencies + tracker_common_private_dependencies,
   c_args: tracker_c_args,
   include_directories: [configinc, srcinc],
   install: true,

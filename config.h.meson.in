@@ -66,6 +66,9 @@
 /* Define if we have libiptcdata */
 #mesondefine HAVE_LIBIPTCDATA
 
+/* Define if we have libseccomp */
+#mesondefine HAVE_LIBSECCOMP
+
 /* Define if we have libstemmer */
 #mesondefine HAVE_LIBSTEMMER
 

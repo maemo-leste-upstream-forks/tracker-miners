@@ -2,14 +2,18 @@ option('docs', type: 'boolean', value: true,
        description: 'Enable the documentation')
 option('extract', type: 'boolean', value: true,
        description: 'Enable the Tracker metadata extractor')
-option('fts', type: 'boolean', value: true,
-       description: 'Enable the Tracker full-text search feature')
 option('functional_tests', type: 'boolean', value: true,
        description: 'Enable the Tracker functional test suite')
 option('guarantee_metadata', type: 'boolean', value: true,
        description: 'Set nie:title and nie:contentCreated from filename and mtime if no metadata available')
 option('journal', type: 'boolean', value: true,
        description: 'Enable database journal backup mechanism')
+option('miner_apps', type: 'boolean', value: true,
+       description: 'Enable the Tracker applications miner')
+option('miner_fs', type: 'boolean', value: true,
+       description: 'Enable the Tracker filesystem miner')
+option('miner_rss', type: 'boolean', value: true,
+       description: 'Enable the Tracker RSS miner')
 option('writeback', type: 'boolean', value: true,
        description: 'Enable Tracker writeback feature')
 
@@ -41,9 +45,7 @@ option('stemmer', type: 'combo', choices: ['auto', 'no', 'yes'], value: 'no',
 option('unicode_support', type: 'combo', choices: ['icu', 'unistring', 'auto'], value: 'auto',
        description: 'Unicode support library to use')
 
-option('bash_completion', type: 'string', default: 'yes',
-       description: 'Directory to install Bash completion files (or "yes" for default directory, "no" to disable installation')
-option('dbus_services', type: 'string', default: '',
+option('dbus_services', type: 'string', value: '',
        description: 'Directory to install D-Bus .service files (leave blank to use the value from dbus-1.pc)')
-option('systemd_user_services', type: 'string', default: 'yes',
+option('systemd_user_services', type: 'string', value: 'yes',
        description: 'Directory to install systemd user .service files (or "yes" for default directory, "no" to disable installation)')
