@@ -2,7 +2,7 @@ subdir('common')
 
 subdir('libtracker-common')
 
-if enable_extract
+if have_tracker_extract
   subdir('libtracker-extract')
 endif
 

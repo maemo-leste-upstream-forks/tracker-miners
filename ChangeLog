@@ -1,3 +1,31 @@
+2017-11-14  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.0.3
+
+	tracker-extract: Ensure to add, not set, the nie:dataSource tag
+	It's not ok to unset all previous nie:dataSource properties here,
+	as tracker-miner-fs sets its own.
+
+2017-11-02  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	meson: Allow disabling individual miners
+	Also cleans up a little nonsense in the meson rules.
+
+2017-10-31  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	meson: Fix use of invalid 'default' keyword in meson_options.txt
+	The correct keyword is 'value'.
+
+	meson: Remove project options that are only relevant in tracker core
+
+2017-10-19  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	meson: Enable seccomp support
+
+	meson: Fix missing library from tracker-extract-gstreamer module
+
+	meson: Install enums for GSettings schemas
+
 2017-10-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 2.0.2

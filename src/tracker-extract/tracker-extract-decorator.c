@@ -163,7 +163,7 @@ decorator_save_info (TrackerExtractDecorator *decorator,
 	urn = tracker_decorator_info_get_urn (decorator_info);
 
 	tracker_resource_set_identifier (resource, urn);
-	tracker_resource_set_uri (resource, "nie:dataSource",
+	tracker_resource_add_uri (resource, "nie:dataSource",
 	        tracker_decorator_get_data_source (TRACKER_DECORATOR (decorator)));
 
 	return resource;
