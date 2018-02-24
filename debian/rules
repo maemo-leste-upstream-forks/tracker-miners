@@ -27,6 +27,7 @@ override_dh_auto_configure:
 		--enable-libgsf \
 		--enable-abiword \
 		--enable-libxml2 \
+		--enable-gexiv2 \
 		--enable-libvorbis \
 		--enable-libflac \
 		--enable-playlist \
@@ -37,11 +38,11 @@ override_dh_auto_configure:
 		--enable-icon \
 		--enable-text \
 		--enable-unit-tests \
-		--disable-miner-rss \
-		--disable-hal \
 		--enable-taglib \
 		--enable-libosinfo \
 		--enable-libcue \
+		--disable-miner-rss \
+		--disable-hal \
 		--disable-static \
 		--libexecdir=\$${prefix}/lib/tracker
 
