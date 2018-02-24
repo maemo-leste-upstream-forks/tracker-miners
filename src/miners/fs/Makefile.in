@@ -139,7 +139,7 @@ tracker_miner_fs_OBJECTS = $(am_tracker_miner_fs_OBJECTS)
 am__DEPENDENCIES_1 =
 tracker_miner_fs_DEPENDENCIES =  \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -291,6 +291,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -507,8 +509,8 @@ AM_CPPFLAGS = \
 	$(BUILD_CFLAGS)                                \
 	-I$(top_srcdir)/src                            \
 	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common          \
-	-I$(top_builddir)/src/libtracker-common        \
+	-I$(top_srcdir)/src/libtracker-miners-common   \
+	-I$(top_builddir)/src/libtracker-miners-common \
 	-DSHAREDIR=\""$(datadir)"\"                    \
 	-DLOCALEDIR=\""$(localedir)"\"                 \
 	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
@@ -555,7 +557,7 @@ tracker_miner_fs_SOURCES = \
 
 tracker_miner_fs_LDADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(TRACKER_MINER_FS_LIBS)
 
@@ -568,7 +570,7 @@ autostart_DATA = tracker-miner-fs.desktop
 
 # Configuration / GSettings
 gsettings_ENUM_NAMESPACE = org.freedesktop.TrackerMiners
-gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-common/tracker-enums.h
+gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-miners-common/tracker-enums.h
 gsettings_SCHEMAS = org.freedesktop.Tracker.Miner.Files.gschema.xml
 
 # Dist / Clean rules for all data

@@ -1,5 +1,5 @@
 # Shared common code
-subdir('libtracker-common')
+subdir('libtracker-miners-common')
 
 # Internal data extraction helpers
 subdir('libtracker-extract')
@@ -14,7 +14,7 @@ subdir('miners')
 subdir('tracker-writeback')
 
 custom_target('tracker-miners-settings-enums',
-    input: 'libtracker-common/tracker-enums.h',
+    input: 'libtracker-miners-common/tracker-enums.h',
     output: 'org.freedesktop.TrackerMiners.enums.xml',
     command: [glib_mkenums,
               '--comments', '<!-- @comment@ -->',

@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include <libtracker-common/tracker-file-utils.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #include <gsf/gsf.h>
 #include <gsf/gsf-infile.h>

@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', version: '2.0.3')
+project('tracker-miners', 'c', 'vala', version: '2.0.4')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -9,20 +9,34 @@ tracker_api_version = '2.0'
 
 glib_required = '2.40.0'
 
-tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 1.99.0', required: true)
-tracker_miner = dependency('tracker-miner-2.0', version: '>= 1.99.0', required: true)
+tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 1.99.0', required: false)
+tracker_miner = dependency('tracker-miner-2.0', version: '>= 1.99.0', required: false)
+
+if not tracker_sparql.found() or not tracker_miner.found()
+  message('Tracker libraries were not found or are too old. A local copy will be built if possible.')
+  tracker_subproject = subproject('tracker',
+    default_options: [
+       'dbus_services=@0@'.format(get_option('dbus_services')),
+       'docs=@0@'.format(get_option('docs')),
+       'systemd_user_services=@0@'.format(get_option('systemd_user_services')),
+    ])
+
+  tracker_sparql = tracker_subproject.get_variable('tracker_sparql_dep')
+  tracker_miner = tracker_subproject.get_variable('tracker_miner_dep')
+endif
+
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
 avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
 avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
 dbus = dependency('dbus-1', version: '> 1.3.1')
 exempi = dependency('exempi-2.0', version: '> 2.1.0', required: false)
 flac = dependency('flac', version: '> 1.2.1', required: false)
+gexiv2 = dependency('gexiv2', required: false)
 gio = dependency('gio-2.0', version: '>' + glib_required)
 gio_unix = dependency('gio-unix-2.0', version: '>' + glib_required)
 glib = dependency('glib-2.0', version: '>' + glib_required)
 gmodule = dependency('gmodule-2.0', version: '>' + glib_required)
 gobject = dependency('gobject-2.0', version: '>' + glib_required)
-gobject_introspection = dependency('gobject-introspection-1.0')
 gstreamer = dependency('gstreamer-1.0', required: false)
 gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
 gstreamer_tag = dependency('gstreamer-tag-1.0', required: false)
@@ -32,11 +46,10 @@ icu_i18n = dependency('icu-i18n', version: '> 4.8.1.1', required: false)
 icu_uc = dependency('icu-uc', version: '> 4.8.1.1', required: false)
 libcue = dependency('libcue', required: false)
 libexif = dependency('libexif', version: '> 0.6', required: false)
-libgrss = dependency('libgrss', version: '> 0.7', required: false)
 libgsf = dependency('libgsf-1', version: '> 1.14.24', required: false)
 libgxps = dependency('libgxps', required: false)
 libiptcdata = dependency('libiptcdata', required: false)
-libosinfo = dependency('libosinfo', version: '> 0.2.9', required: false)
+libosinfo = dependency('libosinfo-1.0', version: '> 0.2.9', required: false)
 libpng = dependency('libpng', version: '> 0.89', required: false)
 libseccomp = dependency('libseccomp', version: '>= 2.0', required: false)
 libtiff = dependency('libtiff-4', required: false)
@@ -50,7 +63,7 @@ zlib = dependency('zlib')
 
 libgif = cc.find_library('libgif', required: false)
 libjpeg = cc.find_library('libjpeg', required: false)
-libmath = cc.find_library('m')
+libmath = cc.find_library('m', required: false)
 
 # FIXME: here we work around a quirk todo with Meson and Vala: the 'uuid'
 # pkg-config component corresponds to 'libuuid.vapi', but Meson assumes that
@@ -60,24 +73,24 @@ libmath = cc.find_library('m')
 # to the Vala commandline, but still works as expected for C code.
 uuid = cc.find_library('uuid')
 
+have_tracker_extract = get_option('extract')
+have_tracker_miner_apps = get_option('miner_apps')
+have_tracker_miner_fs = get_option('miner_fs')
+have_tracker_miner_rss = get_option('miner_rss')
+have_tracker_writeback = get_option('writeback')
+
+if have_tracker_miner_rss
+  libgrss = dependency('libgrss', version: '> 0.7', required: false)
+  if not libgrss.found()
+    error('libgrss is required for the RSS feed miner. You can disable ' +
+          'this miner by passing -Dminer_rss=false if needed.')
+  endif
+endif
+
 # There are various gchar vs. unsigned char warnings that occur in extract
 # modules, it's not worth adding casts everywhere so we disable the warning.
 add_project_arguments('-Wno-pointer-sign', language: 'c')
 add_project_arguments('-DTRACKER_COMPILATION', language: 'c')
-
-##################################################################
-# Check for libtracker-common, make sure libstemmer exists
-##################################################################
-
-have_libstemmer = false
-if get_option('stemmer') != 'no'
-    stemmer = cc.find_library('stemmer')
-    if stemmer.found()
-        have_libstemmer = true
-    elif get_option('stemmer') == 'yes'
-        error('stemmer support explicitly requested, but stemmer library couldn\'t be found')
-    endif
-endif
 
 ##################################################################
 # Check for libtracker-common: battery/mains power detection
@@ -144,7 +157,7 @@ else
   endif
 endif
 
-if charset_library_name == 'none' and get_option('charset_library') != 'none'
+if charset_library_name == 'none' and get_option('charset_detection') != 'none'
   enca = dependency('enca', version: '>= 1.9', required: false)
 
   if enca.found()
@@ -271,7 +284,6 @@ conf.set('HAVE_LIBCUE2', libcue.version() >= '2.0.0')
 conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
-conf.set('HAVE_LIBSTEMMER', have_libstemmer)
 conf.set('HAVE_LIBSECCOMP', libseccomp.found())
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 
@@ -316,12 +328,6 @@ tracker_c_args = [
   # Needed for statvfs64, and probably other stuff
   '-D_LARGEFILE64_SOURCE',
 ]
-
-have_tracker_extract = get_option('extract')
-have_tracker_miner_apps = get_option('miner_apps')
-have_tracker_miner_fs = get_option('miner_fs')
-have_tracker_miner_rss = get_option('miner_rss')
-have_tracker_writeback = get_option('writeback')
 
 configinc = include_directories('./')
 srcinc = include_directories('src/')
@@ -376,6 +382,7 @@ if have_tracker_extract
     '    Support GIF:                            @0@ (xmp: @1@)'.format(libgif.found().to_string(), exempi.found().to_string()),
     '    Support JPEG:                           @0@ (xmp: @1@, exif: @2@, iptc: @3@)'.format(
         libjpeg.found().to_string(), exempi.found().to_string(), libexif.found().to_string(), libiptcdata.found().to_string()),
+    '    Support RAW:                            ' + gexiv2.found().to_string(),
     '    Support TIFF:                           @0@ (xmp: @1@, exif: @2@, iptc: @3@)'.format(
         libtiff.found().to_string(), exempi.found().to_string(), libexif.found().to_string(), libiptcdata.found().to_string()),
     '    Support Vorbis (ogg/etc):               ' + libvorbis.found().to_string(),

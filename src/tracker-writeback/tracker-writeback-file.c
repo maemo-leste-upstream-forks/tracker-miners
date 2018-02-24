@@ -24,8 +24,8 @@
 
 #include <gio/gunixoutputstream.h>
 
-#include <libtracker-common/tracker-file-utils.h>
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include "tracker-writeback-file.h"
 

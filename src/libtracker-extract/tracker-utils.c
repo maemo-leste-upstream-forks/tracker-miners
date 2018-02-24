@@ -26,8 +26,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <libtracker-common/tracker-utils.h>
-#include <libtracker-common/tracker-date-time.h>
+#include <libtracker-miners-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-date-time.h>
 
 #include "tracker-utils.h"
 

@@ -7,11 +7,11 @@
 modules = []
 
 if taglib.found()
-  modules += [['writeback-taglib', 'tracker-writeback-taglib.c', [tracker_miner, tracker_sparql, tracker_common_dep, taglib]]]
+  modules += [['writeback-taglib', 'tracker-writeback-taglib.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, taglib]]]
 endif
 
 if exempi.found()
-  modules += [['writeback-xmp', 'tracker-writeback-xmp.c', [tracker_miner, tracker_sparql, tracker_common_dep, exempi]]]
+  modules += [['writeback-xmp', 'tracker-writeback-xmp.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, exempi]]]
 endif
 
 foreach module : modules
@@ -44,7 +44,7 @@ executable('tracker-writeback',
   c_args: tracker_c_args + [
     '-DWRITEBACK_MODULES_DIR="@0@"'.format(tracker_writeback_modules_dir),
   ],
-  dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_common_dep],
+  dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
   install: true,
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')))
 

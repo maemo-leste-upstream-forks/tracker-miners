@@ -48,6 +48,26 @@
  * using these standards.
  **/
 
+enum {
+	EXIF_FLASH_NONE = 0x0000,
+	EXIF_FLASH_FIRED_MISSING_STROBE = 0x0005,
+	EXIF_FLASH_DID_NOT_FIRE_COMPULSORY_ON = 0x0008,
+	EXIF_FLASH_DID_NOT_FIRE_COMPULSORY_OFF = 0x0010,
+	EXIF_FLASH_DID_NOT_FIRE_AUTO = 0x0018,
+	EXIF_FLASH_DID_NOT_FIRE_AUTO_RED_EYE_REDUCTION = 0x0058,
+};
+
+enum {
+	EXIF_METERING_MODE_UNKNOWN = 0,
+	EXIF_METERING_MODE_AVERAGE = 1,
+	EXIF_METERING_MODE_CENTER_WEIGHTED_AVERAGE = 2,
+	EXIF_METERING_MODE_SPOT = 3,
+	EXIF_METERING_MODE_MULTISPOT = 4,
+	EXIF_METERING_MODE_PATTERN = 5,
+	EXIF_METERING_MODE_PARTIAL = 6,
+	EXIF_METERING_MODE_OTHER = 255,
+};
+
 static gchar *
 get_date (ExifData *exif,
           ExifTag   tag)
@@ -101,12 +121,12 @@ get_flash (ExifData *exif,
 		flash = exif_get_short (entry->data, order);
 
 		switch (flash) {
-		case 0x0000: /* No flash */
-		case 0x0005: /* Without strobe */
-		case 0x0008: /* Flash did not fire */
-		case 0x0010: /* Flash in compulsory mode, did not fire */
-		case 0x0018: /* Flash in auto mode, did not fire */
-		case 0x0058: /* Only red-eye reduction mode */
+		case EXIF_FLASH_NONE:
+		case EXIF_FLASH_FIRED_MISSING_STROBE:
+		case EXIF_FLASH_DID_NOT_FIRE_COMPULSORY_ON:
+		case EXIF_FLASH_DID_NOT_FIRE_COMPULSORY_OFF:
+		case EXIF_FLASH_DID_NOT_FIRE_AUTO:
+		case EXIF_FLASH_DID_NOT_FIRE_AUTO_RED_EYE_REDUCTION:
 			return g_strdup ("nmm:flash-off");
 		default:
 			return g_strdup ("nmm:flash-on");
@@ -234,18 +254,20 @@ get_metering_mode (ExifData *exif,
 		metering = exif_get_short (entry->data, order);
 
 		switch (metering) {
-		case 1:
+		case EXIF_METERING_MODE_AVERAGE:
 			return g_strdup ("nmm:metering-mode-average");
-		case 2:
+		case EXIF_METERING_MODE_CENTER_WEIGHTED_AVERAGE:
 			return g_strdup ("nmm:metering-mode-center-weighted-average");
-		case 3:
+		case EXIF_METERING_MODE_SPOT:
 			return g_strdup ("nmm:metering-mode-spot");
-		case 4:
+		case EXIF_METERING_MODE_MULTISPOT:
 			return g_strdup ("nmm:metering-mode-multispot");
-		case 5:
+		case EXIF_METERING_MODE_PATTERN:
 			return g_strdup ("nmm:metering-mode-pattern");
-		case 6:
+		case EXIF_METERING_MODE_PARTIAL:
 			return g_strdup ("nmm:metering-mode-partial");
+		case EXIF_METERING_MODE_UNKNOWN:
+		case EXIF_METERING_MODE_OTHER:
 		default:
 			return g_strdup ("nmm:metering-mode-other");
 		}

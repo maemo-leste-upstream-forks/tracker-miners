@@ -1,16 +1,16 @@
 module_flags = -module -avoid-version -no-undefined
 modulesdir = $(libdir)/tracker-miners-$(TRACKER_API_VERSION)/writeback-modules
 
-AM_CPPFLAGS =                                          \
-	$(BUILD_CFLAGS)                                \
-	-I$(top_srcdir)/src                            \
-	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common/         \
-	-I$(top_builddir)/src/libtracker-common/       \
-	-DLOCALEDIR=\""$(localedir)"\"                 \
-	-DMODULESDIR=\"$(modulesdir)\"                 \
-	-DWRITEBACK_MODULES_DIR=\""$(modulesdir)"\"    \
-	$(TRACKER_WRITEBACK_CFLAGS)                    \
+AM_CPPFLAGS =                                           \
+	$(BUILD_CFLAGS)                                 \
+	-I$(top_srcdir)/src                             \
+	-I$(top_builddir)/src                           \
+	-I$(top_srcdir)/src/libtracker-miners-common/   \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
+	-DLOCALEDIR=\""$(localedir)"\"                  \
+	-DMODULESDIR=\"$(modulesdir)\"                  \
+	-DWRITEBACK_MODULES_DIR=\""$(modulesdir)"\"     \
+	$(TRACKER_WRITEBACK_CFLAGS)                     \
 	$(LIBTRACKER_MINER_CFLAGS)
 
 
@@ -56,7 +56,7 @@ tracker_writeback_SOURCES = \
 	tracker-main.c
 
 tracker_writeback_LDADD = \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_WRITEBACK_LIBS)
 
@@ -72,7 +72,7 @@ systemd_user_DATA = tracker-writeback.service
 
 # Configuration / GSettings
 gsettings_ENUM_NAMESPACE = org.freedesktop.TrackerMiners
-gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-common/tracker-enums.h
+gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-miners-common/tracker-enums.h
 
 gsettings_SCHEMAS = org.freedesktop.Tracker.Writeback.gschema.xml
 

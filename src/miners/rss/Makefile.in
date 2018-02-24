@@ -114,8 +114,7 @@ am_tracker_miner_rss_OBJECTS = tracker-main.$(OBJEXT) \
 	tracker-miner-rss.$(OBJEXT)
 tracker_miner_rss_OBJECTS = $(am_tracker_miner_rss_OBJECTS)
 am__DEPENDENCIES_1 =
-tracker_miner_rss_DEPENDENCIES =  \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+tracker_miner_rss_DEPENDENCIES = $(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -267,6 +266,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -480,14 +481,14 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = \
-	$(BUILD_CFLAGS)                                \
-	-DSHAREDIR=\""$(datadir)"\"                    \
-	-DLOCALEDIR=\""$(localedir)"\"                 \
-	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
-	-I$(top_srcdir)/src                            \
-	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common/         \
-	-I$(top_builddir)/src/libtracker-common/       \
+	$(BUILD_CFLAGS)                                 \
+	-DSHAREDIR=\""$(datadir)"\"                     \
+	-DLOCALEDIR=\""$(localedir)"\"                  \
+	-DLIBEXEC_PATH=\""$(libexecdir)"\"              \
+	-I$(top_srcdir)/src                             \
+	-I$(top_builddir)/src                           \
+	-I$(top_srcdir)/src/libtracker-miners-common/   \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
 	$(TRACKER_MINER_RSS_CFLAGS)
 
 tracker_miner_rss_SOURCES = \
@@ -496,7 +497,7 @@ tracker_miner_rss_SOURCES = \
 	tracker-miner-rss.c
 
 tracker_miner_rss_LDADD = \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(TRACKER_MINER_RSS_LIBS)
 

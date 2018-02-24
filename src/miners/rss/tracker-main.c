@@ -25,7 +25,7 @@
 #include <locale.h>
 #include <glib/gi18n.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include "tracker-miner-rss.h"
 

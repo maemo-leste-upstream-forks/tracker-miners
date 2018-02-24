@@ -28,7 +28,7 @@
 
 #include <FLAC/metadata.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include <libtracker-extract/tracker-extract.h>
 

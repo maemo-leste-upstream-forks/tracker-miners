@@ -28,6 +28,11 @@
 
 G_BEGIN_DECLS
 
+enum {
+	EXIF_RESOLUTION_UNIT_PER_INCH = 2,
+	EXIF_RESOLUTION_UNIT_PER_CENTIMETER = 3,
+};
+
 /**
  * TrackerExifData:
  * @y_dimension: Y dimension.

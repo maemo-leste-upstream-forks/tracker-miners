@@ -9,8 +9,8 @@ AM_CPPFLAGS = \
 	$(BUILD_CFLAGS) \
 	-I$(top_srcdir)/src \
 	-I$(top_builddir)/src \
-	-I$(top_srcdir)/src/libtracker-common/ \
-	-I$(top_builddir)/src/libtracker-common/ \
+	-I$(top_srcdir)/src/libtracker-miners-common/ \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
 	-DLOCALEDIR=\""$(localedir)"\" \
 	-DTRACKER_EXTRACTORS_DIR=\""$(TRACKER_EXTRACT_MODULES_DIR)"\" \
 	$(TRACKER_EXTRACT_CFLAGS)
@@ -35,6 +35,7 @@ rules_files = \
 	10-pdf.rule \
 	10-png.rule \
 	10-ps.rule \
+	10-raw.rule \
 	10-svg.rule \
 	10-tiff.rule \
 	10-vorbis.rule \
@@ -57,7 +58,7 @@ rules_files = \
 	91-gstreamer-generic-dlna.rule
 
 # NOTE:
-# We don't always link with libtracker-common, we only link
+# We don't always link with libtracker-miners-common, we only link
 # against it if we directly use functions in the .so
 #
 # _MODULES_DIR = $(libdir)/tracker-$(TRACKER_API_VERSION)/extract-modules
@@ -118,6 +119,11 @@ endif
 if HAVE_POPPLER
 extractmodules_LTLIBRARIES += libextract-pdf.la
 rules_DATA += 10-pdf.rule
+endif
+
+if HAVE_GEXIV2
+extractmodules_LTLIBRARIES += libextract-raw.la
+rules_DATA += 10-raw.rule
 endif
 
 if HAVE_GSTREAMER
@@ -194,7 +200,7 @@ libextract_abw_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS)
 libextract_abw_la_LDFLAGS = $(module_flags)
 libextract_abw_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -204,7 +210,7 @@ libextract_mp3_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS)
 libextract_mp3_la_LDFLAGS = $(module_flags)
 libextract_mp3_la_LIBADD =  \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -214,7 +220,7 @@ libextract_vorbis_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS)
 libextract_vorbis_la_LDFLAGS = $(module_flags)
 libextract_vorbis_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBVORBIS_LIBS)
@@ -225,7 +231,7 @@ libextract_flac_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS)
 libextract_flac_la_LDFLAGS = $(module_flags)
 libextract_flac_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBFLAC_LIBS)
@@ -238,7 +244,7 @@ libextract_oasis_la_CFLAGS = \
 libextract_oasis_la_LDFLAGS = $(module_flags)
 libextract_oasis_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBGSF_LIBS)
@@ -251,7 +257,7 @@ libextract_epub_la_CFLAGS = \
 libextract_epub_la_LDFLAGS = $(module_flags)
 libextract_epub_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBGSF_LIBS)
@@ -264,11 +270,10 @@ libextract_png_la_CFLAGS = \
 libextract_png_la_LDFLAGS = $(module_flags)
 libextract_png_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBPNG_LIBS)
-
 
 # PS
 libextract_ps_la_SOURCES = tracker-extract-ps.c
@@ -276,7 +281,7 @@ libextract_ps_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS)
 libextract_ps_la_LDFLAGS = $(module_flags)
 libextract_ps_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -309,7 +314,7 @@ libextract_msoffice_la_CFLAGS = \
 libextract_msoffice_la_LDFLAGS = $(module_flags)
 libextract_msoffice_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBGSF_LIBS)
@@ -322,7 +327,7 @@ libextract_msoffice_xml_la_CFLAGS = \
 libextract_msoffice_xml_la_LDFLAGS = $(module_flags)
 libextract_msoffice_xml_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -334,7 +339,7 @@ libextract_xps_la_CFLAGS = \
 libextract_xps_la_LDFLAGS = $(module_flags)
 libextract_xps_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBGXPS_LIBS)
@@ -347,7 +352,7 @@ libextract_pdf_la_CFLAGS = \
 libextract_pdf_la_LDFLAGS = $(module_flags)
 libextract_pdf_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(POPPLER_LIBS)
@@ -359,9 +364,22 @@ libextract_dvi_la_CFLAGS = \
 libextract_dvi_la_LDFLAGS = $(module_flags)
 libextract_dvi_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
+
+# GEXIV2
+libextract_raw_la_SOURCES = tracker-extract-raw.c
+libextract_raw_la_CFLAGS = \
+	$(TRACKER_EXTRACT_MODULES_CFLAGS) \
+	$(GEXIV2_CFLAGS)
+libextract_raw_la_LDFLAGS = $(module_flags)
+libextract_raw_la_LIBADD = \
+	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
+	$(BUILD_LIBS) \
+	$(TRACKER_EXTRACT_MODULES_LIBS) \
+	$(GEXIV2_LIBS)
 
 # GStreamer
 libextract_gstreamer_la_SOURCES = \
@@ -400,7 +418,7 @@ libextract_gif_la_CFLAGS = \
 libextract_gif_la_LDFLAGS = $(module_flags)
 libextract_gif_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBGIF_LIBS)
@@ -413,7 +431,7 @@ libextract_jpeg_la_CFLAGS = \
 libextract_jpeg_la_LDFLAGS = $(module_flags)
 libextract_jpeg_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(LIBJPEG_LIBS)
@@ -482,7 +500,7 @@ libextract_libav_la_CFLAGS = $(TRACKER_EXTRACT_MODULES_CFLAGS) \
 libextract_libav_la_LDFLAGS = $(module_flags)
 libextract_libav_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS) \
 	$(AVFORMAT_LIBS) \
@@ -497,7 +515,7 @@ libextract_bmp_la_CFLAGS = \
 libextract_bmp_la_LDFLAGS = $(module_flags)
 libextract_bmp_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -508,7 +526,7 @@ libextract_dummy_la_CFLAGS = \
 libextract_dummy_la_LDFLAGS = $(module_flags)
 libextract_dummy_la_LIBADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_MODULES_LIBS)
 
@@ -534,7 +552,7 @@ tracker_extract_SOURCES = \
 
 tracker_extract_LDADD = \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_EXTRACT_LIBS)
 
@@ -606,7 +624,7 @@ autostart_DATA = tracker-extract.desktop
 
 # Configuration / GSettings
 gsettings_ENUM_NAMESPACE = org.freedesktop.TrackerMiners
-gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-common/tracker-enums.h
+gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-miners-common/tracker-enums.h
 
 gsettings_SCHEMAS = org.freedesktop.Tracker.Extract.gschema.xml
 

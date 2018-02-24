@@ -4,7 +4,7 @@ sources = [
 ]
 
 executable('tracker-miner-rss', sources,
-    dependencies: [libgrss, tracker_miner, tracker_common_dep, tracker_extract_dep],
+    dependencies: [libgrss, tracker_miner, tracker_miners_common_dep, tracker_extract_dep],
     c_args: tracker_c_args,
     install: true,
     install_dir: get_option('libexecdir'),

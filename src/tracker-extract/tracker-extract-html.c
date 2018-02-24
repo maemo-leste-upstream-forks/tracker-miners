@@ -25,7 +25,7 @@
 #include <glib.h>
 
 #include <libxml/HTMLparser.h>
-#include <libtracker-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-utils.h>
 #include <libtracker-extract/tracker-extract.h>
 
 #include "tracker-main.h"

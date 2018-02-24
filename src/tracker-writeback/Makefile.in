@@ -178,8 +178,7 @@ am_tracker_writeback_OBJECTS = tracker-config.$(OBJEXT) \
 	tracker-writeback-module.$(OBJEXT) tracker-writeback.$(OBJEXT) \
 	tracker-main.$(OBJEXT)
 tracker_writeback_OBJECTS = $(am_tracker_writeback_OBJECTS)
-tracker_writeback_DEPENDENCIES =  \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+tracker_writeback_DEPENDENCIES = $(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -303,6 +302,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -517,15 +518,15 @@ top_srcdir = @top_srcdir@
 module_flags = -module -avoid-version -no-undefined
 modulesdir = $(libdir)/tracker-miners-$(TRACKER_API_VERSION)/writeback-modules
 AM_CPPFLAGS = \
-	$(BUILD_CFLAGS)                                \
-	-I$(top_srcdir)/src                            \
-	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common/         \
-	-I$(top_builddir)/src/libtracker-common/       \
-	-DLOCALEDIR=\""$(localedir)"\"                 \
-	-DMODULESDIR=\"$(modulesdir)\"                 \
-	-DWRITEBACK_MODULES_DIR=\""$(modulesdir)"\"    \
-	$(TRACKER_WRITEBACK_CFLAGS)                    \
+	$(BUILD_CFLAGS)                                 \
+	-I$(top_srcdir)/src                             \
+	-I$(top_builddir)/src                           \
+	-I$(top_srcdir)/src/libtracker-miners-common/   \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
+	-DLOCALEDIR=\""$(localedir)"\"                  \
+	-DMODULESDIR=\"$(modulesdir)\"                  \
+	-DWRITEBACK_MODULES_DIR=\""$(modulesdir)"\"     \
+	$(TRACKER_WRITEBACK_CFLAGS)                     \
 	$(LIBTRACKER_MINER_CFLAGS)
 
 modules_LTLIBRARIES = $(am__append_1) $(am__append_2)
@@ -548,7 +549,7 @@ tracker_writeback_SOURCES = \
 	tracker-main.c
 
 tracker_writeback_LDADD = \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) \
 	$(TRACKER_WRITEBACK_LIBS)
 
@@ -559,7 +560,7 @@ systemd_user_DATA = tracker-writeback.service
 
 # Configuration / GSettings
 gsettings_ENUM_NAMESPACE = org.freedesktop.TrackerMiners
-gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-common/tracker-enums.h
+gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-miners-common/tracker-enums.h
 gsettings_SCHEMAS = org.freedesktop.Tracker.Writeback.gschema.xml
 
 # Dist / Clean rules for all data

@@ -152,8 +152,7 @@ LTLIBRARIES = $(libtracker_extract_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @HAVE_LIBICU_CHARSET_DETECTION_TRUE@am__DEPENDENCIES_2 =  \
 @HAVE_LIBICU_CHARSET_DETECTION_TRUE@	$(am__DEPENDENCIES_1)
-libtracker_extract_la_DEPENDENCIES =  \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+libtracker_extract_la_DEPENDENCIES = $(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__libtracker_extract_la_SOURCES_DIST = tracker-data.h \
@@ -297,6 +296,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -515,8 +516,7 @@ AM_CPPFLAGS = $(BUILD_CFLAGS) -I$(top_srcdir)/src \
 	$(LIBTRACKER_EXTRACT_CFLAGS) $(am__append_3)
 libtracker_extractdir = $(libdir)/tracker-miners-$(TRACKER_API_VERSION)
 libtracker_extract_LTLIBRARIES = libtracker-extract.la
-libtracker_extract_la_LIBADD =  \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+libtracker_extract_la_LIBADD = $(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS) $(LIBTRACKER_EXTRACT_LIBS) $(am__append_4)
 libtracker_extract_la_SOURCES = tracker-data.h tracker-encoding.c \
 	tracker-encoding.h tracker-exif.c tracker-exif.h \

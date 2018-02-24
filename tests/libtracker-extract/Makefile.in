@@ -191,7 +191,7 @@ tracker_encoding_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 tracker_encoding_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -203,7 +203,7 @@ tracker_exif_test_OBJECTS = $(am_tracker_exif_test_OBJECTS)
 tracker_exif_test_LDADD = $(LDADD)
 tracker_exif_test_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tracker_extract_info_test_OBJECTS =  \
@@ -213,7 +213,7 @@ tracker_extract_info_test_OBJECTS =  \
 tracker_extract_info_test_LDADD = $(LDADD)
 tracker_extract_info_test_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tracker_guarantee_test_OBJECTS = tracker-guarantee-test.$(OBJEXT)
@@ -221,7 +221,7 @@ tracker_guarantee_test_OBJECTS = $(am_tracker_guarantee_test_OBJECTS)
 tracker_guarantee_test_LDADD = $(LDADD)
 tracker_guarantee_test_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tracker_iptc_test_OBJECTS =  \
@@ -229,7 +229,7 @@ am_tracker_iptc_test_OBJECTS =  \
 tracker_iptc_test_OBJECTS = $(am_tracker_iptc_test_OBJECTS)
 am__DEPENDENCIES_2 =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 tracker_iptc_test_DEPENDENCIES = $(am__DEPENDENCIES_2) \
@@ -243,7 +243,7 @@ tracker_test_utils_OBJECTS = $(am_tracker_test_utils_OBJECTS)
 tracker_test_utils_LDADD = $(LDADD)
 tracker_test_utils_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tracker_test_xmp_OBJECTS = tracker-test-xmp.$(OBJEXT)
@@ -251,7 +251,7 @@ tracker_test_xmp_OBJECTS = $(am_tracker_test_xmp_OBJECTS)
 tracker_test_xmp_LDADD = $(LDADD)
 tracker_test_xmp_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 SCRIPTS = $(installed_test_SCRIPTS) $(noinst_SCRIPTS)
@@ -559,6 +559,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -839,7 +841,7 @@ AM_CPPFLAGS = \
 
 LDADD = \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(BUILD_LIBS)                                  \
 	$(LIBTRACKER_EXTRACT_LIBS)

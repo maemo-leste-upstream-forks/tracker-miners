@@ -1,12 +1,12 @@
-AM_CPPFLAGS =                                          \
-	$(BUILD_CFLAGS)                                \
-	-DSHAREDIR=\""$(datadir)"\"                    \
-	-DLOCALEDIR=\""$(localedir)"\"                 \
-	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
-	-I$(top_srcdir)/src                            \
-	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common/         \
-	-I$(top_builddir)/src/libtracker-common/       \
+AM_CPPFLAGS =                                           \
+	$(BUILD_CFLAGS)                                 \
+	-DSHAREDIR=\""$(datadir)"\"                     \
+	-DLOCALEDIR=\""$(localedir)"\"                  \
+	-DLIBEXEC_PATH=\""$(libexecdir)"\"              \
+	-I$(top_srcdir)/src                             \
+	-I$(top_builddir)/src                           \
+	-I$(top_srcdir)/src/libtracker-miners-common/   \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
 	$(TRACKER_MINER_RSS_CFLAGS)
 
 libexec_PROGRAMS = tracker-miner-rss
@@ -17,7 +17,7 @@ tracker_miner_rss_SOURCES =                            \
 	tracker-miner-rss.c
 
 tracker_miner_rss_LDADD =                              \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(TRACKER_MINER_RSS_LIBS)
 

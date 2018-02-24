@@ -22,12 +22,12 @@
 
 #include <png.h>
 
-#include <libtracker-common/tracker-file-utils.h>
-#include <libtracker-common/tracker-date-time.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
+#include <libtracker-miners-common/tracker-date-time.h>
 #include <libtracker-extract/tracker-extract.h>
 
 #define RFC1123_DATE_FORMAT "%d %B %Y %H:%M:%S %z"
-#define CM_TO_INCH          0.393700787
+#define CMS_PER_INCH        2.54
 
 typedef struct {
 	const gchar *title;
@@ -532,14 +532,22 @@ read_metadata (TrackerResource      *metadata,
 	if (ed->x_resolution) {
 		gdouble value;
 
-		value = ed->resolution_unit != 3 ? g_strtod (ed->x_resolution, NULL) : g_strtod (ed->x_resolution, NULL) * CM_TO_INCH;
+		if (ed->resolution_unit == EXIF_RESOLUTION_UNIT_PER_CENTIMETER)
+			value = g_strtod (ed->x_resolution, NULL) * CMS_PER_INCH;
+		else
+			value = g_strtod (ed->x_resolution, NULL);
+
 		tracker_resource_set_double (metadata, "nfo:horizontalResolution", value);
 	}
 
 	if (ed->y_resolution) {
 		gdouble value;
 
-		value = ed->resolution_unit != 3 ? g_strtod (ed->y_resolution, NULL) : g_strtod (ed->y_resolution, NULL) * CM_TO_INCH;
+		if (ed->resolution_unit == EXIF_RESOLUTION_UNIT_PER_CENTIMETER)
+			value = g_strtod (ed->y_resolution, NULL) * CMS_PER_INCH;
+		else
+			value = g_strtod (ed->y_resolution, NULL);
+
 		tracker_resource_set_double (metadata, "nfo:verticalResolution", value);
 	}
 

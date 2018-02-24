@@ -14,7 +14,7 @@ sources = [
 
 tracker_miner_fs_deps = [
      tracker_miner,
-     tracker_common_dep,
+     tracker_miners_common_dep,
      tracker_extract_dep
 ]
 

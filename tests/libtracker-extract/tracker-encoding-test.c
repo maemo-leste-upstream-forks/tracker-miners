@@ -22,7 +22,7 @@
 
 #include <glib-object.h>
 #include <libtracker-extract/tracker-encoding.h>
-#include <libtracker-common/tracker-locale.h>
+#include <libtracker-miners-common/tracker-locale.h>
 #include <locale.h>
 
 static void

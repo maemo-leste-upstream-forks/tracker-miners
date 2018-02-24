@@ -4,7 +4,7 @@ noinst_LTLIBRARIES += libtracker-testcommon.la
 
 AM_CPPFLAGS =                                          \
 	$(BUILD)                                       \
-	-DTEST_TEXT=\""$(top_srcdir)"/tests/libtracker-common/non-utf8.txt\" \
+	-DTEST_TEXT=\""$(top_srcdir)"/tests/libtracker-miners-common/non-utf8.txt\" \
 	$(LIBTRACKER_COMMON_CFLAGS)
 
 LDADD =                                                \
