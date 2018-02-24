@@ -21,7 +21,7 @@
 #define __TRACKERD_EXTRACT_H__
 
 #include <gio/gio.h>
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
 
 #define TRACKER_EXTRACT_SERVICE        "org.freedesktop.Tracker1.Extract"

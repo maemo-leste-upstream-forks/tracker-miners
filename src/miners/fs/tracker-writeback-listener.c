@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#include <libtracker-common/tracker-dbus.h>
+#include <libtracker-miners-common/tracker-dbus.h>
 #include <libtracker-sparql/tracker-sparql.h>
 
 #include "tracker-writeback-listener.h"

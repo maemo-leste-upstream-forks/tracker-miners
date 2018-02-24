@@ -34,7 +34,7 @@
 #include <gio/gunixfdlist.h>
 #include <gio/gunixinputstream.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-sparql/tracker-ontologies.h>
 #include <libtracker-extract/tracker-extract.h>
 
@@ -2389,7 +2389,8 @@ process_file_cb (GObject      *object,
 
 	miner_files_add_to_datasource (data->miner, file, sparql);
 
-        miner_files_add_rdf_types (sparql, file, mime_type);
+	if (g_file_info_get_size (file_info) > 0)
+		miner_files_add_rdf_types (sparql, file, mime_type);
 
 	sparql_builder_finish (data, NULL, NULL, NULL, NULL);
 	tracker_miner_fs_notify_finish (TRACKER_MINER_FS (data->miner), data->task,
@@ -2753,12 +2754,10 @@ miner_files_move_file (TrackerMinerFS *fs,
 	                        "DELETE { "
 	                        "  <%s> nfo:fileName ?f ; "
 	                        "       nie:url ?u ; "
-	                        "       nie:isStoredAs ?s ; "
 	                        "       nfo:belongsToContainer ?b"
 	                        "} WHERE { "
 	                        "  <%s> nfo:fileName ?f ; "
-	                        "       nie:url ?u ; "
-	                        "       nie:isStoredAs ?s . "
+	                        "       nie:url ?u . "
 	                        "       OPTIONAL { <%s> nfo:belongsToContainer ?b }"
 	                        "} ",
 	                        source_iri, source_iri, source_iri);
@@ -2770,9 +2769,8 @@ miner_files_move_file (TrackerMinerFS *fs,
 	g_string_append_printf (sparql,
 	                        "INSERT INTO <" TRACKER_OWN_GRAPH_URN "> {"
 	                        "  <%s> nfo:fileName \"%s\" ; "
-	                        "       nie:url \"%s\" ; "
-	                        "       nie:isStoredAs <%s> ",
-	                        source_iri, display_name, uri, source_iri);
+	                        "       nie:url \"%s\" ",
+	                        source_iri, display_name, uri);
 
 	if (new_parent && new_parent_iri) {
 		g_string_append_printf (sparql, "; nfo:belongsToContainer \"%s\"",

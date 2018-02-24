@@ -1,6 +1,6 @@
 subdir('common')
 
-subdir('libtracker-common')
+subdir('libtracker-miners-common')
 
 if have_tracker_extract
   subdir('libtracker-extract')

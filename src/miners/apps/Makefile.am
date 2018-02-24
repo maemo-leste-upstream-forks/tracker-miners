@@ -1,12 +1,12 @@
-AM_CPPFLAGS =                                          \
-	$(BUILD_CFLAGS)                                \
-	-I$(top_srcdir)/src                            \
-	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common/         \
-	-I$(top_builddir)/src/libtracker-common/       \
-	-DSHAREDIR=\""$(datadir)"\"                    \
-	-DLOCALEDIR=\""$(localedir)"\"                 \
-	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
+AM_CPPFLAGS =                                           \
+	$(BUILD_CFLAGS)                                 \
+	-I$(top_srcdir)/src                             \
+	-I$(top_builddir)/src                           \
+	-I$(top_srcdir)/src/libtracker-miners-common/   \
+	-I$(top_builddir)/src/libtracker-miners-common/ \
+	-DSHAREDIR=\""$(datadir)"\"                     \
+	-DLOCALEDIR=\""$(localedir)"\"                  \
+	-DLIBEXEC_PATH=\""$(libexecdir)"\"              \
 	$(TRACKER_MINER_APPS_CFLAGS)
 
 libexec_PROGRAMS = tracker-miner-apps
@@ -17,7 +17,7 @@ tracker_miner_apps_SOURCES =                           \
 	tracker-miner-applications.h
 
 tracker_miner_apps_LDADD =                             \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(TRACKER_MINER_APPS_LIBS)
 

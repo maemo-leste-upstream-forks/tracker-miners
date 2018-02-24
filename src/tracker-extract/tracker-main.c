@@ -38,7 +38,7 @@
 #include <sys/resource.h>
 #endif
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include "tracker-config.h"
 #include "tracker-main.h"

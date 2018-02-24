@@ -1,3 +1,19 @@
+NEW in 2.0.4 - 2018-02-07
+=========================
+
+  * build: Allow building tracker repo as a meson subproject
+  * libtracker-common: Rename to libtracker-miners-common
+  * libtracker-miners-common: Whitelist arm_fadvise64_64, getegid and getegid32 syscalls
+  * tracker-extract: Add GExiv2-based extractor module for RAW files
+  * tracker-extract: Blacklist gstreamer modules via plugin instead of via feature
+  * tracker-extract: Blacklist video4linux2 gstreamer plugin
+  * tracker-extract: Use enumerations for EXIF values
+  * tracker-extract: Fix image pixel density conversions
+  * tracker-miner-fs: Avoid setting rdf:types on empty files
+  * meson: dependency check fixes
+
+Translations: nb
+
 NEW in 2.0.3 - 2017-11-14
 =========================
 

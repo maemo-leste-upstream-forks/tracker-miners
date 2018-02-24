@@ -407,7 +407,7 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-DIST_SUBDIRS = common libtracker-common libtracker-extract \
+DIST_SUBDIRS = common libtracker-miners-common libtracker-extract \
 	tracker-writeback functional-tests
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/Makefile.decl \
 	$(top_srcdir)/build-aux/test-driver
@@ -492,6 +492,8 @@ GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
 GDBUS_CODEGEN = @GDBUS_CODEGEN@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GEXIV2_CFLAGS = @GEXIV2_CFLAGS@
+GEXIV2_LIBS = @GEXIV2_LIBS@
 GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_MKENUMS = @GLIB_MKENUMS@
@@ -755,8 +757,8 @@ all_test_ltlibs = $(test_ltlibraries) $(uninstalled_test_ltlibraries) $(installe
 @ENABLE_INSTALLED_TESTS_TRUE@                      $(dist_test_scripts) $(dist_installed_test_scripts)
 
 @ENABLE_INSTALLED_TESTS_TRUE@installed_test_meta_DATA = $(installed_testcases:=.test)
-SUBDIRS = common libtracker-common $(am__append_14) $(am__append_15) \
-	$(am__append_16)
+SUBDIRS = common libtracker-miners-common $(am__append_14) \
+	$(am__append_15) $(am__append_16)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

@@ -26,8 +26,8 @@
 
 #include <libhal.h>
 
-#include <libtracker-common/tracker-log.h>
-#include <libtracker-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-log.h>
+#include <libtracker-miners-common/tracker-utils.h>
 
 #include "tracker-power.h"
 

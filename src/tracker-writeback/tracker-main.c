@@ -24,7 +24,7 @@
 
 #include <glib/gi18n.h>
 
-#include <libtracker-common/tracker-log.h>
+#include <libtracker-miners-common/tracker-log.h>
 
 #include "tracker-writeback.h"
 #include "tracker-config.h"

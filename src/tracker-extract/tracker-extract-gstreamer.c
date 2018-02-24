@@ -50,7 +50,7 @@
 #include <gst/gst.h>
 #include <gst/tag/tag.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
 
 #include "tracker-cue-sheet.h"
@@ -1295,15 +1295,9 @@ tracker_extract_module_init (GError **error)
 {
 	/* Lifted from totem-video-thumbnailer */
 	const gchar *blacklisted[] = {
-		"vaapidecodebin",
-		"vaapidecode",
-		"vaapimpeg2dec",
-		"vaapih264dec",
-		"vaapivc1dec",
-		"vaapivp8dec",
-		"vaapivp9dec",
-		"vaapih265dec",
 		"bcmdec",
+		"vaapi",
+		"video4linux2"
 	};
 	GstRegistry *registry;
 	guint i;
@@ -1312,12 +1306,11 @@ tracker_extract_module_init (GError **error)
 	registry = gst_registry_get ();
 
 	for (i = 0; i < G_N_ELEMENTS (blacklisted); i++) {
-		GstPluginFeature *feature =
-			gst_registry_find_feature (registry,
-						   blacklisted[i],
-						   GST_TYPE_ELEMENT_FACTORY);
-		if (feature)
-			gst_registry_remove_feature (registry, feature);
+		GstPlugin *plugin =
+			gst_registry_find_plugin (registry,
+						  blacklisted[i]);
+		if (plugin)
+			gst_registry_remove_plugin (registry, plugin);
 	}
 
 	return TRUE;

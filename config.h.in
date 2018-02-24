@@ -55,6 +55,9 @@
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
+/* Define if we have gexiv2 */
+#undef HAVE_GEXIV2
+
 /* Define if we have GStreamer */
 #undef HAVE_GSTREAMER
 

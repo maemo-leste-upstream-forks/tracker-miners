@@ -22,7 +22,7 @@
 #include <glib.h>
 
 #include <libtracker-sparql/tracker-ontologies.h>
-#include <libtracker-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-utils.h>
 
 #include <libtracker-extract/tracker-extract.h>
 

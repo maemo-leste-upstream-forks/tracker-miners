@@ -1,5 +1,5 @@
 SUBDIRS =                                              \
-	libtracker-common                              \
+	libtracker-miners-common                       \
 	libtracker-extract                             \
 	miners
 

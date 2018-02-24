@@ -11,7 +11,7 @@ libtracker_extractdir = $(libdir)/tracker-miners-$(TRACKER_API_VERSION)
 libtracker_extract_LTLIBRARIES = libtracker-extract.la
 
 libtracker_extract_la_LIBADD =   \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(LIBTRACKER_EXTRACT_LIBS)
 

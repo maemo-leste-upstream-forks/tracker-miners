@@ -30,10 +30,10 @@
 #include <glib/gstdio.h>
 
 #include <tiffio.h>
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
 
-#define CM_TO_INCH          0.393700787
+#define CMS_PER_INCH        2.54
 
 typedef enum {
 	TAG_TYPE_UNDEFINED = 0,
@@ -632,14 +632,22 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	if (ed->x_resolution) {
 		gdouble value;
 
-		value = ed->resolution_unit != 3 ? g_strtod (ed->x_resolution, NULL) : g_strtod (ed->x_resolution, NULL) * CM_TO_INCH;
+		if (ed->resolution_unit == EXIF_RESOLUTION_UNIT_PER_CENTIMETER)
+			value = g_strtod (ed->x_resolution, NULL) * CMS_PER_INCH;
+		else
+			value = g_strtod (ed->x_resolution, NULL);
+
 		tracker_resource_set_double (metadata, "nfo:horizontalResolution", value);
 	}
 
 	if (ed->y_resolution) {
 		gdouble value;
 
-		value = ed->resolution_unit != 3 ? g_strtod (ed->y_resolution, NULL) : g_strtod (ed->y_resolution, NULL) * CM_TO_INCH;
+		if (ed->resolution_unit == EXIF_RESOLUTION_UNIT_PER_CENTIMETER)
+			value = g_strtod (ed->y_resolution, NULL) * CMS_PER_INCH;
+		else
+			value = g_strtod (ed->y_resolution, NULL);
+
 		tracker_resource_set_double (metadata, "nfo:verticalResolution", value);
 	}
 

@@ -40,9 +40,9 @@
 #include <gio/gunixoutputstream.h>
 #include <gio/gunixinputstream.h>
 
-#include <libtracker-common/tracker-date-time.h>
-#include <libtracker-common/tracker-utils.h>
-#include <libtracker-common/tracker-file-utils.h>
+#include <libtracker-miners-common/tracker-date-time.h>
+#include <libtracker-miners-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #include <libtracker-extract/tracker-extract.h>
 

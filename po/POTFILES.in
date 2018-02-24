@@ -1,8 +1,8 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 [encoding: UTF-8]
-src/libtracker-common/tracker-dbus.c
-src/libtracker-common/tracker-utils.c
+src/libtracker-miners-common/tracker-dbus.c
+src/libtracker-miners-common/tracker-utils.c
 src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in
 src/miners/apps/tracker-main.c
 src/miners/apps/tracker-miner-apps.desktop.in.in

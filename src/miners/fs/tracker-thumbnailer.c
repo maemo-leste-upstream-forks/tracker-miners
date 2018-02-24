@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-#include <libtracker-common/tracker-dbus.h>
+#include <libtracker-miners-common/tracker-dbus.h>
 
 #include "tracker-thumbnailer.h"
 

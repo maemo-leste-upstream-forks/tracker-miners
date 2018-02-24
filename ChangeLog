@@ -1,3 +1,222 @@
+2018-02-07  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.0.4
+
+2018-02-07  Debarshi Ray  <debarshir@gnome.org>
+
+	tracker-extract: Add GExiv2 based extractor for RAW files
+	Unlike the other extraction modules, this one is licensed under GPLv2+
+	to match Exiv2.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=787589
+
+	Update COPYING
+	https://bugzilla.gnome.org/show_bug.cgi?id=787589
+
+	functional-tests: Add a test for the RAW extractor
+	https://bugzilla.gnome.org/show_bug.cgi?id=787589
+
+2018-02-06  Carlos Garnacho  <carlosg@gnome.org>
+
+	tracker-miner-fs: Preserve nie:isStoredAs through move operations
+	It is determined that to Tracker nie:DataObject==nie:InformationElement,
+	that is, the URN of both aspects is actually the same. And the URN remains
+	static throughout move operations, so it just doesn't make sense to delete
+	this piece of information just to add it again.
+
+	tracker-miner-fs: Avoid setting rdf types on empty files
+	The mimetype sniffing machinery will give us text/plain for those
+	(thus a nfo:PlainTextDocument), however files may end up being
+	something else. This situation is common in eg. downloads, where
+	a 0-byte file is made up to account for the download location
+	while the file is actually being downloaded on a temporary
+	location.
+
+2018-01-27  Debarshi Ray  <debarshir@gnome.org>
+
+	tracker-extract: Rename constant
+	This factor is meant to convert pixels per centimetre to pixels per
+	inch, not centimetres to inches.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792192
+
+	libtracker-extract, tracker-extract: Use enums for resolution units
+	Based on page 20 of version 2.2 of the Exif standard [1] published by
+	JEITA; and comments in libjpeg's jpeglib.h.
+
+	[1] http://www.exiv2.org/Exif2-2.PDF
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792178
+
+	tracker-extract: Fix pixel density conversions
+	The CM_TO_INCH factor is meant to convert pixels per centimetre to
+	pixels per inch, not centimetres to inches. If there is one pixel per
+	centimetre, then there would be 2.54 pixels per inch.
+
+	Fallout from 5c04c7dedeb985db539d781670ba6b31cfa2006a
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792192
+
+	libtracker-extract: Use enumerated constants for Exif metering modes
+	Based on page 34 of version 2.2 of the Exif standard [1] published by
+	JEITA.
+
+	[1] http://www.exiv2.org/Exif2-2.PDF
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792178
+
+	libtracker-extract: Use enumerated constants for Exif flash values
+	Based on page 35 of version 2.2 of the Exif standard [1] published by
+	JEITA. Note that some combinations, like 0x0008 and 0x0058, are not
+	mentioned in the standard but they are still included to avoid
+	functional changes and to be defensive against odd files.
+
+	[1] http://www.exiv2.org/Exif2-2.PDF
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792178
+
+2018-01-26  Ting-Wei Lan  <lantw@src.gnome.org>
+
+	configure: Don't put includes in function body of AC_LANG_PROGRAM
+	The second argument of AC_LANG_PROGRAM is the content of main function.
+	We cannot put any includes there, or we end up testing whether the
+	compiler supports nested functions because headers may have definitions
+	for inline functions.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792713
+
+2018-01-26  Debarshi Ray  <debarshir@gnome.org>
+
+	libtracker-miners-common: Allow GCredentials to work
+	GDaemonFile, from GVfs, requires GCredentials, which in turn requires
+	getegid. This isn't necessary when going through the FUSE compatibility
+	layer.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=792922
+
+2017-12-18  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	meson: Improve libgrss dependency check
+	We should require this if miner_rss=true and not check for it at all if
+	miner_rss=false.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790375
+
+2017-12-16  Sam Thursfield  <sam@afuera.me.uk>
+
+	meson: Add missing rpath for tracker-extract
+
+2017-12-16  Quentin Glidic  <sardemff7+git@sardemff7.net>
+
+	meson: Allow to build with non-GNU libc
+	https://bugzilla.gnome.org/show_bug.cgi?id=791432
+
+2017-12-16  Sam Thursfield  <sam@afuera.me.uk>
+
+	Remove vestigal unicode-support option
+	This is only used in tracker.git.
+
+	common: Remove unused tracker-language.[ch] and libstemmer dep
+
+2017-12-16  Jeremy Bicha  <jbicha@debian.org>
+
+	meson: Don't require gobject-introspection
+	This is already done by the gnome.generate_gir() module.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790385
+
+	meson: Fix libosinfo dependency check
+	https://bugzilla.gnome.org/show_bug.cgi?id=790377
+
+2017-12-16  Sam Thursfield  <sam@afuera.me.uk>
+
+	meson: Fix breakage when building with charset_detection=enca
+
+2017-12-16  Sam Thursfield  <sam.thursfield@codethink.co.uk>
+
+	meson: Add tracker core as a subproject
+	This allows building tracker-miners and tracker core with a single
+	invocation of Meson and Ninja. It also allows apps to embed their
+	own copy of Tracker just by adding tracker-miners as a subproject in
+	their Meson buildsystem.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=789725
+
+	Rename libtracker-common to libtracker-miners-common
+	We made a big compromise when splitting tracker core from tracker-miners
+	in that the common code that was needed by both parts would end up
+	duplicated. It's ugly but it works fine at the moment and allows us to
+	keep all of the common code private.
+
+	I had an issue when trying to embed tracker core into tracker-miners as
+	a Meson subproject though. Having two targets named tracker-common
+	caused confusion as duplicate targets aren't allowed, but they are not
+	quite equivalent so we can't just pick one or the other.
+
+	To work around this, I've renamed the copy in this repo to
+	tracker-miners-common. This only affects the target names, not the
+	actual function names.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=789725
+
+2017-12-01  Debarshi Ray  <debarshir@gnome.org>
+
+	functional-tests: Unbreak test by fixing the name of the interface
+	The 410-extractor-decorator.py test fails with:
+	  Error: g-dbus-error-quark:
+	    GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: No such
+	    interface 'org.freedesktop.Tracker1.Miner.Index' on object at path
+	    /org/freedesktop/Tracker1/Miner/Files/Index (19)
+
+	Fallout from b4802ca33446772fb029df6215182e2091bdbf2c
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790972
+
+	functional-tests: Unbreak test by removing haveMaemo conditionals
+	The 01-insertion.py test fails with:
+	  File "./01-insertion.py", line 774, in <module>
+	      class TrackerStorePhoneNumberTest (CommonTrackerStoreTest):
+	  File "./01-insertion.py", line 780, in TrackerStorePhoneNumberTest
+	      @ut.skipIf (not cfg.haveMaemo, "This test uses maemo:specific
+	        properties")
+	  AttributeError: 'module' object has no attribute 'haveMaemo'
+
+	The Maemo/Meego flags were removed and the 91-maemo ontology is now
+	installed unconditionally. Therefore there is no need to make this
+	test conditional.
+
+	Fallout from 809b56767fccd5680136485c6fbbc895e83dd886
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=783555
+
+2017-11-20  Kjartan Maraas  <kmaraas@gnome.org>
+
+	Updated Norwegian bokmål translation.
+
+2017-11-16  Robert McQueen  <rob@endlessm.com>
+
+	extract/gstreamer: blacklist video4linux2 plugin
+	Avoid attempting to use V4L2 hardware-accelerated decoders, which
+	can keep scarce hardware units busy and prevent user-facing applications
+	from using hardware accelerated decode.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790457
+
+	extract/gstreamer: blacklist via plugin rather than feature
+	Using a features-based blacklist means that you need to keep adding
+	new blacklist entries when new codecs are added, and makes it impossible
+	to match plugins which generate features dynamically based on
+	detected hardware.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790457
+
+	common/seccomp: allow arm_fadvise64_64 syscall
+	glibc on ARM reroutes the posix_fadvise method to the arm_fadvise64_64
+	syscall. Without allowing this, pretty much every extracter gets killed
+	with SIGSYS on armhf due to the seccomp policy.
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=790456
+
 2017-11-14  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 2.0.3

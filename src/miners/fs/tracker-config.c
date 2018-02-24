@@ -29,7 +29,7 @@
 #define G_SETTINGS_ENABLE_BACKEND
 #include <gio/gsettingsbackend.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include "tracker-config.h"
 

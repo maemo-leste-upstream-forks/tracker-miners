@@ -21,7 +21,7 @@
 
 #include "tracker-extract-watchdog.h"
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-miner/tracker-miner.h>
 
 struct _TrackerExtractWatchdog {

@@ -21,7 +21,7 @@
 
 #include <locale.h>
 
-#include <libtracker-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-utils.h>
 
 #include "tracker-resource-helpers.h"
 #include "tracker-xmp.h"

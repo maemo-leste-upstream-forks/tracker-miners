@@ -34,7 +34,7 @@
 #include <gsf/gsf-utils.h>
 #include <gsf/gsf-infile-zip.h>
 
-#include <libtracker-common/tracker-common.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
 
 #include "tracker-main.h"

@@ -2,8 +2,8 @@ AM_CPPFLAGS =                                          \
 	$(BUILD_CFLAGS)                                \
 	-I$(top_srcdir)/src                            \
 	-I$(top_builddir)/src                          \
-	-I$(top_srcdir)/src/libtracker-common          \
-	-I$(top_builddir)/src/libtracker-common        \
+	-I$(top_srcdir)/src/libtracker-miners-common   \
+	-I$(top_builddir)/src/libtracker-miners-common \
 	-DSHAREDIR=\""$(datadir)"\"                    \
 	-DLOCALEDIR=\""$(localedir)"\"                 \
 	-DLIBEXEC_PATH=\""$(libexecdir)"\"             \
@@ -53,7 +53,7 @@ tracker_miner_fs_SOURCES =                             \
 
 tracker_miner_fs_LDADD =                               \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
-	$(top_builddir)/src/libtracker-common/libtracker-common.la \
+	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(BUILD_LIBS)                                  \
 	$(TRACKER_MINER_FS_LIBS)
 
@@ -94,7 +94,7 @@ autostart_DATA = tracker-miner-fs.desktop
 
 # Configuration / GSettings
 gsettings_ENUM_NAMESPACE = org.freedesktop.TrackerMiners
-gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-common/tracker-enums.h
+gsettings_ENUM_FILES = $(top_srcdir)/src/libtracker-miners-common/tracker-enums.h
 
 gsettings_SCHEMAS = org.freedesktop.Tracker.Miner.Files.gschema.xml
 
