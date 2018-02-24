@@ -10,4 +10,4 @@ usr/share/man/man1/tracker-miner-fs.1
 usr/share/tracker/miners/org.freedesktop.Tracker1.Miner.Applications.service
 usr/share/tracker/miners/org.freedesktop.Tracker1.Miner.Files.service
 #usr/share/tracker/tracker-miner-files-index.xml
-debian/30-tracker.conf etc/sysctl.d/
+debian/30-tracker.conf usr/lib/sysctl.d/

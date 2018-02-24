@@ -20,8 +20,8 @@ set -e
 
 case "$1" in
     configure)
-        if [ -x /sbin/sysctl ] && [ -f /etc/sysctl.d/30-tracker.conf ] ; then
-            sysctl --quiet -p /etc/sysctl.d/30-tracker.conf || true
+        if [ -x /lib/systemd/systemd-sysctl ] ; then
+            /lib/systemd/systemd-sysctl 30-tracker.conf || true
         fi
     ;;
 
