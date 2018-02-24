@@ -1,1 +1,1 @@
-rm_conffile /etc/xdg/autostart/tracker-miner-user-guides.desktop 2.0.3-2~ tracker-miner-fs
+rm_conffile /etc/xdg/autostart/tracker-miner-user-guides.desktop 2.0.4-1~ tracker-miner-fs
