@@ -4,6 +4,50 @@
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed -Wl,-Bsymbolic
 
+FEATURE_FLAGS = \
+	--enable-generic-media-extractor=gstreamer \
+	--enable-libstemmer \
+	--enable-upower \
+	--enable-exempi \
+	--enable-libexif \
+	--enable-libgif \
+	--enable-libjpeg \
+	--enable-libtiff \
+	--enable-libpng \
+	--enable-poppler \
+	--enable-libgsf \
+	--enable-abiword \
+	--enable-libxml2 \
+	--enable-gexiv2 \
+	--enable-libvorbis \
+	--enable-libflac \
+	--enable-playlist \
+	--enable-mp3 \
+	--enable-libgxps \
+	--enable-dvi \
+	--enable-ps \
+	--enable-icon \
+	--enable-text \
+	--enable-unit-tests \
+	--enable-taglib \
+	--enable-libcue \
+	--disable-miner-rss \
+	--disable-hal \
+	--disable-static \
+
+# Disable 'universe' dependencies on Ubuntu
+ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
+FEATURE_FLAGS += \
+	--disable-enca \
+	--disable-libiptcdata \
+	--disable-libosinfo
+else
+FEATURE_FLAGS += \
+	--enable-enca \
+	--enable-libiptcdata \
+	--enable-libosinfo
+endif
+
 %:
 	dh $@ --with gnome
 
@@ -12,38 +56,7 @@ override_dh_autoreconf:
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-		--enable-enca \
-		--enable-generic-media-extractor=gstreamer \
-		--enable-libstemmer \
-		--enable-upower \
-		--enable-libiptcdata \
-		--enable-exempi \
-		--enable-libexif \
-		--enable-libgif \
-		--enable-libjpeg \
-		--enable-libtiff \
-		--enable-libpng \
-		--enable-poppler \
-		--enable-libgsf \
-		--enable-abiword \
-		--enable-libxml2 \
-		--enable-gexiv2 \
-		--enable-libvorbis \
-		--enable-libflac \
-		--enable-playlist \
-		--enable-mp3 \
-		--enable-libgxps \
-		--enable-dvi \
-		--enable-ps \
-		--enable-icon \
-		--enable-text \
-		--enable-unit-tests \
-		--enable-taglib \
-		--enable-libosinfo \
-		--enable-libcue \
-		--disable-miner-rss \
-		--disable-hal \
-		--disable-static \
+		$(FEATURE_FLAGS) \
 		--libexecdir=\$${prefix}/lib/tracker
 
 override_dh_install:
