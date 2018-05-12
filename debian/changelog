@@ -1,10 +1,10 @@
-tracker-miners (2.0.4-2) UNRELEASED; urgency=medium
+tracker-miners (2.0.4-2) unstable; urgency=medium
 
-  * Disable enca, libiptcdata, and libosinfo on Ubuntu since those
+  * Disable enca, libiptcdata, and libosinfo on Ubuntu since they
     are in 'universe'
   * Bump Standards-Version to 4.1.4
 
- -- Jeremy Bicha <jbicha@debian.org>  Sat, 12 May 2018 10:18:51 -0400
+ -- Jeremy Bicha <jbicha@debian.org>  Sat, 12 May 2018 18:59:12 -0400
 
 tracker-miners (2.0.4-1) unstable; urgency=medium
 
