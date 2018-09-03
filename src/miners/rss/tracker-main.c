@@ -29,7 +29,7 @@
 
 #include "tracker-miner-rss.h"
 
-#define DBUS_NAME_SUFFIX "Miner.RSS"
+#define DBUS_NAME_SUFFIX "Tracker1.Miner.RSS"
 #define DBUS_PATH "/org/freedesktop/Tracker1/Miner/RSS"
 
 static gint verbosity = -1;
@@ -79,7 +79,7 @@ main (int argc, char **argv)
 	GDBusConnection *connection;
 	TrackerMinerProxy *proxy;
 	TrackerDomainOntology *domain_ontology;
-	gchar *dbus_name;
+	gchar *domain_name, *dbus_name;
 
 	setlocale (LC_ALL, "");
 
@@ -222,6 +222,7 @@ main (int argc, char **argv)
 		                                G_BUS_NAME_WATCHER_FLAGS_NONE,
 		                                NULL, on_domain_vanished,
 		                                loop, NULL);
+		g_free (domain_name);
 	}
 
 	g_main_loop_run (loop);

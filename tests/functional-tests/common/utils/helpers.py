@@ -20,6 +20,7 @@
 from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
+import atexit
 import os
 import sys
 import subprocess
@@ -27,6 +28,7 @@ import time
 import re
 
 import configuration as cfg
+import mainloop
 import options
 
 class NoMetadataException (Exception):
@@ -37,6 +39,16 @@ REASONABLE_TIMEOUT = 30
 def log (message):
     if options.is_verbose ():
         print (message)
+
+
+_process_list = []
+
+def _cleanup_processes():
+    for process in _process_list:
+        log("helpers._cleanup_processes: stopping %s" % process)
+        process.stop()
+atexit.register(_cleanup_processes)
+
 
 class Helper:
     """
@@ -61,26 +73,15 @@ class Helper:
         self.process = None
         self.available = False
 
-        self.loop = GObject.MainLoop ()
-        self.install_glib_excepthook(self.loop)
+        self.loop = mainloop.MainLoop()
 
         self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
 
-    def install_glib_excepthook(self, loop):
-        """
-        Handler to abort test if an exception occurs inside the GLib main loop.
-        """
-        old_hook = sys.excepthook
-        def new_hook(etype, evalue, etb):
-            old_hook(etype, evalue, etb)
-            GLib.MainLoop.quit(loop)
-            sys.exit()
-        sys.excepthook = new_hook
-
     def _start_process (self):
-        path = getattr (self,
-                        "PROCESS_PATH",
-                        os.path.join (cfg.EXEC_PREFIX, self.PROCESS_NAME))
+        global _process_list
+        _process_list.append(self)
+
+        path = self.PROCESS_PATH
         flags = getattr (self,
                          "FLAGS",
                          [])
@@ -89,11 +90,14 @@ class Helper:
 
         if not options.is_verbose ():
             FNULL = open ('/dev/null', 'w')
-            kws = { 'stdout': FNULL, 'stderr': FNULL }
+            kws = { 'stdout': FNULL, 'stderr': subprocess.PIPE }
 
         command = [path] + flags
         log ("Starting %s" % ' '.join(command))
-        return subprocess.Popen ([path] + flags, **kws)
+        try:
+            return subprocess.Popen ([path] + flags, **kws)
+        except OSError as e:
+            raise RuntimeError("Error starting %s: %s" % (path, e))
 
     def _bus_name_appeared(self, name, owner, data):
         log ("[%s] appeared in the bus as %s" % (self.PROCESS_NAME, owner))
@@ -106,7 +110,7 @@ class Helper:
         self.loop.quit()
 
     def _process_watch_cb (self):
-        if self.process_watch_timeout == 0:
+        if self.process_watch_timeout == 0 or self.process is None:
             # The GLib seems to call the timeout after we've removed it
             # sometimes, which causes errors unless we detect it.
             return False
@@ -119,7 +123,11 @@ class Helper:
             return True    # continue
         else:
             self.process_watch_timeout = 0
-            raise Exception("%s exited with status: %i" % (self.PROCESS_NAME, status))
+            if options.is_verbose():
+                error = ""
+            else:
+                error = self.process.stderr.read()
+            raise RuntimeError("%s exited with status: %i\n%s" % (self.PROCESS_NAME, status, error))
 
     def _timeout_on_idle_cb (self):
         log ("[%s] Timeout waiting... asumming idle." % self.PROCESS_NAME)
@@ -138,7 +146,7 @@ class Helper:
         self._bus_name_watch_id = Gio.bus_watch_name_on_connection(
             self.bus, self.BUS_NAME, Gio.BusNameWatcherFlags.NONE,
             self._bus_name_appeared, self._bus_name_vanished)
-        self.loop.run()
+        self.loop.run_checked()
 
         if options.is_manual_start():
             print ("Start %s manually" % self.PROCESS_NAME)
@@ -155,11 +163,13 @@ class Helper:
         self.abort_if_process_exits_with_status_0 = True
 
         # Run the loop until the bus name appears, or the process dies.
-        self.loop.run ()
+        self.loop.run_checked ()
 
         self.abort_if_process_exits_with_status_0 = False
 
     def stop (self):
+        global _process_list
+
         if self.process is None:
             # Seems that it didn't even start...
             return
@@ -179,15 +189,19 @@ class Helper:
                     self.process.kill()
                     self.process.wait()
 
-        log ("[%s] stopped." % self.PROCESS_NAME)
+            log ("[%s] stopped." % self.PROCESS_NAME)
 
-        # Run the loop until the bus name appears, or the process dies.
-        self.loop.run ()
-        Gio.bus_unwatch_name(self._bus_name_watch_id)
+            # Run the loop until the bus name disappears, or the process dies.
+            self.loop.run_checked ()
+            Gio.bus_unwatch_name(self._bus_name_watch_id)
 
         self.process = None
+        _process_list.remove(self)
+
 
     def kill (self):
+        global _process_list
+
         if options.is_manual_start():
             log ("kill(): ignoring, because process was started manually.")
             return
@@ -195,13 +209,17 @@ class Helper:
         self.process.kill ()
 
         # Name owner changed callback should take us out from this loop
-        self.loop.run ()
+        self.loop.run_checked ()
         Gio.bus_unwatch_name(self._bus_name_watch_id)
 
         self.process = None
+        _process_list.remove(self)
 
         log ("[%s] killed." % self.PROCESS_NAME)
 
+
+class GraphUpdateTimeoutException(RuntimeError):
+    pass
 
 class StoreHelper (Helper):
     """
@@ -212,9 +230,8 @@ class StoreHelper (Helper):
     """
 
     PROCESS_NAME = "tracker-store"
+    PROCESS_PATH = cfg.TRACKER_STORE_PATH
     BUS_NAME = cfg.TRACKER_BUSNAME
-
-    graph_updated_handler_id = 0
 
     def start (self):
         Helper.start (self)
@@ -261,17 +278,14 @@ class StoreHelper (Helper):
     # not yet happened.
 
     def reset_graph_updates_tracking (self):
+        self.class_to_track = None
         self.inserts_list = []
         self.deletes_list = []
         self.inserts_match_function = None
         self.deletes_match_function = None
-        self.graph_updated_timed_out = False
 
     def _graph_updated_timeout_cb (self):
-        # Don't fail here, exceptions don't get propagated correctly
-        # from the GMainLoop
-        self.graph_updated_timed_out = True
-        self.loop.quit ()
+        raise GraphUpdateTimeoutException()
 
     def _graph_updated_cb (self, class_name, deletes_list, inserts_list):
         """
@@ -279,21 +293,26 @@ class StoreHelper (Helper):
         """
         exit_loop = False
 
-        if inserts_list is not None:
-            if self.inserts_match_function is not None:
-                # The match function will remove matched entries from the list
-                (exit_loop, inserts_list) = self.inserts_match_function (inserts_list)
-            self.inserts_list += inserts_list
+        if class_name == self.class_to_track:
+            log("GraphUpdated for %s: %i deletes, %i inserts" % (class_name, len(deletes_list), len(inserts_list)))
 
-        if deletes_list is not None:
-            if self.deletes_match_function is not None:
-                (exit_loop, deletes_list) = self.deletes_match_function (deletes_list)
-            self.deletes_list += deletes_list
+            if inserts_list is not None:
+                if self.inserts_match_function is not None:
+                    # The match function will remove matched entries from the list
+                    (exit_loop, inserts_list) = self.inserts_match_function (inserts_list)
+                self.inserts_list += inserts_list
 
-        if exit_loop:
-            GLib.source_remove(self.graph_updated_timeout_id)
-            self.graph_updated_timeout_id = 0
-            self.loop.quit ()
+            if not exit_loop and deletes_list is not None:
+                if self.deletes_match_function is not None:
+                    (exit_loop, deletes_list) = self.deletes_match_function (deletes_list)
+                self.deletes_list += deletes_list
+
+            if exit_loop:
+                GLib.source_remove(self.graph_updated_timeout_id)
+                self.graph_updated_timeout_id = 0
+                self.loop.quit ()
+        else:
+            log("Ignoring GraphUpdated for class %s, currently tracking %s" % (class_name, self.class_to_track))
 
     def _enable_await_timeout (self):
         self.graph_updated_timeout_id = GLib.timeout_add_seconds (REASONABLE_TIMEOUT,
@@ -304,6 +323,9 @@ class StoreHelper (Helper):
         Block until a resource matching the parameters becomes available
         """
         assert (self.inserts_match_function == None)
+        assert (self.class_to_track == None)
+
+        self.class_to_track = rdf_class
 
         self.matched_resource_urn = None
         self.matched_resource_id = None
@@ -326,7 +348,7 @@ class StoreHelper (Helper):
                 id = insert[1]
 
                 if not matched_creation:
-                    where = "  ?urn a %s " % rdf_class
+                    where = "  ?urn a <%s> " % rdf_class
 
                     if url is not None:
                         where += "; nie:url \"%s\"" % url
@@ -371,19 +393,22 @@ class StoreHelper (Helper):
             self._enable_await_timeout ()
             self.inserts_match_function = match_cb
             # Run the event loop until the correct notification arrives
-            self.loop.run ()
-            self.inserts_match_function = None
+            try:
+                self.loop.run_checked ()
+            except GraphUpdateTimeoutException as e:
+                raise GraphUpdateTimeoutException("Timeout waiting for resource: class %s, URL %s, title %s" % (rdf_class, url, title))
 
-        if self.graph_updated_timed_out:
-            raise Exception ("Timeout waiting for resource: class %s, URL %s, title %s" % (rdf_class, url, title))
+            self.inserts_match_function = None
+            self.class_to_track = None
 
         return (self.matched_resource_id, self.matched_resource_urn)
 
-    def await_resource_deleted (self, id, fail_message = None):
+    def await_resource_deleted (self, rdf_class, id):
         """
         Block until we are notified of a resources deletion
         """
         assert (self.deletes_match_function == None)
+        assert (self.class_to_track == None)
 
         def find_resource_deletion (deletes_list):
             log ("find_resource_deletion: looking for %i in %s" % (id, deletes_list))
@@ -412,22 +437,26 @@ class StoreHelper (Helper):
             self._enable_await_timeout ()
             self.deletes_match_function = match_cb
             # Run the event loop until the correct notification arrives
-            self.loop.run ()
+            try:
+                self.loop.run_checked ()
+            except GraphUpdateTimeoutException:
+                raise GraphUpdateTimeoutException ("Resource %i has not been deleted." % id)
             self.deletes_match_function = None
-
-        if self.graph_updated_timed_out:
-            if fail_message is not None:
-                raise Exception (fail_message)
-            else:
-                raise Exception ("Resource %i has not been deleted." % id)
+            self.class_to_track = None
 
         return
 
-    def await_property_changed (self, subject_id, property_uri):
+    def await_property_changed (self, rdf_class, subject_id, property_uri):
         """
         Block until a property of a resource is updated or inserted.
         """
         assert (self.inserts_match_function == None)
+        assert (self.deletes_match_function == None)
+        assert (self.class_to_track == None)
+
+        log ("Await change to %i %s (%i, %i existing)" % (subject_id, property_uri, len(self.inserts_list), len(self.deletes_list)))
+
+        self.class_to_track = rdf_class
 
         property_id = self.get_resource_id_by_uri(property_uri)
 
@@ -456,18 +485,22 @@ class StoreHelper (Helper):
             self._enable_await_timeout ()
             self.inserts_match_function = match_cb
             # Run the event loop until the correct notification arrives
-            self.loop.run ()
+            try:
+                self.loop.run_checked ()
+            except GraphUpdateTimeoutException:
+                raise GraphUpdateTimeoutException(
+                    "Timeout waiting for property change, subject %i property %s (%i)" % (subject_id, property_uri, property_id))
             self.inserts_match_function = None
-
-        if self.graph_updated_timed_out:
-            raise Exception ("Timeout waiting for property change, subject %i "
-                             "property %s" % (subject_id, property_uri))
+            self.class_to_track = None
 
     def query (self, query, timeout=5000, **kwargs):
         return self.resources.SparqlQuery ('(s)', query, timeout=timeout, **kwargs)
 
     def update (self, update_sparql, timeout=5000, **kwargs):
         return self.resources.SparqlUpdate ('(s)', update_sparql, timeout=timeout, **kwargs)
+
+    def load (self, ttl_uri, timeout=5000, **kwargs):
+        return self.resources.Load ('(s)', ttl_uri, timeout=timeout, **kwargs)
 
     def batch_update (self, update_sparql, **kwargs):
         return self.resources.BatchSparqlUpdate ('(s)', update_sparql, **kwargs)
@@ -542,7 +575,7 @@ class StoreHelper (Helper):
 class MinerFsHelper (Helper):
 
     PROCESS_NAME = 'tracker-miner-fs'
-    PROCESS_PATH = os.path.join (cfg.EXEC_PREFIX, "tracker-miner-fs")
+    PROCESS_PATH = cfg.TRACKER_MINER_FS_PATH
     BUS_NAME = cfg.MINERFS_BUSNAME
 
     FLAGS = ['--initial-sleep=0']
@@ -567,11 +600,12 @@ class MinerFsHelper (Helper):
 class ExtractorHelper (Helper):
 
     PROCESS_NAME = 'tracker-extract'
+    PROCESS_PATH = cfg.TRACKER_EXTRACT_PATH
     BUS_NAME = cfg.TRACKER_EXTRACT_BUSNAME
 
 
 class WritebackHelper (Helper):
 
     PROCESS_NAME = 'tracker-writeback'
-    PROCESS_PATH = os.path.join (cfg.EXEC_PREFIX, 'tracker-writeback')
+    PROCESS_PATH = cfg.TRACKER_WRITEBACK_PATH
     BUS_NAME = cfg.WRITEBACK_BUSNAME

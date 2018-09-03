@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', version: '2.0.4')
+project('tracker-miners', 'c', 'vala', version: '2.1.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -9,11 +9,32 @@ tracker_api_version = '2.0'
 
 glib_required = '2.40.0'
 
-tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 1.99.0', required: false)
-tracker_miner = dependency('tracker-miner-2.0', version: '>= 1.99.0', required: false)
+if get_option('tracker_core') == 'system'
+  tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 2.1.0', required: false)
+  tracker_miner = dependency('tracker-miner-2.0', version: '>= 2.1.0', required: false)
 
-if not tracker_sparql.found() or not tracker_miner.found()
-  message('Tracker libraries were not found or are too old. A local copy will be built if possible.')
+  if not tracker_sparql.found() or not tracker_miner.found()
+    error('Did not find the required versions of the Tracker core libraries ' +
+          'installed in the system. Please ensure they are installed, or ' +
+          'use the -Dtracker_core=subproject option to build from Git.')
+  endif
+
+  # The tracker-miners will not work unless installed into the same prefix as
+  # the base 'tracker' package as it expects to be able to access data files
+  # in ${prefix}/{datadir}/tracker.
+  #
+  # This check acts as a guard to make sure we are being configured with the
+  # right prefix, among other things.
+  tracker_store = find_program(join_paths(get_option('prefix'), get_option('libexecdir'), 'tracker-store'))
+  tracker_store_path = tracker_store.path()
+
+  # If we are building against an installed version of tracker core rather than
+  # having it as a subproject, these 'uninstalled' locations point to the actual
+  # installed locations.
+  tracker_uninstalled_domain_rule = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'domain-ontologies', 'default.rule')
+  tracker_uninstalled_nepomuk_ontologies_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'ontologies', 'nepomuk')
+  tracker_uninstalled_stop_words_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'stop-words', 'default.rule')
+else
   tracker_subproject = subproject('tracker',
     default_options: [
        'dbus_services=@0@'.format(get_option('dbus_services')),
@@ -23,6 +44,13 @@ if not tracker_sparql.found() or not tracker_miner.found()
 
   tracker_sparql = tracker_subproject.get_variable('tracker_sparql_dep')
   tracker_miner = tracker_subproject.get_variable('tracker_miner_dep')
+
+  tracker_store = tracker_subproject.get_variable('tracker_store')
+  tracker_store_path = tracker_store.full_path()
+
+  tracker_uninstalled_domain_rule = tracker_subproject.get_variable('tracker_uninstalled_domain_rule')
+  tracker_uninstalled_nepomuk_ontologies_dir = tracker_subproject.get_variable('tracker_uninstalled_nepomuk_ontologies_dir')
+  tracker_uninstalled_stop_words_dir = tracker_subproject.get_variable('tracker_uninstalled_stop_words_dir')
 endif
 
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
@@ -49,6 +77,7 @@ libexif = dependency('libexif', version: '> 0.6', required: false)
 libgsf = dependency('libgsf-1', version: '> 1.14.24', required: false)
 libgxps = dependency('libgxps', required: false)
 libiptcdata = dependency('libiptcdata', required: false)
+libjpeg = dependency('libjpeg', required: false)
 libosinfo = dependency('libosinfo-1.0', version: '> 0.2.9', required: false)
 libpng = dependency('libpng', version: '> 0.89', required: false)
 libseccomp = dependency('libseccomp', version: '>= 2.0', required: false)
@@ -61,8 +90,7 @@ totem_plparser = dependency('totem-plparser', required: false)
 upower = dependency('upower-glib', version: '> 0.9.0', required: false)
 zlib = dependency('zlib')
 
-libgif = cc.find_library('libgif', required: false)
-libjpeg = cc.find_library('libjpeg', required: false)
+libgif = cc.find_library('gif', required: false)
 libmath = cc.find_library('m', required: false)
 
 # FIXME: here we work around a quirk todo with Meson and Vala: the 'uuid'
@@ -80,7 +108,7 @@ have_tracker_miner_rss = get_option('miner_rss')
 have_tracker_writeback = get_option('writeback')
 
 if have_tracker_miner_rss
-  libgrss = dependency('libgrss', version: '> 0.7', required: false)
+  libgrss = dependency('libgrss', version: '>= 0.7', required: false)
   if not libgrss.found()
     error('libgrss is required for the RSS feed miner. You can disable ' +
           'this miner by passing -Dminer_rss=false if needed.')
@@ -217,9 +245,9 @@ if generic_media_handler_name == 'gstreamer'
     endif
   elif get_option('gstreamer_backend') == 'gupnp'
     if gupnp_dlna.found() and gupnp_dlna_gst.found()
-      gstreamer_backend_name = 'GUPnP-DNLA'
+      gstreamer_backend_name = 'GUPnP-DLNA'
     else
-      error('GStreamer GUPnP-DNLA backend requires the gupNp and gupnp-gst libraries')
+      error('GStreamer GUPnP-DLNA backend requires the gupNp and gupnp-gst libraries')
     endif
   endif
 endif
@@ -271,13 +299,14 @@ conf = configuration_data()
 
 # Config that goes in config.h
 conf.set('DISABLE_JOURNAL', get_option('journal') == false)
+conf.set('GUARANTEE_METADATA', get_option('guarantee_metadata') == true)
 conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == true)
 
 conf.set('HAVE_ENCA', charset_library_name == 'enca')
 conf.set('HAVE_EXEMPI', exempi.found())
 conf.set('HAVE_GSTREAMER', generic_media_handler_name == 'gstreamer')
 conf.set('GSTREAMER_BACKEND_DISCOVERER', gstreamer_backend_name == 'Discoverer')
-conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DNLA')
+conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DLNA')
 conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
 conf.set('HAVE_LIBCUE', libcue.found())
 conf.set('HAVE_LIBCUE2', libcue.version() >= '2.0.0')
@@ -308,12 +337,22 @@ conf.set('TRACKER_BINARY_AGE', 100 * tracker_minor_version + tracker_micro_versi
 
 # Config that goes in some other generated files (.desktop, .pc, etc)
 conf.set('exec_prefix', get_option('prefix'))
+conf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
+conf.set('datadir', join_paths(get_option('prefix'), get_option('datadir')))
+conf.set('datarootdir', join_paths(get_option('prefix'), get_option('datadir')))
 conf.set('includedir', join_paths(get_option('prefix'), get_option('includedir')))
 conf.set('libdir', join_paths(get_option('prefix'), get_option('libdir')))
 conf.set('libexecdir', join_paths(get_option('prefix'), get_option('libexecdir')))
 conf.set('prefix', get_option('prefix'))
 conf.set('TRACKER_API_VERSION', '1.0')
 conf.set('VERSION', meson.project_version())
+
+# Configure functional tests to run completely from source tree.
+conf.set('FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH', join_paths(meson.current_build_dir(), 'src', 'tracker-extract', 'tracker-extract'))
+conf.set('FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH', join_paths(meson.current_build_dir(), 'src', 'miners', 'fs', 'tracker-miner-fs'))
+conf.set('FUNCTIONAL_TESTS_TRACKER_WRITEBACK_PATH', join_paths(meson.current_build_dir(), 'src', 'tracker-writeback', 'tracker-writeback'))
+
+conf.set('FUNCTIONAL_TESTS_TRACKER_STORE_PATH', tracker_store_path)
 
 configure_file(input: 'config.h.meson.in',
                output: 'config.h',
@@ -341,6 +380,8 @@ tracker_extract_rules_dir = join_paths(get_option('prefix'), get_option('datadir
 tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker/miners')
 tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/writeback-modules'.format(tracker_api_version))
 
+tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract')
+
 gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
 vapi_dir = join_paths(get_option('prefix'), get_option('datadir'), 'vala', 'vapi')
 
@@ -351,6 +392,11 @@ subdir('src')
 if get_option('docs')
   subdir('docs')
 endif
+
+test_c_args = tracker_c_args + [
+  '-DTOP_BUILDDIR="@0@/"'.format(meson.build_root()),
+  '-DTOP_SRCDIR="@0@/"'.format(meson.source_root()),
+]
 
 subdir('tests')
 

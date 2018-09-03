@@ -230,7 +230,7 @@ get_gst_date_time_to_buf (GstDateTime *date_time,
 	if (gst_date_time_has_time (date_time)) {
 		hour = gst_date_time_get_hour (date_time);
 		minute = gst_date_time_get_minute (date_time);
-		offset_str = gst_date_time_get_time_zone_offset (date_time) >= 0 ? "+" : "";
+		offset_str = gst_date_time_get_time_zone_offset (date_time) >= 0 ? "+" : "-";
 		offset = gst_date_time_get_time_zone_offset (date_time);
 	} else {
 		offset_str = "+";
@@ -245,31 +245,28 @@ get_gst_date_time_to_buf (GstDateTime *date_time,
 	          minute,
 	          second,
 	          offset_str,
-	          (gint) offset);
+	          (gint) ABS (offset));
 
 	return complete;
 }
 
-static void
-add_date_time_gst_tag_with_mtime_fallback (TrackerResource *resource,
-                                           const gchar     *uri,
-                                           const gchar     *key,
-                                           GstTagList      *tag_list,
-                                           const gchar     *tag_date_time,
-                                           const gchar     *tag_date)
+static gboolean
+extract_gst_date_time (gchar       *buf,
+                       size_t       size,
+                       GstTagList  *tag_list,
+                       const gchar *tag_date_time,
+                       const gchar *tag_date)
 {
-	GstDateTime *date_time;
-	GDate *date;
-	gchar buf[26];
+	GstDateTime *date_time = NULL;
+	GDate *date = NULL;
+	gboolean ret = FALSE;
 
-	date_time = NULL;
-	date = NULL;
 	buf[0] = '\0';
 
 	if (gst_tag_list_get_date_time (tag_list, tag_date_time, &date_time)) {
 		gboolean complete;
 
-		complete = get_gst_date_time_to_buf (date_time, buf, sizeof (buf));
+		complete = get_gst_date_time_to_buf (date_time, buf, size);
 		gst_date_time_unref (date_time);
 
 		if (!complete) {
@@ -287,13 +284,28 @@ add_date_time_gst_tag_with_mtime_fallback (TrackerResource *resource,
 
 		if (ret) {
 			/* GDate does not carry time zone information, assume UTC */
-			g_date_strftime (buf, sizeof (buf), "%Y-%m-%dT%H:%M:%SZ", date);
+			g_date_strftime (buf, size, "%Y-%m-%dT%H:%M:%SZ", date);
 		}
 	}
 
 	if (date) {
 		g_date_free (date);
 	}
+
+	return ret;
+}
+
+static void
+add_date_time_gst_tag_with_mtime_fallback (TrackerResource *resource,
+                                           const gchar     *uri,
+                                           const gchar     *key,
+                                           GstTagList      *tag_list,
+                                           const gchar     *tag_date_time,
+                                           const gchar     *tag_date)
+{
+	gchar buf[26];
+
+	extract_gst_date_time (buf, sizeof (buf), tag_list, tag_date_time, tag_date);
 
 	tracker_guarantee_resource_date_from_file_mtime (resource, key, buf, uri);
 }
@@ -436,7 +448,7 @@ extractor_get_address (MetadataExtractor     *extractor,
 		address_uri = tracker_sparql_get_uuid_urn ();
 		address = tracker_resource_new (address_uri);
 
-		tracker_resource_set_string (address, "rdf:type", "nco:PostalAddress");
+		tracker_resource_set_uri (address, "rdf:type", "nco:PostalAddress");
 
 		if (sublocation) {
 			tracker_resource_set_string (address, "nco:region", sublocation);
@@ -506,7 +518,7 @@ extractor_apply_general_metadata (MetadataExtractor     *extractor,
 	gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &title);
 
 	if (genre && g_strcmp0 (genre, "Unknown") != 0) {
-		tracker_resource_add_string (resource, "nfo:genre", genre);
+		tracker_resource_set_string (resource, "nfo:genre", genre);
 	}
 
 	tracker_guarantee_resource_title_from_file (resource,
@@ -539,14 +551,13 @@ static TrackerResource *
 extractor_maybe_get_album_disc (MetadataExtractor *extractor,
                                 GstTagList        *tag_list)
 {
-	GstDateTime *datetime_temp = NULL;
 	TrackerResource *album = NULL, *album_artist = NULL, *album_disc = NULL;
 	gchar *album_artist_name = NULL;
-	gchar *album_datetime = NULL;
 	gchar *album_title = NULL;
 	gchar *track_artist_temp = NULL;
-	gboolean has_it;
+	gboolean has_it, has_date;
 	guint volume_number;
+	gchar album_datetime[26];
 
 	gst_tag_list_get_string (tag_list, GST_TAG_ALBUM, &album_title);
 
@@ -555,26 +566,24 @@ extractor_maybe_get_album_disc (MetadataExtractor *extractor,
 
 	gst_tag_list_get_string (tag_list, GST_TAG_ALBUM_ARTIST, &album_artist_name);
 	gst_tag_list_get_string (tag_list, GST_TAG_ARTIST, &track_artist_temp);
-	gst_tag_list_get_date_time (tag_list, GST_TAG_DATE_TIME, &datetime_temp);
 
-	if (datetime_temp)
-		album_datetime = gst_date_time_to_iso8601_string (datetime_temp);
+	has_date = extract_gst_date_time (album_datetime, sizeof (album_datetime),
+					  tag_list, GST_TAG_DATE_TIME, GST_TAG_DATE);
+
 	album_artist = intern_artist (extractor, album_artist_name);
 	has_it = gst_tag_list_get_uint (tag_list, GST_TAG_ALBUM_VOLUME_NUMBER, &volume_number);
 
 	album_disc = tracker_extract_new_music_album_disc (album_title,
 	                                                   album_artist,
 	                                                   has_it ? volume_number : 1,
-	                                                   album_datetime);
+	                                                   has_date ? album_datetime : NULL);
 
 	album = tracker_resource_get_first_relation (album_disc, "nmm:albumDiscAlbum");
 	set_property_from_gst_tag (album, "nmm:albumTrackCount", tag_list, GST_TAG_TRACK_COUNT);
 	set_property_from_gst_tag (album, "nmm:albumGain", extractor->tagcache, GST_TAG_ALBUM_GAIN);
 	set_property_from_gst_tag (album, "nmm:albumPeakGain", extractor->tagcache, GST_TAG_ALBUM_PEAK);
 
-	g_clear_pointer (&datetime_temp, (GDestroyNotify) gst_date_time_unref);
 	g_free (album_artist_name);
-	g_free (album_datetime);
 	g_free (track_artist_temp);
 
 	return album_disc;
@@ -844,14 +853,14 @@ extract_metadata (MetadataExtractor      *extractor,
 
 		geolocation = extractor_get_geolocation (extractor, extractor->tagcache);
 		if (geolocation) {
+			address = extractor_get_address (extractor, extractor->tagcache);
+			if (address) {
+				tracker_resource_set_relation (geolocation, "slo:postalAddress", address);
+				g_object_unref (address);
+			}
+
 			tracker_resource_set_relation (resource, "slo:location", geolocation);
 			g_object_unref (geolocation);
-		}
-
-		address = extractor_get_address (extractor, extractor->tagcache);
-		if (address) {
-			tracker_resource_set_relation (resource, "slo:postalAddress", address);
-			g_object_unref (address);
 		}
 
 		if (extractor->mime == EXTRACT_MIME_VIDEO) {

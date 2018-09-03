@@ -5,15 +5,14 @@
 # Matic Žgur <mr.zgur@gmail.com>, 2007.
 # Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009–2010.
 # Martin Srebotnjak  <miles@filmsi.net>, 2011.
-# Matej Urbančič <mateju@svn.gnome.org>, 2008–2017.
+# Matej Urbančič <mateju@svn.gnome.org>, 2008–2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=tracker&keywords=I18N+L10N&component=Miners\n"
-"POT-Creation-Date: 2017-08-10 22:45+0000\n"
-"PO-Revision-Date: 2017-09-19 10:31+0200\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
+"POT-Creation-Date: 2018-07-29 16:31+0000\n"
+"PO-Revision-Date: 2018-07-30 21:54+0200\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -23,42 +22,42 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.6\n"
 
-#: ../src/libtracker-common/tracker-utils.c:90
+#: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
 msgstr "neznan čas"
 
-#: ../src/libtracker-common/tracker-utils.c:104
-#: ../src/libtracker-common/tracker-utils.c:155
+#: ../src/libtracker-miners-common/tracker-utils.c:104
+#: ../src/libtracker-miners-common/tracker-utils.c:155
 msgid "less than one second"
 msgstr "manj kot eno sekundo"
 
 #. Translators: this is %d days
-#: ../src/libtracker-common/tracker-utils.c:119
+#: ../src/libtracker-miners-common/tracker-utils.c:119
 #, c-format
 msgid " %dd"
 msgstr " %dd"
 
 #. Translators: this is %2.2d hours
-#: ../src/libtracker-common/tracker-utils.c:123
+#: ../src/libtracker-miners-common/tracker-utils.c:123
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2dh"
 
 #. Translators: this is %2.2d minutes
-#: ../src/libtracker-common/tracker-utils.c:127
+#: ../src/libtracker-miners-common/tracker-utils.c:127
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2dm"
 
 #. Translators: this is %2.2d seconds
-#: ../src/libtracker-common/tracker-utils.c:131
+#: ../src/libtracker-miners-common/tracker-utils.c:131
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2ds"
 
-#: ../src/libtracker-common/tracker-utils.c:135
+#: ../src/libtracker-miners-common/tracker-utils.c:135
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
@@ -67,7 +66,7 @@ msgstr[1] " %d dan"
 msgstr[2] " %d dneva"
 msgstr[3] " %d dni"
 
-#: ../src/libtracker-common/tracker-utils.c:139
+#: ../src/libtracker-miners-common/tracker-utils.c:139
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
@@ -76,7 +75,7 @@ msgstr[1] " %2.2d ura"
 msgstr[2] " %2.2d uri"
 msgstr[3] " %2.2d ure"
 
-#: ../src/libtracker-common/tracker-utils.c:143
+#: ../src/libtracker-miners-common/tracker-utils.c:143
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
@@ -85,7 +84,7 @@ msgstr[1] " %2.2d minuta"
 msgstr[2] " %2.2d minuti"
 msgstr[3] " %2.2d minute"
 
-#: ../src/libtracker-common/tracker-utils.c:147
+#: ../src/libtracker-miners-common/tracker-utils.c:147
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
@@ -102,7 +101,7 @@ msgstr "Programi"
 msgid "Applications data miner"
 msgstr "Podatkovno rudarjenje programov"
 
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
 #: ../src/miners/rss/tracker-main.c:43
 #: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
@@ -117,14 +116,14 @@ msgstr ""
 "Izvaja se dokler niso pripravljena kazala vseh nastavljenih mest in se nato "
 "konča"
 
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:95
+#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
 #: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:101
+#: ../src/tracker-extract/tracker-main.c:102
 msgid "Runs for a specific domain ontology"
 msgstr "Naloži zgodovino določene domene"
 
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:99
-#: ../src/tracker-extract/tracker-main.c:105
+#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:106
 #: ../src/tracker-writeback/tracker-main.c:51
 msgid "Displays version information"
 msgstr "Pokaže podrobnosti različice"
@@ -346,104 +345,104 @@ msgid "Avoid any directory containing a file blacklisted here"
 msgstr ""
 "Izogni se katerikoli mapi, ki vsebuje datoteko, ki je na tem črnem seznamu"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:77
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Začetno stanje pripravljenosti v sekundah, 0->1000 (privzeto=15)"
 
-#: ../src/miners/fs/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:82
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Izvaja se dokler niso pripravljena kazala vseh nastavljenih mest in se nato "
 "konča"
 
-#: ../src/miners/fs/tracker-main.c:91
+#: ../src/miners/fs/tracker-main.c:86
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Preveri, če je DATOTEKA primerna za podatkovno rudarjenje na podlagi "
 "nastavitev"
 
-#: ../src/miners/fs/tracker-main.c:92 ../src/tracker-extract/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "DATOTEKA"
 
-#: ../src/miners/fs/tracker-main.c:460
+#: ../src/miners/fs/tracker-main.c:432
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Podatkovni predmet »%s« trenutno obstaja"
 
-#: ../src/miners/fs/tracker-main.c:461
+#: ../src/miners/fs/tracker-main.c:433
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Podatkovni predmet »%s« trenutno ne obstaja"
 
-#: ../src/miners/fs/tracker-main.c:476
+#: ../src/miners/fs/tracker-main.c:448
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Mapa je primerna za podatkovno rudarjenje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:477
+#: ../src/miners/fs/tracker-main.c:449
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Mapa NI primerna za kopanje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:497
+#: ../src/miners/fs/tracker-main.c:469
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Mapa je primerna za podatkovno rudarjenje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:498
+#: ../src/miners/fs/tracker-main.c:470
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Mapa NI primerna za podatkovno rudarjenje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:545
+#: ../src/miners/fs/tracker-main.c:517
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Mapa je primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:546
+#: ../src/miners/fs/tracker-main.c:518
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Mapa NI primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:550
+#: ../src/miners/fs/tracker-main.c:522
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Datoteka je primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:551
+#: ../src/miners/fs/tracker-main.c:523
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Datoteka NI primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:527
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr "Datoteka ali mapa je primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:528
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr "Datoteka ali mapa NI primerna za nadziranje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:571
+#: ../src/miners/fs/tracker-main.c:543
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Datoteka je primerna za podatkovno rudarjenje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:572
+#: ../src/miners/fs/tracker-main.c:544
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Datoteka NI primerna za podatkovno rudarjenje (na podlagi pravil)"
 
-#: ../src/miners/fs/tracker-main.c:581
+#: ../src/miners/fs/tracker-main.c:553
 msgid "Would be indexed"
 msgstr "Bi bilo pripravljeno kazalo"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "Yes"
 msgstr "Da"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "No"
 msgstr "Ne"
 
-#: ../src/miners/fs/tracker-main.c:583
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Would be monitored"
 msgstr "Bi bilo nadzirano"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:715
+#: ../src/miners/fs/tracker-main.c:686
 msgid "— start the tracker indexer"
 msgstr "– začne pripravljalnik kazala tracker"
 
@@ -549,12 +548,12 @@ msgstr "Izbrana možnost omogoči časovni zamik pred preučevanjem metapodatkov
 msgid "Metadata extraction failed"
 msgstr "Preučevanje metapodatkov je spodletelo"
 
-#: ../src/tracker-extract/tracker-extract.c:751
+#: ../src/tracker-extract/tracker-extract.c:765
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Ni najdenih modulov proučevanja in metapodatkov za razreševanje datoteke"
 
-#: ../src/tracker-extract/tracker-main.c:81
+#: ../src/tracker-extract/tracker-main.c:82
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default = "
 "0)"
@@ -562,46 +561,46 @@ msgstr ""
 "Beleženje, 0 = samo napake, 1 = najmanjše, 2 = podrobno in 3 = "
 "razhroščevanje (privzeto = 0)"
 
-#: ../src/tracker-extract/tracker-main.c:86
+#: ../src/tracker-extract/tracker-main.c:87
 msgid "File to extract metadata for"
 msgstr "Datoteka za razširitev metapodatkov"
 
-#: ../src/tracker-extract/tracker-main.c:90
+#: ../src/tracker-extract/tracker-main.c:91
 msgid "MIME type for file (if not provided, this will be guessed)"
 msgstr "Vrsta MIME za datoteko (če ni navedena, bo uganjena) "
 
-#: ../src/tracker-extract/tracker-main.c:91
+#: ../src/tracker-extract/tracker-main.c:92
 msgid "MIME"
 msgstr "MIME"
 
-#: ../src/tracker-extract/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:95
 msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
 msgstr "Vsili modul, uporabljen za razširitev (na primer »foo« za »foo.so«)"
 
-#: ../src/tracker-extract/tracker-main.c:95
+#: ../src/tracker-extract/tracker-main.c:96
 msgid "MODULE"
 msgstr "MODUL"
 
-#: ../src/tracker-extract/tracker-main.c:97
-msgid "Output results format: “sparql”, or “turtle”"
-msgstr "Zapis odvoda zadetkov: »sparql» ali »turtle«"
-
 #: ../src/tracker-extract/tracker-main.c:98
+msgid "Output results format: “sparql”, “turtle” or “json-ld”"
+msgstr "Zapis odvoda zadetkov: »sparql«, »turtle« ali »json-ld«"
+
+#: ../src/tracker-extract/tracker-main.c:99
 msgid "FORMAT"
 msgstr "ZAPIS"
 
-#: ../src/tracker-extract/tracker-main.c:271
+#: ../src/tracker-extract/tracker-main.c:272
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Nepodprt zapis zaporedja »%s«\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:331
+#: ../src/tracker-extract/tracker-main.c:362
 msgid "— Extract file meta data"
 msgstr "– Razširi metapodatke datoteke"
 
-#: ../src/tracker-extract/tracker-main.c:340
+#: ../src/tracker-extract/tracker-main.c:377
 msgid "Filename and mime type must be provided together"
 msgstr "Ime datoteke in vrsta mime morata biti navedeni skupaj"
 

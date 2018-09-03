@@ -3,8 +3,8 @@ include $(top_srcdir)/Makefile.decl
 noinst_PROGRAMS += $(test_programs)
 
 test_programs = \
-	tracker-test-utils                             \
-	tracker-test-xmp			       \
+	tracker-utils-test                             \
+	tracker-xmp-test			       \
 	tracker-extract-info-test		       \
 	tracker-guarantee-test
 
@@ -40,9 +40,9 @@ LDADD =                                                \
 
 tracker_encoding_SOURCES = tracker-encoding-test.c
 
-tracker_test_utils_SOURCES = tracker-test-utils.c
+tracker_utils_test_SOURCES = tracker-utils-test.c
 
-tracker_test_xmp_SOURCES = tracker-test-xmp.c
+tracker_xmp_test_SOURCES = tracker-xmp-test.c
 
 tracker_extract_info_test_SOURCES = tracker-extract-info-test.c
 

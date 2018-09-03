@@ -33,6 +33,8 @@ G_DECLARE_FINAL_TYPE (TrackerExtractWatchdog,
 
 TrackerExtractWatchdog * tracker_extract_watchdog_new (void);
 
+void tracker_extract_watchdog_ensure_started (TrackerExtractWatchdog *watchdog);
+
 G_END_DECLS
 
 #endif /* __TRACKER_EXTRACT_WATCHDOG_H__ */

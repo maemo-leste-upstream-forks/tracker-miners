@@ -361,11 +361,11 @@ read_metadata (TrackerResource      *metadata,
 	keywords = g_ptr_array_new_with_free_func ((GDestroyNotify) g_free);
 
 	if (md.comment) {
-		tracker_resource_set_string (metadata, "nie:comment", md.comment);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:comment", md.comment);
 	}
 
 	if (md.license) {
-		tracker_resource_set_string (metadata, "nie:license", md.license);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:license", md.license);
 	}
 
 	/* TODO: add ontology and store this ed->software */
@@ -384,11 +384,11 @@ read_metadata (TrackerResource      *metadata,
 	                                                 uri);
 
 	if (md.description) {
-		tracker_resource_set_string (metadata, "nie:description", md.description);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:description", md.description);
 	}
 
 	if (md.copyright) {
-		tracker_resource_set_string (metadata, "nie:copyright", md.copyright);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:copyright", md.copyright);
 	}
 
 	tracker_guarantee_resource_title_from_file (metadata,

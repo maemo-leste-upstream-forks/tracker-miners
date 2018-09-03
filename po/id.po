@@ -6,71 +6,70 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=tracker&keywords=I18N+L10N&component=Miners\n"
-"POT-Creation-Date: 2017-08-10 22:45+0000\n"
-"PO-Revision-Date: 2017-08-14 14:16+0700\n"
-"Last-Translator: Kukuh Syafaat <syafaatkukuh@gmail.com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
+"POT-Creation-Date: 2018-07-16 23:39+0000\n"
+"PO-Revision-Date: 2018-07-25 16:04+0700\n"
+"Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.0.6\n"
 
-#: ../src/libtracker-common/tracker-utils.c:90
+#: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
 msgstr "waktu tidak diketahui"
 
-#: ../src/libtracker-common/tracker-utils.c:104
-#: ../src/libtracker-common/tracker-utils.c:155
+#: ../src/libtracker-miners-common/tracker-utils.c:104
+#: ../src/libtracker-miners-common/tracker-utils.c:155
 msgid "less than one second"
 msgstr "kurang dari satu detik"
 
 #. Translators: this is %d days
-#: ../src/libtracker-common/tracker-utils.c:119
+#: ../src/libtracker-miners-common/tracker-utils.c:119
 #, c-format
 msgid " %dd"
 msgstr " %dh"
 
 #. Translators: this is %2.2d hours
-#: ../src/libtracker-common/tracker-utils.c:123
+#: ../src/libtracker-miners-common/tracker-utils.c:123
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2dj"
 
 #. Translators: this is %2.2d minutes
-#: ../src/libtracker-common/tracker-utils.c:127
+#: ../src/libtracker-miners-common/tracker-utils.c:127
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2dm"
 
 #. Translators: this is %2.2d seconds
-#: ../src/libtracker-common/tracker-utils.c:131
+#: ../src/libtracker-miners-common/tracker-utils.c:131
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2dd"
 
-#: ../src/libtracker-common/tracker-utils.c:135
+#: ../src/libtracker-miners-common/tracker-utils.c:135
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
 msgstr[0] " %d hari"
 
-#: ../src/libtracker-common/tracker-utils.c:139
+#: ../src/libtracker-miners-common/tracker-utils.c:139
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
 msgstr[0] " %2.2d jam"
 
-#: ../src/libtracker-common/tracker-utils.c:143
+#: ../src/libtracker-miners-common/tracker-utils.c:143
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
 msgstr[0] " %2.2d menit"
 
-#: ../src/libtracker-common/tracker-utils.c:147
+#: ../src/libtracker-miners-common/tracker-utils.c:147
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
@@ -84,7 +83,7 @@ msgstr "Aplikasi"
 msgid "Applications data miner"
 msgstr "Penambang data aplikasi"
 
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
 #: ../src/miners/rss/tracker-main.c:43
 #: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
@@ -97,14 +96,14 @@ msgstr ""
 msgid "Runs until all applications are indexed and then exits"
 msgstr "Jalankan sampai semua aplikasi diindeks lalu keluar"
 
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:95
+#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
 #: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:101
+#: ../src/tracker-extract/tracker-main.c:102
 msgid "Runs for a specific domain ontology"
 msgstr "Jalankan untuk ontologi domain yang spesifik"
 
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:99
-#: ../src/tracker-extract/tracker-main.c:105
+#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:106
 #: ../src/tracker-writeback/tracker-main.c:51
 msgid "Displays version information"
 msgstr "Tampilkan informasi versi"
@@ -329,100 +328,100 @@ msgid "Avoid any directory containing a file blacklisted here"
 msgstr ""
 "Hindari sebarang direktori yang memuat berkas yang masuk daftar hitam disini"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:77
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Waktu tidur awal dalam detik, 0->1000 (bawaan=15)"
 
-#: ../src/miners/fs/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:82
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr "Jalankan sampai semua lokasi yang dikonfigurasi diindeks lalu keluar"
 
-#: ../src/miners/fs/tracker-main.c:91
+#: ../src/miners/fs/tracker-main.c:86
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr "Memeriksa apakah BERKAS boleh ditambang berdasar konfigurasi"
 
-#: ../src/miners/fs/tracker-main.c:92 ../src/tracker-extract/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "BERKAS"
 
-#: ../src/miners/fs/tracker-main.c:460
+#: ../src/miners/fs/tracker-main.c:432
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Objek data \"%s\" kini telah ada"
 
-#: ../src/miners/fs/tracker-main.c:461
+#: ../src/miners/fs/tracker-main.c:433
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Objek data \"%s\" kini belum ada"
 
-#: ../src/miners/fs/tracker-main.c:476
+#: ../src/miners/fs/tracker-main.c:448
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Direktori boleh ditambang (berdasarkan aturan)"
 
-#: ../src/miners/fs/tracker-main.c:477
+#: ../src/miners/fs/tracker-main.c:449
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Direktori TIDAK boleh ditambang (berdasarkan aturan)"
 
-#: ../src/miners/fs/tracker-main.c:497
+#: ../src/miners/fs/tracker-main.c:469
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Direktori boleh ditambang (berdasarkan isi)"
 
-#: ../src/miners/fs/tracker-main.c:498
+#: ../src/miners/fs/tracker-main.c:470
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Direktori TIDAK boleh ditambang (berdasarkan isi)"
 
-#: ../src/miners/fs/tracker-main.c:545
+#: ../src/miners/fs/tracker-main.c:517
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Direktori boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:546
+#: ../src/miners/fs/tracker-main.c:518
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Direktori TIDAK boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:550
+#: ../src/miners/fs/tracker-main.c:522
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Berkas boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:551
+#: ../src/miners/fs/tracker-main.c:523
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Berkas TIDAK boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:527
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr "Berkas atau Direktori boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:528
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr "Berkas atau Direktori TIDAK boleh dipantau (berdasarkan konfig)"
 
-#: ../src/miners/fs/tracker-main.c:571
+#: ../src/miners/fs/tracker-main.c:543
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Berkas boleh ditambang (berdasarkan aturan)"
 
-#: ../src/miners/fs/tracker-main.c:572
+#: ../src/miners/fs/tracker-main.c:544
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Berkas TIDAK boleh ditambang (berdasarkan aturan)"
 
-#: ../src/miners/fs/tracker-main.c:581
+#: ../src/miners/fs/tracker-main.c:553
 msgid "Would be indexed"
 msgstr "Akan diindeks"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "Yes"
 msgstr "Ya"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "No"
 msgstr "Tidak"
 
-#: ../src/miners/fs/tracker-main.c:583
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Would be monitored"
 msgstr "Akan dipantau"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:715
+#: ../src/miners/fs/tracker-main.c:686
 msgid "— start the tracker indexer"
 msgstr "— jalankan pengindeks tracker"
 
@@ -532,12 +531,12 @@ msgstr ""
 msgid "Metadata extraction failed"
 msgstr "Ekstraksi metadata gagal"
 
-#: ../src/tracker-extract/tracker-extract.c:751
+#: ../src/tracker-extract/tracker-extract.c:765
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Tak ditemukan modul pengekstrak atau metadata untuk menangani berkas ini"
 
-#: ../src/tracker-extract/tracker-main.c:81
+#: ../src/tracker-extract/tracker-main.c:82
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default = "
 "0)"
@@ -545,47 +544,47 @@ msgstr ""
 "Log, 0 = hanya galat, 1 = minimal, 2 = terrinci, dan 3 = pengawakutuan "
 "(bawaan=0)"
 
-#: ../src/tracker-extract/tracker-main.c:86
+#: ../src/tracker-extract/tracker-main.c:87
 msgid "File to extract metadata for"
 msgstr "Berkas yang akan diekstrak metadatanya"
 
-#: ../src/tracker-extract/tracker-main.c:90
+#: ../src/tracker-extract/tracker-main.c:91
 msgid "MIME type for file (if not provided, this will be guessed)"
 msgstr "Jenis MIME bagi berkas (bila tidak diberikan, akan ditebak)"
 
-#: ../src/tracker-extract/tracker-main.c:91
+#: ../src/tracker-extract/tracker-main.c:92
 msgid "MIME"
 msgstr "MIME"
 
-#: ../src/tracker-extract/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:95
 msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
 msgstr ""
 "Memaksa modul yang dipakai untuk ekstraksi (mis. \"foo\" untuk \"foo.so\")"
 
-#: ../src/tracker-extract/tracker-main.c:95
+#: ../src/tracker-extract/tracker-main.c:96
 msgid "MODULE"
 msgstr "MODUL"
 
-#: ../src/tracker-extract/tracker-main.c:97
-msgid "Output results format: “sparql”, or “turtle”"
-msgstr "Format hasil keluaran: \"sparql\", atau \"turtle\""
-
 #: ../src/tracker-extract/tracker-main.c:98
+msgid "Output results format: “sparql”, “turtle” or “json-ld”"
+msgstr "Format hasil keluaran: \"sparql\", \"turtle\", atau “json-ld”"
+
+#: ../src/tracker-extract/tracker-main.c:99
 msgid "FORMAT"
 msgstr "FORMAT"
 
-#: ../src/tracker-extract/tracker-main.c:271
+#: ../src/tracker-extract/tracker-main.c:272
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Format serialisasi yang tak didukung \"%s\"\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:331
+#: ../src/tracker-extract/tracker-main.c:362
 msgid "— Extract file meta data"
 msgstr "— Ekstrak meta data berkas"
 
-#: ../src/tracker-extract/tracker-main.c:340
+#: ../src/tracker-extract/tracker-main.c:377
 msgid "Filename and mime type must be provided together"
 msgstr "Nama berkas dan jenis mime mesti diberikan bersamaan"
 

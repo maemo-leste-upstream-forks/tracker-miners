@@ -176,7 +176,7 @@ LTLIBRARIES = $(installed_test_LTLIBRARIES) $(noinst_LTLIBRARIES)
 @HAVE_IPTC_TRUE@@HAVE_LIBJPEG_TRUE@am__EXEEXT_2 =  \
 @HAVE_IPTC_TRUE@@HAVE_LIBJPEG_TRUE@	tracker-iptc-test$(EXEEXT)
 @HAVE_ENCA_TRUE@am__EXEEXT_3 = tracker-encoding$(EXEEXT)
-am__EXEEXT_4 = tracker-test-utils$(EXEEXT) tracker-test-xmp$(EXEEXT) \
+am__EXEEXT_4 = tracker-utils-test$(EXEEXT) tracker-xmp-test$(EXEEXT) \
 	tracker-extract-info-test$(EXEEXT) \
 	tracker-guarantee-test$(EXEEXT) $(am__EXEEXT_1) \
 	$(am__EXEEXT_2) $(am__EXEEXT_3)
@@ -238,18 +238,18 @@ tracker_iptc_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(tracker_iptc_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-am_tracker_test_utils_OBJECTS = tracker-test-utils.$(OBJEXT)
-tracker_test_utils_OBJECTS = $(am_tracker_test_utils_OBJECTS)
-tracker_test_utils_LDADD = $(LDADD)
-tracker_test_utils_DEPENDENCIES =  \
+am_tracker_utils_test_OBJECTS = tracker-utils-test.$(OBJEXT)
+tracker_utils_test_OBJECTS = $(am_tracker_utils_test_OBJECTS)
+tracker_utils_test_LDADD = $(LDADD)
+tracker_utils_test_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
 	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_tracker_test_xmp_OBJECTS = tracker-test-xmp.$(OBJEXT)
-tracker_test_xmp_OBJECTS = $(am_tracker_test_xmp_OBJECTS)
-tracker_test_xmp_LDADD = $(LDADD)
-tracker_test_xmp_DEPENDENCIES =  \
+am_tracker_xmp_test_OBJECTS = tracker-xmp-test.$(OBJEXT)
+tracker_xmp_test_OBJECTS = $(am_tracker_xmp_test_OBJECTS)
+tracker_xmp_test_LDADD = $(LDADD)
+tracker_xmp_test_DEPENDENCIES =  \
 	$(top_builddir)/tests/common/libtracker-testcommon.la \
 	$(top_builddir)/src/libtracker-miners-common/libtracker-miners-common.la \
 	$(top_builddir)/src/libtracker-extract/libtracker-extract.la \
@@ -292,12 +292,12 @@ am__v_CCLD_1 =
 SOURCES = $(tracker_encoding_SOURCES) $(tracker_exif_test_SOURCES) \
 	$(tracker_extract_info_test_SOURCES) \
 	$(tracker_guarantee_test_SOURCES) $(tracker_iptc_test_SOURCES) \
-	$(tracker_test_utils_SOURCES) $(tracker_test_xmp_SOURCES)
+	$(tracker_utils_test_SOURCES) $(tracker_xmp_test_SOURCES)
 DIST_SOURCES = $(tracker_encoding_SOURCES) \
 	$(tracker_exif_test_SOURCES) \
 	$(tracker_extract_info_test_SOURCES) \
 	$(tracker_guarantee_test_SOURCES) $(tracker_iptc_test_SOURCES) \
-	$(tracker_test_utils_SOURCES) $(tracker_test_xmp_SOURCES)
+	$(tracker_utils_test_SOURCES) $(tracker_xmp_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -554,6 +554,9 @@ EXEEXT = @EXEEXT@
 EXEMPI_CFLAGS = @EXEMPI_CFLAGS@
 EXEMPI_LIBS = @EXEMPI_LIBS@
 FGREP = @FGREP@
+FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH = @FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH@
+FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH = @FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH@
+FUNCTIONAL_TESTS_TRACKER_STORE_PATH = @FUNCTIONAL_TESTS_TRACKER_STORE_PATH@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
@@ -827,7 +830,7 @@ all_test_ltlibs = $(test_ltlibraries) $(uninstalled_test_ltlibraries) $(installe
 @ENABLE_INSTALLED_TESTS_TRUE@                      $(dist_test_scripts) $(dist_installed_test_scripts)
 
 @ENABLE_INSTALLED_TESTS_TRUE@installed_test_meta_DATA = $(installed_testcases:=.test)
-test_programs = tracker-test-utils tracker-test-xmp \
+test_programs = tracker-utils-test tracker-xmp-test \
 	tracker-extract-info-test tracker-guarantee-test \
 	$(am__append_14) $(am__append_15) $(am__append_16)
 AM_CPPFLAGS = \
@@ -847,8 +850,8 @@ LDADD = \
 	$(LIBTRACKER_EXTRACT_LIBS)
 
 tracker_encoding_SOURCES = tracker-encoding-test.c
-tracker_test_utils_SOURCES = tracker-test-utils.c
-tracker_test_xmp_SOURCES = tracker-test-xmp.c
+tracker_utils_test_SOURCES = tracker-utils-test.c
+tracker_xmp_test_SOURCES = tracker-xmp-test.c
 tracker_extract_info_test_SOURCES = tracker-extract-info-test.c
 tracker_exif_test_SOURCES = tracker-exif-test.c
 tracker_guarantee_test_SOURCES = tracker-guarantee-test.c
@@ -1035,13 +1038,13 @@ tracker-iptc-test$(EXEEXT): $(tracker_iptc_test_OBJECTS) $(tracker_iptc_test_DEP
 	@rm -f tracker-iptc-test$(EXEEXT)
 	$(AM_V_CCLD)$(tracker_iptc_test_LINK) $(tracker_iptc_test_OBJECTS) $(tracker_iptc_test_LDADD) $(LIBS)
 
-tracker-test-utils$(EXEEXT): $(tracker_test_utils_OBJECTS) $(tracker_test_utils_DEPENDENCIES) $(EXTRA_tracker_test_utils_DEPENDENCIES) 
-	@rm -f tracker-test-utils$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(tracker_test_utils_OBJECTS) $(tracker_test_utils_LDADD) $(LIBS)
+tracker-utils-test$(EXEEXT): $(tracker_utils_test_OBJECTS) $(tracker_utils_test_DEPENDENCIES) $(EXTRA_tracker_utils_test_DEPENDENCIES) 
+	@rm -f tracker-utils-test$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tracker_utils_test_OBJECTS) $(tracker_utils_test_LDADD) $(LIBS)
 
-tracker-test-xmp$(EXEEXT): $(tracker_test_xmp_OBJECTS) $(tracker_test_xmp_DEPENDENCIES) $(EXTRA_tracker_test_xmp_DEPENDENCIES) 
-	@rm -f tracker-test-xmp$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(tracker_test_xmp_OBJECTS) $(tracker_test_xmp_LDADD) $(LIBS)
+tracker-xmp-test$(EXEEXT): $(tracker_xmp_test_OBJECTS) $(tracker_xmp_test_DEPENDENCIES) $(EXTRA_tracker_xmp_test_DEPENDENCIES) 
+	@rm -f tracker-xmp-test$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tracker_xmp_test_OBJECTS) $(tracker_xmp_test_LDADD) $(LIBS)
 install-installed_testSCRIPTS: $(installed_test_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(installed_test_SCRIPTS)'; test -n "$(installed_testdir)" || list=; \
@@ -1088,8 +1091,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-exif-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-extract-info-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-guarantee-test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-test-utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-test-xmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-utils-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker-xmp-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracker_iptc_test-tracker-iptc-test.Po@am__quote@
 
 .c.o:
@@ -1371,16 +1374,16 @@ recheck: all $(check_LTLIBRARIES) $(check_PROGRAMS) $(check_SCRIPTS) $(check_DAT
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-tracker-test-utils.log: tracker-test-utils$(EXEEXT)
-	@p='tracker-test-utils$(EXEEXT)'; \
-	b='tracker-test-utils'; \
+tracker-utils-test.log: tracker-utils-test$(EXEEXT)
+	@p='tracker-utils-test$(EXEEXT)'; \
+	b='tracker-utils-test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tracker-test-xmp.log: tracker-test-xmp$(EXEEXT)
-	@p='tracker-test-xmp$(EXEEXT)'; \
-	b='tracker-test-xmp'; \
+tracker-xmp-test.log: tracker-xmp-test$(EXEEXT)
+	@p='tracker-xmp-test$(EXEEXT)'; \
+	b='tracker-xmp-test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

@@ -103,7 +103,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = configuration.json
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -190,7 +190,8 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in
+am__DIST_COMMON = $(srcdir)/Makefile.in \
+	$(srcdir)/configuration.json.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -267,6 +268,9 @@ EXEEXT = @EXEEXT@
 EXEMPI_CFLAGS = @EXEMPI_CFLAGS@
 EXEMPI_LIBS = @EXEMPI_LIBS@
 FGREP = @FGREP@
+FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH = @FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH@
+FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH = @FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH@
+FUNCTIONAL_TESTS_TRACKER_STORE_PATH = @FUNCTIONAL_TESTS_TRACKER_STORE_PATH@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
@@ -490,36 +494,62 @@ SUBDIRS = \
 	test-extraction-data \
 	test-writeback-data \
 	test-apps-data \
-	unittest2 \
-	test-ontologies
+	unittest2
 
 configdir = $(datadir)/tracker-tests
 config_DATA = \
+	configuration.json \
 	trackertest
 
 config_SCRIPTS = \
 	__init__.py \
-	$(slow_tests) \
-	$(standard_tests)
+	$(tests) \
+	400-extractor-metadata.py \
+	600-applications-camera.py
 
-standard_tests = 01-insertion.py 02-sparql-bugs.py 04-group-concat.py \
-	05-coalesce.py 06-distance.py 07-graph.py \
-	08-unique-insertions.py 09-concurrent-query.py 14-signals.py \
-	15-statistics.py 16-collation.py 17-ontology-changes.py \
-	200-backup-restore.py 300-miner-basic-ops.py \
-	301-miner-resource-removal.py 400-extractor-metadata.py \
-	410-extractor-decorator.py 500-writeback.py \
-	501-writeback-details.py 600-applications-camera.py \
+extractor_tests = \
+  $(srcdir)/test-extraction-data/audio/audio-test-1.expected.json \
+  $(srcdir)/test-extraction-data/audio/empty_albumi_song3.expected.json \
+  $(srcdir)/test-extraction-data/audio/audio-test-2.expected.json \
+  $(srcdir)/test-extraction-data/images/test-image-1.expected.json \
+  $(srcdir)/test-extraction-data/images/xmp-loaded-1.expected.json \
+  $(srcdir)/test-extraction-data/images/test-image-3.expected.json \
+  $(srcdir)/test-extraction-data/images/corrupted-image.expected.json \
+  $(srcdir)/test-extraction-data/images/test-iptcdata-records.expected.json \
+  $(srcdir)/test-extraction-data/images/roi2.expected.json \
+  $(srcdir)/test-extraction-data/images/test-image-4.expected.json \
+  $(srcdir)/test-extraction-data/images/test-image-2.expected.json \
+  $(srcdir)/test-extraction-data/images/comment-extension-block.expected.json \
+  $(srcdir)/test-extraction-data/images/roi.expected.json \
+  $(srcdir)/test-extraction-data/playlists/playlist-test-1.expected.json \
+  $(srcdir)/test-extraction-data/office/office-doc.expected.json \
+  $(srcdir)/test-extraction-data/office/powerpoint.expected.json \
+  $(srcdir)/test-extraction-data/office/pdf-doc.expected.json
+
+
+# These depend on having a H264 codec available, so are disabled by default.
+#
+# $(srcdir)/test-extraction-data/video/184505.expected.json \
+# $(srcdir)/test-extraction-data/video/video-1.expected.json \
+# $(srcdir)/test-extraction-data/video/video-2.expected.json
+tests = \
+	300-miner-basic-ops.py \
+	301-miner-resource-removal.py \
+	310-fts-basic.py \
+	311-fts-file-operations.py \
+	312-fts-stopwords.py \
+	410-extractor-decorator.py \
+	500-writeback.py \
+	501-writeback-details.py \
 	601-applications-sync.py
-slow_tests = \
-	12-transactions.py \
-	13-threaded-store.py
 
 TEST_RUNNER = $(top_srcdir)/tests/functional-tests/test-runner.sh
 EXTRA_DIST = \
 	$(config_SCRIPTS) \
 	$(config_DATA) \
+	configuration.json.in \
 	test-runner.sh \
+	detect-h264-codec.sh \
 	meson.build
 
 all: all-recursive
@@ -554,6 +584,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+configuration.json: $(top_builddir)/config.status $(srcdir)/configuration.json.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-configSCRIPTS: $(config_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(config_SCRIPTS)'; test -n "$(configdir)" || list=; \
@@ -895,13 +927,24 @@ uninstall-am: uninstall-configDATA uninstall-configSCRIPTS
 .PRECIOUS: Makefile
 
 
-functional-test: ${standard_tests}
-	for test in ${standard_tests} ; do \
-		$(TEST_RUNNER) python $(top_srcdir)/tests/functional-tests/$$test; \
-	done
-
-functional-test-slow: ${slow_tests}
-	@for test in ${slow_tests} ; do \
+functional-test: ${tests}
+	@set -e ; \
+	for extractor_test in ${extractor_tests} ; do \
+		export DCONF_PROFILE=$(abs_srcdir)/trackertest ; \
+		export LANG=en_US.UTF8 ; \
+		export TRACKER_EXTRACTORS_DIR=$(top_builddir)/src/tracker-extract/.libs; \
+		export TRACKER_EXTRACTOR_RULES_DIR=$(top_srcdir)/src/tracker-extract; \
+		export TRACKER_FUNCTIONAL_TEST_BUILD_DIR=$(top_builddir) ; \
+		export TRACKER_FUNCTIONAL_TEST_CONFIG=$(top_builddir)/tests/functional-tests/configuration.json ; \
+		$(TEST_RUNNER) python $(top_srcdir)/tests/functional-tests/400-extractor-metadata.py $$extractor_test; \
+	done ; \
+	for test in ${tests} ; do \
+		export DCONF_PROFILE=$(abs_srcdir)/trackertest ; \
+		export LANG=en_US.UTF8 ; \
+		export TRACKER_EXTRACTORS_DIR=$(top_builddir)/src/tracker-extract/.libs; \
+		export TRACKER_EXTRACTOR_RULES_DIR=$(top_srcdir)/src/tracker-extract; \
+		export TRACKER_FUNCTIONAL_TEST_BUILD_DIR=$(top_builddir) ; \
+		export TRACKER_FUNCTIONAL_TEST_CONFIG=$(top_builddir)/tests/functional-tests/configuration.json ; \
 		$(TEST_RUNNER) python $(top_srcdir)/tests/functional-tests/$$test; \
 	done
 

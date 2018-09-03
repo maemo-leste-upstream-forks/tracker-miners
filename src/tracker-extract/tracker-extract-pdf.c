@@ -35,7 +35,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <glib/poppler.h>
+#include <poppler.h>
 
 #include <gio/gunixoutputstream.h>
 #include <gio/gunixinputstream.h>
@@ -85,14 +85,9 @@ read_toc (PopplerIndexIter  *index,
 		switch (action->type) {
 			case POPPLER_ACTION_GOTO_DEST: {
 				PopplerActionGotoDest *ag = (PopplerActionGotoDest *)action;
-				PopplerDest *agd = ag->dest;
 
 				if (!tracker_is_empty_string (ag->title)) {
 					g_string_append_printf (*toc, "%s ", ag->title);
-				}
-
-				if (!tracker_is_empty_string (agd->named_dest)) {
-					g_string_append_printf (*toc, "%s ", agd->named_dest);
 				}
 
 				break;
@@ -465,46 +460,8 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 			g_object_unref (equipment);
 		}
 
-		if (xd->orientation) {
-			TrackerResource *orientation;
-
-			orientation = tracker_resource_new (xd->orientation);
-			tracker_resource_set_relation (metadata, "nfo:orientation", orientation);
-			g_object_unref (orientation);
-		}
-
 		if (xd->rights) {
 			tracker_resource_set_string (metadata, "nie:copyright", xd->rights);
-		}
-
-		if (xd->white_balance) {
-			TrackerResource *white_balance;
-
-			white_balance = tracker_resource_new (xd->white_balance);
-			tracker_resource_set_relation (metadata, "nmm:whiteBalance", white_balance);
-			g_object_unref (white_balance);
-		}
-
-		if (xd->fnumber) {
-			gdouble value;
-
-			value = g_strtod (xd->fnumber, NULL);
-			tracker_resource_set_double (metadata, "nmm:fnumber", value);
-		}
-
-		if (xd->flash) {
-			TrackerResource *flash;
-
-			flash = tracker_resource_new (xd->flash);
-			tracker_resource_set_relation (metadata, "nmm:flash", flash);
-			g_object_unref (flash);
-		}
-
-		if (xd->focal_length) {
-			gdouble value;
-
-			value = g_strtod (xd->focal_length, NULL);
-			tracker_resource_set_double (metadata, "nmm:focalLength", value);
 		}
 
 		/* Question: Shouldn't xd->Artist be merged with md.author instead? */
@@ -522,30 +479,8 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 			g_object_unref (artist);
 		}
 
-		if (xd->exposure_time) {
-			gdouble value;
-
-			value = g_strtod (xd->exposure_time, NULL);
-			tracker_resource_set_double (metadata, "nmm:exposureTime", value);
-		}
-
-		if (xd->iso_speed_ratings) {
-			gdouble value;
-
-			value = g_strtod (xd->iso_speed_ratings, NULL);
-			tracker_resource_set_double (metadata, "nmm:isoSpeed", value);
-		}
-
 		if (xd->description) {
 			tracker_resource_set_string (metadata, "nie:description", xd->description);
-		}
-
-		if (xd->metering_mode) {
-			TrackerResource *metering;
-
-			metering = tracker_resource_new (xd->metering_mode);
-			tracker_resource_set_relation (metadata, "nmm:meteringMode", metering);
-			g_object_unref (metering);
 		}
 
 		if (xd->address || xd->state || xd->country || xd->city ||

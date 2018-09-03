@@ -52,7 +52,7 @@
 
 #define SECONDS_PER_DAY 60 * 60 * 24
 
-#define DBUS_NAME_SUFFIX "Miner.Files"
+#define DBUS_NAME_SUFFIX "Tracker1.Miner.Files"
 #define DBUS_PATH "/org/freedesktop/Tracker1/Miner/Files"
 
 static GMainLoop *main_loop;
@@ -667,7 +667,7 @@ main (gint argc, gchar *argv[])
 	TrackerMinerProxy *proxy;
 	GDBusConnection *connection;
 	TrackerDomainOntology *domain_ontology;
-	gchar *dbus_name;
+	gchar *domain_name, *dbus_name;
 
 	main_loop = NULL;
 
@@ -754,6 +754,7 @@ main (gint argc, gchar *argv[])
 		                                G_BUS_NAME_WATCHER_FLAGS_NONE,
 		                                NULL, on_domain_vanished,
 		                                main_loop, NULL);
+		g_free (domain_name);
 	}
 
 	g_message ("Checking if we're running as a daemon:");

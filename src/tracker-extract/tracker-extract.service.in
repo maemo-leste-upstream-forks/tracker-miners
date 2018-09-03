@@ -5,6 +5,6 @@ Description=Tracker metadata extractor
 Type=dbus
 BusName=org.freedesktop.Tracker1.Miner.Extract
 ExecStart=@libexecdir@/tracker-extract
-Restart=on-failure
+Restart=on-abnormal
 # Don't restart after tracker daemon -k (aka tracker-control -k)
 RestartPreventExitStatus=SIGKILL

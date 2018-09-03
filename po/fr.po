@@ -12,77 +12,78 @@
 # Alain Lojewski <allomervan@gmail.com>, 2011-2015.
 # Bruno Cauet <brunocauet@gmail.com>, 2014.
 # Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2017.
+# Charles Monzat <charles.monzat@numericable.fr>, 2018.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product=tracker"
-"&keywords=I18N+L10N&component=Miners\n"
-"POT-Creation-Date: 2017-08-10 22:45+0000\n"
-"PO-Revision-Date: 2017-09-05 10:40+0100\n"
-"Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
-"Language-Team: French <traduc@traduc.org>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
+"POT-Creation-Date: 2018-07-16 23:39+0000\n"
+"PO-Revision-Date: 2018-07-26 22:48+0200\n"
+"Last-Translator: Charles Monzat <charles.monzat@numericable.fr>\n"
+"Language-Team: français <gnomefr@traduc.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Generator: Lokalize 2.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
-#: ../src/libtracker-common/tracker-utils.c:90
+#: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
 msgstr "date inconnue"
 
-#: ../src/libtracker-common/tracker-utils.c:104
-#: ../src/libtracker-common/tracker-utils.c:155
+#: ../src/libtracker-miners-common/tracker-utils.c:104
+#: ../src/libtracker-miners-common/tracker-utils.c:155
 msgid "less than one second"
 msgstr "moins d’une seconde"
 
 #. Translators: this is %d days
-#: ../src/libtracker-common/tracker-utils.c:119
+#: ../src/libtracker-miners-common/tracker-utils.c:119
 #, c-format
 msgid " %dd"
 msgstr " %d j"
 
 #. Translators: this is %2.2d hours
-#: ../src/libtracker-common/tracker-utils.c:123
+#: ../src/libtracker-miners-common/tracker-utils.c:123
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2d h"
 
 #. Translators: this is %2.2d minutes
-#: ../src/libtracker-common/tracker-utils.c:127
+#: ../src/libtracker-miners-common/tracker-utils.c:127
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2d m"
 
 #. Translators: this is %2.2d seconds
-#: ../src/libtracker-common/tracker-utils.c:131
+#: ../src/libtracker-miners-common/tracker-utils.c:131
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2d s"
 
-#: ../src/libtracker-common/tracker-utils.c:135
+#: ../src/libtracker-miners-common/tracker-utils.c:135
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
 msgstr[0] " %d jour"
 msgstr[1] " %d jours"
 
-#: ../src/libtracker-common/tracker-utils.c:139
+#: ../src/libtracker-miners-common/tracker-utils.c:139
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
 msgstr[0] " %2.2d heure"
 msgstr[1] " %2.2d heures"
 
-#: ../src/libtracker-common/tracker-utils.c:143
+#: ../src/libtracker-miners-common/tracker-utils.c:143
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
 msgstr[0] " %2.2d minute"
 msgstr[1] " %2.2d minutes"
 
-#: ../src/libtracker-common/tracker-utils.c:147
+#: ../src/libtracker-miners-common/tracker-utils.c:147
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
@@ -97,7 +98,7 @@ msgstr "Applications"
 msgid "Applications data miner"
 msgstr "Collecteur de données d’applications"
 
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
 #: ../src/miners/rss/tracker-main.c:43
 #: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
@@ -112,14 +113,14 @@ msgstr ""
 "Fonctionne jusqu’à ce que toutes les applications soient indexées, puis "
 "quitte"
 
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:95
+#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
 #: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:101
+#: ../src/tracker-extract/tracker-main.c:102
 msgid "Runs for a specific domain ontology"
 msgstr "Fonctionne pour une ontologie de domaine spécifique"
 
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:99
-#: ../src/tracker-extract/tracker-main.c:105
+#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:106
 #: ../src/tracker-writeback/tracker-main.c:51
 msgid "Displays version information"
 msgstr "Affiche les informations de version"
@@ -350,118 +351,118 @@ msgstr "Répertoires ignorés selon leur contenu"
 msgid "Avoid any directory containing a file blacklisted here"
 msgstr "Ignorer tout répertoire contenant un fichier sur cette liste noire"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:77
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr ""
 "Temps de sommeil initial en secondes, de 0 à 1000 (valeur par défaut = 15)"
 
-#: ../src/miners/fs/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:82
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Fonctionne jusqu’à ce que tous les emplacements configurés sont indexés, "
 "puis quitte"
 
-#: ../src/miners/fs/tracker-main.c:91
+#: ../src/miners/fs/tracker-main.c:86
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Vérifie si FICHIER est susceptible d’être extrait en fonction de la "
 "configuration"
 
-#: ../src/miners/fs/tracker-main.c:92 ../src/tracker-extract/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "FICHIER"
 
-#: ../src/miners/fs/tracker-main.c:460
+#: ../src/miners/fs/tracker-main.c:432
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "L’objet de donnée « %s » existe déjà"
 
-#: ../src/miners/fs/tracker-main.c:461
+#: ../src/miners/fs/tracker-main.c:433
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "L’objet de donnée « %s » n’existe pas encore"
 
-#: ../src/miners/fs/tracker-main.c:476
+#: ../src/miners/fs/tracker-main.c:448
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Le dossier est susceptible d’être extrait (en fonction des règles)"
 
-#: ../src/miners/fs/tracker-main.c:477
+#: ../src/miners/fs/tracker-main.c:449
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr ""
 "Le dossier n’est PAS susceptible d’être extrait (en fonction des règles)"
 
-#: ../src/miners/fs/tracker-main.c:497
+#: ../src/miners/fs/tracker-main.c:469
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Le dossier est susceptible d’être extrait (sur la base du contenu)"
 
-#: ../src/miners/fs/tracker-main.c:498
+#: ../src/miners/fs/tracker-main.c:470
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr ""
 "Le dossier n’est PAS susceptible d’être extrait (en fonction du contenu)"
 
-#: ../src/miners/fs/tracker-main.c:545
+#: ../src/miners/fs/tracker-main.c:517
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Le dossier est susceptible d’être surveillé (en fonction de la configuration)"
 
-#: ../src/miners/fs/tracker-main.c:546
+#: ../src/miners/fs/tracker-main.c:518
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Le dossier n’est PAS susceptible d’être surveillé (en fonction de la "
 "configuration)"
 
-#: ../src/miners/fs/tracker-main.c:550
+#: ../src/miners/fs/tracker-main.c:522
 msgid "File is eligible to be monitored (based on config)"
 msgstr ""
 "Le fichier est susceptible d’être surveillé (en fonction de la configuration)"
 
-#: ../src/miners/fs/tracker-main.c:551
+#: ../src/miners/fs/tracker-main.c:523
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Le fichier n’est PAS susceptible d’être surveillé (en fonction de la "
 "configuration)"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:527
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Le fichier ou le dossier est susceptible d’être surveillé (en fonction de la "
 "configuration)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:528
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Le fichier ou le dossier n’est PAS susceptible d’être surveillé (en fonction "
 "de la configuration)"
 
-#: ../src/miners/fs/tracker-main.c:571
+#: ../src/miners/fs/tracker-main.c:543
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Le fichier est susceptible d’être extrait (en fonction des règles)"
 
-#: ../src/miners/fs/tracker-main.c:572
+#: ../src/miners/fs/tracker-main.c:544
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr ""
 "Le fichier n’est PAS susceptible d’être extrait (en fonction des règles)"
 
-#: ../src/miners/fs/tracker-main.c:581
+#: ../src/miners/fs/tracker-main.c:553
 msgid "Would be indexed"
 msgstr "Devrait être indexé"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "Yes"
 msgstr "Oui"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
 msgid "No"
 msgstr "Non"
 
-#: ../src/miners/fs/tracker-main.c:583
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Would be monitored"
 msgstr "Devrait être surveillé"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:715
+#: ../src/miners/fs/tracker-main.c:686
 msgid "— start the tracker indexer"
 msgstr "— démarre l’indexeur de tracker"
 
@@ -573,12 +574,12 @@ msgstr ""
 msgid "Metadata extraction failed"
 msgstr "Échec de l’extraction des métadonnées"
 
-#: ../src/tracker-extract/tracker-extract.c:751
+#: ../src/tracker-extract/tracker-extract.c:765
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Aucun module d’extraction ne gère ce fichier ou les métadonnées sont absentes"
 
-#: ../src/tracker-extract/tracker-main.c:81
+#: ../src/tracker-extract/tracker-main.c:82
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default = "
 "0)"
@@ -586,48 +587,49 @@ msgstr ""
 "Type de rapport, 0 = erreurs seulement, 1 = minimal, 2 = détaillé et 3 = "
 "débogage (valeur par défaut = 0)"
 
-#: ../src/tracker-extract/tracker-main.c:86
+#: ../src/tracker-extract/tracker-main.c:87
 msgid "File to extract metadata for"
 msgstr "Fichier pour lequel extraire les métadonnées"
 
-#: ../src/tracker-extract/tracker-main.c:90
+#: ../src/tracker-extract/tracker-main.c:91
 msgid "MIME type for file (if not provided, this will be guessed)"
 msgstr "Type MIME du fichier (sera deviné si non fourni)"
 
-#: ../src/tracker-extract/tracker-main.c:91
+#: ../src/tracker-extract/tracker-main.c:92
 msgid "MIME"
 msgstr "MIME"
 
-#: ../src/tracker-extract/tracker-main.c:94
+#: ../src/tracker-extract/tracker-main.c:95
 msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
 msgstr ""
 "Force l’utilisation d’un module pour l’extraction (par ex. « foo » pour "
 "« foo.so »)"
 
-#: ../src/tracker-extract/tracker-main.c:95
+#: ../src/tracker-extract/tracker-main.c:96
 msgid "MODULE"
 msgstr "MODULE"
 
-#: ../src/tracker-extract/tracker-main.c:97
-msgid "Output results format: “sparql”, or “turtle”"
-msgstr "Résultats du format de sortie : « sparql » ou « turtle »"
-
 #: ../src/tracker-extract/tracker-main.c:98
+#| msgid "Output results format: “sparql”, or “turtle”"
+msgid "Output results format: “sparql”, “turtle” or “json-ld”"
+msgstr "Résultats du format de sortie : « sparql », « turtle » ou « json-ld »"
+
+#: ../src/tracker-extract/tracker-main.c:99
 msgid "FORMAT"
 msgstr "FORMAT"
 
-#: ../src/tracker-extract/tracker-main.c:271
+#: ../src/tracker-extract/tracker-main.c:272
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Format de sérialisation non pris en charge « %s »\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:331
+#: ../src/tracker-extract/tracker-main.c:362
 msgid "— Extract file meta data"
 msgstr "— extrait les métadonnées de fichiers"
 
-#: ../src/tracker-extract/tracker-main.c:340
+#: ../src/tracker-extract/tracker-main.c:377
 msgid "Filename and mime type must be provided together"
 msgstr "Le nom de fichier et le type MIME doivent être fournis conjointement"
 

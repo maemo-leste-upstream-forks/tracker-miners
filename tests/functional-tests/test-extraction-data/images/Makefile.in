@@ -208,6 +208,9 @@ EXEEXT = @EXEEXT@
 EXEMPI_CFLAGS = @EXEMPI_CFLAGS@
 EXEMPI_LIBS = @EXEMPI_LIBS@
 FGREP = @FGREP@
+FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH = @FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH@
+FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH = @FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH@
+FUNCTIONAL_TESTS_TRACKER_STORE_PATH = @FUNCTIONAL_TESTS_TRACKER_STORE_PATH@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
@@ -427,25 +430,25 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 imagedir = $(datadir)/tracker-tests/test-extraction-data/images
-image_DATA = test-image-2.png test-image-2.expected $(am__append_1) \
-	$(am__append_2) $(am__append_3)
+image_DATA = test-image-2.png test-image-2.expected.json \
+	$(am__append_1) $(am__append_2) $(am__append_3)
 gifs = \
 	xmp-loaded-1.gif \
-	xmp-loaded-1.expected \
-	comment-extension-block.expected \
+	xmp-loaded-1.expected.json \
+	comment-extension-block.expected.json \
 	comment-extension-block.gif \
 	corrupted-image.gif \
-	corrupted-image.expected
+	corrupted-image.expected.json
 
 tiffs = \
 	test-image-3.tif \
-	test-image-3.expected
+	test-image-3.expected.json
 
 jpegs = \
 	test-image-1.jpg \
-	test-image-1.expected \
+	test-image-1.expected.json \
 	test-iptcdata-records.jpg \
-	test-iptcdata-records.expected
+	test-iptcdata-records.expected.json
 
 EXTRA_DIST = \
 	$(image_DATA) \

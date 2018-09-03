@@ -55,7 +55,7 @@ tracker_extract_new_artist (const char *name)
 	artist = tracker_resource_new (uri);
 
 	tracker_resource_set_uri (artist, "rdf:type", "nmm:Artist");
-	tracker_resource_set_string (artist, "nmm:artistName", name);
+	tracker_guarantee_resource_utf8_string (artist, "nmm:artistName", name);
 
 	g_free (uri);
 
@@ -128,11 +128,11 @@ tracker_extract_new_equipment (const char *make,
 	tracker_resource_set_uri (equipment, "rdf:type", "nfo:Equipment");
 
 	if (make) {
-		tracker_resource_set_string (equipment, "nfo:manufacturer", make);
+		tracker_guarantee_resource_utf8_string (equipment, "nfo:manufacturer", make);
 	}
 
 	if (model) {
-		tracker_resource_set_string (equipment, "nfo:model", model);
+		tracker_guarantee_resource_utf8_string (equipment, "nfo:model", model);
 	}
 
 	g_free (equip_uri);
@@ -185,24 +185,24 @@ tracker_extract_new_location (const char *street_address,
 		addruri = tracker_sparql_get_uuid_urn ();
 		address = tracker_resource_new (addruri);
 
-		tracker_resource_set_string (address, "rdf:type", "nco:PostalAddress");
+		tracker_resource_set_uri (address, "rdf:type", "nco:PostalAddress");
 
 		g_free (addruri);
 
-		if (address) {
-			tracker_resource_set_string (address, "nco:streetAddress", street_address);
+		if (street_address) {
+			tracker_guarantee_resource_utf8_string (address, "nco:streetAddress", street_address);
 		}
 
 		if (state) {
-			tracker_resource_set_string (address, "nco:region", state);
+			tracker_guarantee_resource_utf8_string (address, "nco:region", state);
 		}
 
 		if (city) {
-			tracker_resource_set_string (address, "nco:locality", city);
+			tracker_guarantee_resource_utf8_string (address, "nco:locality", city);
 		}
 
 		if (country) {
-			tracker_resource_set_string (address, "nco:country", country);
+			tracker_guarantee_resource_utf8_string (address, "nco:country", country);
 		}
 
 		tracker_resource_set_relation (location, "slo:postalAddress", address);
@@ -250,7 +250,7 @@ tracker_extract_new_music_album_disc (const char      *album_title,
                                       int              disc_number,
                                       const char      *date)
 {
-	GString *album_uri, *disc_uri;
+	GString *album_uri, *disc_uri, *shared;
 	const gchar *album_artist_name = NULL;
 	gchar *tmp_album_uri, *tmp_disc_uri;
 
@@ -261,17 +261,18 @@ tracker_extract_new_music_album_disc (const char      *album_title,
 	if (album_artist)
 		album_artist_name = tracker_resource_get_first_string (album_artist,
 		                                                       "nmm:artistName");
+	shared = g_string_new (NULL);
 
-	album_uri = g_string_new ("urn:album:");
-
-	g_string_append (album_uri, album_title);
+	g_string_append (shared, album_title);
 
 	if (album_artist_name)
-		g_string_append_printf (album_uri, ":%s", album_artist_name);
+		g_string_append_printf (shared, ":%s", album_artist_name);
 
 	if (date)
-		g_string_append_printf (album_uri, ":%s", date);
+		g_string_append_printf (shared, ":%s", date);
 
+	album_uri = g_string_new ("urn:album:");
+	g_string_append (album_uri, shared->str);
 	tmp_album_uri = tracker_sparql_escape_uri (album_uri->str);
 	album = tracker_resource_new (tmp_album_uri);
 
@@ -282,28 +283,20 @@ tracker_extract_new_music_album_disc (const char      *album_title,
 		tracker_resource_add_relation (album, "nmm:albumArtist", album_artist);
 
 	disc_uri = g_string_new ("urn:album-disc:");
-
-	g_string_append (disc_uri, album_title);
-
-	if (album_artist_name)
-		g_string_append_printf (disc_uri, ":%s", album_artist_name);
-
-	if (date)
-		g_string_append_printf (disc_uri, ":%s", date);
-
-	g_string_append_printf (disc_uri, ":Disc%d", disc_number);
+	g_string_append_printf (disc_uri, "%s:Disc%d", shared->str, disc_number);
 
 	tmp_disc_uri = tracker_sparql_escape_uri (disc_uri->str);
 	album_disc = tracker_resource_new (tmp_disc_uri);
 
 	tracker_resource_set_uri (album_disc, "rdf:type", "nmm:MusicAlbumDisc");
 	tracker_resource_set_int (album_disc, "nmm:setNumber", disc_number > 0 ? disc_number : 1);
-	tracker_resource_add_relation (album_disc, "nmm:albumDiscAlbum", album);
+	tracker_resource_set_relation (album_disc, "nmm:albumDiscAlbum", album);
 
 	g_free (tmp_album_uri);
 	g_free (tmp_disc_uri);
 	g_string_free (album_uri, TRUE);
 	g_string_free (disc_uri, TRUE);
+	g_string_free (shared, TRUE);
 
 	g_object_unref (album);
 

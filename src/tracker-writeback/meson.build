@@ -46,7 +46,8 @@ executable('tracker-writeback',
   ],
   dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
   install: true,
-  install_dir: join_paths(get_option('prefix'), get_option('libexecdir')))
+  install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
+  install_rpath: tracker_internal_libs_dir)
 
 dbus_service_file = configure_file(
   input: 'org.freedesktop.Tracker1.Writeback.service.in',

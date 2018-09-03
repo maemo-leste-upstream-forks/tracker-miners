@@ -112,7 +112,7 @@ parser_start_element (void           *data,
 			href = lookup_attribute (attrs, "href");
 
 			if (href && !pd->has_license) {
-				tracker_resource_add_string (pd->metadata, "nie:license", href);
+				tracker_resource_set_string (pd->metadata, "nie:license", href);
 				pd->has_license = TRUE;
 			}
 		}

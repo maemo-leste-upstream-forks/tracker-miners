@@ -11,8 +11,7 @@ utils_SCRIPTS =                                        \
 	applicationstest.py			       \
 	writebacktest.py			       \
 	options.py				       \
-	system.py
+	system.py                                      \
+	mainloop.py
 
-EXTRA_DIST =                                           \
-	configuration.py.in                            \
-	$(utils_SCRIPTS)
+EXTRA_DIST = $(utils_SCRIPTS)
