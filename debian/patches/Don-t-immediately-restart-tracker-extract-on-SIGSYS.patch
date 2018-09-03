@@ -7,13 +7,13 @@ Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=851148
  src/tracker-extract/tracker-extract.service.in | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
-index b7bc6c1..415e130 100644
---- a/src/tracker-extract/tracker-extract.service.in
-+++ b/src/tracker-extract/tracker-extract.service.in
-@@ -7,4 +7,5 @@ BusName=org.freedesktop.Tracker1.Miner.Extract
+Index: tracker-miners/src/tracker-extract/tracker-extract.service.in
+===================================================================
+--- tracker-miners.orig/src/tracker-extract/tracker-extract.service.in
++++ tracker-miners/src/tracker-extract/tracker-extract.service.in
+@@ -7,4 +7,5 @@ BusName=org.freedesktop.Tracker1.Miner.E
  ExecStart=@libexecdir@/tracker-extract
- Restart=on-failure
+ Restart=on-abnormal
  # Don't restart after tracker daemon -k (aka tracker-control -k)
 -RestartPreventExitStatus=SIGKILL
 +# Don't restart after seccomp raises SIGSYS either
