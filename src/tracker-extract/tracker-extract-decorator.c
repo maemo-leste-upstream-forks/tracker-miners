@@ -187,13 +187,15 @@ get_metadata_cb (TrackerExtract *extract,
 	g_hash_table_remove (priv->recovery_files, tracker_decorator_info_get_url (data->decorator_info));
 
 	if (error) {
-		if (error->domain == TRACKER_EXTRACT_ERROR) {
-			g_message ("Extraction failed: %s\n", error ? error->message : "no error given");
-			tracker_decorator_info_complete (data->decorator_info, NULL);
-			g_clear_error (&error);
-		} else {
-			tracker_decorator_info_complete_error (data->decorator_info, error);
-		}
+		g_message ("Extraction failed: %s\n", error ? error->message : "no error given");
+		g_clear_error (&error);
+
+		sparql = g_strdup_printf ("INSERT DATA { GRAPH <" TRACKER_OWN_GRAPH_URN "> {"
+		                          "  <%s> nie:dataSource <" TRACKER_EXTRACT_DATA_SOURCE ">;"
+		                          "       nie:dataSource <" TRACKER_EXTRACT_FAILURE_DATA_SOURCE ">."
+		                          "}}", tracker_decorator_info_get_urn (data->decorator_info));
+
+		tracker_decorator_info_complete (data->decorator_info, sparql);
 	} else {
 		resource = decorator_save_info (TRACKER_EXTRACT_DECORATOR (data->decorator),
 		                                data->decorator_info, info);
@@ -360,12 +362,16 @@ tracker_extract_decorator_finished (TrackerDecorator *decorator)
 {
 	TrackerExtractDecoratorPrivate *priv;
 	gchar *time_str;
+	gdouble elapsed = 0;
 
 	priv = TRACKER_EXTRACT_DECORATOR (decorator)->priv;
-	time_str = tracker_seconds_to_string ((gint) g_timer_elapsed (priv->timer, NULL), TRUE);
+	if (priv->timer) {
+		elapsed = g_timer_elapsed (priv->timer, NULL);
+		g_clear_pointer (&priv->timer, g_timer_destroy);
+	}
+
+	time_str = tracker_seconds_to_string (elapsed, TRUE);
 	g_message ("Extraction finished in %s", time_str);
-	g_timer_destroy (priv->timer);
-	priv->timer = NULL;
 	g_free (time_str);
 }
 

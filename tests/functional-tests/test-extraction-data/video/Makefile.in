@@ -208,6 +208,9 @@ EXEEXT = @EXEEXT@
 EXEMPI_CFLAGS = @EXEMPI_CFLAGS@
 EXEMPI_LIBS = @EXEMPI_LIBS@
 FGREP = @FGREP@
+FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH = @FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH@
+FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH = @FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH@
+FUNCTIONAL_TESTS_TRACKER_STORE_PATH = @FUNCTIONAL_TESTS_TRACKER_STORE_PATH@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
 GCOV_VALAFLAGS = @GCOV_VALAFLAGS@
@@ -430,9 +433,9 @@ videotestdir = $(datadir)/tracker-tests/test-extraction-data/video
 videotest_DATA = $(am__append_1)
 videos = \
 	video-1.mp4                                    	\
-	video-1.expected                               	\
+	video-1.expected.json                               	\
 	video-2.mov                                    	\
-	video-2.expected
+	video-2.expected.json
 
 EXTRA_DIST = $(videos)
 all: all-am

@@ -53,6 +53,8 @@
 #define LAST_CRAWL_FILENAME           "last-crawl.txt"
 #define NEED_MTIME_CHECK_FILENAME     "no-need-mtime-check.txt"
 
+#define TRACKER_EXTRACT_DATA_SOURCE TRACKER_PREFIX_TRACKER "extractor-data-source"
+
 #define TRACKER_MINER_FILES_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TRACKER_TYPE_MINER_FILES, TrackerMinerFilesPrivate))
 
 static GQuark miner_files_error_quark = 0;
@@ -71,7 +73,12 @@ struct ProcessFileData {
 struct TrackerMinerFilesPrivate {
 	TrackerConfig *config;
 	TrackerStorage *storage;
+
 	TrackerExtractWatchdog *extract_watchdog;
+	gboolean checking_unextracted;
+	guint grace_period_timeout_id;
+	GCancellable *extract_check_cancellable;
+	gchar *extract_check_query;
 
 	GVolumeMonitor *volume_monitor;
 
@@ -378,6 +385,46 @@ tracker_miner_files_class_init (TrackerMinerFilesClass *klass)
 }
 
 static void
+check_unextracted_cb (GObject      *object,
+                      GAsyncResult *res,
+                      gpointer      user_data)
+{
+	TrackerMinerFiles *mf = user_data;
+	TrackerExtractWatchdog *watchdog = mf->private->extract_watchdog;
+	TrackerSparqlCursor *cursor;
+	GError *error = NULL;
+
+	mf->private->checking_unextracted = FALSE;
+	cursor = tracker_sparql_connection_query_finish (TRACKER_SPARQL_CONNECTION (object),
+	                                                 res, &error);
+	if (error) {
+		g_warning ("Could not check unextracted items: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	if (tracker_sparql_cursor_next (cursor, mf->private->extract_check_cancellable, NULL))
+		tracker_extract_watchdog_ensure_started (watchdog);
+	else
+		g_debug ("Not starting extractor. Nothing to do.");
+
+	g_object_unref (cursor);
+}
+
+static void
+tracker_miner_files_check_unextracted (TrackerMinerFiles *mf)
+{
+	if (mf->private->checking_unextracted)
+		return;
+
+	mf->private->checking_unextracted = TRUE;
+	tracker_sparql_connection_query_async (tracker_miner_get_connection (TRACKER_MINER (mf)),
+					       mf->private->extract_check_query,
+	                                       mf->private->extract_check_cancellable,
+	                                       check_unextracted_cb, mf);
+}
+
+static void
 cancel_and_unref (gpointer data)
 {
 	GCancellable *cancellable = data;
@@ -388,10 +435,36 @@ cancel_and_unref (gpointer data)
 	}
 }
 
+static gboolean
+extractor_lost_timeout_cb (gpointer user_data)
+{
+	TrackerMinerFiles *mf = user_data;
+
+	tracker_miner_files_check_unextracted (mf);
+	mf->private->grace_period_timeout_id = 0;
+	return G_SOURCE_REMOVE;
+}
+
+
+static void
+on_extractor_lost (TrackerExtractWatchdog *watchdog,
+                   TrackerMinerFiles      *mf)
+{
+	g_debug ("tracker-extract vanished, maybe restarting.");
+
+	/* Give a period of grace before restarting, so we allow replacing
+	 * from eg. a terminal.
+	 */
+	mf->private->grace_period_timeout_id =
+		g_timeout_add_seconds (1, extractor_lost_timeout_cb, mf);
+}
+
 static void
 tracker_miner_files_init (TrackerMinerFiles *mf)
 {
 	TrackerMinerFilesPrivate *priv;
+	gchar *rdf_types_str;
+	GStrv rdf_types;
 
 	priv = mf->private = TRACKER_MINER_FILES_GET_PRIVATE (mf);
 
@@ -408,12 +481,14 @@ tracker_miner_files_init (TrackerMinerFiles *mf)
 #if defined(HAVE_UPOWER) || defined(HAVE_HAL)
 	priv->power = tracker_power_new ();
 
-	g_signal_connect (priv->power, "notify::on-low-battery",
-	                  G_CALLBACK (battery_status_cb),
-	                  mf);
-	g_signal_connect (priv->power, "notify::on-battery",
-	                  G_CALLBACK (battery_status_cb),
-	                  mf);
+	if (priv->power) {
+		g_signal_connect (priv->power, "notify::on-low-battery",
+		                  G_CALLBACK (battery_status_cb),
+		                  mf);
+		g_signal_connect (priv->power, "notify::on-battery",
+		                  G_CALLBACK (battery_status_cb),
+		                  mf);
+	}
 #endif /* defined(HAVE_UPOWER) || defined(HAVE_HAL) */
 
 	priv->finished_handler = g_signal_connect_after (mf, "finished",
@@ -430,7 +505,24 @@ tracker_miner_files_init (TrackerMinerFiles *mf)
 
 	priv->writeback_tasks = g_hash_table_new_full (g_file_hash,
 	                                               (GEqualFunc) g_file_equal,
-	                                               NULL, cancel_and_unref);
+	                                               g_object_unref, cancel_and_unref);
+
+	priv->extract_check_cancellable = g_cancellable_new ();
+
+	rdf_types = tracker_extract_module_manager_get_rdf_types ();
+	rdf_types_str = g_strjoinv (",", rdf_types);
+	g_strfreev (rdf_types);
+
+	priv->extract_check_query = g_strdup_printf ("SELECT ?u { "
+	                                             "  GRAPH <" TRACKER_OWN_GRAPH_URN "> {"
+						     "    ?u a nfo:FileDataObject ;"
+						     "       a ?class . "
+						     "    FILTER (?class IN (%s) && "
+						     "            NOT EXISTS { ?u nie:dataSource <" TRACKER_EXTRACT_DATA_SOURCE "> })"
+	                                             "  }"
+						     "} LIMIT 1",
+						     rdf_types_str);
+	g_free (rdf_types_str);
 }
 
 static void
@@ -711,6 +803,9 @@ miner_files_initable_init (GInitable     *initable,
 	disk_space_check_start (mf);
 
 	mf->private->extract_watchdog = tracker_extract_watchdog_new ();
+	g_signal_connect (mf->private->extract_watchdog, "lost",
+	                  G_CALLBACK (on_extractor_lost), mf);
+
 	mf->private->thumbnailer = tracker_thumbnailer_new ();
 
 	return TRUE;
@@ -765,6 +860,18 @@ miner_files_finalize (GObject *object)
 	mf = TRACKER_MINER_FILES (object);
 	priv = mf->private;
 
+	g_cancellable_cancel (priv->extract_check_cancellable);
+	g_object_unref (priv->extract_check_cancellable);
+	g_free (priv->extract_check_query);
+
+	if (priv->grace_period_timeout_id != 0) {
+		g_source_remove (priv->grace_period_timeout_id);
+		priv->grace_period_timeout_id = 0;
+	}
+
+	g_signal_handlers_disconnect_by_func (priv->extract_watchdog,
+	                                      on_extractor_lost,
+	                                      NULL);
 	g_clear_object (&priv->extract_watchdog);
 
 	if (priv->config) {
@@ -1484,6 +1591,10 @@ check_battery_status (TrackerMinerFiles *mf)
 	gboolean on_battery, on_low_battery;
 	gboolean should_pause = FALSE;
 	gboolean should_throttle = FALSE;
+
+	if (mf->private->power == NULL) {
+		return;
+	}
 
 	on_low_battery = tracker_power_get_on_low_battery (mf->private->power);
 	on_battery = tracker_power_get_on_battery (mf->private->power);
@@ -2589,6 +2700,8 @@ miner_files_finished (TrackerMinerFS *fs,
 		tracker_thumbnailer_send (priv->thumbnailer);
 
 	tracker_miner_files_set_last_crawl_done (TRUE);
+
+	tracker_miner_files_check_unextracted (TRACKER_MINER_FILES (fs));
 }
 
 static gchar *
@@ -3505,7 +3618,7 @@ tracker_miner_files_writeback_file (TrackerMinerFiles *mf,
 
 	if (!g_hash_table_contains (mf->private->writeback_tasks, file)) {
 		cancellable = g_cancellable_new ();
-		g_hash_table_insert (mf->private->writeback_tasks, file, cancellable);
+		g_hash_table_insert (mf->private->writeback_tasks, g_object_ref (file), cancellable);
 		sync_writeback_pause_state (mf);
 		g_signal_emit (mf, signals[WRITEBACK], 0, file, rdf_types,
 		               results, cancellable);

@@ -12,8 +12,8 @@ AC_PREREQ([2.64])
 # if backwards compatibility has been broken,
 # set TRACKER_BINARY_AGE and TRACKER_INTERFACE_AGE to 0.
 m4_define([tracker_major_version], [2])
-m4_define([tracker_minor_version], [0])
-m4_define([tracker_micro_version], [4])
+m4_define([tracker_minor_version], [1])
+m4_define([tracker_micro_version], [3])
 m4_define([tracker_interface_age], [0])
 m4_define([tracker_binary_age],
           [m4_eval(100 * tracker_minor_version + tracker_micro_version)])
@@ -230,7 +230,7 @@ GEXIV2_REQUIRED="any version"
 GSTREAMER_REQUIRED=0.10.31
 GUPNP_DLNA_REQUIRED=0.9.4
 LIBPNG_REQUIRED=1.2
-TRACKER_CORE_REQUIRED=1.99
+TRACKER_CORE_REQUIRED=2.1.0
 
 GLIB_PREFIX="`$PKG_CONFIG --variable=prefix glib-2.0`"
 AC_SUBST(GLIB_PREFIX)
@@ -435,6 +435,10 @@ AM_CONDITIONAL(OS_WIN32, test "$native_win32" = "yes")
 if test "$native_win32" = "yes" ; then
    AC_DEFINE(OS_WIN32, 1, [Define if we are on win32])
 fi
+
+AC_SUBST(FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH, "@top_builddir@/src/tracker-extract/tracker-extract")
+AC_SUBST(FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH, "@top_builddir@/src/miners/fs/tracker-miner-fs")
+AC_SUBST(FUNCTIONAL_TESTS_TRACKER_STORE_PATH, "${libexecdir}/tracker-store")
 
 ####################################################################
 # Check if we should disable the journal
@@ -1348,13 +1352,6 @@ LIBS="$OLD_LIBS"
 # FIXME: This should be package based. Unfortunately in several main
 # distros, it is not.
 
-OLD_CFLAGS="$CFLAGS"
-OLD_LDFLAGS="$LDFLAGS"
-OLD_LIBS="$LIBS"
-CFLAGS=""
-LDFLAGS=""
-LIBS=""
-
 AC_ARG_ENABLE(libjpeg,
               AS_HELP_STRING([--enable-libjpeg],
                              [enable extractor for JPEG metadata [[default=auto]]]),
@@ -1362,13 +1359,10 @@ AC_ARG_ENABLE(libjpeg,
               [enable_libjpeg=auto])
 
 if test "x$enable_libjpeg" != "xno" ; then
-   AC_CHECK_HEADER(jpeglib.h,
-   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
-
-   have_libjpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
-
-   LIBJPEG_CFLAGS="$CFLAGS"
-   LIBJPEG_LIBS="$LIBS"
+   PKG_CHECK_MODULES(LIBJPEG,
+                     [libjpeg],
+                     [have_libjpeg=yes],
+                     [have_libjpeg=no])
 
    AC_SUBST(LIBJPEG_CFLAGS)
    AC_SUBST(LIBJPEG_LIBS)
@@ -1387,10 +1381,6 @@ if test "x$enable_libjpeg" = "xyes"; then
 fi
 
 AM_CONDITIONAL(HAVE_LIBJPEG, test "x$have_libjpeg" = "xyes")
-
-CFLAGS="$OLD_CFLAGS"
-LDFLAGS="$OLD_LDFLAGS"
-LIBS="$OLD_LIBS"
 
 ##################################################################
 # Check for tracker-extract: libtiff
@@ -1822,8 +1812,8 @@ AC_CONFIG_FILES([
 	tests/libtracker-miners-common/Makefile
 	tests/libtracker-extract/Makefile
 	tests/functional-tests/Makefile
+	tests/functional-tests/configuration.json
 	tests/functional-tests/common/Makefile
-	tests/functional-tests/common/utils/configuration.py
 	tests/functional-tests/common/utils/Makefile
 	tests/functional-tests/unittest2/Makefile
 	tests/functional-tests/test-extraction-data/Makefile
@@ -1833,19 +1823,6 @@ AC_CONFIG_FILES([
 	tests/functional-tests/test-extraction-data/video/Makefile
 	tests/functional-tests/test-extraction-data/playlists/Makefile
 	tests/functional-tests/test-writeback-data/Makefile
-	tests/functional-tests/test-ontologies/Makefile
-	tests/functional-tests/test-ontologies/basic/Makefile
-	tests/functional-tests/test-ontologies/property-range-int-to-string/Makefile
-	tests/functional-tests/test-ontologies/property-range-string-to-date/Makefile
-	tests/functional-tests/test-ontologies/cardinality/Makefile
-	tests/functional-tests/test-ontologies/notify/Makefile
-	tests/functional-tests/test-ontologies/indexed/Makefile
-	tests/functional-tests/test-ontologies/add-class/Makefile
-	tests/functional-tests/test-ontologies/add-prop/Makefile
-	tests/functional-tests/test-ontologies/add-domainIndex/Makefile
-	tests/functional-tests/test-ontologies/superclass-remove/Makefile
-	tests/functional-tests/test-ontologies/property-promotion/Makefile
-	tests/functional-tests/test-ontologies/basic-future/Makefile
 	tests/functional-tests/test-apps-data/Makefile
 	tests/Makefile
 	tests/tracker-writeback/Makefile

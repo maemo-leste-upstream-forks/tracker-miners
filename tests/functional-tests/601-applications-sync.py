@@ -22,7 +22,7 @@
 Tests trying to simulate the behaviour of applications working with tracker
 """
 
-import sys,os,dbus
+import sys,os
 import unittest
 import time
 import random

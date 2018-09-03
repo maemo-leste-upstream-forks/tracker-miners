@@ -365,7 +365,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		TrackerResource *equipment;
 
 		equipment = tracker_extract_new_equipment (ed->make, ed->model);
-		tracker_resource_add_relation (resource, "nfo:equipment", equipment);
+		tracker_resource_set_relation (resource, "nfo:equipment", equipment);
 		g_object_unref (equipment);
 	}
 
@@ -424,7 +424,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		                                         ed->gps_latitude,
 		                                         ed->gps_longitude);
 
-		tracker_resource_add_relation (resource, "slo:location", location);
+		tracker_resource_set_relation (resource, "slo:location", location);
 		g_object_unref (location);
 	}
 

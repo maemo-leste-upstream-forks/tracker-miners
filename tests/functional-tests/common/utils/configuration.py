@@ -20,7 +20,16 @@
 
 "Constants describing Tracker D-Bus services"
 
+import json
 import os
+
+if 'TRACKER_FUNCTIONAL_TEST_CONFIG' not in os.environ:
+    raise RuntimeError("The TRACKER_FUNCTIONAL_TEST_CONFIG environment "
+                       "variable must be set to point to the location of "
+                       "the generated configuration.json file.")
+
+with open(os.environ['TRACKER_FUNCTIONAL_TEST_CONFIG']) as f:
+    config = json.load(f)
 
 TRACKER_BUSNAME = 'org.freedesktop.Tracker1'
 TRACKER_OBJ_PATH = '/org/freedesktop/Tracker1/Resources'
@@ -32,7 +41,7 @@ MINER_IFACE = "org.freedesktop.Tracker1.Miner"
 MINERFS_INDEX_OBJ_PATH = "/org/freedesktop/Tracker1/Miner/Files/Index"
 MINER_INDEX_IFACE = "org.freedesktop.Tracker1.Miner.Files.Index"
 
-TRACKER_BACKUP_OBJ_PATH = "/org/freedesktop/Tracker1/Backup"                                            
+TRACKER_BACKUP_OBJ_PATH = "/org/freedesktop/Tracker1/Backup"
 BACKUP_IFACE = "org.freedesktop.Tracker1.Backup"
 
 TRACKER_STATS_OBJ_PATH = "/org/freedesktop/Tracker1/Statistics"
@@ -49,12 +58,15 @@ WRITEBACK_BUSNAME = "org.freedesktop.Tracker1.Writeback"
 
 DCONF_MINER_SCHEMA = "org.freedesktop.Tracker.Miner.Files"
 
+# Autoconf substitutes paths in the configuration.json file without
+# expanding variables, so we need to manually insert these.
 def expandvars (variable):
     # Note: the order matters!
     result = variable
     for var, value in [("${datarootdir}", RAW_DATAROOT_DIR),
                        ("${exec_prefix}", RAW_EXEC_PREFIX),
-                       ("${prefix}", PREFIX)]:
+                       ("${prefix}", PREFIX),
+                       ("@top_builddir@", TOP_BUILDDIR)]:
         result = result.replace (var, value)
 
 
@@ -62,34 +74,34 @@ def expandvars (variable):
 
 
 
-PREFIX = "/home/carlos/Build/gnome"
-#
-# This raw variables are set by autotools without translating vars:
-#   E.G. bindir='${exec_prefix}/bin
-#
-# So we do the translation by hand in the expandvars function
-#
-RAW_EXEC_PREFIX = "${prefix}"
-RAW_EXEC_DIR = "${exec_prefix}/libexec"
-RAW_DATA_DIR = "${datarootdir}"
-RAW_DATAROOT_DIR = "${prefix}/share"
-RAW_BINDIR = "${exec_prefix}/bin"
+PREFIX = config['PREFIX']
+RAW_EXEC_PREFIX = config['RAW_EXEC_PREFIX']
+RAW_DATAROOT_DIR = config['RAW_DATAROOT_DIR']
+TOP_BUILDDIR = os.environ['TRACKER_FUNCTIONAL_TEST_BUILD_DIR']
 
-EXEC_PREFIX = os.path.normpath (expandvars (RAW_EXEC_DIR))
-DATADIR = os.path.normpath (expandvars (RAW_DATA_DIR))
-BINDIR = os.path.normpath (expandvars (RAW_BINDIR))
+TRACKER_EXTRACT_PATH = os.path.normpath(expandvars(config['TRACKER_EXTRACT_PATH']))
+TRACKER_MINER_FS_PATH = os.path.normpath(expandvars(config['TRACKER_MINER_FS_PATH']))
+TRACKER_STORE_PATH = os.path.normpath(expandvars(config['TRACKER_STORE_PATH']))
+TRACKER_WRITEBACK_PATH = os.path.normpath(expandvars(config['TRACKER_WRITEBACK_PATH']))
 
-haveUpstart = ("@HAVE_UPSTART_TRUE@" == "")
-disableJournal = ("#" == "")
+DATADIR = os.path.normpath(expandvars(config['RAW_DATAROOT_DIR']))
 
 TEST_TMP_DIR = os.path.join (os.environ["HOME"], "tracker-tests")
 
 TEST_MONITORED_TMP_DIR = TEST_TMP_DIR
 
 if TEST_TMP_DIR.startswith('/tmp'):
-	if os.environ.has_key('REAL_HOME'):
-		TEST_MONITORED_TMP_DIR = os.path.join (os.environ["REAL_HOME"], "tracker-tests")
-	else:
-		print ("HOME is in the /tmp prefix - this will cause tests that rely " +
-		       "on filesystem monitoring to fail as changes in that prefix are " +
-		       "ignored.")
+    if os.environ.has_key('REAL_HOME'):
+        # Note that this MUST NOT be a hidden directory, as Tracker is
+        # hardcoded to ignore those. The 'ignore-files' configuration option
+        # can be changed, but the 'filter-hidden' property of
+        # TrackerIndexingTree is hardwired to be True at present :/
+        TEST_MONITORED_TMP_DIR = os.path.join (os.environ["REAL_HOME"], "tracker-tests")
+    else:
+        print ("HOME is in the /tmp prefix - this will cause tests that rely " +
+                "on filesystem monitoring to fail as changes in that prefix are " +
+                "ignored.")
+
+
+def generated_ttl_dir():
+    return os.path.join(TOP_BUILD_DIR, 'tests', 'functional-tests', 'ttl')

@@ -334,7 +334,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (xd->publisher) {
 		TrackerResource *publisher = tracker_extract_new_contact (xd->publisher);
-		tracker_resource_add_relation (metadata, "nco:publisher", publisher);
+		tracker_resource_set_relation (metadata, "nco:publisher", publisher);
 		g_object_unref (publisher);
 	}
 
@@ -397,7 +397,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (md.make || md.model) {
 		TrackerResource *equipment = tracker_extract_new_equipment (md.make, md.model);
-		tracker_resource_add_relation (metadata, "nfo:equipment", equipment);
+		tracker_resource_set_relation (metadata, "nfo:equipment", equipment);
 		g_object_unref (equipment);
 	}
 
@@ -416,7 +416,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	}
 
 	if (md.copyright) {
-		tracker_resource_set_string (metadata, "nie:copyright", md.copyright);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:copyright", md.copyright);
 	}
 
 	if (md.white_balance) {
@@ -475,7 +475,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	                                                 uri);
 
 	if (md.description) {
-		tracker_resource_set_string(metadata, "nie:description", md.description);
+		tracker_guarantee_resource_utf8_string (metadata, "nie:description", md.description);
 	}
 
 	if (md.metering_mode) {
@@ -526,7 +526,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		        md.state, md.city, md.country, md.gps_altitude,
 		        md.gps_latitude, md.gps_longitude);
 
-		tracker_resource_add_relation (metadata, "slo:location", location);
+		tracker_resource_set_relation (metadata, "slo:location", location);
 
 		g_object_unref (location);
 	}

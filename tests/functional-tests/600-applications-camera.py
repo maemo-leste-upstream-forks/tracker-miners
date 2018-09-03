@@ -30,6 +30,10 @@ from common.utils.applicationstest import CommonTrackerApplicationTest as Common
 from common.utils.helpers import log
 
 
+NMM_PHOTO = 'http://www.tracker-project.org/temp/nmm#Photo'
+NMM_VIDEO = 'http://www.tracker-project.org/temp/nmm#Video'
+
+
 class TrackerCameraTestSuite (CommonTrackerApplicationTest):
     """
     Common functionality for camera tests.
@@ -146,13 +150,13 @@ class TrackerCameraPicturesApplicationTests (TrackerCameraTestSuite):
         # Copy the image to the dest path
         self.slowcopy_file (origin_filepath, dest_filepath)
         assert os.path.exists (dest_filepath)
-        dest_id, dest_urn = self.system.store.await_resource_inserted ('nmm:Photo', dest_fileuri)
+        dest_id, dest_urn = self.system.store.await_resource_inserted (NMM_PHOTO, dest_fileuri)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
 
         # Clean the new file so the test directory is as before
         log ("Remove and wait")
         os.remove (dest_filepath)
-        self.system.store.await_resource_deleted (dest_id)
+        self.system.store.await_resource_deleted (NMM_PHOTO, dest_id)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 0)
 
     def test_02_camera_picture_geolocation (self):
@@ -192,13 +196,13 @@ class TrackerCameraPicturesApplicationTests (TrackerCameraTestSuite):
         assert os.path.exists (dest_filepath)
 
         # FOURTH, ensure we have only 1 resource
-        dest_id, dest_urn = self.system.store.await_resource_inserted ('nmm:Photo', dest_fileuri)
+        dest_id, dest_urn = self.system.store.await_resource_inserted (NMM_PHOTO, dest_fileuri)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
 
         # Clean the new file so the test directory is as before
         log ("Remove and wait")
         os.remove (dest_filepath)
-        self.system.store.await_resource_deleted (dest_id)
+        self.system.store.await_resource_deleted (NMM_PHOTO, dest_id)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 0)
 
 
@@ -224,13 +228,13 @@ class TrackerCameraVideosApplicationTests (TrackerCameraTestSuite):
         # Copy the image to the dest path
         self.slowcopy_file (origin_filepath, dest_filepath)
         assert os.path.exists (dest_filepath)
-        dest_id, dest_urn = self.system.store.await_resource_inserted ('nmm:Video', dest_fileuri)
+        dest_id, dest_urn = self.system.store.await_resource_inserted (NMM_PHOTO, dest_fileuri)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
 
         # Clean the new file so the test directory is as before
         log ("Remove and wait")
         os.remove (dest_filepath)
-        self.system.store.await_resource_deleted (dest_id)
+        self.system.store.await_resource_deleted (NMM_PHOTO, dest_id)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 0)
 
 
@@ -271,13 +275,13 @@ class TrackerCameraVideosApplicationTests (TrackerCameraTestSuite):
         assert os.path.exists (dest_filepath)
 
         # FOURTH, ensure we have only 1 resource
-        dest_id, dest_urn = self.system.store.await_resource_inserted ('nmm:Video', dest_fileuri)
+        dest_id, dest_urn = self.system.store.await_resource_inserted (NMM_VIDEO, dest_fileuri)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
 
         # Clean the new file so the test directory is as before
         log ("Remove and wait")
         os.remove (dest_filepath)
-        self.system.store.await_resource_deleted (dest_id)
+        self.system.store.await_resource_deleted (NMM_VIDEO, dest_id)
         self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 0)
 
 if __name__ == "__main__":
