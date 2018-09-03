@@ -1,3 +1,9 @@
+tracker-miners (2.1.3-1) UNRELEASED; urgency=medium
+
+  * New upstream development release 
+
+ -- Tim Lunn <tim@feathertop.org>  Mon, 03 Sep 2018 12:21:54 +1000
+
 tracker-miners (2.0.4-2) unstable; urgency=medium
 
   * Disable enca, libiptcdata, and libosinfo on Ubuntu since they
