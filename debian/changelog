@@ -1,10 +1,10 @@
-tracker-miners (2.1.4-1) UNRELEASED; urgency=medium
+tracker-miners (2.1.4-1) experimental; urgency=medium
 
   * New upstream development release 
   * debian/control.in: Bump Build-deps on Tracker 2.1.0
   * d/p/Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch: Refreshed
 
- -- Tim Lunn <tim@feathertop.org>  Wed, 05 Sep 2018 17:32:09 +1000
+ -- Tim Lunn <tim@feathertop.org>  Wed, 05 Sep 2018 21:04:51 +1000
 
 tracker-miners (2.0.4-2) unstable; urgency=medium
 
