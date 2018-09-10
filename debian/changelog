@@ -1,8 +1,9 @@
-tracker-miners (2.0.4-3) UNRELEASED; urgency=medium
+tracker-miners (2.0.4-3) unstable; urgency=medium
 
+  * Team upload
   * Build-depend on shared-mime-info if running tests (Closes: #907896)
 
- -- Simon McVittie <smcv@debian.org>  Mon, 10 Sep 2018 16:49:59 +0100
+ -- Simon McVittie <smcv@debian.org>  Mon, 10 Sep 2018 18:03:26 +0100
 
 tracker-miners (2.0.4-2) unstable; urgency=medium
 
