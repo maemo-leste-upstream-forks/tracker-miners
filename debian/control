@@ -40,6 +40,7 @@ Build-Depends: debhelper (>= 11),
                libcue-dev,
                libseccomp-dev (>= 2.0) [linux-any],
                dbus (>= 1.8) <!nocheck>,
+               shared-mime-info <!nocheck>,
 Standards-Version: 4.1.4
 Vcs-Browser: https://salsa.debian.org/gnome-team/tracker-miners
 Vcs-Git: https://salsa.debian.org/gnome-team/tracker-miners.git
