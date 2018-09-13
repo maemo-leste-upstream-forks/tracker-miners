@@ -1,3 +1,9 @@
+tracker-miners (2.1.4-2) unstable; urgency=medium
+
+  * Release to unstable (LP: #1791484)
+
+ -- Jeremy Bicha <jbicha@debian.org>  Wed, 12 Sep 2018 22:39:03 -0400
+
 tracker-miners (2.1.4-1) experimental; urgency=medium
 
   * New upstream development release 
