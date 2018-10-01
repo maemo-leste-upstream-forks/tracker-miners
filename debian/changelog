@@ -1,3 +1,9 @@
+tracker-miners (2.1.5-1) UNRELEASED; urgency=medium
+
+  * New upstream release 
+
+ -- Tim Lunn <tim@feathertop.org>  Mon, 01 Oct 2018 12:12:54 +1000
+
 tracker-miners (2.1.4-2) unstable; urgency=medium
 
   * Release to unstable (LP: #1791484)
