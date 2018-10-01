@@ -109,6 +109,8 @@ tracker_extract_get_metadata (TrackerExtractInfo *info_)
 		name = osinfo_product_get_name (OSINFO_PRODUCT (os));
 	}
 
+	g_object_unref (variants);
+
 	if (name != NULL) {
 		tracker_resource_set_string (metadata, "nie:title", name);
 	}
@@ -139,8 +141,9 @@ tracker_extract_get_metadata (TrackerExtractInfo *info_)
         }
         g_list_free (languages);
 
-	g_object_unref (G_OBJECT (media));
-	g_object_unref (G_OBJECT (loader));
+	g_object_unref (media);
+	g_object_unref (loader);
+	g_object_unref (os);
 
 	tracker_extract_info_set_resource (info_, metadata);
 	g_object_unref (metadata);

@@ -2467,6 +2467,7 @@ process_file_cb (GObject      *object,
 	if (parent_urn) {
 		tracker_sparql_builder_predicate (sparql, "nfo:belongsToContainer");
 		tracker_sparql_builder_object_iri (sparql, parent_urn);
+		g_free (parent_urn);
 	}
 
 	tracker_sparql_builder_predicate (sparql, "nfo:fileName");
