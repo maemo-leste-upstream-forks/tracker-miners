@@ -585,6 +585,7 @@ extractor_maybe_get_album_disc (MetadataExtractor *extractor,
 
 	g_free (album_artist_name);
 	g_free (track_artist_temp);
+	g_free (album_title);
 
 	return album_disc;
 }

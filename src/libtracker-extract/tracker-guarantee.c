@@ -109,7 +109,7 @@ tracker_guarantee_resource_title_from_file (TrackerResource  *resource,
 	g_return_val_if_fail (uri != NULL, FALSE);
 
 	if (current_value && *current_value != '\0') {
-		tracker_resource_set_string (resource, key, current_value);
+		tracker_guarantee_resource_utf8_string (resource, key, current_value);
 
 		if (p_new_value != NULL) {
 			*p_new_value = g_strdup (current_value);
@@ -133,7 +133,7 @@ tracker_guarantee_resource_title_from_file (TrackerResource  *resource,
 	}
 #else  /* GUARANTEE_METADATA */
 	if (current_value && *current_value != '\0') {
-		tracker_resource_set_string (resource, key, current_value);
+		tracker_guarantee_resource_utf8_string (resource, key, current_value);
 
 		if (p_new_value != NULL) {
 			*p_new_value = g_strdup (current_value);
