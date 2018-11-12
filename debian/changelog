@@ -1,8 +1,14 @@
-tracker-miners (2.1.5-1) UNRELEASED; urgency=medium
+tracker-miners (2.1.5-1) unstable; urgency=medium
 
-  * New upstream release 
+  [ Tim Lunn ]
+  * New upstream release
 
- -- Tim Lunn <tim@feathertop.org>  Mon, 01 Oct 2018 12:12:54 +1000
+  [ Jeremy Bicha ]
+  * Cherry-pick libtracker-miners-common-Make-g_error-a-soft-error.patch
+    - Allow tracker library to still be used without ontology rules
+    (Closes: #908800)
+
+ -- Jeremy Bicha <jbicha@debian.org>  Mon, 12 Nov 2018 16:52:52 -0500
 
 tracker-miners (2.1.4-2) unstable; urgency=medium
 
@@ -12,7 +18,7 @@ tracker-miners (2.1.4-2) unstable; urgency=medium
 
 tracker-miners (2.1.4-1) experimental; urgency=medium
 
-  * New upstream development release 
+  * New upstream development release
   * debian/control.in: Bump Build-deps on Tracker 2.1.0
   * d/p/Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch: Refreshed
 
