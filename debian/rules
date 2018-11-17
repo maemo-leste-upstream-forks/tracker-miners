@@ -4,63 +4,41 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed -Wl,-Bsymbolic
 
 FEATURE_FLAGS = \
-	--enable-generic-media-extractor=gstreamer \
-	--enable-libstemmer \
-	--enable-upower \
-	--enable-exempi \
-	--enable-libexif \
-	--enable-libgif \
-	--enable-libjpeg \
-	--enable-libtiff \
-	--enable-libpng \
-	--enable-poppler \
-	--enable-libgsf \
-	--enable-abiword \
-	--enable-libxml2 \
-	--enable-gexiv2 \
-	--enable-libvorbis \
-	--enable-libflac \
-	--enable-playlist \
-	--enable-mp3 \
-	--enable-libgxps \
-	--enable-dvi \
-	--enable-ps \
-	--enable-icon \
-	--enable-text \
-	--enable-unit-tests \
-	--enable-taglib \
-	--enable-libcue \
-	--disable-miner-rss \
-	--disable-hal \
-	--disable-static \
+	-Dgeneric_media_extractor=gstreamer \
+	-Dsystemd_user_services=/usr/lib/systemd/user \
+	-Ddocs=true \
+	-Dabiword=true \
+	-Dmp3=true \
+	-Denable-dvi=true \
+	-Dps=true \
+	-Dicon=true \
+	-Dtext=true \
+	-Dfunctional_tests=false \
+	-Dminer_rss=false \
+	-Dbattery_detection=upower
 
 # Disable 'universe' dependencies on Ubuntu
 ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
 FEATURE_FLAGS += \
-	--disable-enca \
-	--disable-libiptcdata \
-	--disable-libosinfo
+#	-Dlibiptcdata=false \
+#	-Dlibosinfo=false \
+	-Dcharset_detection=icu
 else
 FEATURE_FLAGS += \
-	--enable-enca \
-	--enable-libiptcdata \
-	--enable-libosinfo
+#	-Dlibiptcdata=true \
+#	-Dlibosinfo=true \
+	-Dcharset_detection=enca
 endif
 
 %:
-	dh $@ --with gnome
-
-override_dh_autoreconf:
-	dh_autoreconf --as-needed
+	dh $@ --with gnome --buildsystem=meson
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		$(FEATURE_FLAGS) \
-		--libexecdir=\$${prefix}/lib/tracker
+		--libexecdir=/usr/lib/tracker
 
 override_dh_install:
-	find debian/tmp -name '*.la' -print -delete
-	find debian/tmp -name libtracker-extract.so -print -delete
 	find debian/tmp -name 01-writeback.py -print -delete
 	find debian/tmp -name tracker-tests -print -delete
 	dh_install
@@ -75,6 +53,4 @@ override_dh_shlibdeps:
 	dh_shlibdeps -Ltracker-extract
 
 override_dh_auto_test:
-ifeq (, $(filter nocheck, $(DEB_BUILD_OPTIONS)))
 	dbus-run-session -- dh_auto_test
-endif
