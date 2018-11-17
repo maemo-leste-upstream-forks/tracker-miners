@@ -15,20 +15,19 @@ FEATURE_FLAGS = \
 	-Dtext=true \
 	-Dfunctional_tests=false \
 	-Dminer_rss=false \
-	-Dbattery_detection=upower
+	-Dbattery_detection=upower \
+	-Dcharset_detection=icu
 
 # Disable 'universe' dependencies on Ubuntu
-ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
-FEATURE_FLAGS += \
+#ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
+#FEATURE_FLAGS += \
 #	-Dlibiptcdata=false \
-#	-Dlibosinfo=false \
-	-Dcharset_detection=icu
-else
-FEATURE_FLAGS += \
+#	-Dlibosinfo=false
+#else
+#FEATURE_FLAGS += \
 #	-Dlibiptcdata=true \
 #	-Dlibosinfo=true \
-	-Dcharset_detection=enca
-endif
+#endif
 
 %:
 	dh $@ --with gnome --buildsystem=meson
