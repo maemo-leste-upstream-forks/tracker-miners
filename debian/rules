@@ -13,11 +13,13 @@ FEATURE_FLAGS = \
 	-Dps=true \
 	-Dicon=true \
 	-Dtext=true \
-	-Dfunctional_tests=false \
+	-Dfunctional_tests=true \
 	-Dminer_rss=false \
 	-Dbattery_detection=upower \
 	-Dcharset_detection=icu
 
+# Disable this section since meson doesn't have these options yet
+# https://gitlab.gnome.org/GNOME/tracker-miners/issues/39
 # Disable 'universe' dependencies on Ubuntu
 #ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
 #FEATURE_FLAGS += \
