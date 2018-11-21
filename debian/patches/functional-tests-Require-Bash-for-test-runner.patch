@@ -1,7 +1,13 @@
-From: Jeremy Bicha <jbicha@debian.org>
-Date: Mon, 19 Nov 2018 13:09:20 -0500
-Subject: bash
+From: Sam Thursfield <sam@afuera.me.uk>
+Date: Mon, 19 Nov 2018 23:06:45 +0100
+Subject: functional-tests: Require Bash for test runner
 
+We need to clean up on errors. There isn't a 'standard' way to do this,
+so this script needs to explicitly depend on Bash.
+
+Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/42
+
+(cherry picked from commit c0aa4c1fff67e2be2452cffdcc486397da64b96f)
 ---
  tests/functional-tests/test-runner.sh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
