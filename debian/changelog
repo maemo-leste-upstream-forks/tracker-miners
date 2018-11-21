@@ -1,3 +1,17 @@
+tracker-miners (2.1.5-2) unstable; urgency=medium
+
+  * Cherry-pick 2 patches to fix bashisms in meson build script
+  * Cherry-pick functional-tests-Require-Bash-for-test-runner.patch:
+    - Set the functional test script shebang to bash since it's
+      too much work to make it work with other shells right now
+  * Build with meson
+  * Drop enca from Build-Depends; upstream recommends icu for this feature
+  * Build-Depend on tracker & libdbus-1-dev
+  * Build-Depend on dbus-x11 for dbus-launch for functional tests
+  * Build-Depend on bash & procps for functional tests
+
+ -- Jeremy Bicha <jbicha@debian.org>  Tue, 20 Nov 2018 20:05:52 -0500
+
 tracker-miners (2.1.5-1) unstable; urgency=medium
 
   [ Tim Lunn ]
