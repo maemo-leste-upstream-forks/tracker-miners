@@ -1,3 +1,10 @@
+tracker-miners (2.1.5-3) unstable; urgency=medium
+
+  * Drop autopkgtest since those tests are already run by dh_auto_test
+  * Drop unnecessary Build-Depends on bash (it's essential)
+
+ -- Jeremy Bicha <jbicha@debian.org>  Mon, 26 Nov 2018 12:15:17 -0500
+
 tracker-miners (2.1.5-2) unstable; urgency=medium
 
   * Cherry-pick 2 patches to fix bashisms in meson build script
