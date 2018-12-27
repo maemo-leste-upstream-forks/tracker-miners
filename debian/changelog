@@ -1,3 +1,10 @@
+tracker-miners (2.1.5-4) unstable; urgency=medium
+
+  * Add -Wl,-O1 to our LDFLAGS
+  * Bump Standards-Version to 4.3.0
+
+ -- Jeremy Bicha <jbicha@debian.org>  Thu, 27 Dec 2018 18:01:40 -0500
+
 tracker-miners (2.1.5-3) unstable; urgency=medium
 
   * Drop autopkgtest since those tests are already run by dh_auto_test
