@@ -3,3 +3,4 @@ libtracker-miners-common-Make-g_error-a-soft-error.patch
 meson-Fix-bad-string-comparisons-in-create-miner-symlinks.patch
 meson-fix-bashism-in-equality-check.patch
 functional-tests-Require-Bash-for-test-runner.patch
+Stop-merging-translations-to-gschema-files.patch

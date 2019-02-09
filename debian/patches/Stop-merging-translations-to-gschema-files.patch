@@ -1,0 +1,635 @@
+From: =?utf-8?q?Piotr_Dr=C4=85g?= <piotrdrag@gmail.com>
+Date: Fri, 8 Feb 2019 18:03:48 +0100
+Subject: Stop merging translations to gschema files
+
+GSettings schema files are not supposed to include translations,
+but rather tools should look up translations in .mo files.
+
+Fixes https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=918122
+---
+ po/POTFILES.in                                     |   6 +-
+ src/miners/fs/meson.build                          |   6 +-
+ ...org.freedesktop.Tracker.Miner.Files.gschema.xml | 162 +++++++++++++++++++++
+ ....freedesktop.Tracker.Miner.Files.gschema.xml.in | 162 ---------------------
+ src/tracker-extract/meson.build                    |   6 +-
+ .../org.freedesktop.Tracker.Extract.gschema.xml    |  58 ++++++++
+ .../org.freedesktop.Tracker.Extract.gschema.xml.in |  58 --------
+ src/tracker-writeback/meson.build                  |   6 +-
+ .../org.freedesktop.Tracker.Writeback.gschema.xml  |  28 ++++
+ ...rg.freedesktop.Tracker.Writeback.gschema.xml.in |  28 ----
+ 10 files changed, 254 insertions(+), 266 deletions(-)
+ create mode 100644 src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml
+ delete mode 100644 src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
+ create mode 100644 src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml
+ delete mode 100644 src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in
+ create mode 100644 src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml
+ delete mode 100644 src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in
+
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index fab6838..e2fc2bf 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -7,7 +7,7 @@ src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in
+ src/miners/apps/tracker-main.c
+ src/miners/apps/tracker-miner-apps.desktop.in.in
+ src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in
+-src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
++src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml
+ src/miners/fs/tracker-main.c
+ src/miners/fs/tracker-miner-files.c
+ src/miners/fs/tracker-miner-fs.desktop.in.in
+@@ -16,9 +16,9 @@ src/miners/rss/tracker-main.c
+ src/miners/rss/tracker-miner-rss.c
+ src/miners/rss/tracker-miner-rss.desktop.in.in
+ src/tracker-extract/org.freedesktop.Tracker1.Miner.Extract.service.in.in
+-src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in
++src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml
+ src/tracker-extract/tracker-extract.c
+ src/tracker-extract/tracker-main.c
+ src/tracker-extract/tracker-extract.desktop.in.in
+ src/tracker-writeback/tracker-main.c
+-src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in
++src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml
+diff --git a/src/miners/fs/meson.build b/src/miners/fs/meson.build
+index 288610b..3cb46c7 100644
+--- a/src/miners/fs/meson.build
++++ b/src/miners/fs/meson.build
+@@ -58,11 +58,7 @@ desktop_file = custom_target('tracker-miner-fs-desktop-file',
+     install: true,
+     install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+ 
+-custom_target('tracker-miner-fs-settings-schema',
+-    input: 'org.freedesktop.Tracker.Miner.Files.gschema.xml.in',
+-    output: 'org.freedesktop.Tracker.Miner.Files.gschema.xml',
+-    command: ['intltool-merge', '--quiet', '--xml-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
+-    install: true,
++install_data('org.freedesktop.Tracker.Miner.Files.gschema.xml',
+     install_dir: gsettings_schema_dir)
+ 
+ if install_systemd_user_services
+diff --git a/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml b/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml
+new file mode 100644
+index 0000000..15b1e36
+--- /dev/null
++++ b/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml
+@@ -0,0 +1,162 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
++
++This library is free software; you can redistribute it and/or
++modify it under the terms of the GNU Lesser General Public
++License as published by the Free Software Foundation; either
++version 2.1 of the License, or (at your option) any later version.
++
++This library is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++Lesser General Public License for more details.
++
++You should have received a copy of the GNU Lesser General Public
++License along with this library; if not, write to the
++Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++Boston, MA  02110-1301, USA.
++-->
++<schemalist>
++  <schema id="org.freedesktop.Tracker.Miner.Files" path="/org/freedesktop/tracker/miner/files/" gettext-domain="tracker-miners">
++    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
++      <default>'errors'</default>
++      <summary>Log verbosity</summary>
++      <description>Log verbosity.</description>
++    </key>
++
++    <key name="initial-sleep" type="i">
++      <summary>Initial sleep</summary>
++      <description>Initial sleep time, in seconds.</description>
++      <range min="0" max="1000"/>
++      <default>15</default>
++    </key>
++
++    <key name="sched-idle" enum="org.freedesktop.TrackerMiners.TrackerSchedIdle">
++      <default>'first-index'</default>
++      <summary>Scheduler priority when idle</summary>
++      <description>
++	The scheduler is the kernel component that decides which
++	runnable application will be executed by the CPU next. Each
++	application has an associated scheduling policy and priority.
++      </description>
++    </key>
++
++    <key name="throttle" type="i">
++      <summary>Throttle</summary>
++      <description>Indexing speed, the higher the slower.</description>
++      <range min="0" max="20"/>
++      <default>0</default>
++    </key>
++
++    <key name="low-disk-space-limit" type="i">
++      <summary>Low disk space limit</summary>
++      <description>Disk space threshold in percent at which to pause indexing, or -1 to disable.</description>
++      <range min="-1" max="100"/>
++      <default>-1</default>
++    </key>
++
++    <key name="crawling-interval" type="i">
++      <summary>Crawling interval</summary>
++      <description>
++        Interval in days to check whether the filesystem is up to date in the database.
++	0 forces crawling anytime, -1 forces it only after unclean shutdowns, and -2
++	disables it entirely.
++      </description>
++      <range min="-2" max="365"/>
++      <default>-1</default>
++    </key>
++
++    <key name="removable-days-threshold" type="i">
++      <summary>Removable devices’ data permanence threshold</summary>
++      <description>
++	Threshold in days after which files from removables devices
++	will be removed from database if not mounted. 0 means never,
++	maximum is 365.
++      </description>
++      <range min="0" max="365"/>
++      <default>3</default>
++    </key>
++
++    <key name="enable-monitors" type="b">
++      <summary>Enable monitors</summary>
++      <description>Set to false to completely disable any file monitoring</description>
++      <default>true</default>
++    </key>
++
++    <key name="enable-writeback" type="b">
++      <summary>Enable writeback</summary>
++      <description>Set to false to completely disable any file writeback</description>
++      <default>true</default>
++    </key>
++
++    <key name="index-removable-devices" type="b">
++      <summary>Index removable devices</summary>
++      <description>Set to true to enable indexing mounted directories for removable devices.</description>
++      <default>false</default>
++    </key>
++
++    <key name="index-optical-discs" type="b">
++      <summary>Index optical discs</summary>
++      <description>
++	Set to true to enable indexing CDs, DVDs, and generally optical media
++	(if removable devices are not indexed, optical discs won’t be either)
++      </description>
++      <default>false</default>
++    </key>
++
++    <key name="index-on-battery" type="b">
++      <summary>Index when running on battery</summary>
++      <description>Set to true to index while running on battery</description>
++      <default>true</default>
++    </key>
++
++    <key name="index-on-battery-first-time" type="b">
++      <summary>Perform initial indexing when running on battery</summary>
++      <description>Set to true to index while running on battery for the first time only</description>
++      <default>true</default>
++    </key>
++
++    <key name="index-recursive-directories" type="as">
++      <summary>Directories to index recursively</summary>
++      <description>
++	List of directories to index recursively, Special values include:
++	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
++	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
++
++	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
++      </description>
++      <default>[ '&amp;DESKTOP', '&amp;DOCUMENTS', '&amp;DOWNLOAD', '&amp;MUSIC', '&amp;PICTURES', '&amp;VIDEOS' ]</default>
++    </key>
++
++    <key name="index-single-directories" type="as">
++      <summary>Directories to index non-recursively</summary>
++      <description>
++	List of directories to index without inspecting subfolders, Special values include:
++	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
++	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
++
++	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
++      </description>
++      <default>[ '$HOME' ]</default>
++    </key>
++
++    <key name="ignored-files" type="as">
++      <summary>Ignored files</summary>
++      <description>List of file patterns to avoid</description>
++      <default>[ '*~', '*.o', '*.la', '*.lo' , '*.loT', '*.in', '*.csproj', '*.m4', '*.rej', '*.gmo', '*.orig', '*.pc', '*.omf', '*.aux', '*.tmp', '*.vmdk', '*.vm*', '*.nvram', '*.part', '*.rcore', '*.lzo', 'autom4te', 'conftest', 'confstat', 'Makefile', 'SCCS', 'ltmain.sh', 'libtool', 'config.status', 'confdefs.h', 'configure', '#*#', '~$*.doc?', '~$*.dot?', '~$*.xls?', '~$*.xlt?', '~$*.xlam', '~$*.ppt?', '~$*.pot?', '~$*.ppam', '~$*.ppsm', '~$*.ppsx', '~$*.vsd?', '~$*.vss?', '~$*.vst?', '*.desktop', '*.directory' ]</default>
++    </key>
++
++    <key name="ignored-directories" type="as">
++      <summary>Ignored directories</summary>
++      <description>List of directories to avoid</description>
++      <default>[ 'po', 'CVS', 'core-dumps', 'lost+found' ]</default>
++    </key>
++
++    <key name="ignored-directories-with-content" type="as">
++      <summary>Ignored directories with content</summary>
++      <description>Avoid any directory containing a file blacklisted here</description>
++      <default>[ '.trackerignore', '.git', '.hg' ]</default>
++    </key>
++  </schema>
++</schemalist>
+diff --git a/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in b/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
+deleted file mode 100644
+index a96e519..0000000
+--- a/src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
++++ /dev/null
+@@ -1,162 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!--
+-Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
+-
+-This library is free software; you can redistribute it and/or
+-modify it under the terms of the GNU Lesser General Public
+-License as published by the Free Software Foundation; either
+-version 2.1 of the License, or (at your option) any later version.
+-
+-This library is distributed in the hope that it will be useful,
+-but WITHOUT ANY WARRANTY; without even the implied warranty of
+-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+-Lesser General Public License for more details.
+-
+-You should have received a copy of the GNU Lesser General Public
+-License along with this library; if not, write to the
+-Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+-Boston, MA  02110-1301, USA.
+--->
+-<schemalist>
+-  <schema id="org.freedesktop.Tracker.Miner.Files" path="/org/freedesktop/tracker/miner/files/" gettext-domain="tracker-miners">
+-    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
+-      <default>'errors'</default>
+-      <_summary>Log verbosity</_summary>
+-      <_description>Log verbosity.</_description>
+-    </key>
+-
+-    <key name="initial-sleep" type="i">
+-      <_summary>Initial sleep</_summary>
+-      <_description>Initial sleep time, in seconds.</_description>
+-      <range min="0" max="1000"/>
+-      <default>15</default>
+-    </key>
+-
+-    <key name="sched-idle" enum="org.freedesktop.TrackerMiners.TrackerSchedIdle">
+-      <default>'first-index'</default>
+-      <_summary>Scheduler priority when idle</_summary>
+-      <_description>
+-	The scheduler is the kernel component that decides which
+-	runnable application will be executed by the CPU next. Each
+-	application has an associated scheduling policy and priority.
+-      </_description>
+-    </key>
+-
+-    <key name="throttle" type="i">
+-      <_summary>Throttle</_summary>
+-      <_description>Indexing speed, the higher the slower.</_description>
+-      <range min="0" max="20"/>
+-      <default>0</default>
+-    </key>
+-
+-    <key name="low-disk-space-limit" type="i">
+-      <_summary>Low disk space limit</_summary>
+-      <_description>Disk space threshold in percent at which to pause indexing, or -1 to disable.</_description>
+-      <range min="-1" max="100"/>
+-      <default>-1</default>
+-    </key>
+-
+-    <key name="crawling-interval" type="i">
+-      <_summary>Crawling interval</_summary>
+-      <_description>
+-        Interval in days to check whether the filesystem is up to date in the database.
+-	0 forces crawling anytime, -1 forces it only after unclean shutdowns, and -2
+-	disables it entirely.
+-      </_description>
+-      <range min="-2" max="365"/>
+-      <default>-1</default>
+-    </key>
+-
+-    <key name="removable-days-threshold" type="i">
+-      <_summary>Removable devices’ data permanence threshold</_summary>
+-      <_description>
+-	Threshold in days after which files from removables devices
+-	will be removed from database if not mounted. 0 means never,
+-	maximum is 365.
+-      </_description>
+-      <range min="0" max="365"/>
+-      <default>3</default>
+-    </key>
+-
+-    <key name="enable-monitors" type="b">
+-      <_summary>Enable monitors</_summary>
+-      <_description>Set to false to completely disable any file monitoring</_description>
+-      <default>true</default>
+-    </key>
+-
+-    <key name="enable-writeback" type="b">
+-      <_summary>Enable writeback</_summary>
+-      <_description>Set to false to completely disable any file writeback</_description>
+-      <default>true</default>
+-    </key>
+-
+-    <key name="index-removable-devices" type="b">
+-      <_summary>Index removable devices</_summary>
+-      <_description>Set to true to enable indexing mounted directories for removable devices.</_description>
+-      <default>false</default>
+-    </key>
+-
+-    <key name="index-optical-discs" type="b">
+-      <_summary>Index optical discs</_summary>
+-      <_description>
+-	Set to true to enable indexing CDs, DVDs, and generally optical media
+-	(if removable devices are not indexed, optical discs won’t be either)
+-      </_description>
+-      <default>false</default>
+-    </key>
+-
+-    <key name="index-on-battery" type="b">
+-      <_summary>Index when running on battery</_summary>
+-      <_description>Set to true to index while running on battery</_description>
+-      <default>true</default>
+-    </key>
+-
+-    <key name="index-on-battery-first-time" type="b">
+-      <_summary>Perform initial indexing when running on battery</_summary>
+-      <_description>Set to true to index while running on battery for the first time only</_description>
+-      <default>true</default>
+-    </key>
+-
+-    <key name="index-recursive-directories" type="as">
+-      <_summary>Directories to index recursively</_summary>
+-      <_description>
+-	List of directories to index recursively, Special values include:
+-	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
+-	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
+-
+-	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
+-      </_description>
+-      <default>[ '&amp;DESKTOP', '&amp;DOCUMENTS', '&amp;DOWNLOAD', '&amp;MUSIC', '&amp;PICTURES', '&amp;VIDEOS' ]</default>
+-    </key>
+-
+-    <key name="index-single-directories" type="as">
+-      <_summary>Directories to index non-recursively</_summary>
+-      <_description>
+-	List of directories to index without inspecting subfolders, Special values include:
+-	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
+-	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
+-
+-	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
+-      </_description>
+-      <default>[ '$HOME' ]</default>
+-    </key>
+-
+-    <key name="ignored-files" type="as">
+-      <_summary>Ignored files</_summary>
+-      <_description>List of file patterns to avoid</_description>
+-      <default>[ '*~', '*.o', '*.la', '*.lo' , '*.loT', '*.in', '*.csproj', '*.m4', '*.rej', '*.gmo', '*.orig', '*.pc', '*.omf', '*.aux', '*.tmp', '*.vmdk', '*.vm*', '*.nvram', '*.part', '*.rcore', '*.lzo', 'autom4te', 'conftest', 'confstat', 'Makefile', 'SCCS', 'ltmain.sh', 'libtool', 'config.status', 'confdefs.h', 'configure', '#*#', '~$*.doc?', '~$*.dot?', '~$*.xls?', '~$*.xlt?', '~$*.xlam', '~$*.ppt?', '~$*.pot?', '~$*.ppam', '~$*.ppsm', '~$*.ppsx', '~$*.vsd?', '~$*.vss?', '~$*.vst?', '*.desktop', '*.directory' ]</default>
+-    </key>
+-
+-    <key name="ignored-directories" type="as">
+-      <_summary>Ignored directories</_summary>
+-      <_description>List of directories to avoid</_description>
+-      <default>[ 'po', 'CVS', 'core-dumps', 'lost+found' ]</default>
+-    </key>
+-
+-    <key name="ignored-directories-with-content" type="as">
+-      <_summary>Ignored directories with content</_summary>
+-      <_description>Avoid any directory containing a file blacklisted here</_description>
+-      <default>[ '.trackerignore', '.git', '.hg' ]</default>
+-    </key>
+-  </schema>
+-</schemalist>
+diff --git a/src/tracker-extract/meson.build b/src/tracker-extract/meson.build
+index 9834dc4..ba61603 100644
+--- a/src/tracker-extract/meson.build
++++ b/src/tracker-extract/meson.build
+@@ -198,11 +198,7 @@ desktop_file = custom_target('tracker-extract-desktop-file',
+   install: true,
+   install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+ 
+-custom_target('tracker-extract-settings-schema',
+-  input: 'org.freedesktop.Tracker.Extract.gschema.xml.in',
+-  output: 'org.freedesktop.Tracker.Extract.gschema.xml',
+-  command: ['intltool-merge', '--quiet', '--xml-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
+-  install: true,
++install_data('org.freedesktop.Tracker.Extract.gschema.xml',
+   install_dir: gsettings_schema_dir)
+ 
+ if install_systemd_user_services
+diff --git a/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml b/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml
+new file mode 100644
+index 0000000..e1449e7
+--- /dev/null
++++ b/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml
+@@ -0,0 +1,58 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
++
++This library is free software; you can redistribute it and/or
++modify it under the terms of the GNU Lesser General Public
++License as published by the Free Software Foundation; either
++version 2.1 of the License, or (at your option) any later version.
++
++This library is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++Lesser General Public License for more details.
++
++You should have received a copy of the GNU Lesser General Public
++License along with this library; if not, write to the
++Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++Boston, MA  02110-1301, USA.
++-->
++<schemalist>
++  <schema id="org.freedesktop.Tracker.Extract" path="/org/freedesktop/tracker/extract/" gettext-domain="tracker-miners">
++    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
++      <default>'errors'</default>
++      <summary>Log verbosity</summary>
++      <description>Log verbosity.</description>
++    </key>
++
++    <key name="sched-idle" enum="org.freedesktop.TrackerMiners.TrackerSchedIdle">
++      <default>'first-index'</default>
++      <summary>Scheduler priority when idle</summary>
++      <description>
++	The scheduler is the kernel component that decides which
++	runnable application will be executed by the CPU next. Each
++	application has an associated scheduling policy and priority.
++      </description>
++    </key>
++
++    <key name="max-bytes" type="i">
++      <summary>Max bytes to extract</summary>
++      <description>Maximum number of UTF-8 bytes to extract.</description>
++      <range min="0" max="10485760"/>
++      <default>1048576</default>
++    </key>
++
++    <key name="max-media-art-width" type="i">
++      <summary>Max media art width</summary>
++      <description>Maximum width in pixels for any media art extracted. Anything bigger is resized. Set to -1 to disable saving media art from files. Setting to 0 sets no limit on the media art width.</description>
++      <range min="-1" max="2048"/>
++      <default>0</default>
++    </key>
++
++    <key name="wait-for-miner-fs" type="b">
++      <summary>Wait for FS miner to be done before extracting</summary>
++      <description>When true, tracker-extract will wait for tracker-miner-fs to be done crawling before extracting meta-data. This option is useful on constrained environment where it is important to list files as fast as possible and can wait to get meta-data later.</description>
++      <default>false</default>
++    </key>
++  </schema>
++</schemalist>
+diff --git a/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in b/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in
+deleted file mode 100644
+index 591194f..0000000
+--- a/src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in
++++ /dev/null
+@@ -1,58 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!--
+-Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
+-
+-This library is free software; you can redistribute it and/or
+-modify it under the terms of the GNU Lesser General Public
+-License as published by the Free Software Foundation; either
+-version 2.1 of the License, or (at your option) any later version.
+-
+-This library is distributed in the hope that it will be useful,
+-but WITHOUT ANY WARRANTY; without even the implied warranty of
+-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+-Lesser General Public License for more details.
+-
+-You should have received a copy of the GNU Lesser General Public
+-License along with this library; if not, write to the
+-Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+-Boston, MA  02110-1301, USA.
+--->
+-<schemalist>
+-  <schema id="org.freedesktop.Tracker.Extract" path="/org/freedesktop/tracker/extract/" gettext-domain="tracker-miners">
+-    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
+-      <default>'errors'</default>
+-      <_summary>Log verbosity</_summary>
+-      <_description>Log verbosity.</_description>
+-    </key>
+-
+-    <key name="sched-idle" enum="org.freedesktop.TrackerMiners.TrackerSchedIdle">
+-      <default>'first-index'</default>
+-      <_summary>Scheduler priority when idle</_summary>
+-      <_description>
+-	The scheduler is the kernel component that decides which
+-	runnable application will be executed by the CPU next. Each
+-	application has an associated scheduling policy and priority.
+-      </_description>
+-    </key>
+-
+-    <key name="max-bytes" type="i">
+-      <_summary>Max bytes to extract</_summary>
+-      <_description>Maximum number of UTF-8 bytes to extract.</_description>
+-      <range min="0" max="10485760"/>
+-      <default>1048576</default>
+-    </key>
+-
+-    <key name="max-media-art-width" type="i">
+-      <_summary>Max media art width</_summary>
+-      <_description>Maximum width in pixels for any media art extracted. Anything bigger is resized. Set to -1 to disable saving media art from files. Setting to 0 sets no limit on the media art width.</_description>
+-      <range min="-1" max="2048"/>
+-      <default>0</default>
+-    </key>
+-
+-    <key name="wait-for-miner-fs" type="b">
+-      <_summary>Wait for FS miner to be done before extracting</_summary>
+-      <_description>When true, tracker-extract will wait for tracker-miner-fs to be done crawling before extracting meta-data. This option is useful on constrained environment where it is important to list files as fast as possible and can wait to get meta-data later.</_description>
+-      <default>false</default>
+-    </key>
+-  </schema>
+-</schemalist>
+diff --git a/src/tracker-writeback/meson.build b/src/tracker-writeback/meson.build
+index f84eab5..367c9dc 100644
+--- a/src/tracker-writeback/meson.build
++++ b/src/tracker-writeback/meson.build
+@@ -56,11 +56,7 @@ dbus_service_file = configure_file(
+   install: true,
+   install_dir: dbus_services_dir)
+ 
+-custom_target('tracker-writeback-settings-schema',
+-  input: 'org.freedesktop.Tracker.Writeback.gschema.xml.in',
+-  output: 'org.freedesktop.Tracker.Writeback.gschema.xml',
+-  command: ['intltool-merge', '--quiet', '--xml-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
+-  install: true,
++install_data('org.freedesktop.Tracker.Writeback.gschema.xml',
+   install_dir: gsettings_schema_dir)
+ 
+ if install_systemd_user_services
+diff --git a/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml b/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml
+new file mode 100644
+index 0000000..ba6b0e1
+--- /dev/null
++++ b/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
++
++This library is free software; you can redistribute it and/or
++modify it under the terms of the GNU Lesser General Public
++License as published by the Free Software Foundation; either
++version 2.1 of the License, or (at your option) any later version.
++
++This library is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++Lesser General Public License for more details.
++
++You should have received a copy of the GNU Lesser General Public
++License along with this library; if not, write to the
++Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++Boston, MA  02110-1301, USA.
++-->
++<schemalist>
++  <schema id="org.freedesktop.Tracker.Writeback" path="/org/freedesktop/tracker/writeback/" gettext-domain="tracker-miners">
++    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
++      <default>'errors'</default>
++      <summary>Log verbosity</summary>
++      <description>Log verbosity.</description>
++    </key>
++  </schema>
++</schemalist>
+diff --git a/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in b/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in
+deleted file mode 100644
+index ba6b0e1..0000000
+--- a/src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in
++++ /dev/null
+@@ -1,28 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!--
+-Copyright (C) 2011, Nokia <ivan.frade@nokia.com>
+-
+-This library is free software; you can redistribute it and/or
+-modify it under the terms of the GNU Lesser General Public
+-License as published by the Free Software Foundation; either
+-version 2.1 of the License, or (at your option) any later version.
+-
+-This library is distributed in the hope that it will be useful,
+-but WITHOUT ANY WARRANTY; without even the implied warranty of
+-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+-Lesser General Public License for more details.
+-
+-You should have received a copy of the GNU Lesser General Public
+-License along with this library; if not, write to the
+-Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+-Boston, MA  02110-1301, USA.
+--->
+-<schemalist>
+-  <schema id="org.freedesktop.Tracker.Writeback" path="/org/freedesktop/tracker/writeback/" gettext-domain="tracker-miners">
+-    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
+-      <default>'errors'</default>
+-      <_summary>Log verbosity</_summary>
+-      <_description>Log verbosity.</_description>
+-    </key>
+-  </schema>
+-</schemalist>
