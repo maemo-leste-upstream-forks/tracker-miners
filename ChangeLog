@@ -1,3 +1,108 @@
+2019-02-23  Carlos Garnacho  <carlosg@gnome.org>
+
+	Release 2.1.6
+
+2019-02-21  Mart Raudsepp  <leio@gentoo.org>
+
+	build: Remove unnecessary uuid util-linux hard dependency
+	tracker core might use uuid, but nothing in tracker-miners needs it
+
+	(cherry-picked from 5eee9f8618b8d4b1f2c5e858213de0d5883cc950)
+
+	build: Remove unnecessary vala language dependency
+	(cherry-picked from e4a71d9cff6002d5d62e417d43241dbdbb3e2d54)
+	tracker-miners doesn't use any vala, but due to vala declared as
+	a used language it does error out if valac isn't found. Remove the
+	language and unused vapi helper variable.
+
+	build: Fix minimum dep checks to allow the specified version too
+	Many of the minimum deps were expressed as "> x.y", but were meant to
+	allow x.y itself as well. Change all to ">= x.y". This seems to be
+	what was intended and was the case with autotools.
+
+	(cherry-picked from 65424da4f9f5b169412672192d67a564a31078a0)
+
+	build: Add feature options for all external deps
+	Automagic dependencies are bad for distributions. Add feature options
+	for all of them that didn't have it before. If no options are specified,
+	the behavior matches with before, but now it's possible to specify
+	exactly what is linked to and what isn't.
+
+	Fixes: #39
+
+	(cherry-picked from db824e0e1fd73aef96c8b0c10ec1563369f5c5bc)
+
+2019-02-21  Debarshi Ray  <debarshir@gnome.org>
+
+	build: Disable guarantee_metadata by default
+	Fallout from 68b41e39e0fbdcf60dccfbccc83f59212f81edb6
+
+	https://gitlab.gnome.org/GNOME/tracker-miners/issues/28
+
+2019-02-21  Mart Raudsepp  <leio@gentoo.org>
+
+	build: Only require seccomp when the CPU architecture supports it
+	(cherry-picked from b2d4b05a0c9e34b88aaf55b9f52497b07af8e862)
+
+	libtracker-common: improve test_path_evaluate_name environment handling
+	Under some environments $PWD might not point where we expect, so simply
+	use g_get_current_dir() instead.
+	g_getenv() is documented to return a pointer that may get overwritten
+	by subsequent calls to g_getenv, g_setenv of g_unsetenv. As even after
+	removing the second g_getenv, there's still g_setenv calls, take a copy.
+
+	See: https://gitlab.gnome.org/GNOME/tracker/merge_requests/59
+
+	(cherry-picked from 2b4069e02daf7ce79c58d70ebb9afceff334f88e)
+
+2019-02-21  Carlos Garnacho  <carlosg@gnome.org>
+
+	build: Fix build with libav
+	The extractor rules defined an array inside an array, which configure_file()
+	wouldn't accept.
+
+2019-01-17  Charles Monzat  <charles.monzat@numericable.fr>
+
+	Update French translation
+
+2018-11-19  Sam Thursfield  <sam@afuera.me.uk>
+
+	Merge branch 'meson-bashism' into 'tracker-miners-2.1'
+	Fix bashism in meson build
+
+	See merge request GNOME/tracker-miners!37
+
+2018-11-18  Jeremy Bicha  <jbicha@ubuntu.com>
+
+	meson: fix bashism in equality check
+	Thanks https://rgeissert.blogspot.com/2012/12/a-bashism-week-testing-for-equality.html
+
+	and checkbashisms from Debian's devscripts
+
+	Closes: https://gitlab.gnome.org/GNOME/tracker-miners/issues/38
+
+2018-11-18  Sam Thursfield  <sam@afuera.me.uk>
+
+	meson: Fix bad string comparisons in create-miner-symlinks.sh script
+	This script creates symlinks from $prefix/share/tracker/miners to the
+	real D-Bus .service files, which usually live in /usr/share/dbus-1.
+
+	The script was comparing strings incorrectly, leading to misbehaviour.
+
+	See https://gitlab.gnome.org/GNOME/tracker-miners/issues/38
+
+2018-11-17  Iñaki Larrañaga Murgoitio  <dooteo@zundan.com>
+
+	Update Basque translation
+
+2018-10-28  Dušan Kazik  <prescott66@gmail.com>
+
+	Update Slovak translation
+
+2018-09-29  Марко Костић  <marko.m.kostic@gmail.com>
+
+	Update Serbian translation
+
 2018-09-26  Carlos Garnacho  <carlosg@gnome.org>
 
 	Release 2.1.5
