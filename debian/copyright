@@ -9,35 +9,35 @@ Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
            2011 Sam Thursfield <sam.thursfield@codethink.co.uk>
 License: GPL-2+
 
-Files: src/libtracker-common/*
+Files: src/libtracker-miners-common/*
 Copyright: 2008-2011 Nokia <ivan.frade@nokia.com>
 License: LGPL-2.1+
 
-Files: src/libtracker-common/tracker-date-time.*
-       src/libtracker-common/tracker-file-utils.*
-       src/libtracker-common/tracker-language.*
-       src/libtracker-common/tracker-type-utils.*
-       src/libtracker-common/tracker-utils.*
+Files: src/libtracker-miners-common/tracker-date-time.*
+       src/libtracker-miners-common/tracker-file-utils.*
+       src/libtracker-miners-common/tracker-language.*
+       src/libtracker-miners-common/tracker-type-utils.*
+       src/libtracker-miners-common/tracker-utils.*
 Copyright: 2006 Jamie McCracken <jamiemcc@gnome.org>
            2008-2010 Nokia <ivan.frade@nokia.com>
 License: LGPL-2.1+
 
-Files: src/libtracker-common/tracker-domain-ontology.*
+Files: src/libtracker-miners-common/tracker-domain-ontology.*
 Copyright: 2017, Red Hat, Inc.
 License: LGPL-2.1+
 
-Files: src/libtracker-common/tracker-ioprio.c
+Files: src/libtracker-miners-common/tracker-ioprio.c
 Copyright: 2005 Novell, Inc.
            2006 Anders Aagaard
            2006 Jamie McCracken <jamiemcc@gnome.org>
 License: Expat
 
-Files: src/libtracker-common/tracker-ioprio.h
+Files: src/libtracker-miners-common/tracker-ioprio.h
 Copyright: 2006 Anders Aagaard
            2008 Nokia <ivan.frade@nokia.com>
 License: LGPL-2.1+
 
-Files: src/libtracker-common/tracker-seccomp.*
+Files: src/libtracker-miners-common/tracker-seccomp.*
 Copyright: 2016 Red Hat Inc.
 License: LGPL-2.1+
 
