@@ -1,10 +1,15 @@
-tracker-miners (2.1.6-1) UNRELEASED; urgency=medium
+tracker-miners (2.1.6-1) unstable; urgency=medium
 
+  * New upstream release
+  * debian/rules: Set meson's auto_features=enabled
+  * Drop obsolete Build-Depends on valac
+  * Drop patches applied in new release:
+    - meson-Fix-bad-string-comparisons-in-create-miner-symlinks.patch
+    - meson-fix-bashism-in-equality-check.patch
   * Cherry-pick Stop-merging-translations-to-gschema-files.patch:
     - Fix translations of gsettings descriptions. (Closes: #918122)
-  * New upstream release
 
- -- Jeremy Bicha <jbicha@debian.org>  Sat, 23 Feb 2019 11:59:25 -0500
+ -- Jeremy Bicha <jbicha@debian.org>  Sat, 23 Feb 2019 12:15:14 -0500
 
 tracker-miners (2.1.5-4) unstable; urgency=medium
 
