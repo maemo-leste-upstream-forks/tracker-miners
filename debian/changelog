@@ -1,3 +1,10 @@
+tracker-miners (2.1.5-5) UNRELEASED; urgency=medium
+
+  * Cherry-pick Stop-merging-translations-to-gschema-files.patch:
+    - Fix translations of gsettings descriptions. (Closes: #918122)
+
+ -- Jeremy Bicha <jbicha@debian.org>  Sat, 23 Feb 2019 11:37:17 -0500
+
 tracker-miners (2.1.5-4) unstable; urgency=medium
 
   * Add -Wl,-O1 to our LDFLAGS
