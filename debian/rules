@@ -7,35 +7,24 @@ FEATURE_FLAGS = \
 	-Dgeneric_media_extractor=gstreamer \
 	-Dsystemd_user_services=/usr/lib/systemd/user \
 	-Ddocs=true \
-	-Dabiword=true \
-	-Dmp3=true \
-	-Denable-dvi=true \
-	-Dps=true \
-	-Dicon=true \
-	-Dtext=true \
 	-Dfunctional_tests=true \
 	-Dminer_rss=false \
 	-Dbattery_detection=upower \
 	-Dcharset_detection=icu
 
-# Disable this section since meson doesn't have these options yet
-# https://gitlab.gnome.org/GNOME/tracker-miners/issues/39
-# Disable 'universe' dependencies on Ubuntu
-#ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
-#FEATURE_FLAGS += \
-#	-Dlibiptcdata=false \
-#	-Dlibosinfo=false
-#else
-#FEATURE_FLAGS += \
-#	-Dlibiptcdata=true \
-#	-Dlibosinfo=true \
-#endif
+# Disable 'universe' dependencies (libosinfo & libiptcdata) on Ubuntu
+ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
+FEATURE_FLAGS += \
+	-Diptc=disabled \
+	-Diso=disabled
+endif
 
 %:
 	dh $@ --with gnome --buildsystem=meson
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
+		-Dauto_features=enabled \
 		$(FEATURE_FLAGS) \
 		--libexecdir=/usr/lib/tracker
 
