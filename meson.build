@@ -1,4 +1,4 @@
-project('tracker-miners', 'c', 'vala', version: '2.1.5')
+project('tracker-miners', 'c', version: '2.1.6')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -56,50 +56,42 @@ endif
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
 avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
 avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
-dbus = dependency('dbus-1', version: '> 1.3.1')
-exempi = dependency('exempi-2.0', version: '> 2.1.0', required: false)
-flac = dependency('flac', version: '> 1.2.1', required: false)
-gexiv2 = dependency('gexiv2', required: false)
-gio = dependency('gio-2.0', version: '>' + glib_required)
-gio_unix = dependency('gio-unix-2.0', version: '>' + glib_required)
-glib = dependency('glib-2.0', version: '>' + glib_required)
-gmodule = dependency('gmodule-2.0', version: '>' + glib_required)
-gobject = dependency('gobject-2.0', version: '>' + glib_required)
+dbus = dependency('dbus-1', version: '>= 1.3.1')
+exempi = dependency('exempi-2.0', version: '>= 2.1.0', required: get_option('xmp'))
+flac = dependency('flac', version: '>= 1.2.1', required: get_option('flac'))
+gexiv2 = dependency('gexiv2', required: get_option('raw'))
+gio = dependency('gio-2.0', version: '>=' + glib_required)
+gio_unix = dependency('gio-unix-2.0', version: '>=' + glib_required)
+glib = dependency('glib-2.0', version: '>=' + glib_required)
+gmodule = dependency('gmodule-2.0', version: '>=' + glib_required)
+gobject = dependency('gobject-2.0', version: '>=' + glib_required)
 gstreamer = dependency('gstreamer-1.0', required: false)
 gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
 gstreamer_tag = dependency('gstreamer-tag-1.0', required: false)
-gupnp_dlna = dependency('gupnp-dlna-2.0', version: '> 0.9.4', required: false)
-gupnp_dlna_gst = dependency('gupnp-dlna-gst-2.0', version: '> 0.9.4', required: false)
-icu_i18n = dependency('icu-i18n', version: '> 4.8.1.1', required: false)
-icu_uc = dependency('icu-uc', version: '> 4.8.1.1', required: false)
-libcue = dependency('libcue', required: false)
-libexif = dependency('libexif', version: '> 0.6', required: false)
-libgsf = dependency('libgsf-1', version: '> 1.14.24', required: false)
-libgxps = dependency('libgxps', required: false)
-libiptcdata = dependency('libiptcdata', required: false)
-libjpeg = dependency('libjpeg', required: false)
-libosinfo = dependency('libosinfo-1.0', version: '> 0.2.9', required: false)
-libpng = dependency('libpng', version: '> 0.89', required: false)
+gupnp_dlna = dependency('gupnp-dlna-2.0', version: '>= 0.9.4', required: false)
+gupnp_dlna_gst = dependency('gupnp-dlna-gst-2.0', version: '>= 0.9.4', required: false)
+icu_i18n = dependency('icu-i18n', version: '>= 4.8.1.1', required: false)
+icu_uc = dependency('icu-uc', version: '>= 4.8.1.1', required: false)
+libcue = dependency('libcue', required: get_option('cue'))
+libexif = dependency('libexif', version: '>= 0.6', required: get_option('exif'))
+libgsf = dependency('libgsf-1', version: '>= 1.14.24', required: get_option('gsf'))
+libgxps = dependency('libgxps', required: get_option('xps'))
+libiptcdata = dependency('libiptcdata', required: get_option('iptc'))
+libjpeg = dependency('libjpeg', required: get_option('jpeg'))
+libosinfo = dependency('libosinfo-1.0', version: '>= 0.2.9', required: get_option('iso'))
+libpng = dependency('libpng', version: '>= 0.89', required: get_option('png'))
 libseccomp = dependency('libseccomp', version: '>= 2.0', required: false)
-libtiff = dependency('libtiff-4', required: false)
-libxml2 = dependency('libxml-2.0', version: '> 2.6')
-libvorbis = dependency('vorbisfile', version: '> 0.22')
-poppler = dependency('poppler-glib', version: '> 0.16.0', required: false)
-taglib = dependency('taglib_c', version: '> 1.6', required: false)
-totem_plparser = dependency('totem-plparser', required: false)
-upower = dependency('upower-glib', version: '> 0.9.0', required: false)
+libtiff = dependency('libtiff-4', required: get_option('tiff'))
+libxml2 = dependency('libxml-2.0', version: '>= 2.6', required: get_option('xml'))
+libvorbis = dependency('vorbisfile', version: '>= 0.22', required: get_option('vorbis'))
+poppler = dependency('poppler-glib', version: '>= 0.16.0', required: get_option('pdf'))
+taglib = dependency('taglib_c', version: '>= 1.6', required: get_option('taglib'))
+totem_plparser = dependency('totem-plparser', required: get_option('playlist'))
+upower = dependency('upower-glib', version: '>= 0.9.0', required: false)
 zlib = dependency('zlib')
 
-libgif = cc.find_library('gif', required: false)
+libgif = cc.find_library('gif', required: get_option('gif'))
 libmath = cc.find_library('m', required: false)
-
-# FIXME: here we work around a quirk todo with Meson and Vala: the 'uuid'
-# pkg-config component corresponds to 'libuuid.vapi', but Meson assumes that
-# .vapi name always matches pkg-config name, and will add `--pkg uuid` to the
-# Vala commandline. By finding 'uuid' using find_library() instead, we get
-# a dependency object back that won't cause any `--pkg` arguments to be added
-# to the Vala commandline, but still works as expected for C code.
-uuid = cc.find_library('uuid')
 
 have_tracker_extract = get_option('extract')
 have_tracker_miner_apps = get_option('miner_apps')
@@ -141,7 +133,7 @@ elif get_option('battery_detection') == 'upower'
 endif
 
 if battery_detection_library_name == ''
-  hal = dependency('hal', version: '> 0.5', required: false)
+  hal = dependency('hal', version: '>= 0.5', required: false)
 
   if hal.found()
     battery_detection_library = hal
@@ -256,7 +248,23 @@ endif
 # Check for libseccomp
 ##################################################################
 
-if not libseccomp.found() and host_machine.system() == 'linux'
+host_system = host_machine.system()
+host_cpu = host_machine.cpu()
+unsupported_cpus = [
+  'alpha',
+  'ia64',
+  'm68k',
+  'parisc',
+  'parisc64',
+  'sh4',
+  'sparc',
+  'sparc64',
+]
+system_supports_seccomp = host_system == 'linux'
+cpu_supports_seccomp = not unsupported_cpus.contains(host_cpu)
+seccomp_required = system_supports_seccomp and cpu_supports_seccomp
+
+if not libseccomp.found() and seccomp_required
   error('Libseccomp is mandatory for sandboxed metadata extraction')
 endif
 
@@ -383,7 +391,6 @@ tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('lib
 tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract')
 
 gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
-vapi_dir = join_paths(get_option('prefix'), get_option('datadir'), 'vala', 'vapi')
 
 glib_mkenums = find_program('glib-mkenums')
 

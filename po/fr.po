@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-07-16 23:39+0000\n"
-"PO-Revision-Date: 2018-07-26 22:48+0200\n"
+"POT-Creation-Date: 2018-09-09 21:05+0000\n"
+"PO-Revision-Date: 2018-11-12 19:45+0100\n"
 "Last-Translator: Charles Monzat <charles.monzat@numericable.fr>\n"
 "Language-Team: français <gnomefr@traduc.org>\n"
 "Language: fr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.30.0\n"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
@@ -260,7 +260,7 @@ msgstr "Indexer les médias amovibles"
 msgid ""
 "Set to true to enable indexing mounted directories for removable devices."
 msgstr ""
-"Définir à vrai (true) pour activer l’indexation des répertoire montés sur "
+"Définir à vrai (true) pour activer l’indexation des répertoires montés sur "
 "des médias amovibles."
 
 #: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
@@ -359,7 +359,7 @@ msgstr ""
 #: ../src/miners/fs/tracker-main.c:82
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
-"Fonctionne jusqu’à ce que tous les emplacements configurés sont indexés, "
+"Fonctionne jusqu’à ce que tous les emplacements configurés soient indexés, "
 "puis quitte"
 
 #: ../src/miners/fs/tracker-main.c:86
@@ -610,7 +610,6 @@ msgid "MODULE"
 msgstr "MODULE"
 
 #: ../src/tracker-extract/tracker-main.c:98
-#| msgid "Output results format: “sparql”, or “turtle”"
 msgid "Output results format: “sparql”, “turtle” or “json-ld”"
 msgstr "Résultats du format de sortie : « sparql », « turtle » ou « json-ld »"
 
