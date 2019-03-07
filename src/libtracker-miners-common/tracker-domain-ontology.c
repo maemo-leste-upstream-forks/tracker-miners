@@ -332,7 +332,11 @@ tracker_domain_ontology_initable_init (GInitable     *initable,
 			path_for_tests = g_strdup (g_getenv ("TRACKER_TEST_DOMAIN_ONTOLOGY_RULE"));
 
 			if (path_for_tests == NULL) {
-				g_error ("Unable to find default domain ontology rule %s", path);
+				inner_error = g_error_new (G_KEY_FILE_ERROR,
+				                           G_KEY_FILE_ERROR_NOT_FOUND,
+				                           "Unable to find default domain ontology rule %s",
+				                           path);
+				goto end;
 			}
 
 			g_free (path);

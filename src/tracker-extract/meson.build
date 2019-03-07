@@ -6,6 +6,7 @@
 
 modules = [
   ['extract-bmp', 'tracker-extract-bmp.c', ['10-bmp.rule'], [tracker_miners_common_dep]],
+  ['extract-desktop', 'tracker-extract-desktop.c', ['10-desktop.rule'], [tracker_miners_common_dep]],
   ['extract-dummy', 'tracker-extract-dummy.c', ['10-comics.rule', '10-ebooks.rule'], [tracker_miners_common_dep]]
 ]
 
@@ -131,11 +132,10 @@ foreach module : modules
 
   # Populate tracker_uninstalled_extract_rules_dir with the enabled .rule files.
   foreach rule: rules
-    empty_conf = configuration_data()
     configure_file(
       input: rule,
       output: rule,
-      configuration: empty_conf)
+      copy: true)
   endforeach
 endforeach
 
@@ -197,13 +197,6 @@ desktop_file = custom_target('tracker-extract-desktop-file',
   command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
   install: true,
   install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
-
-custom_target('tracker-extract-settings-schema',
-  input: 'org.freedesktop.Tracker.Extract.gschema.xml.in',
-  output: 'org.freedesktop.Tracker.Extract.gschema.xml',
-  command: ['intltool-merge', '--quiet', '--xml-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
-  install: true,
-  install_dir: gsettings_schema_dir)
 
 if install_systemd_user_services
   configure_file(

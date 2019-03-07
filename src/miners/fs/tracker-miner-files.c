@@ -63,7 +63,6 @@ typedef struct ProcessFileData ProcessFileData;
 
 struct ProcessFileData {
 	TrackerMinerFiles *miner;
-	TrackerSparqlBuilder *sparql;
 	GCancellable *cancellable;
 	GFile *file;
 	gchar *mime_type;
@@ -516,6 +515,7 @@ tracker_miner_files_init (TrackerMinerFiles *mf)
 	priv->extract_check_query = g_strdup_printf ("SELECT ?u { "
 	                                             "  GRAPH <" TRACKER_OWN_GRAPH_URN "> {"
 						     "    ?u a nfo:FileDataObject ;"
+						     "       tracker:available true ; "
 						     "       a ?class . "
 						     "    FILTER (?class IN (%s) && "
 						     "            NOT EXISTS { ?u nie:dataSource <" TRACKER_EXTRACT_DATA_SOURCE "> })"
@@ -532,6 +532,29 @@ miner_files_initable_iface_init (GInitableIface *iface)
 	iface->init = miner_files_initable_init;
 }
 
+static void
+miner_files_add_application_dir (TrackerMinerFiles *mf,
+                                 const gchar       *dir)
+{
+	TrackerIndexingTree *indexing_tree;
+	GFile *file;
+	gchar *path;
+
+	indexing_tree = tracker_miner_fs_get_indexing_tree (TRACKER_MINER_FS (mf));
+
+	/* Add $dir/applications */
+	path = g_build_filename (dir, "applications", NULL);
+	file = g_file_new_for_path (path);
+	g_message ("  Adding:'%s'", path);
+
+	tracker_indexing_tree_add (indexing_tree, file,
+				   TRACKER_DIRECTORY_FLAG_RECURSE |
+				   TRACKER_DIRECTORY_FLAG_MONITOR |
+				   TRACKER_DIRECTORY_FLAG_CHECK_MTIME);
+	g_object_unref (file);
+	g_free (path);
+}
+
 static gboolean
 miner_files_initable_init (GInitable     *initable,
                            GCancellable  *cancellable,
@@ -541,10 +564,13 @@ miner_files_initable_init (GInitable     *initable,
 	TrackerMinerFS *fs;
 	TrackerIndexingTree *indexing_tree;
 	TrackerDirectoryFlags flags;
+	const gchar *user_data_dir;
+	const gchar * const *xdg_dirs;
 	GError *inner_error = NULL;
 	GSList *mounts = NULL;
 	GSList *dirs;
 	GSList *m;
+	gint i;
 
 	/* Chain up parent's initable callback before calling child's one */
 	if (!miner_files_initable_parent_iface->init (initable, cancellable, &inner_error)) {
@@ -751,6 +777,19 @@ miner_files_initable_init (GInitable     *initable,
 		miner_files_add_removable_or_optical_directory (mf,
 		                                                (gchar *) m->data,
 		                                                NULL);
+	}
+
+	/* Add application directories */
+	g_message ("Setting up applications to iterate from XDG system directories");
+	xdg_dirs = g_get_system_data_dirs ();
+
+	for (i = 0; xdg_dirs[i]; i++) {
+		miner_files_add_application_dir (mf, xdg_dirs[i]);
+	}
+
+	user_data_dir = g_get_user_data_dir ();
+	if (user_data_dir) {
+		miner_files_add_application_dir (mf, user_data_dir);
 	}
 
 	/* We want to get notified when config changes */
@@ -2204,18 +2243,15 @@ miner_files_get_file_urn (TrackerMinerFiles *miner,
 }
 
 static void
-miner_files_add_to_datasource (TrackerMinerFiles    *mf,
-                               GFile                *file,
-                               TrackerSparqlBuilder *sparql)
+miner_files_add_to_datasource (TrackerMinerFiles *mf,
+                               GFile             *file,
+                               TrackerResource   *resource)
 {
 	TrackerMinerFilesPrivate *priv;
 	const gchar *removable_device_uuid;
-	gchar *removable_device_urn, *uri;
-	const gchar *urn;
-	gboolean is_iri;
+	gchar *removable_device_urn;
 
 	priv = TRACKER_MINER_FILES_GET_PRIVATE (mf);
-	uri = g_file_get_uri (file);
 
 	removable_device_uuid = tracker_storage_get_uuid_for_file (priv->storage, file);
 
@@ -2226,31 +2262,17 @@ miner_files_add_to_datasource (TrackerMinerFiles    *mf,
 		removable_device_urn = g_strdup (TRACKER_DATASOURCE_URN_NON_REMOVABLE_MEDIA);
 	}
 
-	urn = miner_files_get_file_urn (mf, file, &is_iri);
+	tracker_resource_set_uri (resource, "nie:dataSource", removable_device_urn);
 
-	if (is_iri) {
-		tracker_sparql_builder_subject_iri (sparql, urn);
-	} else {
-		tracker_sparql_builder_subject (sparql, urn);
-	}
-
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "nfo:FileDataObject");
-
-	tracker_sparql_builder_predicate (sparql, "nie:dataSource");
-	tracker_sparql_builder_object_iri (sparql, removable_device_urn);
-
-	tracker_sparql_builder_predicate (sparql, "tracker:available");
-	tracker_sparql_builder_object_boolean (sparql, TRUE);
+	tracker_resource_set_boolean (resource, "tracker:available", TRUE);
 
 	g_free (removable_device_urn);
-	g_free (uri);
 }
 
 static void
-miner_files_add_rdf_types (TrackerSparqlBuilder *sparql,
-                           GFile                *file,
-                           const gchar          *mime_type)
+miner_files_add_rdf_types (TrackerResource *resource,
+                           GFile           *file,
+                           const gchar     *mime_type)
 {
 	GStrv rdf_types;
 	gint i = 0;
@@ -2260,13 +2282,9 @@ miner_files_add_rdf_types (TrackerSparqlBuilder *sparql,
 	if (!rdf_types)
 		return;
 
-	if (rdf_types[0]) {
-		tracker_sparql_builder_predicate (sparql, "a");
-
-		while (rdf_types[i]) {
-			tracker_sparql_builder_object (sparql, rdf_types[i]);
-			i++;
-		}
+	while (rdf_types[i]) {
+		tracker_resource_add_uri (resource, "rdf:type", rdf_types[i]);
+		i++;
 	}
 
 	g_strfreev (rdf_types);
@@ -2276,7 +2294,6 @@ static void
 process_file_data_free (ProcessFileData *data)
 {
 	g_object_unref (data->miner);
-	g_object_unref (data->sparql);
 	g_object_unref (data->cancellable);
 	g_object_unref (data->file);
 	g_object_unref (data->task);
@@ -2284,52 +2301,10 @@ process_file_data_free (ProcessFileData *data)
 	g_slice_free (ProcessFileData, data);
 }
 
-static void
-sparql_builder_finish (ProcessFileData *data,
-                       const gchar     *preupdate,
-                       const gchar     *postupdate,
-                       const gchar     *sparql,
-                       const gchar     *where)
+static gchar *
+update_mount_point_sparql (ProcessFileData *data)
 {
 	const gchar *uuid;
-
-	if (sparql && *sparql) {
-		gboolean is_iri;
-		const gchar *urn;
-
-		urn = miner_files_get_file_urn (data->miner, data->file, &is_iri);
-
-		if (is_iri) {
-			gchar *str;
-
-			str = g_strdup_printf ("<%s>", urn);
-			tracker_sparql_builder_append (data->sparql, str);
-			g_free (str);
-		} else {
-			tracker_sparql_builder_append (data->sparql, urn);
-		}
-
-		tracker_sparql_builder_append (data->sparql, sparql);
-	}
-
-	tracker_sparql_builder_graph_close (data->sparql);
-	tracker_sparql_builder_insert_close (data->sparql);
-
-	if (where && *where) {
-		tracker_sparql_builder_where_open (data->sparql);
-		tracker_sparql_builder_append (data->sparql, where);
-		tracker_sparql_builder_where_close (data->sparql);
-	}
-
-	/* Prepend preupdate queries */
-	if (preupdate && *preupdate) {
-		tracker_sparql_builder_prepend (data->sparql, preupdate);
-	}
-
-	/* Append postupdate */
-	if (postupdate && *postupdate) {
-		tracker_sparql_builder_append (data->sparql, postupdate);
-	}
 
 	uuid = g_object_get_qdata (G_OBJECT (data->file),
 	                           data->miner->private->quark_mount_point_uuid);
@@ -2362,11 +2337,13 @@ sparql_builder_finish (ProcessFileData *data,
 		                        "} ",
 		                        removable_device_urn, removable_device_urn, uri);
 
-		tracker_sparql_builder_append (data->sparql, queries->str);
-		g_string_free (queries, TRUE);
 		g_free (removable_device_urn);
 		g_free (uri);
+
+		return g_string_free (queries, FALSE);
 	}
+
+	return NULL;
 }
 
 static void
@@ -2375,20 +2352,21 @@ process_file_cb (GObject      *object,
                  gpointer      user_data)
 {
 	TrackerMinerFilesPrivate *priv;
-	TrackerSparqlBuilder *sparql;
+	TrackerResource *resource;
 	ProcessFileData *data;
-	const gchar *mime_type, *urn, *parent_urn;
+	const gchar *mime_type, *urn;
+	gchar *parent_urn;
+	gchar *delete_properties_sparql = NULL, *mount_point_sparql;
 	GFileInfo *file_info;
 	guint64 time_;
 	GFile *file, *parent;
-	gchar *uri;
+	gchar *uri, *sparql_str, *time_str;
 	GError *error = NULL;
 	gboolean is_iri;
 	gboolean is_directory;
 
 	data = user_data;
 	file = G_FILE (object);
-	sparql = data->sparql;
 	file_info = g_file_query_info_finish (file, result, &error);
 	priv = TRACKER_MINER_FILES (data->miner)->private;
 
@@ -2407,8 +2385,6 @@ process_file_cb (GObject      *object,
 	data->mime_type = g_strdup (mime_type);
 
 	if (is_iri) {
-		gchar *delete_properties_sparql;
-
 		/* Update: delete all statements inserted by miner except:
 		 *  - rdf:type statements as they could cause implicit deletion of user data
 		 *  - nie:contentCreated so it persists across updates
@@ -2436,28 +2412,21 @@ process_file_cb (GObject      *object,
 			                 TRACKER_OWN_GRAPH_URN, urn,
 			                 TRACKER_OWN_GRAPH_URN, urn,
 			                 urn, urn);
-
-		tracker_sparql_builder_prepend (sparql, delete_properties_sparql);
-		g_free (delete_properties_sparql);
 	}
 
-	tracker_sparql_builder_insert_silent_open (sparql, NULL);
-	tracker_sparql_builder_graph_open (sparql, TRACKER_OWN_GRAPH_URN);
+	resource = tracker_resource_new (NULL);
 
 	if (is_iri) {
-		tracker_sparql_builder_subject_iri (sparql, urn);
-	} else {
-		tracker_sparql_builder_subject (sparql, urn);
+		tracker_resource_set_identifier (resource, urn);
 	}
 
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "nfo:FileDataObject");
-	tracker_sparql_builder_object (sparql, "nie:InformationElement");
+	tracker_resource_add_uri (resource, "rdf:type", "nfo:FileDataObject");
+	tracker_resource_add_uri (resource, "rdf:type", "nie:InformationElement");
 
 	is_directory = (g_file_info_get_file_type (file_info) == G_FILE_TYPE_DIRECTORY ?
 	                TRUE : FALSE);
 	if (is_directory) {
-		tracker_sparql_builder_object (sparql, "nfo:Folder");
+		tracker_resource_add_uri (resource, "rdf:type", "nfo:Folder");
 	}
 
 	parent = g_file_get_parent (file);
@@ -2465,54 +2434,59 @@ process_file_cb (GObject      *object,
 	g_object_unref (parent);
 
 	if (parent_urn) {
-		tracker_sparql_builder_predicate (sparql, "nfo:belongsToContainer");
-		tracker_sparql_builder_object_iri (sparql, parent_urn);
+		tracker_resource_set_uri (resource, "nfo:belongsToContainer", parent_urn);
 		g_free (parent_urn);
 	}
 
-	tracker_sparql_builder_predicate (sparql, "nfo:fileName");
-	tracker_sparql_builder_object_string (sparql, g_file_info_get_display_name (file_info));
-
-	tracker_sparql_builder_predicate (sparql, "nfo:fileSize");
-	tracker_sparql_builder_object_int64 (sparql, g_file_info_get_size (file_info));
+	tracker_resource_set_string (resource, "nfo:fileName",
+	                             g_file_info_get_display_name (file_info));
+	tracker_resource_set_int64 (resource, "nfo:fileSize",
+	                            g_file_info_get_size (file_info));
 
 	time_ = g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastModified");
-	tracker_sparql_builder_object_date (sparql, (time_t *) &time_);
+	time_str = tracker_date_to_string (time_);
+	tracker_resource_set_string (resource, "nfo:fileLastModified", time_str);
+	g_free (time_str);
 
 	time_ = g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_ACCESS);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastAccessed");
-	tracker_sparql_builder_object_date (sparql, (time_t *) &time_);
+	time_str = tracker_date_to_string (time_);
+	tracker_resource_set_string (resource, "nfo:fileLastAccessed", time_str);
+	g_free (time_str);
 
 	/* Laying the link between the IE and the DO. We use IE = DO */
-	tracker_sparql_builder_predicate (sparql, "nie:isStoredAs");
 	if (is_iri) {
-		tracker_sparql_builder_object_iri (sparql, urn);
+		tracker_resource_add_uri (resource, "nie:isStoredAs", urn);
 	} else {
-		tracker_sparql_builder_object (sparql, urn);
+		tracker_resource_add_relation (resource, "nie:isStoredAs", resource);
 	}
 
 	/* The URL of the DataObject (because IE = DO, this is correct) */
-	tracker_sparql_builder_predicate (sparql, "nie:url");
-	tracker_sparql_builder_object_string (sparql, uri);
+	tracker_resource_set_string (resource, "nie:url", uri);
 
-	tracker_sparql_builder_predicate (sparql, "nie:mimeType");
-	tracker_sparql_builder_object_string (sparql, mime_type);
+	tracker_resource_set_string (resource, "nie:mimeType", mime_type);
 
-	miner_files_add_to_datasource (data->miner, file, sparql);
+	miner_files_add_to_datasource (data->miner, file, resource);
 
 	if (g_file_info_get_size (file_info) > 0)
-		miner_files_add_rdf_types (sparql, file, mime_type);
+		miner_files_add_rdf_types (resource, file, mime_type);
 
-	sparql_builder_finish (data, NULL, NULL, NULL, NULL);
+	mount_point_sparql = update_mount_point_sparql (data);
+	sparql_str = g_strdup_printf ("%s %s %s",
+	                              delete_properties_sparql ? delete_properties_sparql : "",
+	                              tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN),
+	                              mount_point_sparql ? mount_point_sparql : "");
+	g_free (delete_properties_sparql);
+	g_free (mount_point_sparql);
+
 	tracker_miner_fs_notify_finish (TRACKER_MINER_FS (data->miner), data->task,
-					tracker_sparql_builder_get_result (sparql),
-					NULL);
+	                                sparql_str, NULL);
 
 	priv->extraction_queue = g_list_remove (priv->extraction_queue, data);
 	process_file_data_free (data);
 
+	g_object_unref (resource);
 	g_object_unref (file_info);
+	g_free (sparql_str);
 	g_free (uri);
 }
 
@@ -2526,9 +2500,8 @@ miner_files_process_file (TrackerMinerFS *fs,
 	const gchar *attrs;
 
 	data = g_slice_new0 (ProcessFileData);
-	data->miner = g_object_ref (fs);
+	data->miner = TRACKER_MINER_FILES (g_object_ref (fs));
 	data->cancellable = g_object_ref (g_task_get_cancellable (task));
-	data->sparql = tracker_sparql_builder_new_update ();
 	data->file = g_object_ref (file);
 	data->task = g_object_ref (task);
 
@@ -2558,19 +2531,18 @@ process_file_attributes_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-	TrackerSparqlBuilder *sparql;
+	TrackerResource *resource;
 	ProcessFileData *data;
 	const gchar *urn;
 	GFileInfo *file_info;
 	guint64 time_;
 	GFile *file;
-	gchar *uri;
+	gchar *uri, *time_str, *sparql_str;
 	GError *error = NULL;
 	gboolean is_iri;
 
 	data = user_data;
 	file = G_FILE (object);
-	sparql = data->sparql;
 	file_info = g_file_query_info_finish (file, result, &error);
 
 	if (error) {
@@ -2594,67 +2566,31 @@ process_file_attributes_cb (GObject      *object,
 		return;
 	}
 
+	resource = tracker_resource_new (urn);
+
 	/* Update nfo:fileLastModified */
-	tracker_sparql_builder_delete_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastModified");
-	tracker_sparql_builder_object_variable (sparql, "lastmodified");
-	tracker_sparql_builder_delete_close (sparql);
-	tracker_sparql_builder_where_open (sparql);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastModified");
-	tracker_sparql_builder_object_variable (sparql, "lastmodified");
-	tracker_sparql_builder_where_close (sparql);
-	tracker_sparql_builder_insert_open (sparql, NULL);
-	tracker_sparql_builder_graph_open (sparql, TRACKER_OWN_GRAPH_URN);
-	tracker_sparql_builder_subject_iri (sparql, urn);
 	time_ = g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastModified");
-	tracker_sparql_builder_object_date (sparql, (time_t *) &time_);
-	tracker_sparql_builder_graph_close (sparql);
-	tracker_sparql_builder_insert_close (sparql);
+	time_str = tracker_date_to_string (time_);
+	tracker_resource_set_string (resource, "nfo:fileLastModified", time_str);
+	g_free (time_str);
 
 	/* Update nfo:fileLastAccessed */
-	tracker_sparql_builder_delete_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastAccessed");
-	tracker_sparql_builder_object_variable (sparql, "lastaccessed");
-	tracker_sparql_builder_delete_close (sparql);
-	tracker_sparql_builder_where_open (sparql);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastAccessed");
-	tracker_sparql_builder_object_variable (sparql, "lastaccessed");
-	tracker_sparql_builder_where_close (sparql);
-	tracker_sparql_builder_insert_open (sparql, NULL);
-	tracker_sparql_builder_graph_open (sparql, TRACKER_OWN_GRAPH_URN);
-	tracker_sparql_builder_subject_iri (sparql, urn);
 	time_ = g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_ACCESS);
-	tracker_sparql_builder_predicate (sparql, "nfo:fileLastAccessed");
-	tracker_sparql_builder_object_date (sparql, (time_t *) &time_);
-	tracker_sparql_builder_graph_close (sparql);
-	tracker_sparql_builder_insert_close (sparql);
-
-	/* Delete data sources from other miners/decorators */
-	tracker_sparql_builder_delete_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nie:dataSource");
-	tracker_sparql_builder_object_variable (sparql, "datasource");
-	tracker_sparql_builder_delete_close (sparql);
-	tracker_sparql_builder_where_open (sparql);
-	tracker_sparql_builder_subject_iri (sparql, urn);
-	tracker_sparql_builder_predicate (sparql, "nie:dataSource");
-	tracker_sparql_builder_object_variable (sparql, "datasource");
-	tracker_sparql_builder_where_close (sparql);
+	time_str = tracker_date_to_string (time_);
+	tracker_resource_set_string (resource, "nfo:fileLastAccessed", time_str);
+	g_free (time_str);
 
 	g_object_unref (file_info);
 	g_free (uri);
 
 	/* Notify about the success */
+	sparql_str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN);
 	tracker_miner_fs_notify_finish (TRACKER_MINER_FS (data->miner), data->task,
-					tracker_sparql_builder_get_result (sparql),
-					NULL);
+	                                sparql_str, NULL);
 
 	process_file_data_free (data);
+	g_object_unref (resource);
+	g_free (sparql_str);
 }
 
 static gboolean
@@ -2666,9 +2602,8 @@ miner_files_process_file_attributes (TrackerMinerFS *fs,
 	const gchar *attrs;
 
 	data = g_slice_new0 (ProcessFileData);
-	data->miner = g_object_ref (fs);
+	data->miner = TRACKER_MINER_FILES (g_object_ref (fs));
 	data->cancellable = g_object_ref (g_task_get_cancellable (task));
-	data->sparql = tracker_sparql_builder_new_update ();
 	data->file = g_object_ref (file);
 	data->task = g_object_ref (task);
 
