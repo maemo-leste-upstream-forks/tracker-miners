@@ -5,8 +5,11 @@ Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.
 Uploaders: @GNOME_TEAM@
 Build-Depends: debhelper (>= 12),
                dh-sequence-gnome,
+               gir1.2-glib-2.0 <!nocheck>,
                meson,
                pkg-config,
+               python <!nocheck>,
+               python-gi <!nocheck>,
                intltool (>= 0.40.0),
                libglib2.0-dev (>= 2.44.0),
                libgstreamer1.0-dev (>= 0.10.31),
