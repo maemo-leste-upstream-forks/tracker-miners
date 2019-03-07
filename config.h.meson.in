@@ -111,20 +111,5 @@
 /* Define to the version of this package. */
 #mesondefine PACKAGE_VERSION
 
-/* Define to the Tracker binary age */
-#mesondefine TRACKER_BINARY_AGE
-
-/* Define to the Tracker interface age */
-#mesondefine TRACKER_INTERFACE_AGE
-
-/* Define to the Tracker major version */
-#mesondefine TRACKER_MAJOR_VERSION
-
-/* Define to the Tracker micro version */
-#mesondefine TRACKER_MICRO_VERSION
-
-/* Define to the Tracker minor version */
-#mesondefine TRACKER_MINOR_VERSION
-
 /* Unzip ps.gz files */
 #mesondefine USING_UNZIPPSFILES

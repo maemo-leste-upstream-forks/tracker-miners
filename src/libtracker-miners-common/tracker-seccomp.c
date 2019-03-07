@@ -142,6 +142,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (lseek);
 	ALLOW_RULE (_llseek);
 	ALLOW_RULE (fadvise64);
+	ALLOW_RULE (fadvise64_64);
 	ALLOW_RULE (arm_fadvise64_64);
 	ALLOW_RULE (write);
 	ALLOW_RULE (writev);

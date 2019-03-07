@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-09-09 21:05+0000\n"
-"PO-Revision-Date: 2018-09-29 11:43+0200\n"
+"POT-Creation-Date: 2019-02-17 15:13+0000\n"
+"PO-Revision-Date: 2019-02-28 21:17+0100\n"
 "Last-Translator: Марко М. Костић <marko.m.kostic@gmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
@@ -18,7 +18,243 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Project-Style: gnome\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2\n"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Опширност записника"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Опширан записник."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Приоритет планера када мирује"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr ""
+"Планер је састојак језгра који одлучује који покренути програм ће бити "
+"извршен од стране процесора као следећи. Сваки програм има придружену "
+"политику и приоритет заказивања."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Највећи број бајтова за извлачење"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "Највећи број УТФ-8 бајтова за извлачење."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Max media art width"
+msgstr "Највећа ширина медијске сличице"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"Maximum width in pixels for any media art extracted. Anything bigger is "
+"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
+"no limit on the media art width."
+msgstr ""
+"Највећа ширина у тачкицама за извађену било какву медијску сличицу. Свим "
+"већим биће промењена величина. Поставите на -1 да искључите чување медијских "
+"сличица из датотека. Поставите на 0 да ширина медијске сличице буде без "
+"ограничења."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:9
+msgid "Wait for FS miner to be done before extracting"
+msgstr "Чека на копача СД-а да заврши пре извлачења"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:10
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr ""
+"Када је изабрано, „трагач-извуци“ ће сачекати да „трагачев-копач-сд“ заврши "
+"са пописивањем пре извлачења метаподатака. Ова опција је корисна на "
+"ограниченим окружењима где је важно исписати датотеке што је брже могуће и "
+"где може сачекати на добављање метаподатака."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Почетно спавање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Почетно време спавања, у секундама."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Одмеравач"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Брзина пописивања, већа мања."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Ограничење недостатка простора на диску"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr ""
+"Праг ограничења простора на диску у процентима при коме ће попис бити "
+"заустављен, или -1 за искључивање."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Период пописивања"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr ""
+"Интервал у данима за проверу ажурности система датотека у бази података. 0 "
+"увек приморава пописивање, -1 приморава само након нечистог гашења, и -2 га "
+"искључује у целости."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Праг постојаности података уклоњивих уређаја"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr ""
+"Период у данима након кога ће датотеке из уклоњивих уређаја бити уклоњене из "
+"базе података ако нису прикачени. 0 значи никада, 365 највише дозвољено."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Укључује надгледање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr "Поништите избор да у потпуности искључите надгледање датотека"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Укључи повратно писање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr "Поништите избор да у потпуности искључите повратно писање датотека"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Пописује уклоњиве уређаје"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr ""
+"Изаберите да укључите попис прикачених директоријума за уклоњиве уређаје."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Пописује оптичке дискове"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr ""
+"Изаберите да укључите попис ЦД, ДВД, и осталих оптичких медија (ако се "
+"уклоњиви уређаји не пописују, неће ни оптички дискови)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Пописивање при раду на батерији"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr "Изаберите за пописивање при раду на батерији"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Извршава почетно пописивање при раду на батерији"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr "Изаберите за пописивање при раду на батерији само први пут"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Директоријуми за дубинско пописивање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Списак директоријума који ће бити пописани дубински. У посебне вредности "
+"спадају: &amp;РАДНА_ПОВРШ, &amp;ДОКУМЕНТИ, &amp;ПРЕУЗИМАЊА, &amp;МУЗИКА, "
+"&amp;СЛИКЕ, &amp;ЈАВНО_ДЕЉЕЊЕ, &amp;ШАБЛОНИ, &amp;ВИДЕО.\n"
+"\n"
+"Погледајте „/etc/xdg/user-dirs.defaults“ и „$HOME/.config/user-dirs.default“"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Директоријуми за не-дубинско пописивање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Списак директоријума који ће бити пописани без прегледања подфасцикли. У "
+"посебне вредности спадају: &amp;РАДНА_ПОВРШ, &amp;ДОКУМЕНТИ, &amp;"
+"ПРЕУЗИМАЊА, &amp;МУЗИКА, &amp;СЛИКЕ, &amp;ЈАВНО_ДЕЉЕЊЕ, &amp;ШАБЛОНИ, &amp;"
+"ВИДЕО.\n"
+"\n"
+"Погледајте „/etc/xdg/user-dirs.defaults“ и „$HOME/.config/user-dirs.default“"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Занемарене датотеке"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Списак образаца датотека за избегавање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Занемарени директоријуми"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Списак директоријума за избегавање"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Занемарени директоријуми са садржајем"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr ""
+"Избегава сваки директоријум који овде садржи датотеку на списку забрана"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
@@ -89,54 +325,6 @@ msgstr[1] " %2.2d секунде"
 msgstr[2] " %2.2d секунди"
 msgstr[3] " %2.2d секунда"
 
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Програми"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Копач податка програма"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Записник, 0 = само грешке, 1 = најмање, 2 = детаљно и 3 = прочишћавање "
-"(задато=0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr "Ради све док не попише све програме и затим излази"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:102
-msgid "Runs for a specific domain ontology"
-msgstr "Ради за посебном онтологијом домена"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
-#: ../src/tracker-extract/tracker-main.c:106
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Исписује податке о издању програма"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— покреће копача података програма"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Трагачев копач програма"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Попишите податке о инсталираним програмима"
-
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
 msgid "File System"
 msgstr "Систем датотека"
@@ -145,296 +333,121 @@ msgstr "Систем датотека"
 msgid "File system data miner"
 msgstr "Копач података система датотека"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
-msgid "Log verbosity"
-msgstr "Опширност записника"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
-msgid "Log verbosity."
-msgstr "Опширан записник."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
-msgid "Initial sleep"
-msgstr "Почетно спавање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Почетно време спавања, у секундама."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
-msgid "Scheduler priority when idle"
-msgstr "Приоритет планера када мирује"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
 msgstr ""
-"Планер је састојак језгра који одлучује који покренути програм ће бити "
-"извршен од стране процесора као следећи. Сваки програм има придружену "
-"политику и приоритет заказивања."
+"Записник, 0 = само грешке, 1 = најмање, 2 = детаљно и 3 = прочишћавање "
+"(задато=0)"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
-msgid "Throttle"
-msgstr "Одмеравач"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Брзина пописивања, већа мања."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
-msgid "Low disk space limit"
-msgstr "Ограничење недостатка простора на диску"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Праг ограничења простора на диску у процентима при коме ће попис бити "
-"заустављен, или -1 за искључивање."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
-msgid "Crawling interval"
-msgstr "Период пописивања"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Интервал у данима за проверу ажурности система датотека у бази података. 0 "
-"увек приморава пописивање, -1 приморава само након нечистог гашења, и -2 га "
-"искључује у целости."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Праг постојаности података уклоњивих уређаја"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Период у данима након кога ће датотеке из уклоњивих уређаја бити уклоњене из "
-"базе података ако нису прикачени. 0 значи никада, 365 највише дозвољено."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
-msgid "Enable monitors"
-msgstr "Укључује надгледање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr "Поништите избор да у потпуности искључите надгледање датотека"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
-msgid "Enable writeback"
-msgstr "Укључи повратно писање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr "Поништите избор да у потпуности искључите повратно писање датотека"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
-msgid "Index removable devices"
-msgstr "Пописује уклоњиве уређаје"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Изаберите да укључите попис прикачених директоријума за уклоњиве уређаје."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
-msgid "Index optical discs"
-msgstr "Пописује оптичке дискове"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Изаберите да укључите попис ЦД, ДВД, и осталих оптичких медија (ако се "
-"уклоњиви уређаји не пописују, неће ни оптички дискови)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
-msgid "Index when running on battery"
-msgstr "Пописивање при раду на батерији"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
-msgid "Set to true to index while running on battery"
-msgstr "Изаберите за пописивање при раду на батерији"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Извршава почетно пописивање при раду на батерији"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr "Изаберите за пописивање при раду на батерији само први пут"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
-msgid "Directories to index recursively"
-msgstr "Директоријуми за дубинско пописивање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
-msgstr ""
-"Списак директоријума који ће бити пописани дубински. У посебне вредности "
-"спадају: &amp;РАДНА_ПОВРШ, &amp;ДОКУМЕНТИ, &amp;ПРЕУЗИМАЊА, &amp;МУЗИКА, "
-"&amp;СЛИКЕ, &amp;ЈАВНО_ДЕЉЕЊЕ, &amp;ШАБЛОНИ, &amp;ВИДЕО. Погледајте „/etc/"
-"xdg/user-dirs.defaults“ и „$HOME/.config/user-dirs.default“"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
-msgid "Directories to index non-recursively"
-msgstr "Директоријуми за не-дубинско пописивање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Списак директоријума који ће бити пописани без прегледања подфасцикли. У "
-"посебне вредности спадају: &amp;РАДНА_ПОВРШ, &amp;ДОКУМЕНТИ, &amp;"
-"ПРЕУЗИМАЊА, &amp;МУЗИКА, &amp;СЛИКЕ, &amp;ЈАВНО_ДЕЉЕЊЕ, &amp;ШАБЛОНИ, &amp;"
-"ВИДЕО. Погледајте „/etc/xdg/user-dirs.defaults“ и „$HOME/.config/user-dirs."
-"default“"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
-msgid "Ignored files"
-msgstr "Занемарене датотеке"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
-msgid "List of file patterns to avoid"
-msgstr "Списак образаца датотека за избегавање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
-msgid "Ignored directories"
-msgstr "Занемарени директоријуми"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
-msgid "List of directories to avoid"
-msgstr "Списак директоријума за избегавање"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
-msgid "Ignored directories with content"
-msgstr "Занемарени директоријуми са садржајем"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr ""
-"Избегава сваки директоријум који овде садржи датотеку на списку забрана"
-
-#: ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Почетно време спавања у секундама, 0->1000 (основно=15)"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr "Ради све док не попише сва подешена места и затим излази"
 
-#: ../src/miners/fs/tracker-main.c:86
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Проверава да ли је ДАТОТЕКА избирљива за ископавање на основу подешавања"
 
-#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "ДАТОТЕКА"
 
-#: ../src/miners/fs/tracker-main.c:432
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Ради за посебном онтологијом домена"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Исписује податке о издању програма"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Објекат података „%s“ тренутно постоји"
 
-#: ../src/miners/fs/tracker-main.c:433
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Објекат података „%s“ тренутно не постоји"
 
-#: ../src/miners/fs/tracker-main.c:448
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Директоријум је избирљив за ископавање (засновано на правилима)"
 
-#: ../src/miners/fs/tracker-main.c:449
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Директоријум НИЈЕ избирљив за ископавање (на основану правила)"
 
-#: ../src/miners/fs/tracker-main.c:469
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Директоријум је избирљив за ископавање (на основу садржаја)"
 
-#: ../src/miners/fs/tracker-main.c:470
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Директоријум НИЈЕ избирљив за ископавање (на основу садржаја)"
 
-#: ../src/miners/fs/tracker-main.c:517
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Директоријум је избирљив за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:518
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Директоријум НИЈЕ избирљив за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:522
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Датотека је избирљива за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:523
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Датотека НИЈЕ избирљива за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:527
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Датотека или директоријум је избирљива за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:528
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Датотека или директоријум НИЈЕ избирљива за надгледање (на основу подешавања)"
 
-#: ../src/miners/fs/tracker-main.c:543
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Датотека је избирљива за ископавање (засновано на правилима)"
 
-#: ../src/miners/fs/tracker-main.c:544
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Датотека НИЈЕ избирљива за ископавање (засновано на правилима)"
 
-#: ../src/miners/fs/tracker-main.c:553
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "Биће пописано"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Да"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Не"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "Биће надгледано"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:686
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— покреће трагачевог пописника"
 
@@ -501,45 +514,6 @@ msgstr "Извлачивач"
 #: ../src/tracker-extract/org.freedesktop.Tracker1.Miner.Extract.service.in.in.h:2
 msgid "Metadata extractor"
 msgstr "Извлачивач метаподатака"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
-msgid "Max bytes to extract"
-msgstr "Највећи број бајтова за извлачење"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "Највећи број УТФ-8 бајтова за извлачење."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
-msgid "Max media art width"
-msgstr "Највећа ширина медијске сличице"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Највећа ширина у тачкицама за извађену било какву медијску сличицу. Свим "
-"већим биће промењена величина. Поставите на -1 да искључите чување медијских "
-"сличица из датотека. Поставите на 0 да ширина медијске сличице буде без "
-"ограничења."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr "Чека на копача СД-а да заврши пре извлачења"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"Када је изабрано, „трагач-извуци“ ће сачекати да „трагачев-копач-сд“ заврши "
-"са пописивањем пре извлачења метаподатака. Ова опција је корисна на "
-"ограниченим окружењима где је важно исписати датотеке што је брже могуће и "
-"где може сачекати на добављање метаподатака."
 
 #: ../src/tracker-extract/tracker-extract.c:685
 msgid "Metadata extraction failed"
@@ -619,6 +593,24 @@ msgstr "Искључује гашење након 30 секунди неакт�
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— покреће трагачеву услугу повратног писања"
+
+#~ msgid "Applications"
+#~ msgstr "Програми"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Копач податка програма"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr "Ради све док не попише све програме и затим излази"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— покреће копача података програма"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Трагачев копач програма"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Попишите податке о инсталираним програмима"
 
 #~ msgid "All posts"
 #~ msgstr "Сва постављања"

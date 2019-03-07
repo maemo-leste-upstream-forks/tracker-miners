@@ -1,5 +1,5 @@
 # Brazilian Portuguese translation of Tracker.
-# Copyright (C) 2007-2017 Free Software Foundation, Inc.
+# Copyright (C) 2007-2019 Free Software Foundation, Inc.
 # This file is distributed under the same license as the tracker package.
 # Luiz Armesto <luiz.armesto@gmail.com>, 2007, 2008.
 # Leonardo Ferreira Fontenelle <leo.fontenelle@gmail.com>, 2008.
@@ -10,22 +10,278 @@
 # Gabriel Speckhahn <gabspeck@gmail.com>, 2011.
 # Enrico Nicoletto <liverig@gmail.com>, 2013, 2014, 2015.
 # Felipe Braga <fbobraga@gmail.com>, 2015.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2013, 2014, 2016-2018.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2013-2019.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-07-16 23:39+0000\n"
-"PO-Revision-Date: 2018-07-20 19:44-0200\n"
+"POT-Creation-Date: 2019-02-17 15:13+0000\n"
+"PO-Revision-Date: 2019-02-20 08:02-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"Language-Team: Portuguese - Brazil <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Virtaal 1.0.0-beta1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 3.31.90\n"
 "X-Project-Style: gnome\n"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Nível de detalhe do log"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Nível de detalhe do log."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Prioridade do agendador quando ocioso"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr ""
+"O agendador é um componente do kernel que decide qual aplicativo executável "
+"será executado pela próxima CPU. Cada aplicativo tem uma política e "
+"prioridade de agendamento associada."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Máximo de bytes a extrair"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "Número máximo de bytes UTF-8 a extrair."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Max media art width"
+msgstr "Largura máxima da arte da mídia"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"Maximum width in pixels for any media art extracted. Anything bigger is "
+"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
+"no limit on the media art width."
+msgstr ""
+"Largura máxima em pixels para qualquer arte de mídia extraída. Qualquer uma "
+"que seja maior, é redimensionada. Defina como -1 para desabilitar o "
+"armazenamento de arte de mídia dos arquivos. Atribuir como 0, define nenhum "
+"limite na largura da arte da mídia."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:9
+msgid "Wait for FS miner to be done before extracting"
+msgstr ""
+"Esperar pela mineração de sistema de arquivos finalizar antes de extrair"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:10
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr ""
+"Quando verdadeiro, o tracker-extract vai esperar o tracker-miner-fs estar "
+"finalizado antes de extrair metadados. Essa opção é útil em ambientes "
+"restritos em que é importante listar arquivos o mais rápido possível e pode "
+"esperar para obter metadados depois."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Pausa inicial"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Tempo de pausa inicial em segundos."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Ritmo"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Velocidade de indexação; quanto maior, mais lento."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Limite mínimo de espaço em disco"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr ""
+"Limite de espaço em disco em percentagem ao qual a indexação deve ser "
+"pausada, ou -1 para desabilitar."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Intervalo de rastreamento"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr ""
+"Intervalo em dias para verificar se o sistema de arquivos está atualizado no "
+"banco de dados. 0 força o rastreamento a qualquer momento, -1 o força apenas "
+"depois de desligamentos abruptos, e -2 o desabilita inteiramente."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Limite de permanência de dados em dispositivos removíveis"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr ""
+"Limite em dias depois do qual arquivos de dispositivos removíveis serão "
+"removidos do banco de dados se não montados. 0 significa nunca, o máximo é "
+"365."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Habilitar monitores"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr ""
+"Configure como falso para desabilitar completamente qualquer monitoração de "
+"arquivos"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Habilitar cache de gravação"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr ""
+"Configure como falso para desabilitar completamente qualquer cache de "
+"gravação"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Indexar dispositivos removíveis"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr ""
+"Configure como verdadeiro para habilitar a indexação de diretórios montados "
+"para dispositivos removíveis."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Indexar discos óticos"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr ""
+"Configure como verdadeiro para habilitar a indexação de CDs, DVDs e mídia "
+"geralmente ótica (se dispositivos removíveis não forem indexados, discos "
+"óticos também não serão)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Indexar quando estiver usando bateria"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr ""
+"Configure como verdadeiro para indexar enquanto estiver se usando a bateria"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Executar indexação inicial quando estiver se usando a bateria"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr ""
+"Configure como verdadeiro para indexar enquanto estiver se usando a bateria "
+"apenas pela primeira vez"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Diretórios a indexar recursivamente"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+#| msgid ""
+#| "List of directories to index recursively, Special values include: &amp;"
+#| "DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+#| "PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs."
+#| "defaults and $HOME/.config/user-dirs.default"
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Lista de diretórios a indexar recursivamente. Valores especiais incluem: "
+"&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Veja /etc/xdg/user-dirs.defaults e $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Diretórios a indexar não recursivamente"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+#| msgid ""
+#| "List of directories to index without inspecting subfolders, Special "
+#| "values include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, "
+#| "&amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/"
+#| "xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Lista de diretórios a indexar sem inspecionar subpastas. Valores especiais "
+"incluem: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Veja /etc/xdg/user-dirs.defaults e $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Arquivos ignorados"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Lista de padrões de arquivo a evitar"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Diretórios ignorados"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Lista de diretórios a evitar"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Diretórios ignorados com conteúdo"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr "Evitar qualquer diretório que contenha um arquivo nessa lista negra"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
@@ -88,54 +344,6 @@ msgid_plural " %2.2d seconds"
 msgstr[0] " %2.2d segundo"
 msgstr[1] " %2.2d segundos"
 
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Aplicativos"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Mineração de dados de aplicativos"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Registrando, 0 = somente erros, 1 = mínimo, 2 = detalhado e 3 = depuração (o "
-"padrão é = 0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr "Executa-se até que todos os aplicativos sejam indexados e então sai"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:102
-msgid "Runs for a specific domain ontology"
-msgstr "Executa para uma ontologia de domínio específica"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
-#: ../src/tracker-extract/tracker-main.c:106
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Exibe informações de versão"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— inicia o aplicativo de mineração de dados"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Tracker - Aplicativo de mineração de dados"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Indexa informações a respeito de aplicativos instalados"
-
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
 msgid "File System"
 msgstr "Sistema de arquivos"
@@ -144,306 +352,123 @@ msgstr "Sistema de arquivos"
 msgid "File system data miner"
 msgstr "Mineração de dados do sistema de arquivos"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
-msgid "Log verbosity"
-msgstr "Nível de detalhe do log"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
-msgid "Log verbosity."
-msgstr "Nível de detalhe do log."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
-msgid "Initial sleep"
-msgstr "Pausa inicial"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Tempo de pausa inicial em segundos."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
-msgid "Scheduler priority when idle"
-msgstr "Prioridade do agendador quando ocioso"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
 msgstr ""
-"O agendador é um componente do kernel que decide qual aplicativo executável "
-"será executado pela próxima CPU. Cada aplicativo tem uma política e "
-"prioridade de agendamento associada."
+"Registrando, 0 = somente erros, 1 = mínimo, 2 = detalhado e 3 = depuração (o "
+"padrão é = 0)"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
-msgid "Throttle"
-msgstr "Ritmo"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Velocidade de indexação; quanto maior, mais lento."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
-msgid "Low disk space limit"
-msgstr "Limite mínimo de espaço em disco"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Limite de espaço em disco em percentagem ao qual a indexação deve ser "
-"pausada, ou -1 para desabilitar."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
-msgid "Crawling interval"
-msgstr "Intervalo de rastreamento"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Intervalo em dias para verificar se o sistema de arquivos está atualizado no "
-"banco de dados. 0 força o rastreamento a qualquer momento, -1 o força apenas "
-"depois de desligamentos abruptos, e -2 o desabilita inteiramente."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Limite de permanência de dados em dispositivos removíveis"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Limite em dias depois do qual arquivos de dispositivos removíveis serão "
-"removidos do banco de dados se não montados. 0 significa nunca, o máximo é "
-"365."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
-msgid "Enable monitors"
-msgstr "Habilitar monitores"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr ""
-"Configure como falso para desabilitar completamente qualquer monitoração de "
-"arquivos"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
-msgid "Enable writeback"
-msgstr "Habilitar cache de gravação"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr ""
-"Configure como falso para desabilitar completamente qualquer cache de "
-"gravação"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
-msgid "Index removable devices"
-msgstr "Indexar dispositivos removíveis"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Configure como verdadeiro para habilitar a indexação de diretórios montados "
-"para dispositivos removíveis."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
-msgid "Index optical discs"
-msgstr "Indexar discos óticos"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Configure como verdadeiro para habilitar a indexação de CDs, DVDs e mídia "
-"geralmente ótica (se dispositivos removíveis não forem indexados, discos "
-"óticos também não serão)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
-msgid "Index when running on battery"
-msgstr "Indexar quando estiver usando bateria"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
-msgid "Set to true to index while running on battery"
-msgstr ""
-"Configure como verdadeiro para indexar enquanto estiver se usando a bateria"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Executar indexação inicial quando estiver se usando a bateria"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr ""
-"Configure como verdadeiro para indexar enquanto estiver se usando a bateria "
-"apenas pela primeira vez"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
-msgid "Directories to index recursively"
-msgstr "Diretórios a indexar recursivamente"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
-msgstr ""
-"Lista de diretórios a indexar recursivamente. Valores especiais incluem: "
-"&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Veja /etc/xdg/user-dirs.defaults "
-"e $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
-msgid "Directories to index non-recursively"
-msgstr "Diretórios a indexar não recursivamente"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Lista de diretórios a indexar sem inspecionar subpastas. Valores especiais "
-"incluem: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Veja /etc/xdg/user-"
-"dirs.defaults e $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
-msgid "Ignored files"
-msgstr "Arquivos ignorados"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
-msgid "List of file patterns to avoid"
-msgstr "Lista de padrões de arquivo a evitar"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
-msgid "Ignored directories"
-msgstr "Diretórios ignorados"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
-msgid "List of directories to avoid"
-msgstr "Lista de diretórios a evitar"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
-msgid "Ignored directories with content"
-msgstr "Diretórios ignorados com conteúdo"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr "Evitar qualquer diretório que contenha um arquivo nessa lista negra"
-
-#: ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Tempo de sleep inicial em segundos, 0->1000 (padrão=15)"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Executa até que todas as localizações configuradas sejam indexadas e então "
 "sai"
 
-#: ../src/miners/fs/tracker-main.c:86
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Verifica se o ARQUIVO é elegível para ser minerado baseado em configuração"
 
-#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "ARQUIVO"
 
-#: ../src/miners/fs/tracker-main.c:432
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Executa para uma ontologia de domínio específica"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Exibe informações de versão"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "O objeto de dados “%s” não existe"
 
-#: ../src/miners/fs/tracker-main.c:433
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "O objeto de dados “%s” atualmente não existe"
 
-#: ../src/miners/fs/tracker-main.c:448
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Diretório elegível a ser minerado (baseado em regras)"
 
-#: ../src/miners/fs/tracker-main.c:449
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Diretório NÃO elegível a ser minerado (baseado em regras)"
 
-#: ../src/miners/fs/tracker-main.c:469
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Diretório elegível a ser minerado (baseado em conteúdo)"
 
-#: ../src/miners/fs/tracker-main.c:470
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Diretório NÃO elegível a ser minerado (baseado em conteúdo)"
 
-#: ../src/miners/fs/tracker-main.c:517
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Diretório elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:518
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Diretório NÃO elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:522
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Arquivo elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:523
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Arquivo NÃO elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:527
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Arquivo ou diretório elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:528
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Arquivo ou diretório NÃO elegível a ser monitorado (baseado em configuração)"
 
-#: ../src/miners/fs/tracker-main.c:543
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Arquivo elegível a ser minerado (baseado em regras)"
 
-#: ../src/miners/fs/tracker-main.c:544
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Arquivo NÃO elegível a ser minerado (baseado em regras)"
 
-#: ../src/miners/fs/tracker-main.c:553
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "Devem ser indexados"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Sim"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Não"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "Devem ser monitorados"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:686
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— inicia o indexador do Tracker"
 
@@ -511,46 +536,6 @@ msgstr "Extrator"
 msgid "Metadata extractor"
 msgstr "Extrator de metadados"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
-msgid "Max bytes to extract"
-msgstr "Máximo de bytes a extrair"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "Número máximo de bytes UTF-8 a extrair."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
-msgid "Max media art width"
-msgstr "Largura máxima da arte da mídia"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Largura máxima em pixels para qualquer arte de mídia extraída. Qualquer uma "
-"que seja maior, é redimensionada. Defina como -1 para desabilitar o "
-"armazenamento de arte de mídia dos arquivos. Atribuir como 0, define nenhum "
-"limite na largura da arte da mídia."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr ""
-"Esperar pela mineração de sistema de arquivos finalizar antes de extrair"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"Quando verdadeiro, o tracker-extract vai esperar o tracker-miner-fs estar "
-"finalizado antes de extrair metadados. Essa opção é útil em ambientes "
-"restritos em que é importante listar arquivos o mais rápido possível e pode "
-"esperar para obter metadados depois."
-
 #: ../src/tracker-extract/tracker-extract.c:685
 msgid "Metadata extraction failed"
 msgstr "Extrator de metadados falhou"
@@ -590,7 +575,6 @@ msgid "MODULE"
 msgstr "MÓDULO"
 
 #: ../src/tracker-extract/tracker-main.c:98
-#| msgid "Output results format: “sparql”, or “turtle”"
 msgid "Output results format: “sparql”, “turtle” or “json-ld”"
 msgstr "Emite formato de resultados: “sparql”, “turtle” ou “json-ld”"
 
@@ -631,6 +615,24 @@ msgstr "Desabilitar desligamento depois de 30 segundos de inatividade"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— inicia o serviço de writeback do Tracker"
+
+#~ msgid "Applications"
+#~ msgstr "Aplicativos"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Mineração de dados de aplicativos"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr "Executa-se até que todos os aplicativos sejam indexados e então sai"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— inicia o aplicativo de mineração de dados"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Tracker - Aplicativo de mineração de dados"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Indexa informações a respeito de aplicativos instalados"
 
 #~ msgid "All posts"
 #~ msgstr "Todas as publicações"

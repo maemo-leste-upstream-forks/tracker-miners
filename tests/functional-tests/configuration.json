@@ -1,9 +1,0 @@
-{
-    "PREFIX": "/home/carlos/Build/gnome",
-    "RAW_EXEC_PREFIX": "${prefix}",
-    "RAW_DATAROOT_DIR": "${prefix}/share",
-    "TRACKER_EXTRACT_PATH": "@top_builddir@/src/tracker-extract/tracker-extract",
-    "TRACKER_MINER_FS_PATH": "@top_builddir@/src/miners/fs/tracker-miner-fs",
-    "TRACKER_STORE_PATH": "${exec_prefix}/libexec/tracker-store",
-    "TRACKER_WRITEBACK_PATH": "@FUNCTIONAL_TESTS_TRACKER_WRITEBACK_PATH@"
-}

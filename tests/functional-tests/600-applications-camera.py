@@ -25,7 +25,7 @@ Tests trying to simulate the behaviour of applications working with tracker
 import os
 import random
 
-import unittest2 as ut
+import unittest as ut
 from common.utils.applicationstest import CommonTrackerApplicationTest as CommonTrackerApplicationTest
 from common.utils.helpers import log
 

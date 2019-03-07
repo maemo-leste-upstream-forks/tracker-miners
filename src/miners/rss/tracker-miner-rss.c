@@ -555,48 +555,29 @@ feed_channel_change_updated_time_cb (GObject      *source,
 static gboolean
 feed_channel_changed_timeout_cb (gpointer user_data)
 {
-	TrackerSparqlBuilder *sparql;
+	TrackerResource *resource;
 	FeedChannelUpdateData *fcud;
-	gchar *uri;
-	time_t now;
+	gchar *uri, *time_str;
 
 	fcud = user_data;
 	fcud->timeout_id = 0;
 
-	now = time (NULL);
 	uri = g_object_get_data (G_OBJECT (fcud->channel), "subject");
 
 	g_message ("Updating mfo:updatedTime for channel '%s'", grss_feed_channel_get_title (fcud->channel));
 
-	/* I hope there will be soon a SPARQL command to just update a
-	 * value instead to delete and re-insert it
-	 */
-
-	sparql = tracker_sparql_builder_new_update ();
-	tracker_sparql_builder_delete_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, uri);
-	tracker_sparql_builder_predicate (sparql, "mfo:updatedTime");
-	tracker_sparql_builder_object_variable (sparql, "unknown");
-	tracker_sparql_builder_delete_close (sparql);
-	tracker_sparql_builder_where_open (sparql);
-	tracker_sparql_builder_subject_iri (sparql, uri);
-	tracker_sparql_builder_predicate (sparql, "mfo:updatedTime");
-	tracker_sparql_builder_object_variable (sparql, "unknown");
-	tracker_sparql_builder_where_close (sparql);
-
-	tracker_sparql_builder_insert_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, uri);
-	tracker_sparql_builder_predicate (sparql, "mfo:updatedTime");
-	tracker_sparql_builder_object_date (sparql, &now);
-	tracker_sparql_builder_insert_close (sparql);
+	resource = tracker_resource_new (uri);
+	time_str = tracker_date_to_string (time (NULL));
+	tracker_resource_set_string (resource, "mfo:updatedTime", time_str);
+	g_free (time_str);
 
 	tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (fcud->miner)),
-	                                        tracker_sparql_builder_get_result (sparql),
+	                                        tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN),
 	                                        G_PRIORITY_DEFAULT,
 	                                        fcud->cancellable,
 	                                        feed_channel_change_updated_time_cb,
 	                                        fcud);
-	g_object_unref (sparql);
+	g_object_unref (resource);
 
 	return FALSE;
 }
@@ -660,97 +641,81 @@ feed_fetching_cb (GrssFeedsPool   *pool,
 }
 
 static gchar *
-sparql_add_website (TrackerSparqlBuilder *sparql,
-                    const gchar          *uri)
+sparql_add_website (TrackerResource *resource,
+                    const gchar     *uri)
 {
+	TrackerResource *website;
 	gchar *website_urn;
 
 	website_urn = tracker_sparql_escape_uri_printf ("urn:website:%s", uri);
 
-	tracker_sparql_builder_insert_silent_open (sparql, NULL);
-	tracker_sparql_builder_subject_iri (sparql, website_urn);
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "nie:DataObject");
-	tracker_sparql_builder_object (sparql, "nfo:Website");
+	website = tracker_resource_new (website_urn);
+	tracker_resource_add_uri (website, "rdf:type", "nie:DataObject");
+	tracker_resource_add_uri (website, "rdf:type", "nfo:Website");
+	tracker_resource_set_string (website, "nie:url", uri);
 
-	tracker_sparql_builder_predicate (sparql, "nie:url");
-	tracker_sparql_builder_object_unvalidated (sparql, uri);
-
-	tracker_sparql_builder_insert_close (sparql);
+	tracker_resource_set_take_relation (resource, "nco:websiteUrl", website);
 
 	return website_urn;
 }
 
-static void
-sparql_add_contact (TrackerSparqlBuilder *sparql,
-                    const gchar          *alias,
-                    GrssPerson           *contact,
-                    const gchar          *website_urn,
-                    gboolean              is_iri)
+static TrackerResource *
+sparql_add_contact (TrackerResource *resource,
+                    const gchar     *property,
+                    GrssPerson      *contact)
 {
 	const gchar *name = grss_person_get_name (contact);
 	const gchar *email = grss_person_get_email (contact);
+	const gchar *person_url = grss_person_get_uri (contact);
+	TrackerResource *contact_resource;
 
-	tracker_sparql_builder_subject (sparql, alias);
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "nco:Contact");
-
-	tracker_sparql_builder_predicate (sparql, "nco:fullname");
-	tracker_sparql_builder_object_unvalidated (sparql, name);
+	contact_resource = tracker_resource_new (NULL);
+	tracker_resource_add_uri (contact_resource, "rdf:type", "nco:Contact");
+	tracker_resource_set_string (contact_resource, "nco:fullname", name);
 
 	if (email != NULL) {
-		tracker_sparql_builder_predicate (sparql, "nco:hasEmailAddress");
+		TrackerResource *email_resource;
 
-		tracker_sparql_builder_object_blank_open (sparql);
-
-		tracker_sparql_builder_predicate (sparql, "a");
-		tracker_sparql_builder_object (sparql, "nco:EmailAddress");
-
-		tracker_sparql_builder_predicate (sparql, "nco:emailAddress");
-		tracker_sparql_builder_object_unvalidated (sparql, email);
-		tracker_sparql_builder_object_blank_close (sparql);
+		email_resource = tracker_resource_new (NULL);
+		tracker_resource_add_uri (email_resource, "rdf:type", "nco:EmailAddress");
+		tracker_resource_set_string (email_resource, "nco:emailAddress", email);
+		tracker_resource_add_take_relation (contact_resource, "nco:hasEmailAddress", email_resource);
 	}
 
-	if (website_urn) {
-		tracker_sparql_builder_predicate (sparql, "nco:websiteUrl");
+	if (person_url != NULL)
+		sparql_add_website (contact_resource, person_url);
 
-		if (is_iri) {
-			tracker_sparql_builder_object_iri (sparql, website_urn);
-		} else {
-			tracker_sparql_builder_object (sparql, website_urn);
-		}
-	}
+	tracker_resource_add_take_relation (resource, property, contact_resource);
+
+	return contact_resource;
 }
 
 static void
-sparql_add_enclosure (TrackerSparqlBuilder *sparql,
-                      const gchar          *subject,
-                      GrssFeedEnclosure    *enclosure)
+sparql_add_enclosure (TrackerResource   *resource,
+                      GrssFeedEnclosure *enclosure)
 {
-	gchar *url;
+	TrackerResource *child;
+	const gchar *url;
 	gint length;
-	gchar * format;
+	const gchar * format;
+
+	child = tracker_resource_new (NULL);
 
 	url = grss_feed_enclosure_get_url (enclosure);
 	length = grss_feed_enclosure_get_length (enclosure);
 	format = grss_feed_enclosure_get_format (enclosure);
 
-	tracker_sparql_builder_subject (sparql, subject);
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "mfo:Enclosure");
-	tracker_sparql_builder_object (sparql, "nfo:RemoteDataObject");
+	tracker_resource_add_uri (child, "rdf:type", "mfo:Enclosure");
+	tracker_resource_add_uri (child, "rdf:type", "nfo:RemoteDataObject");
 
-	tracker_sparql_builder_predicate (sparql, "mfo:remoteLink");
-	tracker_sparql_builder_object_unvalidated (sparql, url);
+	tracker_resource_set_uri (child, "mfo:remoteLink", url);
 
-	tracker_sparql_builder_predicate (sparql, "nfo:fileSize");
-	tracker_sparql_builder_object_int64 (sparql, length);
+	tracker_resource_set_int64 (child, "nfo:fileSize", length);
 
-	if (format != NULL) {
-		tracker_sparql_builder_predicate (sparql, "nie:mimeType");
-		tracker_sparql_builder_object_unvalidated (sparql, format);
-	}
+	if (format != NULL)
+		tracker_resource_set_string (child, "nie:mimeType", format);
 
+	tracker_resource_add_take_relation (resource, "mfo:enclosureList", child);
 }
 
 static gchar *
@@ -778,187 +743,85 @@ feed_message_create_delete_properties_query (const gchar *item_urn)
 	                        "}", item_urn, item_urn);
 }
 
-static TrackerSparqlBuilder *
-feed_message_create_insert_builder (TrackerMinerRSS    *miner,
-                                    GrssFeedItem       *item,
-                                    const gchar        *item_urn)
+static TrackerResource *
+feed_message_create_resource (TrackerMinerRSS *miner,
+                              GrssFeedItem    *item,
+                              const gchar     *item_urn)
 {
 	time_t t;
-	gchar *uri;
+	gchar *uri, *time_str;
 	const gchar *url;
 	GrssPerson *author;
 	gdouble latitude;
 	gdouble longitude;
 	const gchar *tmp_string;
-	TrackerSparqlBuilder *sparql;
+	TrackerResource *resource;
 	GrssFeedChannel *channel;
-	gboolean has_geolocation;
 	const GList *contributors;
 	const GList *enclosures;
 	const GList *list, *l;
-	GList *contrib_aliases = NULL;
-	GList *enclosure_aliases = NULL;
-	GHashTable *websites;
 	GHashTable *enclosure_urls;
-	gboolean is_iri = FALSE;
-	gint i = 0;
-
-	if (!item_urn) {
-		item_urn = "_:message";
-	} else {
-		is_iri = TRUE;
-	}
 
 	url = get_message_url (item);
 	g_message ("Inserting feed item for '%s'", url);
 
-	websites = g_hash_table_new_full (g_str_hash, g_str_equal,
-	                                  (GDestroyNotify) g_free,
-	                                  (GDestroyNotify) g_free);
-	g_hash_table_insert (websites, g_strdup (url), g_strdup (item_urn));
+	resource = tracker_resource_new (item_urn);
 
-	sparql = tracker_sparql_builder_new_update ();
+	tracker_resource_add_uri (resource, "rdf:type", "mfo:FeedMessage");
+	tracker_resource_add_uri (resource, "rdf:type", "nfo:RemoteDataObject");
+
+	if (url != NULL)
+		tracker_resource_set_string (resource, "nie:url", url);
+
+	resource = tracker_resource_new (NULL);
 	author = grss_feed_item_get_author (item);
 	contributors = grss_feed_item_get_contributors (item);
 	channel = grss_feed_item_get_parent (item);
 	enclosures = grss_feed_item_get_enclosures (item);
 
-	for (l = contributors; l; l = l->next) {
-		const gchar *person_url;
+	if (grss_feed_item_get_geo_point (item, &latitude, &longitude)) {
+		TrackerResource *geolocation;
 
-		person_url = grss_person_get_uri (l->data);
-
-		if (!person_url)
-			continue;
-
-		if (g_hash_table_lookup (websites, person_url))
-			continue;
-
-		g_hash_table_insert (websites, g_strdup (person_url),
-		                     sparql_add_website (sparql, person_url));
-	}
-
-	if (author && grss_person_get_uri (author)) {
-		const gchar *person_url;
-
-		person_url = grss_person_get_uri (author);
-
-		if (!g_hash_table_lookup (websites, person_url)) {
-			g_hash_table_insert (websites, g_strdup (person_url),
-			                     sparql_add_website (sparql, person_url));
-		}
-	}
-
-	has_geolocation = grss_feed_item_get_geo_point (item, &latitude, &longitude);
-	tracker_sparql_builder_insert_open (sparql, NULL);
-
-	if (has_geolocation) {
 		g_message ("  Geolocation, using longitude:%f, latitude:%f",
 		           longitude, latitude);
 
-		tracker_sparql_builder_subject (sparql, "_:location");
-		tracker_sparql_builder_predicate (sparql, "a");
-		tracker_sparql_builder_object (sparql, "slo:GeoLocation");
+		geolocation = tracker_resource_new (NULL);
+		tracker_resource_add_uri (geolocation, "rdf:type", "slo:GeoLocation");
+		tracker_resource_set_double (geolocation, "slo:latitude", latitude);
+		tracker_resource_set_double (geolocation, "slo:longitude", longitude);
 
-		tracker_sparql_builder_predicate (sparql, "slo:latitude");
-		tracker_sparql_builder_object_double (sparql, latitude);
-		tracker_sparql_builder_predicate (sparql, "slo:longitude");
-		tracker_sparql_builder_object_double (sparql, longitude);
+		tracker_resource_set_take_relation (resource, "slo:location", geolocation);
 	}
 
 	if (author != NULL) {
 		g_message ("  Author:'%s'", grss_person_get_name (author));
-
-		if (grss_person_get_uri (author))
-			tmp_string = g_hash_table_lookup (websites, grss_person_get_uri (author));
-		else
-			tmp_string = NULL;
-
-		sparql_add_contact (sparql, "_:author", author, tmp_string,
-		                    (tmp_string && tmp_string[0] != '_'));
+		sparql_add_contact (resource, "nco:creator", author);
 	}
 
-	i = 0;
 	for (l = contributors; l; l = l->next) {
-		gchar *subject;
-
 		g_debug ("  Contributor:'%s'", grss_person_get_name (l->data));
-
-		subject = g_strdup_printf ("_:contrib%d", i++);
-		contrib_aliases = g_list_prepend (contrib_aliases, subject);
-
-		if (grss_person_get_uri (l->data))
-			tmp_string = g_hash_table_lookup (websites, grss_person_get_uri (l->data));
-		else
-			tmp_string = NULL;
-
-		sparql_add_contact (sparql, subject, l->data, tmp_string,
-		                    (tmp_string && tmp_string[0] != '_'));
-
-		/* subject is not freed right now as it will be freed at the end of the
-		 * method in a foreach loop over the contrib_aliases list */
+		sparql_add_contact (resource, "nco:contributor", l->data);
 	}
 
-	enclosure_urls = g_hash_table_new_full (g_str_hash, g_str_equal,
-	                                        (GDestroyNotify) g_free,
-	                                        (GDestroyNotify) g_free);
-	i = 0;
+	enclosure_urls = g_hash_table_new (g_str_hash, g_str_equal);
 	for (l = enclosures; l; l = l->next) {
-		gchar *subject;
-		gchar *url;
+		const gchar *url;
 
 		url = grss_feed_enclosure_get_url (l->data);
 
 		if (!g_hash_table_contains (enclosure_urls, url)) {
 			g_debug ("  Enclosure:'%s'", url);
-			subject = g_strdup_printf ("_:enclosure%d", i++);
-			enclosure_aliases = g_list_prepend (enclosure_aliases, subject);
-			g_hash_table_insert (enclosure_urls, g_strdup (url), NULL);
-
-			sparql_add_enclosure (sparql, subject, l->data);
+			g_hash_table_add (enclosure_urls, (gpointer) url);
+			sparql_add_enclosure (resource, l->data);
 
 		}
-
-		/* subject is not freed right now as it will be freed at the end of the
-		 * method in a foreach loop over the enclosure_aliases list */
 	}
-
-	if (is_iri) {
-		tracker_sparql_builder_subject_iri (sparql, item_urn);
-	} else {
-		tracker_sparql_builder_subject (sparql, item_urn);
-	}
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "mfo:FeedMessage");
-	tracker_sparql_builder_predicate (sparql, "a");
-	tracker_sparql_builder_object (sparql, "nfo:RemoteDataObject");
-
-	if (has_geolocation == TRUE) {
-		tracker_sparql_builder_predicate (sparql, "slo:location");
-		tracker_sparql_builder_object (sparql, "_:location");
-	}
+	g_hash_table_destroy (enclosure_urls);
 
 	tmp_string = grss_feed_item_get_title (item);
 	if (tmp_string != NULL) {
 		g_message ("  Title:'%s'", tmp_string);
-
-		tracker_sparql_builder_predicate (sparql, "nie:title");
-		tracker_sparql_builder_object_unvalidated (sparql, tmp_string);
-	}
-
-	if (author != NULL) {
-		tracker_sparql_builder_predicate (sparql, "nco:creator");
-		tracker_sparql_builder_object (sparql, "_:author");
-	}
-
-	for (l = contrib_aliases; l; l = l->next) {
-		tracker_sparql_builder_predicate (sparql, "nco:contributor");
-		tracker_sparql_builder_object (sparql, l->data);
-	}
-
-	for (l = enclosure_aliases; l; l = l->next) {
-		tracker_sparql_builder_predicate (sparql, "mfo:enclosureList");
-		tracker_sparql_builder_object (sparql, l->data);
+		tracker_resource_set_string (resource, "nie:title", tmp_string);
 	}
 
 	tmp_string = grss_feed_item_get_description (item);
@@ -966,61 +829,38 @@ feed_message_create_insert_builder (TrackerMinerRSS    *miner,
 		gchar *plain_text;
 
 		plain_text = parse_html_text (tmp_string);
-		tracker_sparql_builder_predicate (sparql, "nie:plainTextContent");
-		tracker_sparql_builder_object_unvalidated (sparql, plain_text);
+		tracker_resource_set_string (resource, "nie:plainTextContent", plain_text);
 		g_free (plain_text);
 
-		tracker_sparql_builder_predicate (sparql, "nmo:htmlMessageContent");
-		tracker_sparql_builder_object_unvalidated (sparql, tmp_string);
+		tracker_resource_set_string (resource, "nmo:htmlMessageContent", tmp_string);
 	}
 
-	if (url != NULL) {
-		tracker_sparql_builder_predicate (sparql, "nie:url");
-		tracker_sparql_builder_object_unvalidated (sparql, url);
-	}
-
-	/* TODO nmo:receivedDate and mfo:downloadedTime are the same?
-	 *      Ask for the MFO maintainer */
-
-	t = time (NULL);
-
-	tracker_sparql_builder_predicate (sparql, "nmo:receivedDate");
-	tracker_sparql_builder_object_date (sparql, &t);
-
-	tracker_sparql_builder_predicate (sparql, "mfo:downloadedTime");
-	tracker_sparql_builder_object_date (sparql, &t);
+	time_str = tracker_date_to_string (time (NULL));
+	tracker_resource_set_string (resource, "nmo:receivedDate", time_str);
+	tracker_resource_set_string (resource, "mfo:downloadedTime", time_str);
+	g_free (time_str);
 
 	t = grss_feed_item_get_publish_time (item);
-	tracker_sparql_builder_predicate (sparql, "nie:contentCreated");
-	tracker_sparql_builder_object_date (sparql, &t);
+	time_str = tracker_date_to_string (t);
+	tracker_resource_set_string (resource, "nie:contentCreated", time_str);
+	g_free (time_str);
 
-	tracker_sparql_builder_predicate (sparql, "nmo:isRead");
-	tracker_sparql_builder_object_boolean (sparql, FALSE);
+	tracker_resource_set_boolean (resource, "nmo:isRead", FALSE);
 
 	uri = g_object_get_data (G_OBJECT (channel), "subject");
-	tracker_sparql_builder_predicate (sparql, "nmo:communicationChannel");
-	tracker_sparql_builder_object_iri (sparql, uri);
+	tracker_resource_add_uri (resource, "nmo:communicationChannel", uri);
 
 	tmp_string = grss_feed_item_get_copyright (item);
 	if (tmp_string) {
-		tracker_sparql_builder_predicate (sparql, "nie:copyright");
-		tracker_sparql_builder_object_unvalidated (sparql, tmp_string);
+		tracker_resource_set_string (resource, "nie:copyright", tmp_string);
 	}
 
 	list = grss_feed_item_get_categories (item);
 	for (l = list; l; l = l->next) {
-		tracker_sparql_builder_predicate (sparql, "nie:keyword");
-		tracker_sparql_builder_object_unvalidated (sparql, l->data);
+		tracker_resource_add_string (resource, "nie:keyword", l->data);
 	}
 
-	tracker_sparql_builder_insert_close (sparql);
-
-	g_list_free_full (contrib_aliases, g_free);
-	g_list_free_full (enclosure_aliases, g_free);
-	g_hash_table_destroy (websites);
-	g_hash_table_destroy (enclosure_urls);
-
-	return sparql;
+	return resource;
 }
 
 static void
@@ -1064,7 +904,7 @@ check_feed_items_cb (GObject      *source_object,
                      gpointer      user_data)
 {
 	TrackerSparqlConnection *connection;
-	TrackerSparqlBuilder *sparql;
+	TrackerResource *resource;
 	FeedItemListInsertData *data;
 	TrackerSparqlCursor *cursor;
 	GrssFeedItem *item;
@@ -1100,11 +940,11 @@ check_feed_items_cb (GObject      *source_object,
 
 			g_ptr_array_add (array, feed_message_create_delete_properties_query (urn));
 
-			sparql = feed_message_create_insert_builder (data->miner,
-			                                             item, urn);
-			str = tracker_sparql_builder_get_result (sparql);
+			resource = feed_message_create_resource (data->miner,
+			                                       item, urn);
+			str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN);
 			g_ptr_array_add (array, g_strdup (str));
-			g_object_unref (sparql);
+			g_object_unref (resource);
 		}
 
 		g_hash_table_remove (data->items, url);
@@ -1126,11 +966,11 @@ check_feed_items_cb (GObject      *source_object,
 
 	/* Insert all remaining items as new */
 	while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &item)) {
-		sparql = feed_message_create_insert_builder (data->miner,
-		                                             item, NULL);
-		str = tracker_sparql_builder_get_result (sparql);
+		resource = feed_message_create_resource (data->miner,
+		                                       item, NULL);
+		str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN);
 		g_ptr_array_add (array, g_strdup (str));
-		g_object_unref (sparql);
+		g_object_unref (resource);
 	}
 
 	if (array->len == 0) {

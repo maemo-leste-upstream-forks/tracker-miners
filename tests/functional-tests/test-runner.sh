@@ -1,12 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Test runner script for Tracker's functional tests
 
 set -e
 
 SCRIPT=$1
-
-DBUS_SESSION_BUS_PID=
 
 export TEMP_DIR=`mktemp --tmpdir -d tracker-test-XXXX`
 
@@ -18,13 +16,6 @@ export REAL_HOME=`echo ~`
 # in the filesystem
 HOME=$TEMP_DIR
 
-eval `dbus-launch --sh-syntax`
-
-trap "/bin/kill $DBUS_SESSION_BUS_PID; exit" INT ERR
-
-echo "Running $@"
-$@
-
-kill $DBUS_SESSION_BUS_PID
+dbus-run-session $@
 
 rm -R $TEMP_DIR

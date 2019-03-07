@@ -5,13 +5,17 @@ subdir('libtracker-miners-common')
 subdir('libtracker-extract')
 
 # Public data extract tool & modules
-subdir('tracker-extract')
+if get_option('extract')
+  subdir('tracker-extract')
+endif
 
 # Public miners
 subdir('miners')
 
 # Public metadata writeback tool & modiles
-subdir('tracker-writeback')
+if get_option('writeback')
+  subdir('tracker-writeback')
+endif
 
 custom_target('tracker-miners-settings-enums',
     input: 'libtracker-miners-common/tracker-enums.h',
@@ -27,4 +31,4 @@ custom_target('tracker-miners-settings-enums',
     install: true,
     install_dir: gsettings_schema_dir)
 
-meson.add_install_script('create-miner-symlinks.sh', dbus_services_dir, tracker_miner_services_dir, have_tracker_miner_apps.to_string(), have_tracker_miner_fs.to_string(), have_tracker_miner_rss.to_string())
+meson.add_install_script('create-miner-symlinks.sh', dbus_services_dir, tracker_miner_services_dir, have_tracker_miner_fs.to_string(), have_tracker_miner_rss.to_string())

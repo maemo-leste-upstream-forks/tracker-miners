@@ -1,4 +1,6 @@
-project('tracker-miners', 'c', version: '2.1.6')
+project('tracker-miners', 'c',
+        version: '2.2.1',
+        meson_version: '>=0.47')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -7,11 +9,14 @@ cc = meson.get_compiler('c')
 # This is the X.Y used in -llibtracker-FOO-X.Y
 tracker_api_version = '2.0'
 
+libdir = join_paths(get_option('prefix'), get_option('libdir'))
+datadir = join_paths(get_option('prefix'), get_option('datadir'))
+
 glib_required = '2.40.0'
 
 if get_option('tracker_core') == 'system'
-  tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 2.1.0', required: false)
-  tracker_miner = dependency('tracker-miner-2.0', version: '>= 2.1.0', required: false)
+  tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 2.2.0', required: false)
+  tracker_miner = dependency('tracker-miner-2.0', version: '>= 2.2.0', required: false)
 
   if not tracker_sparql.found() or not tracker_miner.found()
     error('Did not find the required versions of the Tracker core libraries ' +
@@ -25,15 +30,14 @@ if get_option('tracker_core') == 'system'
   #
   # This check acts as a guard to make sure we are being configured with the
   # right prefix, among other things.
-  tracker_store = find_program(join_paths(get_option('prefix'), get_option('libexecdir'), 'tracker-store'))
-  tracker_store_path = tracker_store.path()
+  tracker_store_path = tracker_sparql.get_pkgconfig_variable('tracker_store')
 
   # If we are building against an installed version of tracker core rather than
   # having it as a subproject, these 'uninstalled' locations point to the actual
   # installed locations.
-  tracker_uninstalled_domain_rule = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'domain-ontologies', 'default.rule')
-  tracker_uninstalled_nepomuk_ontologies_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'ontologies', 'nepomuk')
-  tracker_uninstalled_stop_words_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker', 'stop-words', 'default.rule')
+  tracker_uninstalled_domain_rule = join_paths (tracker_sparql.get_pkgconfig_variable('domain_ontologies_dir'), 'default.rule')
+  tracker_uninstalled_nepomuk_ontologies_dir = join_paths(tracker_sparql.get_pkgconfig_variable('ontologies_dir'), 'nepomuk')
+  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_pkgconfig_variable('datadir'), 'tracker', 'stop-words')
 else
   tracker_subproject = subproject('tracker',
     default_options: [
@@ -94,7 +98,6 @@ libgif = cc.find_library('gif', required: get_option('gif'))
 libmath = cc.find_library('m', required: false)
 
 have_tracker_extract = get_option('extract')
-have_tracker_miner_apps = get_option('miner_apps')
 have_tracker_miner_fs = get_option('miner_fs')
 have_tracker_miner_rss = get_option('miner_rss')
 have_tracker_writeback = get_option('writeback')
@@ -106,6 +109,8 @@ if have_tracker_miner_rss
           'this miner by passing -Dminer_rss=false if needed.')
   endif
 endif
+
+add_project_arguments('-Wformat', '-Wformat-security', language: 'c')
 
 # There are various gchar vs. unsigned char warnings that occur in extract
 # modules, it's not worth adding casts everywhere so we disable the warning.
@@ -250,6 +255,9 @@ endif
 
 host_system = host_machine.system()
 host_cpu = host_machine.cpu()
+
+# You can find a list of architectures that seccomp supports in the seccomp
+# project README. See: https://github.com/seccomp/libseccomp/
 unsupported_cpus = [
   'alpha',
   'ia64',
@@ -260,6 +268,7 @@ unsupported_cpus = [
   'sparc',
   'sparc64',
 ]
+
 system_supports_seccomp = host_system == 'linux'
 cpu_supports_seccomp = not unsupported_cpus.contains(host_cpu)
 seccomp_required = system_supports_seccomp and cpu_supports_seccomp
@@ -273,7 +282,8 @@ endif
 ####################################################################
 
 if get_option('dbus_services') == ''
-  dbus_services_dir = dbus.get_pkgconfig_variable('session_bus_services_dir')
+  dbus_services_dir = dbus.get_pkgconfig_variable('session_bus_services_dir',
+                                                  define_variable: [ 'datadir', datadir ])
 else
   dbus_services_dir = get_option('dbus_services')
 endif
@@ -286,11 +296,12 @@ install_systemd_user_services = false
 if get_option('systemd_user_services') == 'yes' or get_option('systemd_user_services') == 'auto'
   systemd = dependency('systemd', required: false)
   if systemd.found()
-    systemd_user_services_dir = systemd.get_pkgconfig_variable('systemduserunitdir')
+    install_systemd_user_services = true
+    systemd_user_services_dir = join_paths(libdir, 'systemd', 'user')
   else
-    systemd_user_services_dir = join_paths(get_option('libdir'), 'systemd', 'user')
+    install_systemd_user_services = false
+    systemd_user_services_dir = '(not found)'
   endif
-  install_systemd_user_services = true
 elif get_option('systemd_user_services') == 'no' or get_option('systemd_user_services') == ''
   install_systemd_user_services = false
   systemd_user_services_dir = '(disabled)'
@@ -298,10 +309,6 @@ else
   install_systemd_user_services = true
   systemd_user_services_dir = get_option('systemd_user_services')
 endif
-
-tracker_major_version = meson.project_version().split('.')[0].to_int()
-tracker_minor_version = meson.project_version().split('.')[1].to_int()
-tracker_micro_version = meson.project_version().split('.')[2].to_int()
 
 conf = configuration_data()
 
@@ -317,7 +324,7 @@ conf.set('GSTREAMER_BACKEND_DISCOVERER', gstreamer_backend_name == 'Discoverer')
 conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DLNA')
 conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
 conf.set('HAVE_LIBCUE', libcue.found())
-conf.set('HAVE_LIBCUE2', libcue.version() >= '2.0.0')
+conf.set('HAVE_LIBCUE2', libcue.found() and libcue.version().version_compare('>= 2.0.0'))
 conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
@@ -337,19 +344,14 @@ conf.set('TRACKER_UI_DIR', '"@0@/@1@/tracker/"'.format(get_option('prefix'), get
 conf.set('GETTEXT_PACKAGE', '"tracker-miners"')
 conf.set('PACKAGE_VERSION', '"@0@"'.format(meson.project_version()))
 conf.set('TRACKER_VERSION', '"@0@"'.format(meson.project_version()))
-conf.set('TRACKER_MAJOR_VERSION', tracker_major_version)
-conf.set('TRACKER_MINOR_VERSION', tracker_minor_version)
-conf.set('TRACKER_MICRO_VERSION', tracker_micro_version)
-conf.set('TRACKER_INTERFACE_AGE', 0)
-conf.set('TRACKER_BINARY_AGE', 100 * tracker_minor_version + tracker_micro_version)
 
 # Config that goes in some other generated files (.desktop, .pc, etc)
 conf.set('exec_prefix', get_option('prefix'))
 conf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
-conf.set('datadir', join_paths(get_option('prefix'), get_option('datadir')))
+conf.set('datadir', datadir)
 conf.set('datarootdir', join_paths(get_option('prefix'), get_option('datadir')))
 conf.set('includedir', join_paths(get_option('prefix'), get_option('includedir')))
-conf.set('libdir', join_paths(get_option('prefix'), get_option('libdir')))
+conf.set('libdir', libdir)
 conf.set('libexecdir', join_paths(get_option('prefix'), get_option('libexecdir')))
 conf.set('prefix', get_option('prefix'))
 conf.set('TRACKER_API_VERSION', '1.0')
@@ -389,12 +391,14 @@ tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadi
 tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/writeback-modules'.format(tracker_api_version))
 
 tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract')
+tracker_uninstalled_writeback_modules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-writeback')
 
 gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
 
 glib_mkenums = find_program('glib-mkenums')
 
 subdir('src')
+subdir('data')
 
 if get_option('docs')
   subdir('docs')
@@ -419,7 +423,6 @@ summary = [
   '    Build with Journal support:             ' + get_option('journal').to_string(),
   '\nData Miners / Writebacks:',
   '    FS (File System):                       ' + have_tracker_miner_fs.to_string(),
-  '    Applications:                           ' + have_tracker_miner_apps.to_string(),
   '    RSS:                                    ' + have_tracker_miner_rss.to_string(),
   '   Extract (secondary extraction):     ' + have_tracker_extract.to_string(),
   '   Writeback (writing changes back):   ' + have_tracker_writeback.to_string(),

@@ -21,7 +21,7 @@
 from common.utils import configuration as cfg
 from common.utils.helpers import log
 from common.utils.system import TrackerSystemAbstraction
-import unittest2 as ut
+import unittest as ut
 
 from gi.repository import GLib
 
@@ -33,7 +33,7 @@ from itertools import chain
 
 DEFAULT_TEXT = "Some stupid content, to have a test file"
 
-NFO_TEXT_DOCUMENT = 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#TextDocument'
+NFO_DOCUMENT = 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Document'
 
 
 def ensure_dir_exists(dirname):
@@ -43,13 +43,9 @@ def ensure_dir_exists(dirname):
 
 class CommonTrackerMinerTest (ut.TestCase):
     def setUp (self):
-        ensure_dir_exists(cfg.TEST_MONITORED_TMP_DIR)
+        self.workdir = cfg.create_monitored_test_dir()
 
-        # It's important that this directory is NOT inside /tmp, because
-        # monitoring files in /tmp usually doesn't work.
-        self.datadir = tempfile.mkdtemp(dir=cfg.TEST_MONITORED_TMP_DIR)
-
-        self.indexed_dir = os.path.join(self.datadir, 'test-monitored')
+        self.indexed_dir = os.path.join(self.workdir, 'test-monitored')
 
         # It's important that this directory exists BEFORE we start Tracker:
         # it won't monitor an indexing root for changes if it doesn't exist,
@@ -90,14 +86,15 @@ class CommonTrackerMinerTest (ut.TestCase):
             raise
 
     def tearDown (self):
+        self.system.finish ()
         self.remove_test_data ()
-        self.system.tracker_miner_fs_testing_stop ()
+        cfg.remove_monitored_test_dir(self.workdir)
 
     def path (self, filename):
-        return os.path.join (self.datadir, filename)
+        return os.path.join (self.workdir, filename)
 
     def uri (self, filename):
-        return "file://" + os.path.join (self.datadir, filename)
+        return "file://" + os.path.join (self.workdir, filename)
 
     def create_test_data (self):
         monitored_files = [
@@ -117,11 +114,12 @@ class CommonTrackerMinerTest (ut.TestCase):
                 f.write (DEFAULT_TEXT)
 
         for tf in monitored_files:
-            self.tracker.await_resource_inserted(NFO_TEXT_DOCUMENT, url=self.uri(tf))
+            self.tracker.await_resource_inserted(NFO_DOCUMENT, url=self.uri(tf))
 
     def remove_test_data(self):
         try:
-            shutil.rmtree(self.datadir)
+            shutil.rmtree(os.path.join(self.workdir, 'test-monitored'))
+            shutil.rmtree(os.path.join(self.workdir, 'test-no-monitored'))
         except Exception as e:
             log("Failed to remove temporary data dir: %s" % e)
 
@@ -156,11 +154,11 @@ class CommonTrackerMinerFTSTest (CommonTrackerMinerTest):
 
         if exists:
             subject_id = self.tracker.get_resource_id(self.uri(self.testfile))
-            self.tracker.await_property_changed(NFO_TEXT_DOCUMENT,
+            self.tracker.await_property_changed(NFO_DOCUMENT,
                 subject_id=subject_id, property_uri='nie:plainTextContent')
         else:
             self.tracker.await_resource_inserted(
-                rdf_class=NFO_TEXT_DOCUMENT, url=self.uri(self.testfile),
+                rdf_class=NFO_DOCUMENT, url=self.uri(self.testfile),
                 required_property='nie:plainTextContent')
 
         self.tracker.reset_graph_updates_tracking()

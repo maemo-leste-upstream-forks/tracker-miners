@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-07-16 23:39+0000\n"
-"PO-Revision-Date: 2018-07-17 19:18+0300\n"
+"POT-Creation-Date: 2019-02-10 14:29+0000\n"
+"PO-Revision-Date: 2019-02-13 15:57+0100\n"
 "Last-Translator: Florentina Mușat <florentina.musat.28 [at] gmail [dot] "
 "com>\n"
 "Language-Team: Romanian Gnome Team <gnomero-list@lists.sourceforge.net>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Launchpad-Export-Date: 2009-10-03 17:40+0000\n"
 "X-Project-Style: gnome\n"
 
@@ -88,54 +88,6 @@ msgstr[0] " %2.2d secundă"
 msgstr[1] " %2.2d secunde"
 msgstr[2] " %2.2d de secunde"
 
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Aplicații"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Minerit de date pentru aplicații"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Jurnalizare, 0 = doar erori, 1 = minimal, 2 = detaliat și 3 = depanare "
-"(implicit=0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr "Rulează până când toate locațiile sunt indexate și apoi iese"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:102
-msgid "Runs for a specific domain ontology"
-msgstr "Rulează pentru o ontologie de domeniu specifică"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
-#: ../src/tracker-extract/tracker-main.c:106
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Afișează informații despre versiune"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— pornește aplicația de minerit de date"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Miner de aplicații tracker"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Indexează informațiile despre aplicațiile instalate"
-
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
 msgid "File System"
 msgstr "Sistem de fișiere"
@@ -144,33 +96,33 @@ msgstr "Sistem de fișiere"
 msgid "File system data miner"
 msgstr "Miner date din sistemul de fișiere"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
 msgid "Log verbosity"
 msgstr "Detalierea istoricului"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
 msgid "Log verbosity."
 msgstr "Nivelul de detaliere al istoricului."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
 msgid "Initial sleep"
 msgstr "Așteptare inițială"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
 msgid "Initial sleep time, in seconds."
 msgstr "Timp inițial de așteptare, în secunde."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:3
 msgid "Scheduler priority when idle"
 msgstr "Prioritatea planificatorului când este neutilizat"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:4
 msgid ""
 "The scheduler is the kernel component that decides which runnable "
 "application will be executed by the CPU next. Each application has an "
@@ -180,30 +132,30 @@ msgstr ""
 "va fi rulată următoarea de către procesor. Fiecare aplicație are asociată o "
 "prioritate și regulă de planificare."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
 msgid "Throttle"
 msgstr "Regulator"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
 msgid "Indexing speed, the higher the slower."
 msgstr "Viteză de indexare, cu cât mai mare, cu atât mai încet."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
 msgid "Low disk space limit"
 msgstr "Spațiu liber pe disc redus"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
 msgid ""
 "Disk space threshold in percent at which to pause indexing, or -1 to disable."
 msgstr ""
 "Limita spațiului pe disc în procente la care să se întrerupă indexarea, sau "
 "-1 pentru a dezactiva."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
 msgid "Crawling interval"
 msgstr "Interval căutare"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
 msgid ""
 "Interval in days to check whether the filesystem is up to date in the "
 "database. 0 forces crawling anytime, -1 forces it only after unclean "
@@ -213,11 +165,11 @@ msgstr ""
 "în baza de date. 0 forțează căutarea mereu, -1 o forțează numai după oprirea "
 "forțată, și -2 o dezactivează complet."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
 msgid "Removable devices’ data permanence threshold"
 msgstr "Limita de permanență a datelor de pe dispozitivele detașabile"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
 msgid ""
 "Threshold in days after which files from removables devices will be removed "
 "from database if not mounted. 0 means never, maximum is 365."
@@ -226,39 +178,39 @@ msgstr ""
 "eliminate din baza de date dacă nu sunt montate. 0 înseamnă niciodată, "
 "maximul este 365."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
 msgid "Enable monitors"
 msgstr "Permite monitorizarea"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
 msgid "Set to false to completely disable any file monitoring"
 msgstr ""
 "Stabiliți ca fals pentru a dezactiva complet orice monitorizare a fișierelor"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
 msgid "Enable writeback"
 msgstr "Permite scrierea înapoi"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
 msgid "Set to false to completely disable any file writeback"
 msgstr "Stabiliți ca fals pentru a dezactiva complet orice scriere înapoi"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
 msgid "Index removable devices"
 msgstr "Include dispozitivele de stocare detașabile"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
 msgid ""
 "Set to true to enable indexing mounted directories for removable devices."
 msgstr ""
 "Stabiliți ca adevărat pentru a permite indexarea dosarelor montate pentru "
 "dispozitivele detașabile."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
 msgid "Index optical discs"
 msgstr "Indexează discurile optice"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
 msgid ""
 "Set to true to enable indexing CDs, DVDs, and generally optical media (if "
 "removable devices are not indexed, optical discs won’t be either)"
@@ -267,179 +219,201 @@ msgstr ""
 "general a mediilor optice (dacă dispozitivele detașabile nu sunt indexate, "
 "nu vor fi nici discurile optice)"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
 msgid "Index when running on battery"
 msgstr "Indexează când se rulează pe baterie"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
 msgid "Set to true to index while running on battery"
 msgstr "Stabiliți ca fals pentru a indexa în timp ce se rulează de pe baterie"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
 msgid "Perform initial indexing when running on battery"
 msgstr "Execută indexarea inițială când rulează prima dată de pe baterie"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
 msgid "Set to true to index while running on battery for the first time only"
 msgstr ""
 "Stabiliți ca adevărat pentru a indexa în timp ce se rulează pe baterie doar "
 "pentru prima dată"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
 msgid "Directories to index recursively"
 msgstr "Dosare de indexat recursiv"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
 msgid ""
 "List of directories to index recursively, Special values include: &amp;"
 "DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Lista dosarelor de indexat recursiv, Valorile speciale includ: &amp;DESKTOP, "
-"&amp;DOCUMENTE, &amp;DESCĂRCARE, &amp;MUZICĂ, &amp;IMAGINI, &amp;"
-"PARTAJARE_PUBLICĂ, &amp;ȘABLOANE, &amp;VIDEOCLIPURI. Vedeți /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
+"&amp;DOCUMENTE, &amp;DESCĂRCĂRI, &amp;MUZICĂ, &amp;IMAGINI, &amp;"
+"PARTAJARE_PUBLICĂ, &amp;ȘABLOANE, &amp;VIDEOCLIPURI.\n"
+"\n"
+"Consultați /etc/xdg/user-dirs.defaults și $HOME/.config/user-dirs.default"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
 msgid "Directories to index non-recursively"
 msgstr "Dosare de indexat ne-recursiv"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
 msgid ""
 "List of directories to index without inspecting subfolders, Special values "
 "include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Lista dosarelor de indexat fără a inspecta subdosarele, Valorile speciale "
-"includ: &amp;DESKTOP, &amp;DOCUMENTE, &amp;DESCĂRCARE, &amp;MUZICĂ, &amp;"
-"IMAGINI, &amp;PARTAJARE_PUBLICĂ, &amp;ȘABLOANE, &amp;VIDEOCLIPURI. Vedeți /"
-"etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+"includ: &amp;DESKTOP, &amp;DOCUMENTE, &amp;DESCĂRCĂRI, &amp;MUZICĂ, &amp;"
+"IMAGINI, &amp;PARTAJARE_PUBLICĂ, &amp;ȘABLOANE, &amp;VIDEOCLIPURI.\n"
+"\n"
+"Consultați /etc/xdg/user-dirs.defaults și $HOME/.config/user-dirs.default"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
 msgid "Ignored files"
 msgstr "Fișiere ignorate"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
 msgid "List of file patterns to avoid"
 msgstr "Lista modelelor de evitat"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
 msgid "Ignored directories"
 msgstr "Dosare ignorate"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
 msgid "List of directories to avoid"
 msgstr "Lista dosarelor de evitat"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
 msgid "Ignored directories with content"
 msgstr "Au fost ignorate dosarele cu conținut"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
 msgid "Avoid any directory containing a file blacklisted here"
 msgstr "Evită orice dosar ce conține un fișier interzis aici"
 
-#: ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
+msgid ""
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
+msgstr ""
+"Jurnalizare, 0 = doar erori, 1 = minimal, 2 = detaliat și 3 = depanare "
+"(implicit=0)"
+
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Timp inițial de așteptare, 0->1000 (implicit=15)"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Rulează până când toate locațiile configurate sunt indexate iar apoi se "
 "închide"
 
-#: ../src/miners/fs/tracker-main.c:86
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Verifică dacă FIȘIER este eligibil pentru a fi minerit conform configurației"
 
-#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "FIȘIER"
 
-#: ../src/miners/fs/tracker-main.c:432
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Rulează pentru o ontologie de domeniu specifică"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Afișează informații despre versiune"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Obiectul de date „%s” există deja"
 
-#: ../src/miners/fs/tracker-main.c:433
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Obiectul de date „%s” nu există în mod curent"
 
-#: ../src/miners/fs/tracker-main.c:448
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Dosarul este eligibil pentru minerit (conform regulilor)"
 
-#: ../src/miners/fs/tracker-main.c:449
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Dosarul NU este eligibil pentru minerit (conform regulilor)"
 
-#: ../src/miners/fs/tracker-main.c:469
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Dosarul este eligibil pentru minerit (conform conținutului)"
 
-#: ../src/miners/fs/tracker-main.c:470
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Dosarul NU este eligibil pentru minerit (conform conținutului)"
 
-#: ../src/miners/fs/tracker-main.c:517
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Dosarul este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:518
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Dosarul NU este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:522
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Fișierul este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:523
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Fișierul NU este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:527
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Fișierul sau dosarul este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:528
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Fișierul sau dosarul NU este eligibil pentru minerit (conform configurației)"
 
-#: ../src/miners/fs/tracker-main.c:543
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Fișierul este eligibil pentru minerit (conform regulilor)"
 
-#: ../src/miners/fs/tracker-main.c:544
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Fișierul NU este eligibil pentru minerit (conform regulilor)"
 
-#: ../src/miners/fs/tracker-main.c:553
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "Ar fi indexat"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Da"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Nu"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "Ar fi monitorizat"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:686
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— pornește indexatorul de tracker"
 
@@ -507,19 +481,19 @@ msgstr "Extractor"
 msgid "Metadata extractor"
 msgstr "Extractor de metadate"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:5
 msgid "Max bytes to extract"
 msgstr "Numărul maxim de octeți de extras"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:6
 msgid "Maximum number of UTF-8 bytes to extract."
 msgstr "Numărul maxim de octeți UTF-8 de extras."
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:7
 msgid "Max media art width"
 msgstr "Lățime maximă de artă media"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:8
 msgid ""
 "Maximum width in pixels for any media art extracted. Anything bigger is "
 "resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
@@ -530,11 +504,11 @@ msgstr ""
 "media din fișiere. Stabilirea la 0 nu definește nicio limită pe lățimea "
 "artei media."
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:9
 msgid "Wait for FS miner to be done before extracting"
 msgstr "Așteaptă ca minerul FS să termine înainte de a extrage"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:10
 msgid ""
 "When true, tracker-extract will wait for tracker-miner-fs to be done "
 "crawling before extracting meta-data. This option is useful on constrained "
@@ -626,6 +600,24 @@ msgstr "Dezactivează oprirea după 30 de secunde de inactivitate"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— pornește serviciul de scriere înapoi de tracker"
+
+#~ msgid "Applications"
+#~ msgstr "Aplicații"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Minerit de date pentru aplicații"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr "Rulează până când toate locațiile sunt indexate și apoi iese"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— pornește aplicația de minerit de date"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Miner de aplicații tracker"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Indexează informațiile despre aplicațiile instalate"
 
 #~ msgid "Location of journal pieces"
 #~ msgstr "Locația bucăților din jurnal"

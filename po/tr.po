@@ -6,14 +6,14 @@
 # Kaan Özdinçer <kaanozdincer@gmail.com>, 2015.
 # Muhammet Kara <muhammetk@gmail.com>, 2014, 2015.
 # Çağatay Yiğit Şahin <cyigitsahin@outlook.com>, 2017.
-# Emin Tufan Çetin <etcetin@gmail.com>, 2018.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2018-2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-07-16 23:39+0000\n"
-"PO-Revision-Date: 2018-08-12 10:07+0300\n"
+"POT-Creation-Date: 2019-02-09 16:22+0000\n"
+"PO-Revision-Date: 2019-02-09 23:32+0300\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Türkçe <gnome-turk@gnome.org>\n"
 "Language: tr\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.30.1\n"
 "X-POOTLE-MTIME: 1436541455.000000\n"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
@@ -81,54 +81,6 @@ msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
 msgstr[0] " %2.2d saniye"
 
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Uygulamalar"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Uygulama veri madencisi"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Loglama, 0 = yalnızca hatalar, 1 = asgari, 2 = ayrıntılı ve 3 = hata "
-"ayıklama (öntanımlı=0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr "Tüm uygulamalar dizine eklenene kadar çalışır ve sonra çıkar"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:102
-msgid "Runs for a specific domain ontology"
-msgstr "Belirli bir etki alanı ontolojisi için çalışır"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
-#: ../src/tracker-extract/tracker-main.c:106
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Sürüm bilgisini görüntüler"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— uygulama veri madencisini başlat"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Tracker Uygulama Madencisi"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Uygulamaların kurulumu hakkında bilgiler indeksler"
-
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
 msgid "File System"
 msgstr "Dosya Sistemi"
@@ -137,33 +89,31 @@ msgstr "Dosya Sistemi"
 msgid "File system data miner"
 msgstr "Dosya sistemi veri madencisi"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:1
 msgid "Log verbosity"
 msgstr "Sistem günlüğü ayrıntısı"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:2
 msgid "Log verbosity."
 msgstr "Sistem günlüğü ayrıntısı."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
 msgid "Initial sleep"
 msgstr "İlk uyku"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
 msgid "Initial sleep time, in seconds."
 msgstr "İlk uyku süresi, saniye cinsinden."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:3
 msgid "Scheduler priority when idle"
 msgstr "Boştayken zamanlayıcı önceliği"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:4
 msgid ""
 "The scheduler is the kernel component that decides which runnable "
 "application will be executed by the CPU next. Each application has an "
@@ -173,30 +123,30 @@ msgstr ""
 "karar veren, çekirdek bileşenidir. Her bir uygulama bir zamanlama politikası "
 "ve önceliğine sahiptir."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
 msgid "Throttle"
 msgstr "Yavaşlatma"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
 msgid "Indexing speed, the higher the slower."
 msgstr "Dizinleme hızı, daha yüksek değer daha yavaştır."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
 msgid "Low disk space limit"
 msgstr "Düşük disk alanı sınırı"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
 msgid ""
 "Disk space threshold in percent at which to pause indexing, or -1 to disable."
 msgstr ""
 "İndekslemenin duraklatılacağı, yüzde cinsinden disk alanı eşiği, kapatmak "
 "için -1 kullanın."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
 msgid "Crawling interval"
 msgstr "Tarama aralığı"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
 msgid ""
 "Interval in days to check whether the filesystem is up to date in the "
 "database. 0 forces crawling anytime, -1 forces it only after unclean "
@@ -206,11 +156,11 @@ msgstr ""
 "edileceği gün aralığı. 0 herhangi bir zamanda taramayı zorlar, -1 yalnızca "
 "düzgün olmayan kapatmalardan sonra zorlar ve -2 tamamen kapatır."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
 msgid "Removable devices’ data permanence threshold"
 msgstr "Kaldırılabilir aygıtların veri kalıcılığı eşiği"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
 msgid ""
 "Threshold in days after which files from removables devices will be removed "
 "from database if not mounted. 0 means never, maximum is 365."
@@ -219,41 +169,41 @@ msgstr ""
 "silinecektir, eğer bağlı değilse. 0 hiçbir zaman demektir ve 365 azami "
 "sayıdır."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
 msgid "Enable monitors"
 msgstr "İzleyicileri etkinleştir"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
 msgid "Set to false to completely disable any file monitoring"
 msgstr ""
 "Her tür dosya izlemeyi devre dışı bırakmak için yanlış/false olarak "
 "ayarlayın."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
 msgid "Enable writeback"
 msgstr "Geri yazmayı etkinleştir"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
 msgid "Set to false to completely disable any file writeback"
 msgstr ""
 "herhangi bir dosya geri yazmayı tamamen kapatmak için false olarak ayarlayın"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
 msgid "Index removable devices"
 msgstr "Çıkarılabilir aygıtları dizine ekle"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
 msgid ""
 "Set to true to enable indexing mounted directories for removable devices."
 msgstr ""
 "Çıkarılabilir aygıtlardan bağlanan dizinleri dosya dizinine eklemek için "
 "doğru/true olarak ayarlayın."
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
 msgid "Index optical discs"
 msgstr "Optik diskleri dizine ekle"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
 msgid ""
 "Set to true to enable indexing CDs, DVDs, and generally optical media (if "
 "removable devices are not indexed, optical discs won’t be either)"
@@ -262,175 +212,196 @@ msgstr ""
 "ayarlayın (çıkarılabilir aygıtlar indekslenmemişse, optik diskler de "
 "indekslenmez)"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
 msgid "Index when running on battery"
 msgstr "Pille çalışırken dizin oluştur"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
 msgid "Set to true to index while running on battery"
 msgstr "Pil üzerinden çalışırken de indekslemek için true olarak ayarlayın"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
 msgid "Perform initial indexing when running on battery"
 msgstr "Pil üzerinden çalışırken başlangıç indekslemesini uygula"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
 msgid "Set to true to index while running on battery for the first time only"
 msgstr ""
 "Yalnızca ilk kez olan için pil üzerinden çalışırken indekslemek için true "
 "olarak ayarlayın"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
 msgid "Directories to index recursively"
 msgstr "Özyinelemeli olarak dizine eklenecek klasörler"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
 msgid ""
 "List of directories to index recursively, Special values include: &amp;"
 "DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Yinelemeli olarak indekslenecek dizinlerin listesi, Özel değerler içerir: "
 "&amp;MASAÜSTÜ, &amp;BELGELER, &amp;İNDİRİLENLER, &amp;MÜZİK, &amp;RESİMLER, "
-"&amp;GENEL_PAYLAŞIM, &amp;ŞABLONLAR, &amp;VİDEOLAR. /etc/xdg/user-dirs."
-"defaults ve $HOME/.config/user-dirs.default dosyalarına gözatın"
+"&amp;GENEL_PAYLAŞIM, &amp;ŞABLONLAR, &amp;VİDEOLAR.\n"
+"\n"
+"Şunlara bakın: /etc/xdg/user-dirs.defaults ve $HOME/.config/user-dirs.default"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
 msgid "Directories to index non-recursively"
 msgstr "Özyinelemesiz olarak dizine eklenecek klasörler"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
 msgid ""
 "List of directories to index without inspecting subfolders, Special values "
 "include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Alt dizinlerine girilmeden indekslenecek olan dizinlerin listesi, Özel "
 "değerler içerir: &amp;MASAÜSTÜ, &amp;BELGELER, &amp;İNDİRİLENLER, &amp;"
-"MÜZİK, &amp;RESİMLER, &amp;GENEL_PAYLAŞIM, &amp;ŞABLONLAR, &amp;VİDEOLAR. /"
-"etc/xdg/user-dirs.defaults ve $HOME/.config/user-dirs.default dosyalarına "
-"gözatın"
+"MÜZİK, &amp;RESİMLER, &amp;GENEL_PAYLAŞIM, &amp;ŞABLONLAR, &amp;VİDEOLAR.\n"
+"\n"
+"Şunlara bakın: /etc/xdg/user-dirs.defaults ve $HOME/.config/user-dirs.default"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
 msgid "Ignored files"
 msgstr "Yoksayılan dosyalar"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
 msgid "List of file patterns to avoid"
 msgstr "Kaçınılacak dosya örüntülerinin listesi"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
 msgid "Ignored directories"
 msgstr "Yoksayılan dizinler"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
 msgid "List of directories to avoid"
 msgstr "Kaçınılacak dizinlerin listesi"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
 msgid "Ignored directories with content"
 msgstr "İçeriğiyle yoksayılmış dizinler"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
+#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
 msgid "Avoid any directory containing a file blacklisted here"
 msgstr "Kara listeye alınmış bir dosya içeren her hangi bir dizini dışla"
 
-#: ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
+msgid ""
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
+msgstr ""
+"Loglama, 0 = yalnızca hatalar, 1 = asgari, 2 = ayrıntılı ve 3 = hata "
+"ayıklama (öntanımlı=0)"
+
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Saniye cinsinden başlangıç uyuma süresi, 0->1000 (varsayılan=15)"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr "Tüm yapılandırılmış konumlar indekslenene kadar çalışır ve sonra çıkar"
 
-#: ../src/miners/fs/tracker-main.c:86
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr "FILE değişkeninin yapılandırmaya uygun yaranmışlığını denetler"
 
-#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "DOSYA"
 
-#: ../src/miners/fs/tracker-main.c:432
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Belirli bir etki alanı ontolojisi için çalışır"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Sürüm bilgisini görüntüler"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "“%s” veri nesnesi, şu anda var"
 
-#: ../src/miners/fs/tracker-main.c:433
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "“%s” veri nesnesi, şu anda yok"
 
-#: ../src/miners/fs/tracker-main.c:448
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Dizin, tarama için uygun (kurallara göre)"
 
-#: ../src/miners/fs/tracker-main.c:449
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Dizin, tarama için uygun değil (kurallara göre)"
 
-#: ../src/miners/fs/tracker-main.c:469
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Dizin taranmaya uygun (içeriğe göre)"
 
-#: ../src/miners/fs/tracker-main.c:470
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Dizin taranmaya uygun değil (içeriğe göre)"
 
-#: ../src/miners/fs/tracker-main.c:517
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Dizin izlenmeye uygun (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:518
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Dizin izlenmeye uygun değil (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:522
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Dosya izlenmeye uygun (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:523
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Dosya izlenmeye uygun değil (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:527
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr "Dosya veya Dizin izlenmeye uygun (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:528
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr "Dosya veya Dizin izlenmeye uygun değil (yapılandırmaya göre)"
 
-#: ../src/miners/fs/tracker-main.c:543
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Dosya taranmaya uygun (kurallara göre)"
 
-#: ../src/miners/fs/tracker-main.c:544
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Dosya, taranma için uygun (kurallara göre)"
 
-#: ../src/miners/fs/tracker-main.c:553
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "İndekslenecektir"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Evet"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Hayır"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "İzlenecektir"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:686
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— tracker indeksleyicisini çalıştır"
 
@@ -498,19 +469,19 @@ msgstr "Ayıklayıcı"
 msgid "Metadata extractor"
 msgstr "Üstveri ayıklayıcı"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:5
 msgid "Max bytes to extract"
 msgstr "Ayıklanacak en çok bayt"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:6
 msgid "Maximum number of UTF-8 bytes to extract."
 msgstr "Ayıklanacak en çok UTF-8 baytı sayısı"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:7
 msgid "Max media art width"
 msgstr "Azami ortam resmi genişliği"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:8
 msgid ""
 "Maximum width in pixels for any media art extracted. Anything bigger is "
 "resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
@@ -520,11 +491,11 @@ msgstr ""
 "Daha büyük herhangi bir sayı için yeniden boyutlandırılır. -1 ile dosyadan "
 "ortam resmi kaydetme kapatılır. 0 ise genişlik için bir sınır belirtmez."
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:9
 msgid "Wait for FS miner to be done before extracting"
 msgstr "Ayıklamadan önce FS madencisinin tamamlamasını bekle"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
+#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:10
 msgid ""
 "When true, tracker-extract will wait for tracker-miner-fs to be done "
 "crawling before extracting meta-data. This option is useful on constrained "
@@ -573,7 +544,6 @@ msgid "MODULE"
 msgstr "MODÜL"
 
 #: ../src/tracker-extract/tracker-main.c:98
-#| msgid "Output results format: “sparql”, or “turtle”"
 msgid "Output results format: “sparql”, “turtle” or “json-ld”"
 msgstr "Çıktı sonuçları biçimi: “sparql”, “turtle” veya “json-ld”"
 
@@ -614,6 +584,24 @@ msgstr "30 saniye hareketsizlikten sonra kapatmayı devre dışı bırak"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— tracker geri yazma servisini başlat"
+
+#~ msgid "Applications"
+#~ msgstr "Uygulamalar"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Uygulama veri madencisi"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr "Tüm uygulamalar dizine eklenene kadar çalışır ve sonra çıkar"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— uygulama veri madencisini başlat"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Tracker Uygulama Madencisi"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Uygulamaların kurulumu hakkında bilgiler indeksler"
 
 #~ msgid "All posts"
 #~ msgstr "Tüm gönderiler"

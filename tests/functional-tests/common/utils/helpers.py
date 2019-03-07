@@ -323,7 +323,7 @@ class StoreHelper (Helper):
         Block until a resource matching the parameters becomes available
         """
         assert (self.inserts_match_function == None)
-        assert (self.class_to_track == None)
+        assert (self.class_to_track == None), "Already waiting for resource of type %s" % self.class_to_track
 
         self.class_to_track = rdf_class
 
@@ -397,10 +397,9 @@ class StoreHelper (Helper):
                 self.loop.run_checked ()
             except GraphUpdateTimeoutException as e:
                 raise GraphUpdateTimeoutException("Timeout waiting for resource: class %s, URL %s, title %s" % (rdf_class, url, title))
-
             self.inserts_match_function = None
-            self.class_to_track = None
 
+        self.class_to_track = None
         return (self.matched_resource_id, self.matched_resource_urn)
 
     def await_resource_deleted (self, rdf_class, id):
@@ -435,6 +434,7 @@ class StoreHelper (Helper):
 
         if not existing_match:
             self._enable_await_timeout ()
+            self.class_to_track = rdf_class
             self.deletes_match_function = match_cb
             # Run the event loop until the correct notification arrives
             try:
@@ -460,30 +460,32 @@ class StoreHelper (Helper):
 
         property_id = self.get_resource_id_by_uri(property_uri)
 
-        def find_property_change (inserts_list):
+        def find_property_change (event_list):
             matched = False
             remaining_events = []
 
-            for insert in inserts_list:
-                if insert[1] == subject_id and insert[2] == property_id:
-                    log("Matched property change: %s" % str(insert))
+            for event in event_list:
+                if event[1] == subject_id and event[2] == property_id:
+                    log("Matched property change: %s" % str(event))
                     matched = True
                 else:
-                    remaining_events += [insert]
+                    remaining_events += [event]
 
             return matched, remaining_events
 
-        def match_cb (inserts_list):
-            matched, remaining_events = find_property_change (inserts_list)
+        def match_cb (event_list):
+            matched, remaining_events = find_property_change (event_list)
             exit_loop = matched
             return exit_loop, remaining_events
 
         # Check the list of previously received events for matches
         (existing_match, self.inserts_list) = find_property_change (self.inserts_list)
+        (existing_match, self.deletes_list) = find_property_change (self.deletes_list)
 
         if not existing_match:
             self._enable_await_timeout ()
             self.inserts_match_function = match_cb
+            self.deletes_match_function = match_cb
             # Run the event loop until the correct notification arrives
             try:
                 self.loop.run_checked ()
@@ -491,6 +493,7 @@ class StoreHelper (Helper):
                 raise GraphUpdateTimeoutException(
                     "Timeout waiting for property change, subject %i property %s (%i)" % (subject_id, property_uri, property_id))
             self.inserts_match_function = None
+            self.deletes_match_function = None
             self.class_to_track = None
 
     def query (self, query, timeout=5000, **kwargs):
@@ -572,6 +575,10 @@ class StoreHelper (Helper):
             raise Exception ("Something fishy is going on")
 
 
+class WakeupCycleTimeoutException(RuntimeError):
+    pass
+
+
 class MinerFsHelper (Helper):
 
     PROCESS_NAME = 'tracker-miner-fs'
@@ -579,6 +586,13 @@ class MinerFsHelper (Helper):
     BUS_NAME = cfg.MINERFS_BUSNAME
 
     FLAGS = ['--initial-sleep=0']
+
+    def __init__ (self):
+        Helper.__init__(self)
+        self._progress_handler_id = 0
+        self._wakeup_count = 0
+        self._previous_status = None
+        self._target_wakeup_count = None
 
     def start (self):
         Helper.start (self)
@@ -590,8 +604,67 @@ class MinerFsHelper (Helper):
             self.bus, Gio.DBusProxyFlags.DO_NOT_AUTO_START, None,
             cfg.MINERFS_BUSNAME, cfg.MINERFS_INDEX_OBJ_PATH, cfg.MINER_INDEX_IFACE)
 
+        def signal_handler(proxy, sender_name, signal_name, parameters):
+            if signal_name == 'Progress':
+                self._progress_cb(*parameters.unpack())
+
+        self._progress_handler_id = self.miner_fs.connect('g-signal', signal_handler)
+
     def stop (self):
         Helper.stop (self)
+
+        if self._progress_handler_id != 0:
+            self.miner_fs.disconnect(self._progress_handler_id)
+
+    def _progress_cb (self, status, progress, remaining_time):
+        if self._previous_status is None:
+            self._previous_status = status
+        if self._previous_status != 'Idle' and status == 'Idle':
+            self._wakeup_count += 1
+
+        if self._target_wakeup_count is not None and self._wakeup_count >= self._target_wakeup_count:
+            self.loop.quit()
+
+    def wakeup_count(self):
+        """Return the number of wakeup-to-idle cycles the miner-fs completed."""
+        return self._wakeup_count
+
+    def await_wakeup_count (self, target_wakeup_count, timeout=REASONABLE_TIMEOUT):
+        """Block until the miner has completed N wakeup-and-idle cycles.
+
+        This function is for use by miner-fs tests that should trigger an
+        operation in the miner, but which do not cause a new resource to be
+        inserted. These tests can instead wait for the status to change from
+        Idle to Processing... and then back to Idle.
+
+        The miner may change its status any number of times, but you can use
+        this function reliably as follows:
+
+            wakeup_count = miner_fs.wakeup_count()
+            # Trigger a miner-fs operation somehow ...
+            miner_fs.await_wakeup_count(wakeup_count + 1)
+            # The miner has probably finished processing the operation now.
+
+        If the timeout is reached before enough wakeup cycles complete, an
+        exception will be raised.
+
+        """
+
+        assert self._target_wakeup_count is None
+
+        if self._wakeup_count >= target_wakeup_count:
+            log ("miner-fs wakeup count is at %s (target is %s). No need to wait" % (self._wakeup_count, target_wakeup_count))
+        else:
+            def _timeout_cb ():
+                raise WakeupCycleTimeoutException()
+            timeout_id = GLib.timeout_add_seconds (timeout, _timeout_cb)
+
+            log ("Waiting for miner-fs wakeup count of %s (currently %s)" % (target_wakeup_count, self._wakeup_count))
+            self._target_wakeup_count = target_wakeup_count
+            self.loop.run_checked()
+
+            self._target_wakeup_count = None
+            GLib.source_remove(timeout_id)
 
     def index_file (self, uri):
         return self.index.IndexFile('(s)', uri)

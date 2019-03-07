@@ -63,6 +63,7 @@ tracker_extractors_dir = join_paths(meson.current_build_dir(), '..', '..', 'src'
 
 test_env = environment()
 test_env.set('DCONF_PROFILE', dconf_profile_full_path)
+test_env.set('GSETTINGS_SCHEMA_DIR', join_paths(meson.build_root(), 'data'))
 
 test_env.set('TRACKER_DB_ONTOLOGIES_DIR', tracker_uninstalled_nepomuk_ontologies_dir)
 test_env.set('TRACKER_EXTRACTORS_DIR', tracker_extractors_dir)
@@ -71,6 +72,7 @@ test_env.set('TRACKER_LANGUAGE_STOP_WORDS_DIR', tracker_uninstalled_stop_words_d
 test_env.set('TRACKER_FUNCTIONAL_TEST_BUILD_DIR', meson.build_root())
 test_env.set('TRACKER_FUNCTIONAL_TEST_CONFIG', config_json_full_path)
 test_env.set('TRACKER_TEST_DOMAIN_ONTOLOGY_RULE', tracker_uninstalled_domain_rule)
+test_env.set('TRACKER_WRITEBACK_MODULES_DIR', tracker_uninstalled_writeback_modules_dir)
 test_env.set('TRACKER_TESTS_VERBOSE', '1')
 
 foreach t: extractor_tests
@@ -86,5 +88,5 @@ foreach t: functional_tests
     args: './' + t + '.py',
     env: test_env,
     workdir: meson.current_source_dir(),
-    timeout: 60)
+    timeout: 120)
 endforeach
