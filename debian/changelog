@@ -1,3 +1,9 @@
+tracker-miners (2.2.1-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Jeremy Bicha <jbicha@debian.org>  Thu, 07 Mar 2019 05:32:00 -0500
+
 tracker-miners (2.1.6-1) unstable; urgency=medium
 
   * New upstream release
