@@ -3,8 +3,8 @@ Section: utils
 Priority: optional
 Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
 Uploaders: @GNOME_TEAM@
-Build-Depends: debhelper (>= 11),
-               gnome-pkg-tools,
+Build-Depends: debhelper (>= 12),
+               dh-sequence-gnome,
                meson,
                pkg-config,
                intltool (>= 0.40.0),

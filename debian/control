@@ -7,8 +7,8 @@ Section: utils
 Priority: optional
 Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
 Uploaders: Jeremy Bicha <jbicha@debian.org>, Michael Biebl <biebl@debian.org>, Tim Lunn <tim@feathertop.org>
-Build-Depends: debhelper (>= 11),
-               gnome-pkg-tools,
+Build-Depends: debhelper (>= 12),
+               dh-sequence-gnome,
                meson,
                pkg-config,
                intltool (>= 0.40.0),

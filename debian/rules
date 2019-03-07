@@ -20,7 +20,7 @@ FEATURE_FLAGS += \
 endif
 
 %:
-	dh $@ --with gnome --buildsystem=meson
+	dh $@
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
