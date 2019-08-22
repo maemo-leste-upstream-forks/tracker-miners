@@ -12,8 +12,19 @@ tracker-miners (2.2.99.0-1) UNRELEASED; urgency=medium
     + Functional tests now use python3
     + Fix text extractor handling of non-existent files
     + Fix indexing of tracks in FLAC files
+  * debian/control:
+    - BD on meson 0.47
+    - Use gstreamer instead of libtagc for parsing audio tags
+    - BD on python3-gi in case we're running tests
+    - BD on gstreamer1.0-plugins-good and gstreamer1.0-libav
+  * debian/rules: Set XDG_RUNTIME_DIR on tests
+  * d/p/functional-tests-Check-for-ISO-image-tags-only-if-libosin.patch:
+    - Only check for ISO image tags if libosinfo is found (disabled in Ubuntu)
+  * debian/tracker-extract.install: Remove miners-common
+  * tracker-miner-fs.install: Remove tracker-miner-apps
+  * debian/docs: Use README.md
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Aug 2019 04:23:32 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Aug 2019 12:41:51 +0200
 
 tracker-miners (2.1.6-1) unstable; urgency=medium
 
