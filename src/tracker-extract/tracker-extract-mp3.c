@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,6 +95,12 @@ typedef struct {
 	gint track_count;
 	gint set_number;
 	gint set_count;
+	gchar *acoustid_fingerprint;
+	gchar *mb_recording_id;
+	gchar *mb_track_id;
+	gchar *mb_release_id;
+	gchar *mb_artist_id;
+	gchar *mb_release_group_id;
 } id3v2tag;
 
 typedef enum {
@@ -139,8 +145,24 @@ typedef enum {
 	ID3V24_TPUB,
 	ID3V24_TRCK,
 	ID3V24_TPOS,
+	ID3V24_TXXX,
 	ID3V24_TYER,
+	ID3V24_UFID,
 } id3v24frame;
+
+typedef enum {
+	ACOUSTID_FINGERPRINT,
+	MB_TRACK_ID,
+	MB_RELEASE_ID,
+	MB_ARTIST_ID,
+	MB_RELEASE_GROUP_ID,
+	TXXX_UNKNOWN,
+} id3txxxtype;
+
+typedef enum {
+	MB_RECORDING_ID,
+	UFID_UNKNOWN,
+} id3ufidtype;
 
 typedef struct {
 	size_t size;
@@ -167,6 +189,12 @@ typedef struct {
 	gint track_count;
 	gint set_number;
 	gint set_count;
+	const gchar *acoustid_fingerprint;
+	const gchar *mb_recording_id;
+	const gchar *mb_track_id;
+	const gchar *mb_release_id;
+	const gchar *mb_artist_id;
+	const gchar *mb_release_group_id;
 
 	const unsigned char *media_art_data;
 	size_t media_art_size;
@@ -217,7 +245,9 @@ static const struct {
 	{ "TPOS", ID3V24_TPOS },
 	{ "TPUB", ID3V24_TPUB },
 	{ "TRCK", ID3V24_TRCK },
+	{ "TXXX", ID3V24_TXXX },
 	{ "TYER", ID3V24_TYER },
+	{ "UFID", ID3V24_UFID },
 };
 
 /* sorted array */
@@ -241,6 +271,24 @@ static const struct {
 	{ "TT3", ID3V2_TT3 },
 	{ "TXT", ID3V2_TXT },
 	{ "TYE", ID3V2_TYE },
+};
+
+static const struct {
+	const char *name;
+	id3txxxtype txxxtype;
+} id3_txxxtypes[] = {
+	{ "Acoustid Fingerprint", ACOUSTID_FINGERPRINT },
+	{ "MusicBrainz Release Track Id", MB_TRACK_ID },
+	{ "MusicBrainz Album Id", MB_RELEASE_ID },
+	{ "MusicBrainz Artist Id", MB_ARTIST_ID },
+	{ "MusicBrainz Release Group Id", MB_RELEASE_GROUP_ID },
+};
+
+static const struct {
+	const char *name;
+	id3ufidtype ufidtype;
+} id3_ufidtypes[] = {
+	{ "http://musicbrainz.org", MB_RECORDING_ID},
 };
 
 static const char *const genre_names[] = {
@@ -528,6 +576,12 @@ id3v2tag_free (id3v2tag *tags)
 	g_free (tags->title1);
 	g_free (tags->title2);
 	g_free (tags->title3);
+	g_free (tags->acoustid_fingerprint);
+	g_free (tags->mb_recording_id);
+	g_free (tags->mb_track_id);
+	g_free (tags->mb_release_id);
+	g_free (tags->mb_artist_id);
+	g_free (tags->mb_release_group_id);
 }
 
 static gboolean
@@ -1281,6 +1335,119 @@ id3v2_get_frame (const gchar *name)
 	}
 }
 
+static id3txxxtype
+id3_get_txxx_type (const gchar *name)
+{
+	gint i;
+	for (i = 0; i < G_N_ELEMENTS (id3_txxxtypes); i++) {
+		if (strcmp (id3_txxxtypes[i].name, name) == 0) {
+			return id3_txxxtypes[i].txxxtype;
+		}
+	}
+	return TXXX_UNKNOWN;
+}
+
+static id3ufidtype
+id3_get_ufid_type (const gchar *name)
+{
+	gint i;
+	for (i = 0; i < G_N_ELEMENTS (id3_ufidtypes); i++) {
+		if (strcmp (id3_ufidtypes[i].name, name) == 0) {
+			return id3_ufidtypes[i].ufidtype;
+		}
+	}
+	return UFID_UNKNOWN;
+}
+
+static void
+extract_txxx_tags (id3v2tag *tag, const gchar *data, guint pos, size_t csize, id3tag *info, gfloat version)
+{
+	gchar *description;
+	gchar *value;
+	gchar text_encode;
+	const gchar *text_desc;
+	const gchar *text;
+	guint offset;
+	gint text_desc_len;
+	id3txxxtype txxxtype;
+
+	text_encode   =  data[pos + 0]; /* $xx */
+	text_desc     = &data[pos + 4]; /* <text string according to encoding> $00 (00) */
+	text_desc_len = id3v2_strlen (text_encode, text_desc, csize - 4);
+
+	offset        = 4 + text_desc_len + id3v2_nul_size (text_encode);
+	text          = &data[pos + offset]; /* <full text string according to encoding> */
+
+	if (version == 2.3f) {
+		description = id3v2_text_to_utf8 (data[pos], &data[pos + 1], csize - 1, info);
+		value = id3v2_text_to_utf8 (text_encode, text, csize - offset, info);
+	}
+	else if (version == 2.4f) {
+		description = id3v24_text_to_utf8 (data[pos], &data[pos + 1], csize - 1, info);
+		value = id3v24_text_to_utf8 (text_encode, text, csize - offset, info);
+	}
+	if (!tracker_is_empty_string (description)) {
+		g_strstrip (description);
+		txxxtype = id3_get_txxx_type (description);
+	} else {
+		/* Can't do anything without mb tag. */
+		g_free (description);
+		return;
+	}
+
+	if (!tracker_is_empty_string (value)) {
+		g_strstrip (value);
+	} else {
+		/* Can't do anything without value. */
+		g_free (value);
+		return;
+	}
+	switch (txxxtype) {
+	case ACOUSTID_FINGERPRINT:
+		tag->acoustid_fingerprint = value;
+		break;
+	case MB_TRACK_ID:
+		tag->mb_track_id = value;
+		break;
+	case MB_RELEASE_ID:
+		tag->mb_release_id = value;
+		break;
+	case MB_ARTIST_ID:
+		tag->mb_artist_id = value;
+		break;
+	case MB_RELEASE_GROUP_ID:
+		tag->mb_release_group_id = value;
+		break;
+	default:
+		g_free (value);
+		break;
+	}
+}
+
+static void
+extract_ufid_tags (id3v2tag *tag, const gchar *data, guint pos, size_t csize)
+{
+	id3ufidtype ufid_type;
+	const gchar *owner;
+	gint owner_len;
+	gchar *identifier;
+
+	owner      = &data[pos + 0];
+	owner_len  = strnlen (owner, csize);
+	if (tracker_is_empty_string (owner) ||
+		(ufid_type = id3_get_ufid_type (owner)) == UFID_UNKNOWN) {
+		return;
+	}
+
+	identifier = g_strndup (&data[pos + owner_len + 1], csize - owner_len - 1);
+	if (tracker_is_empty_string (identifier)) {
+		g_free (identifier);
+		return;
+	}
+
+	tag->mb_recording_id = identifier;
+}
+
 static void
 get_id3v24_tags (id3v24frame           frame,
                  const gchar          *data,
@@ -1347,6 +1514,16 @@ get_id3v24_tags (id3v24frame           frame,
 		} else {
 			g_free (word);
 		}
+		break;
+	}
+
+	case ID3V24_TXXX: {
+		extract_txxx_tags (tag, data, pos, csize, info, 2.4f);
+		break;
+	}
+
+	case ID3V24_UFID: {
+		extract_ufid_tags (tag, data, pos, csize);
 		break;
 	}
 
@@ -1468,6 +1645,7 @@ get_id3v24_tags (id3v24frame           frame,
 			break;
 		default:
 			g_free (word);
+			break;
 		}
 	}
 	}
@@ -1537,6 +1715,16 @@ get_id3v23_tags (id3v24frame           frame,
 			g_free (word);
 		}
 
+		break;
+	}
+
+	case ID3V24_TXXX: {
+		extract_txxx_tags (tag, data, pos, csize, info, 2.3f);
+		break;
+	}
+
+	case ID3V24_UFID: {
+		extract_ufid_tags (tag, data, pos, csize);
 		break;
 	}
 
@@ -1652,6 +1840,7 @@ get_id3v23_tags (id3v24frame           frame,
 			break;
 		default:
 			g_free (word);
+			break;
 		}
 	}
 	}
@@ -1783,6 +1972,7 @@ get_id3v20_tags (id3v2frame            frame,
 			break;
 		default:
 			g_free (word);
+			break;
 		}
 	}
 }
@@ -2458,6 +2648,24 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	                                        md.id3v23.encoded_by,
 	                                        md.id3v22.encoded_by);
 
+	md.acoustid_fingerprint = tracker_coalesce_strip (2, md.id3v24.acoustid_fingerprint,
+	                                                  md.id3v23.acoustid_fingerprint);
+
+	md.mb_recording_id = tracker_coalesce_strip (2, md.id3v24.mb_recording_id,
+	                                             md.id3v23.mb_recording_id);
+
+	md.mb_track_id = tracker_coalesce_strip (2, md.id3v24.mb_track_id,
+	                                         md.id3v23.mb_track_id);
+
+	md.mb_release_id = tracker_coalesce_strip (2, md.id3v24.mb_release_id,
+	                                           md.id3v23.mb_release_id);
+
+	md.mb_artist_id = tracker_coalesce_strip (2, md.id3v24.mb_artist_id,
+	                                          md.id3v23.mb_artist_id);
+
+	md.mb_release_group_id = tracker_coalesce_strip (2, md.id3v24.mb_release_group_id,
+	                                                 md.id3v23.mb_release_group_id);
+
 	if (md.id3v24.track_number != 0) {
 		md.track_number = md.id3v24.track_number;
 	} else if (md.id3v23.track_number != 0) {
@@ -2506,6 +2714,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (md.album_name) {
 		TrackerResource *album_disc = NULL, *album_artist = NULL;
+		TrackerResource *mb_release_id = NULL, *mb_release_group_id = NULL;
 
 		if (md.album_artist_name)
 			album_artist = tracker_extract_new_artist (md.album_artist_name);
@@ -2520,12 +2729,31 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		tracker_resource_set_relation (main_resource, "nmm:musicAlbum", md.album);
 		tracker_resource_set_relation (main_resource, "nmm:musicAlbumDisc", album_disc);
 
+		if (md.mb_release_id) {
+			mb_release_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release",
+									       md.mb_release_id);
+
+			tracker_resource_set_relation (md.album, "tracker:hasExternalReference", mb_release_id);
+		}
+
+		if (md.mb_release_group_id) {
+			mb_release_group_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release_Group",
+									 	     md.mb_release_group_id);
+
+			if (mb_release_id) {
+				tracker_resource_add_relation (md.album, "tracker:hasExternalReference", mb_release_group_id);
+			} else
+				tracker_resource_set_relation (md.album, "tracker:hasExternalReference", mb_release_group_id);
+		}
+
 		if (md.track_count > 0) {
 			tracker_resource_set_int (md.album, "nmm:albumTrackCount", md.track_count);
 		}
 
 		g_object_unref (album_disc);
 		g_clear_object (&album_artist);
+		g_object_unref (mb_release_id);
+		g_object_unref (mb_release_group_id);
 	}
 
 	tracker_resource_add_uri (main_resource, "rdf:type", "nmm:MusicPiece");
@@ -2544,6 +2772,13 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (md.performer) {
 		tracker_resource_set_relation (main_resource, "nmm:performer", md.performer);
+		if (md.mb_artist_id) {
+			TrackerResource *mb_artist_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Artist",
+											       md.mb_artist_id);
+
+			tracker_resource_set_relation (md.performer, "tracker:hasExternalReference", mb_artist_id);
+			g_object_unref (mb_artist_id);
+		}
 	}
 
 	if (md.composer) {
@@ -2583,6 +2818,41 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (md.track_number > 0) {
 		tracker_resource_set_int (main_resource, "nmm:trackNumber", md.track_number);
+	}
+
+	if (md.mb_recording_id) {
+		TrackerResource *mb_recording_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Recording",
+											  md.mb_recording_id);
+
+		tracker_resource_set_relation (main_resource, "tracker:hasExternalReference", mb_recording_id);
+		g_object_unref (mb_recording_id);
+	}
+
+	if (md.mb_track_id) {
+		TrackerResource *mb_track_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Track",
+										      md.mb_track_id);
+
+		if (md.mb_recording_id) {
+			tracker_resource_add_relation (main_resource, "tracker:hasExternalReference", mb_track_id);
+		} else {
+			tracker_resource_set_relation (main_resource, "tracker:hasExternalReference", mb_track_id);
+		}
+
+		g_object_unref (mb_track_id);
+	}
+
+	if (md.acoustid_fingerprint) {
+		TrackerResource *hash_resource;
+
+		hash_resource = tracker_resource_new (NULL);
+		tracker_resource_set_uri (hash_resource, "rdf:type", "nfo:FileHash");
+
+		tracker_resource_set_string (hash_resource, "nfo:hashValue", md.acoustid_fingerprint);
+		tracker_resource_set_string (hash_resource, "nfo:hashAlgorithm", "chromaprint");
+
+		tracker_resource_set_relation (main_resource, "nfo:hasHash", hash_resource);
+
+		g_object_unref (hash_resource);
 	}
 
 	/* Get mp3 stream info */

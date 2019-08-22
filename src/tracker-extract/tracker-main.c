@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #define _XOPEN_SOURCE
 #include <time.h>
@@ -199,32 +199,6 @@ initialize_signal_handler (void)
 }
 
 static void
-log_handler (const gchar    *domain,
-             GLogLevelFlags  log_level,
-             const gchar    *message,
-             gpointer        user_data)
-{
-	switch (log_level) {
-	case G_LOG_LEVEL_WARNING:
-	case G_LOG_LEVEL_CRITICAL:
-	case G_LOG_LEVEL_ERROR:
-	case G_LOG_FLAG_RECURSION:
-	case G_LOG_FLAG_FATAL:
-		g_fprintf (stderr, "%s\n", message);
-		fflush (stderr);
-		break;
-	case G_LOG_LEVEL_MESSAGE:
-	case G_LOG_LEVEL_INFO:
-	case G_LOG_LEVEL_DEBUG:
-	case G_LOG_LEVEL_MASK:
-	default:
-		g_fprintf (stdout, "%s\n", message);
-		fflush (stdout);
-		break;
-	}
-}
-
-static void
 sanity_check_option_values (TrackerConfig *config)
 {
 	g_message ("General options:");
@@ -251,14 +225,6 @@ run_standalone (TrackerConfig *config)
 	GEnumClass *enum_class;
 	GEnumValue *enum_value;
 	TrackerSerializationFormat output_format;
-
-	/* Set log handler for library messages */
-	g_log_set_default_handler (log_handler, NULL);
-
-	/* Set the default verbosity if unset */
-	if (verbosity == -1) {
-		verbosity = 3;
-	}
 
 	if (!output_format_name) {
 		output_format_name = "turtle";
@@ -350,8 +316,7 @@ main (int argc, char *argv[])
 	GMainLoop *my_main_loop;
 	GDBusConnection *connection;
 	TrackerMinerProxy *proxy;
-	TrackerDomainOntology *domain_ontology;
-	gchar *domain_name, *dbus_name;
+	gchar *dbus_domain_name, *dbus_name;
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -397,7 +362,8 @@ main (int argc, char *argv[])
 
 	tracker_sparql_connection_set_domain (domain_ontology_name);
 
-	domain_ontology = tracker_domain_ontology_new (domain_ontology_name, NULL, &error);
+	tracker_load_domain_config (domain_ontology_name, &dbus_domain_name, &error);
+
 	if (error) {
 		g_critical ("Could not load domain ontology '%s': %s",
 		            domain_ontology_name, error->message);
@@ -479,7 +445,7 @@ main (int argc, char *argv[])
 	tracker_miner_start (TRACKER_MINER (decorator));
 
 	/* Request DBus name */
-	dbus_name = tracker_domain_ontology_get_domain (domain_ontology, DBUS_NAME_SUFFIX);
+	dbus_name = g_strconcat (dbus_domain_name, ".", DBUS_NAME_SUFFIX, NULL);
 
 	if (!tracker_dbus_request_name (connection, dbus_name, &error)) {
 		g_critical ("Could not request DBus name '%s': %s",
@@ -494,18 +460,16 @@ main (int argc, char *argv[])
 	/* Main loop */
 	main_loop = g_main_loop_new (NULL, FALSE);
 
-	if (domain_ontology && domain_ontology_name) {
+	if (domain_ontology_name) {
 		/* If we are running for a specific domain, we tie the lifetime of this
 		 * process to the domain. For example, if the domain name is
 		 * org.example.MyApp then this tracker-extract process will exit as
 		 * soon as org.example.MyApp exits.
 		 */
-		domain_name = tracker_domain_ontology_get_domain (domain_ontology, NULL);
-		g_bus_watch_name_on_connection (connection, domain_name,
+		g_bus_watch_name_on_connection (connection, dbus_domain_name,
 		                                G_BUS_NAME_WATCHER_FLAGS_NONE,
 		                                NULL, on_domain_vanished,
 		                                main_loop, NULL);
-		g_free (domain_name);
 	}
 
 	g_signal_connect (decorator, "finished",
@@ -531,7 +495,7 @@ main (int argc, char *argv[])
 	g_object_unref (controller);
 	g_object_unref (proxy);
 	g_object_unref (connection);
-	g_object_unref (domain_ontology);
+	g_free (dbus_domain_name);
 
 	tracker_log_shutdown ();
 

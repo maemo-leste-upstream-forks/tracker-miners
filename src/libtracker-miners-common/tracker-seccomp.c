@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include "tracker-seccomp.h"
 
@@ -211,8 +211,11 @@ tracker_seccomp_init (void)
 
 	g_debug ("Loading seccomp rules.");
 
-	if (seccomp_load (ctx) >= 0)
+	if (seccomp_load (ctx) >= 0) {
+		/* Any seccomp filters loaded into the kernel are not affected. */
+		seccomp_release (ctx);
 		return TRUE;
+	}
 
 out:
 	g_critical ("Failed to load seccomp rules.");

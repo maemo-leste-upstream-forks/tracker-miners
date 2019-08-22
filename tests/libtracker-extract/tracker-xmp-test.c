@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <glib-object.h>
 
@@ -328,6 +328,11 @@ test_xmp_apply_location (void)
 	g_assert_cmpstr (tracker_resource_get_first_string (address, "nco:region"), ==, data.state);
 	g_assert_cmpstr (tracker_resource_get_first_string (address, "nco:locality"), ==, data.city);
 	g_assert_cmpstr (tracker_resource_get_first_string (address, "nco:country"), ==, data.country);
+
+	g_free (data.address);
+	g_free (data.city);
+	g_free (data.state);
+	g_free (data.country);
 }
 
 

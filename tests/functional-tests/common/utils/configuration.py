@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2010, Nokia <jean-luc.lamadon@nokia.com>
 #
@@ -63,18 +63,18 @@ DCONF_MINER_SCHEMA = "org.freedesktop.Tracker.Miner.Files"
 
 # Autoconf substitutes paths in the configuration.json file without
 # expanding variables, so we need to manually insert these.
-def expandvars (variable):
+
+
+def expandvars(variable):
     # Note: the order matters!
     result = variable
     for var, value in [("${datarootdir}", RAW_DATAROOT_DIR),
                        ("${exec_prefix}", RAW_EXEC_PREFIX),
                        ("${prefix}", PREFIX),
                        ("@top_builddir@", TOP_BUILDDIR)]:
-        result = result.replace (var, value)
-
+        result = result.replace(var, value)
 
     return result
-
 
 
 PREFIX = config['PREFIX']
@@ -89,6 +89,7 @@ TRACKER_WRITEBACK_PATH = os.path.normpath(expandvars(config['TRACKER_WRITEBACK_P
 
 DATADIR = os.path.normpath(expandvars(config['RAW_DATAROOT_DIR']))
 
+
 def generated_ttl_dir():
     return os.path.join(TOP_BUILD_DIR, 'tests', 'functional-tests', 'ttl')
 
@@ -99,14 +100,14 @@ def generated_ttl_dir():
 # those. The 'ignore-files' configuration option can be changed, but the
 # 'filter-hidden' property of TrackerIndexingTree is hardwired to be True at
 # present :/
-_TEST_MONITORED_TMP_DIR = os.path.join (os.environ["HOME"], "tracker-tests")
+_TEST_MONITORED_TMP_DIR = os.path.join(os.environ["HOME"], "tracker-tests")
 if _TEST_MONITORED_TMP_DIR.startswith('/tmp'):
-    if os.environ.has_key('REAL_HOME'):
-        _TEST_MONITORED_TMP_DIR = os.path.join (os.environ["REAL_HOME"], "tracker-tests")
+    if 'REAL_HOME' in os.environ:
+        _TEST_MONITORED_TMP_DIR = os.path.join(os.environ["REAL_HOME"], "tracker-tests")
     else:
-        print ("HOME is in the /tmp prefix - this will cause tests that rely " +
-                "on filesystem monitoring to fail as changes in that prefix are " +
-                "ignored.")
+        print ("HOME is in the /tmp prefix - this will cause tests that rely "
+                + "on filesystem monitoring to fail as changes in that prefix are "
+                + "ignored.")
 
 
 def create_monitored_test_dir():

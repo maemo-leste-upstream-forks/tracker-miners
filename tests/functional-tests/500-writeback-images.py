@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (C) 2010, Nokia (ivan.frade@nokia.com)
 #
@@ -17,28 +17,29 @@
 # Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA  02110-1301, USA.
 #
-"""
-Write values in tracker and check the actual values are written
-on the files. Note that these tests are highly platform dependant.
-"""
+
+"""Tests for Tracker writeback daemon."""
+
+
 import os
 import sys
 import time
 
 from common.utils.extractor import get_tracker_extract_jsonld_output
 from common.utils.helpers import log
-from common.utils.writebacktest import CommonTrackerWritebackTest as CommonTrackerWritebackTest
+from common.utils.writebacktest import CommonTrackerWritebackTest
 import unittest as ut
 
-REASONABLE_TIMEOUT = 5 # Seconds we wait for tracker-writeback to do the work
+REASONABLE_TIMEOUT = 5  # Seconds we wait for tracker-writeback to do the work
 
-class WritebackBasicDataTest (CommonTrackerWritebackTest):
+
+class WritebackImagesTest (CommonTrackerWritebackTest):
     """
     Write in tracker store the properties witih writeback support and check
     that the new values are actually in the file
     """
 
-    def __writeback_test (self, filename, mimetype, prop, expectedKey=None):
+    def __writeback_test(self, filename, mimetype, prop, expectedKey=None):
         """
         Set a value in @prop for the @filename. Then ask tracker-extractor
         for metadata and check in the results dictionary if the property is there.
@@ -49,27 +50,26 @@ class WritebackBasicDataTest (CommonTrackerWritebackTest):
         the @prop is used.
         """
 
-        # FIXME: filename is actually a URI! :(
-        filename_real = filename[len('file://'):]
-        initial_mtime = os.stat(filename_real).st_mtime
+        path = self.prepare_test_image(self.datadir_path(filename))
+        initial_mtime = path.stat().st_mtime
 
-        TEST_VALUE = prop.replace (":","") + "test"
+        TEST_VALUE = prop.replace(":", "") + "test"
         SPARQL_TMPL = """
            DELETE { ?u %s ?v } WHERE { ?u nie:url '%s' ; %s ?v }
            INSERT { ?u %s '%s' }
            WHERE  { ?u nie:url '%s' }
-        """ 
-        self.tracker.update (SPARQL_TMPL % (prop, filename, prop, prop, TEST_VALUE, filename))
+        """
+        self.tracker.update(SPARQL_TMPL % (prop, path.as_uri(), prop, prop, TEST_VALUE, path.as_uri()))
 
-        log("Waiting for change on %s" % filename_real)
-        self.wait_for_file_change(filename_real, initial_mtime)
+        log("Waiting for change on %s" % path)
+        self.wait_for_file_change(path, initial_mtime)
         log("Got the change")
 
-        results = get_tracker_extract_jsonld_output (filename, mimetype)
+        results = get_tracker_extract_jsonld_output(path, mimetype)
         keyDict = expectedKey or prop
-        self.assertIn (TEST_VALUE, results[keyDict])
+        self.assertIn(TEST_VALUE, results[keyDict])
 
-    def __writeback_hasTag_test (self, filename, mimetype):
+    def __writeback_hasTag_test(self, filename, mimetype):
 
         SPARQL_TMPL = """
             INSERT {
@@ -91,72 +91,63 @@ class WritebackBasicDataTest (CommonTrackerWritebackTest):
            }
         """
 
-        self.tracker.update (SPARQL_TMPL % (filename))
+        self.tracker.update(SPARQL_TMPL % (filename))
 
-        time.sleep (REASONABLE_TIMEOUT)
+        time.sleep(REASONABLE_TIMEOUT)
 
-        results = get_tracker_extract_jsonld_output (filename, mimetype)
-        self.assertIn ("testTag", results ["nao:hasTag"])
-
+        results = get_tracker_extract_jsonld_output(filename, mimetype)
+        self.assertIn("testTag", results["nao:hasTag"])
 
     # JPEG test
-    def test_001_jpeg_title (self):
-        #FILENAME = "test-writeback-monitored/writeback-test-1.jpeg"
-        self.__writeback_test (self.get_test_filename_jpeg (), "image/jpeg", "nie:title")
 
-    def test_002_jpeg_description (self):
-        #FILENAME = "test-writeback-monitored/writeback-test-1.jpeg"
-        self.__writeback_test (self.get_test_filename_jpeg (), "image/jpeg", "nie:description")
+    def test_001_jpeg_title(self):
+        self.__writeback_test("writeback-test-1.jpeg", "image/jpeg", "nie:title")
 
-    #def test_003_jpeg_keyword (self):
+    def test_002_jpeg_description(self):
+        self.__writeback_test("writeback-test-1.jpeg", "image/jpeg", "nie:description")
+
+    # def test_003_jpeg_keyword (self):
     #    #FILENAME = "test-writeback-monitored/writeback-test-1.jpeg"
     #    self.__writeback_test (self.get_test_filename_jpeg (), "image/jpeg",
     #                           "nie:keyword", "nao:hasTag")
 
-    #def test_004_jpeg_hasTag (self):
+    # def test_004_jpeg_hasTag (self):
     #    #FILENAME = "test-writeback-monitored/writeback-test-1.jpeg"
     #    self.__writeback_hasTag_test (self.get_test_filename_jpeg (), "image/jpeg")
 
-        
     # TIFF tests
-    def test_011_tiff_title (self):
-        #FILANAME = "test-writeback-monitored/writeback-test-2.tif"
-        self.__writeback_test (self.get_test_filename_tiff (), "image/tiff", "nie:title")
 
-    def test_012_tiff_description (self):
-        FILENAME = "test-writeback-monitored/writeback-test-2.tif"
-        self.__writeback_test (self.get_test_filename_tiff (), "image/tiff", "nie:description")
-        
-    #def test_013_tiff_keyword (self):
+    def test_011_tiff_title(self):
+        self.__writeback_test("writeback-test-2.tif", "image/tiff", "nie:title")
+
+    def test_012_tiff_description(self):
+        self.__writeback_test("writeback-test-2.tif", "image/tiff", "nie:description")
+
+    # def test_013_tiff_keyword (self):
     #    FILENAME = "test-writeback-monitored/writeback-test-2.tif"
     #    self.__writeback_test (self.get_test_filename_tiff (), "image/tiff",
     #                           "nie:keyword", "nao:hasTag")
 
-    #def test_014_tiff_hasTag (self):
+    # def test_014_tiff_hasTag (self):
     #    FILENAME = "test-writeback-monitored/writeback-test-2.tif"
     #    self.__writeback_hasTag_test (self.get_test_filename_tiff (), "image/tiff")
-      
-        
 
     # PNG tests
-    def test_021_png_title (self):
-        FILENAME = "test-writeback-monitored/writeback-test-4.png"
-        self.__writeback_test (self.get_test_filename_png (), "image/png", "nie:title")
 
-    def test_022_png_description (self):
-        FILENAME = "test-writeback-monitored/writeback-test-4.png"
-        self.__writeback_test (self.get_test_filename_png (), "image/png", "nie:description")
+    def test_021_png_title(self):
+        self.__writeback_test("writeback-test-4.png", "image/png", "nie:title")
 
-    #def test_023_png_keyword (self):
+    def test_022_png_description(self):
+        self.__writeback_test("writeback-test-4.png", "image/png", "nie:description")
+
+    # def test_023_png_keyword (self):
     #    FILENAME = "test-writeback-monitored/writeback-test-4.png"
     #    self.__writeback_test (self.get_test_filename_png (), "image/png", "nie:keyword", "nao:hasTag:prefLabel")
 
-    #def test_024_png_hasTag (self):
+    # def test_024_png_hasTag (self):
     #    FILENAME = "test-writeback-monitored/writeback-test-4.png"
     #    self.__writeback_hasTag_test (self.get_test_filename_png (), "image/png")
 
-if __name__ == "__main__":
-    print("FIXME: This test is skipped as it currently fails. See: https://gitlab.gnome.org/GNOME/tracker-miners/issues/55")
-    sys.exit(77)
 
-    ut.main (failfast=True)
+if __name__ == "__main__":
+    ut.main(failfast=True)

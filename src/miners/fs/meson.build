@@ -31,7 +31,7 @@ executable('tracker-miner-fs', sources,
     c_args: tracker_c_args,
     install: true,
     install_dir: get_option('libexecdir'),
-    install_rpath: tracker_internal_libs_dir,
+    install_rpath: tracker_install_rpath,
 )
 
 dbus_service_file_untranslated = configure_file(

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2010, Nokia <ivan.frade@nokia.com>
 # Copyright (C) 2018, Sam Thursfield <sam@afuera.me.uk>
@@ -42,7 +42,7 @@ def ensure_dir_exists(dirname):
 
 
 class CommonTrackerMinerTest (ut.TestCase):
-    def setUp (self):
+    def setUp(self):
         self.workdir = cfg.create_monitored_test_dir()
 
         self.indexed_dir = os.path.join(self.workdir, 'test-monitored')
@@ -53,7 +53,7 @@ class CommonTrackerMinerTest (ut.TestCase):
         # function.
         ensure_dir_exists(self.indexed_dir)
 
-        self.system = TrackerSystemAbstraction (
+        self.system = TrackerSystemAbstraction(
             settings={
                 'org.freedesktop.Tracker.Store': {
                     'graphupdated-delay': GLib.Variant('i', 100)
@@ -72,31 +72,31 @@ class CommonTrackerMinerTest (ut.TestCase):
         }
 
         try:
-            self.system.tracker_miner_fs_testing_start (config)
+            self.system.tracker_miner_fs_testing_start(config)
         except RuntimeError as e:
             self.fail(e)
 
         self.tracker = self.system.store
 
         try:
-            self.create_test_data ()
-            self.tracker.reset_graph_updates_tracking ()
+            self.create_test_data()
+            self.tracker.reset_graph_updates_tracking()
         except Exception as e:
-            self.tearDown ()
+            self.tearDown()
             raise
 
-    def tearDown (self):
-        self.system.finish ()
-        self.remove_test_data ()
+    def tearDown(self):
+        self.system.finish()
+        self.remove_test_data()
         cfg.remove_monitored_test_dir(self.workdir)
 
-    def path (self, filename):
-        return os.path.join (self.workdir, filename)
+    def path(self, filename):
+        return os.path.join(self.workdir, filename)
 
-    def uri (self, filename):
-        return "file://" + os.path.join (self.workdir, filename)
+    def uri(self, filename):
+        return "file://" + os.path.join(self.workdir, filename)
 
-    def create_test_data (self):
+    def create_test_data(self):
         monitored_files = [
             'test-monitored/file1.txt',
             'test-monitored/dir1/file2.txt',
@@ -109,9 +109,9 @@ class CommonTrackerMinerTest (ut.TestCase):
 
         for tf in chain(monitored_files, unmonitored_files):
             testfile = self.path(tf)
-            ensure_dir_exists (os.path.dirname(testfile))
-            with open (testfile, 'w') as f:
-                f.write (DEFAULT_TEXT)
+            ensure_dir_exists(os.path.dirname(testfile))
+            with open(testfile, 'w') as f:
+                f.write(DEFAULT_TEXT)
 
         for tf in monitored_files:
             self.tracker.await_resource_inserted(NFO_DOCUMENT, url=self.uri(tf))
@@ -123,39 +123,40 @@ class CommonTrackerMinerTest (ut.TestCase):
         except Exception as e:
             log("Failed to remove temporary data dir: %s" % e)
 
-    def assertResourceExists (self, urn):
-        if self.tracker.ask ("ASK { <%s> a rdfs:Resource }" % urn) == False:
-            self.fail ("Resource <%s> does not exist" % urn)
+    def assertResourceExists(self, urn):
+        if self.tracker.ask("ASK { <%s> a rdfs:Resource }" % urn) == False:
+            self.fail("Resource <%s> does not exist" % urn)
 
-    def assertResourceMissing (self, urn):
-        if self.tracker.ask ("ASK { <%s> a rdfs:Resource }" % urn) == True:
-            self.fail ("Resource <%s> should not exist" % urn)
+    def assertResourceMissing(self, urn):
+        if self.tracker.ask("ASK { <%s> a rdfs:Resource }" % urn) == True:
+            self.fail("Resource <%s> should not exist" % urn)
 
 
 class CommonTrackerMinerFTSTest (CommonTrackerMinerTest):
     """
     Superclass to share methods. Shouldn't be run by itself.
     """
-    def prepare_directories (self):
+
+    def prepare_directories(self):
         # Override content from the base class
         pass
 
-    def setUp (self):
+    def setUp(self):
         super(CommonTrackerMinerFTSTest, self).setUp()
 
         self.testfile = "test-monitored/miner-fts-test.txt"
 
-    def set_text (self, text):
+    def set_text(self, text):
         exists = os.path.exists(self.path(self.testfile))
 
-        f = open (self.path (self.testfile), "w")
-        f.write (text)
-        f.close ()
+        f = open(self.path(self.testfile), "w")
+        f.write(text)
+        f.close()
 
         if exists:
             subject_id = self.tracker.get_resource_id(self.uri(self.testfile))
             self.tracker.await_property_changed(NFO_DOCUMENT,
-                subject_id=subject_id, property_uri='nie:plainTextContent')
+                                                subject_id=subject_id, property_uri='nie:plainTextContent')
         else:
             self.tracker.await_resource_inserted(
                 rdf_class=NFO_DOCUMENT, url=self.uri(self.testfile),
@@ -163,12 +164,12 @@ class CommonTrackerMinerFTSTest (CommonTrackerMinerTest):
 
         self.tracker.reset_graph_updates_tracking()
 
-    def search_word (self, word):
+    def search_word(self, word):
         """
         Return list of URIs with the word in them
         """
-        log ("Search for: %s" % word)
-        results = self.tracker.query ("""
+        log("Search for: %s" % word)
+        results = self.tracker.query("""
                 SELECT ?url WHERE {
                   ?u a nfo:TextDocument ;
                       nie:url ?url ;
@@ -177,7 +178,7 @@ class CommonTrackerMinerFTSTest (CommonTrackerMinerTest):
                  """ % (word))
         return [r[0] for r in results]
 
-    def basic_test (self, text, word):
+    def basic_test(self, text, word):
         """
         Save the text on the testfile, search the word
         and assert the testfile is only result.
@@ -185,13 +186,13 @@ class CommonTrackerMinerFTSTest (CommonTrackerMinerTest):
         Be careful with the default contents of the text files
         ( see common/utils/minertest.py DEFAULT_TEXT )
         """
-        self.set_text (text)
-        results = self.search_word (word)
-        self.assertEquals (len (results), 1)
-        self.assertIn ( self.uri (self.testfile), results)
+        self.set_text(text)
+        results = self.search_word(word)
+        self.assertEqual(len(results), 1)
+        self.assertIn(self.uri(self.testfile), results)
 
-    def _query_id (self, uri):
+    def _query_id(self, uri):
         query = "SELECT tracker:id(?urn) WHERE { ?urn nie:url \"%s\". }" % uri
-        result = self.tracker.query (query)
-        assert len (result) == 1
-        return int (result[0][0])
+        result = self.tracker.query(query)
+        assert len(result) == 1
+        return int(result[0][0])

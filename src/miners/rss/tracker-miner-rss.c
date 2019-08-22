@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <stdio.h>
 
@@ -32,7 +32,7 @@
 
 #include "tracker-miner-rss.h"
 
-#define TRACKER_MINER_RSS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TRACKER_TYPE_MINER_RSS, TrackerMinerRSSPrivate))
+#define TRACKER_MINER_RSS_GET_PRIVATE(obj) (tracker_miner_rss_get_instance_private (TRACKER_MINER_RSS (obj)))
 
 typedef struct _TrackerMinerRSSPrivate TrackerMinerRSSPrivate;
 
@@ -96,7 +96,7 @@ static void         feed_ready_cb                   (GrssFeedsPool             *
                                                      gpointer               user_data);
 static const gchar *get_message_url                 (GrssFeedItem              *item);
 
-G_DEFINE_TYPE (TrackerMinerRSS, tracker_miner_rss, TRACKER_TYPE_MINER_ONLINE)
+G_DEFINE_TYPE_WITH_PRIVATE (TrackerMinerRSS, tracker_miner_rss, TRACKER_TYPE_MINER_ONLINE)
 
 static void
 parser_characters (void          *data,
@@ -239,8 +239,6 @@ tracker_miner_rss_class_init (TrackerMinerRSSClass *klass)
 	miner_class->resumed = miner_resumed;
 
 	miner_online_class->connected = miner_connected;
-
-	g_type_class_add_private (object_class, sizeof (TrackerMinerRSSPrivate));
 }
 
 static void
@@ -248,8 +246,7 @@ tracker_miner_rss_init (TrackerMinerRSS *object)
 {
 	GError *error = NULL;
 	TrackerMinerRSSPrivate *priv;
-	TrackerDomainOntology *domain_ontology;
-	gchar *dbus_name;
+	gchar *dbus_domain_name;
 
 	g_message ("Initializing...");
 
@@ -280,13 +277,11 @@ tracker_miner_rss_init (TrackerMinerRSS *object)
 	g_message ("Listening for GraphUpdated changes on D-Bus interface...");
 	g_message ("  arg0:'%s'", TRACKER_PREFIX_MFO "FeedChannel");
 
-	domain_ontology = tracker_domain_ontology_new (tracker_sparql_connection_get_domain (),
-	                                               NULL, NULL);
-	dbus_name = tracker_domain_ontology_get_domain (domain_ontology, NULL);
+	tracker_load_domain_config (tracker_sparql_connection_get_domain (), &dbus_domain_name, &error);
 
 	priv->graph_updated_id =
 		g_dbus_connection_signal_subscribe  (priv->connection,
-		                                     dbus_name,
+		                                     dbus_domain_name,
 		                                     "org.freedesktop.Tracker1.Resources",
 		                                     "GraphUpdated",
 		                                     "/org/freedesktop/Tracker1/Resources",
@@ -295,8 +290,8 @@ tracker_miner_rss_init (TrackerMinerRSS *object)
 		                                     graph_updated_cb,
 		                                     object,
 		                                     NULL);
-	g_free (dbus_name);
-	g_object_unref (domain_ontology);
+
+	g_free (dbus_domain_name);
 }
 
 static void

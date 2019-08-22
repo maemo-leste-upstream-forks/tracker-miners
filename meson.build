@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '2.2.1',
+        version: '2.2.99.0',
         meson_version: '>=0.47')
 
 gnome = import('gnome')
@@ -55,6 +55,9 @@ else
   tracker_uninstalled_domain_rule = tracker_subproject.get_variable('tracker_uninstalled_domain_rule')
   tracker_uninstalled_nepomuk_ontologies_dir = tracker_subproject.get_variable('tracker_uninstalled_nepomuk_ontologies_dir')
   tracker_uninstalled_stop_words_dir = tracker_subproject.get_variable('tracker_uninstalled_stop_words_dir')
+
+  tracker_common_enums_header = tracker_subproject.get_variable('tracker_common_enums_header')
+  tracker_gsettings_schemas = tracker_subproject.get_variable('tracker_gsettings_schemas')
 endif
 
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
@@ -70,6 +73,7 @@ glib = dependency('glib-2.0', version: '>=' + glib_required)
 gmodule = dependency('gmodule-2.0', version: '>=' + glib_required)
 gobject = dependency('gobject-2.0', version: '>=' + glib_required)
 gstreamer = dependency('gstreamer-1.0', required: false)
+gstreamer_audio = dependency('gstreamer-audio-1.0', required: false)
 gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
 gstreamer_tag = dependency('gstreamer-tag-1.0', required: false)
 gupnp_dlna = dependency('gupnp-dlna-2.0', version: '>= 0.9.4', required: false)
@@ -89,7 +93,6 @@ libtiff = dependency('libtiff-4', required: get_option('tiff'))
 libxml2 = dependency('libxml-2.0', version: '>= 2.6', required: get_option('xml'))
 libvorbis = dependency('vorbisfile', version: '>= 0.22', required: get_option('vorbis'))
 poppler = dependency('poppler-glib', version: '>= 0.16.0', required: get_option('pdf'))
-taglib = dependency('taglib_c', version: '>= 1.6', required: get_option('taglib'))
 totem_plparser = dependency('totem-plparser', required: get_option('playlist'))
 upower = dependency('upower-glib', version: '>= 0.9.0', required: false)
 zlib = dependency('zlib')
@@ -115,7 +118,9 @@ add_project_arguments('-Wformat', '-Wformat-security', language: 'c')
 # There are various gchar vs. unsigned char warnings that occur in extract
 # modules, it's not worth adding casts everywhere so we disable the warning.
 add_project_arguments('-Wno-pointer-sign', language: 'c')
+
 add_project_arguments('-DTRACKER_COMPILATION', language: 'c')
+add_project_arguments('-DG_LOG_DOMAIN="Tracker"', language: 'c')
 
 ##################################################################
 # Check for libtracker-common: battery/mains power detection
@@ -346,6 +351,7 @@ conf.set('PACKAGE_VERSION', '"@0@"'.format(meson.project_version()))
 conf.set('TRACKER_VERSION', '"@0@"'.format(meson.project_version()))
 
 # Config that goes in some other generated files (.desktop, .pc, etc)
+conf.set('abs_top_builddir', meson.current_build_dir())
 conf.set('exec_prefix', get_option('prefix'))
 conf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
 conf.set('datadir', datadir)
@@ -364,8 +370,8 @@ conf.set('FUNCTIONAL_TESTS_TRACKER_WRITEBACK_PATH', join_paths(meson.current_bui
 
 conf.set('FUNCTIONAL_TESTS_TRACKER_STORE_PATH', tracker_store_path)
 
-configure_file(input: 'config.h.meson.in',
-               output: 'config.h',
+configure_file(input: 'config-miners.h.meson.in',
+               output: 'config-miners.h',
                configuration: conf)
 
 # Global compiler defines. We avoid add_global_arguments() as it breaks
@@ -382,6 +388,7 @@ configinc = include_directories('./')
 srcinc = include_directories('src/')
 
 tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-' + tracker_api_version)
+tracker_install_rpath = ':'.join([tracker_internal_libs_dir, libdir])
 
 tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/extract-modules'.format(tracker_api_version))
 # NOTE: We don't use ${TRACKER_API_VERSION} because other content like
@@ -390,11 +397,12 @@ tracker_extract_rules_dir = join_paths(get_option('prefix'), get_option('datadir
 tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker/miners')
 tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/writeback-modules'.format(tracker_api_version))
 
-tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract')
+tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract', 'uninstalled-rules')
 tracker_uninstalled_writeback_modules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-writeback')
 
 gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
 
+glib_compile_schemas = find_program('glib-compile-schemas')
 glib_mkenums = find_program('glib-mkenums')
 
 subdir('src')
@@ -412,6 +420,8 @@ test_c_args = tracker_c_args + [
 subdir('tests')
 
 subdir('po')
+
+meson.add_install_script('meson_integration_commands.sh', glib_compile_schemas.path(), gsettings_schema_dir)
 
 summary = [
   '\nBuild Configuration:',
@@ -465,7 +475,7 @@ endif
 if have_tracker_writeback
   summary += [
     '\nWriteback Formats:',
-    '    Audio files using Taglib:               ' + taglib.found().to_string(),
+    '    Audio files using GStreamer:            ' + (gstreamer.found() and gstreamer_tag.found() and gstreamer_audio.found()).to_string(),
     '    XMP:                                    ' + exempi.found().to_string(),
   ]
 endif

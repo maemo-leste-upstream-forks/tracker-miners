@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2009, Nokia <ivan.frade@nokia.com>
 #
@@ -22,18 +22,18 @@ import getopt
 import sys
 
 def usage ():
-    print "Usage:"
-    print "  xxx.py [OPTION...] - Input data into tracker"
-    print ""
-    print "Help Options:"
-    print "  -h, --help             Show help options"
-    print ""
-    print "Application Options:"
-    print "  -g, --graphics         Enable GTK interface"
-    print "  -p, --period=NUM       Time (in sec) between insertion message"
-    print "  -s, --size=NUM         Amount of instances in the message"
-    print "  -t, --timeout=NUM      Switch off the program after NUM seconds"
-    print ""
+    print("Usage:")
+    print("  xxx.py [OPTION...] - Input data into tracker")
+    print("")
+    print("Help Options:")
+    print("  -h, --help             Show help options")
+    print("")
+    print("Application Options:")
+    print("  -g, --graphics         Enable GTK interface")
+    print("  -p, --period=NUM       Time (in sec) between insertion message")
+    print("  -s, --size=NUM         Amount of instances in the message")
+    print("  -t, --timeout=NUM      Switch off the program after NUM seconds")
+    print("")
 
 
 def parse_options (graphic_mode=False, period=1, msgsize=1, timeout=0):
@@ -41,9 +41,9 @@ def parse_options (graphic_mode=False, period=1, msgsize=1, timeout=0):
         opts, args = getopt.getopt(sys.argv[1:],
                                    "gp:s:t:h",
                                    ["graphics", "period", "size", "timeout", "help"])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # print help information and exit:
-        print str (err) # will print something like "option -a not recognized"
+        print(str (err)) # will print something like "option -a not recognized"
         usage ()
         sys.exit (2)
 

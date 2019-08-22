@@ -6,8 +6,8 @@
 
 modules = []
 
-if taglib.found()
-  modules += [['writeback-taglib', 'tracker-writeback-taglib.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, taglib]]]
+if gstreamer.found() and gstreamer_tag.found() and gstreamer_audio.found()
+  modules += [['writeback-gstreamer', 'tracker-writeback-gstreamer.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, gstreamer, gstreamer_tag]]]
 endif
 
 if exempi.found()
@@ -47,7 +47,7 @@ executable('tracker-writeback',
   dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
   install: true,
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
-  install_rpath: tracker_internal_libs_dir)
+  install_rpath: tracker_install_rpath)
 
 dbus_service_file = configure_file(
   input: 'org.freedesktop.Tracker1.Writeback.service.in',

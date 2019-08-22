@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -119,6 +119,8 @@ load_iptc_blob (const gchar *filename)
 
 		marker = marker->next;
 	}
+
+        jpeg_destroy_decompress (&cinfo);
 
         g_free (uri);
         fclose (f);

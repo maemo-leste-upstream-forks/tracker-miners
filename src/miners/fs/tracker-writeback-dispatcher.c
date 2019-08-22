@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <libtracker-miners-common/tracker-dbus.h>
 #include <libtracker-sparql/tracker-sparql.h>
@@ -52,7 +52,7 @@ enum {
 	PROP_FILES_MINER
 };
 
-#define TRACKER_WRITEBACK_DISPATCHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TRACKER_TYPE_WRITEBACK_DISPATCHER, TrackerWritebackDispatcherPrivate))
+#define TRACKER_WRITEBACK_DISPATCHER_GET_PRIVATE(o) (tracker_writeback_dispatcher_get_instance_private (TRACKER_WRITEBACK_DISPATCHER (o)))
 
 static void     writeback_dispatcher_set_property    (GObject              *object,
                                                       guint                 param_id,
@@ -82,6 +82,7 @@ writeback_dispatcher_initable_iface_init (GInitableIface *iface)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TrackerWritebackDispatcher, tracker_writeback_dispatcher, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (TrackerWritebackDispatcher)
                          G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
                                                 writeback_dispatcher_initable_iface_init));
 
@@ -103,8 +104,6 @@ tracker_writeback_dispatcher_class_init (TrackerWritebackDispatcherClass *klass)
 	                                                      "The FS Miner",
 	                                                      TRACKER_TYPE_MINER_FILES,
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-
-	g_type_class_add_private (klass, sizeof (TrackerWritebackDispatcherPrivate));
 }
 
 static void
@@ -374,7 +373,7 @@ writeback_dispatcher_writeback_file (TrackerMinerFS *fs,
 	data->retry_timeout = 0;
 	data->self = self;
 	g_object_weak_ref (G_OBJECT (data->self), self_weak_notify, data);
-	data->fs = g_object_ref (fs);
+	data->fs = TRACKER_MINER_FILES (g_object_ref (fs));
 	data->file = g_object_ref (file);
 	data->results = g_ptr_array_ref (results);
 	data->rdf_types = g_strdupv (rdf_types);
