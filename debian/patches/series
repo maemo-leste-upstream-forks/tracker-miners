@@ -1,1 +1,2 @@
 Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch
+functional-tests-Check-for-ISO-image-tags-only-if-libosin.patch
