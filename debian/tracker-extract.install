@@ -1,5 +1,4 @@
 usr/lib/*/tracker-miners-2.0/libtracker-extract.so
-usr/lib/*/tracker-miners-2.0/libtracker-miners-common.so
 usr/lib/tracker/tracker-extract
 etc/xdg/autostart/tracker-extract.desktop
 usr/lib/*/tracker-miners-2.0/extract-modules/*.so
