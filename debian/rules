@@ -4,6 +4,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,-O1 -Wl,--as-needed -Wl,-Bsymbolic
 
 CHECK_HOME = $(CURDIR)/debian/tmp/home
+CHECK_XRD = $(CHECK_HOME)/XRD
 
 FEATURE_FLAGS = \
 	-Dgeneric_media_extractor=gstreamer \
@@ -46,7 +47,8 @@ override_dh_shlibdeps:
 
 override_dh_auto_test:
 	mkdir -p -m0700 $(CHECK_HOME)
-	HOME=$(CHECK_HOME) dbus-run-session -- dh_auto_test
+	mkdir -m0700 $(CHECK_XRD)
+	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) dbus-run-session -- dh_auto_test
 
 override_dh_clean:
 	rm -rf $(CHECK_HOME)
