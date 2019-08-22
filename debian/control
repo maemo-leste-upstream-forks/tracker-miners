@@ -10,7 +10,7 @@ Uploaders: Jeremy Bicha <jbicha@debian.org>, Michael Biebl <biebl@debian.org>, T
 Build-Depends: debhelper (>= 12),
                dh-sequence-gnome,
                gir1.2-glib-2.0 <!nocheck>,
-               meson,
+               meson (>= 0.47),
                pkg-config,
                python <!nocheck>,
                python-gi <!nocheck>,
