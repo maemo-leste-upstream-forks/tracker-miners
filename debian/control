@@ -47,6 +47,7 @@ Build-Depends: debhelper (>= 12),
                dbus (>= 1.3.1) <!nocheck>,
                dbus-x11 (>= 1.3.1) <!nocheck>,
                procps <!nocheck>,
+               python3-gi <!nocheck>,
                shared-mime-info <!nocheck>,
 Standards-Version: 4.3.0
 Vcs-Browser: https://salsa.debian.org/gnome-team/tracker-miners
