@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <string.h>
 
@@ -459,7 +459,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 out:
 	g_clear_object (&metadata);
 	g_clear_object (&resource);
-	g_clear_pointer (&ed, (GDestroyNotify) raw_exif_data_free);
+	g_clear_pointer (&ed, raw_exif_data_free);
 	g_free (filename);
 	g_free (nfo_orientation);
 	g_free (uri);

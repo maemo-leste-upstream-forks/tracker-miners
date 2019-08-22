@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (C) 2010, Nokia (ivan.frade@nokia.com)
 #
@@ -37,57 +37,57 @@ NMM_MUSIC_PIECE = 'http://www.tracker-project.org/temp/nmm#MusicPiece'
 
 class MinerResourceRemovalTest (CommonTrackerMinerTest):
 
-    def prepare_directories (self):
+    def prepare_directories(self):
         # Override content from the base class
         pass
 
-    def create_test_content (self, file_urn, title):
+    def create_test_content(self, file_urn, title):
         sparql = "INSERT { \
                     _:ie a nmm:MusicPiece ; \
                          nie:title \"%s\" ; \
                          nie:isStoredAs <%s> \
                   } " % (title, file_urn)
 
-        self.tracker.update (sparql)
+        self.tracker.update(sparql)
 
-        return self.tracker.await_resource_inserted (rdf_class = NMM_MUSIC_PIECE,
-                                                     title = title)
+        return self.tracker.await_resource_inserted(rdf_class=NMM_MUSIC_PIECE,
+                                                    title=title)
 
-    def create_test_file (self, file_name):
+    def create_test_file(self, file_name):
         file_path = self.path(file_name)
 
-        file = open (file_path, 'w')
-        file.write ("Test")
-        file.close ()
+        file = open(file_path, 'w')
+        file.write("Test")
+        file.close()
 
-        return self.tracker.await_resource_inserted (rdf_class = NFO_DOCUMENT,
-                                                     url = self.uri(file_name))
+        return self.tracker.await_resource_inserted(rdf_class=NFO_DOCUMENT,
+                                                    url=self.uri(file_name))
 
     @ut.skip("https://gitlab.gnome.org/GNOME/tracker-miners/issues/57")
-    def test_01_file_deletion (self):
+    def test_01_file_deletion(self):
         """
         Ensure every logical resource (nie:InformationElement) contained with
         in a file is deleted when the file is deleted.
         """
 
-        (file_1_id, file_1_urn) = self.create_test_file ("test-monitored/test_1.txt")
-        (file_2_id, file_2_urn) = self.create_test_file ("test-monitored/test_2.txt")
-        (ie_1_id, ie_1_urn) = self.create_test_content (file_1_urn, "Test resource 1")
-        (ie_2_id, ie_2_urn) = self.create_test_content (file_2_urn, "Test resource 2")
+        (file_1_id, file_1_urn) = self.create_test_file("test-monitored/test_1.txt")
+        (file_2_id, file_2_urn) = self.create_test_file("test-monitored/test_2.txt")
+        (ie_1_id, ie_1_urn) = self.create_test_content(file_1_urn, "Test resource 1")
+        (ie_2_id, ie_2_urn) = self.create_test_content(file_2_urn, "Test resource 2")
 
-        os.unlink (self.path ("test-monitored/test_1.txt"))
+        os.unlink(self.path("test-monitored/test_1.txt"))
 
-        self.tracker.await_resource_deleted (NFO_DOCUMENT, file_1_id)
+        self.tracker.await_resource_deleted(NFO_DOCUMENT, file_1_id)
 
-        self.assertResourceMissing (file_1_urn)
+        self.assertResourceMissing(file_1_urn)
         # Ensure the logical resource is deleted when the relevant file is
         # removed.
-        self.assertResourceMissing (ie_1_urn)
+        self.assertResourceMissing(ie_1_urn)
 
-        self.assertResourceExists (file_2_urn)
-        self.assertResourceExists (ie_2_urn)
+        self.assertResourceExists(file_2_urn)
+        self.assertResourceExists(ie_2_urn)
 
-    #def test_02_removable_device_data (self):
+    # def test_02_removable_device_data (self):
     #    """
     #    Tracker does periodic cleanups of data on removable volumes that haven't
     #    been seen since 'removable-days-threshold', and will also remove all data

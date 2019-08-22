@@ -110,6 +110,9 @@ test_string_to_date (void)
         /* More cases of string->date are tested in tracker_date_time_from_string...
          *  it is more convinient to test them there
          */
+
+    g_date_free (result);
+    g_date_free (expected);
 }
 
 static void
@@ -137,6 +140,9 @@ test_date_to_string (void)
 	result = tracker_date_to_string (input);
 
 	g_assert (result != NULL && strncmp (result, "2008-06-16T23:53:10Z", 19) == 0);
+
+    g_free (result);
+    g_free (original);
 }
 
 static void

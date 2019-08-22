@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2011, Nokia Corporation <ivan.frade@nokia.com>
 #
@@ -22,7 +22,8 @@
 Tests trying to simulate the behaviour of applications working with tracker
 """
 
-import sys,os
+import sys
+import os
 import unittest
 import time
 import random
@@ -42,7 +43,7 @@ NMM_MUSICPIECE = 'http://www.tracker-project.org/temp/nmm#MusicPiece'
 
 class TrackerSyncApplicationTests (CommonTrackerApplicationTest):
 
-    def test_01_sync_audio_nb219946 (self):
+    def test_01_sync_audio_nb219946(self):
         """
         Sync simulation (after fix for NB#219946):
 
@@ -67,11 +68,11 @@ class TrackerSyncApplicationTests (CommonTrackerApplicationTest):
 
         self.system.miner_fs.await_wakeup_count(1)
 
-        origin_filepath = os.path.join (self.get_data_dir (), self.get_test_music ())
-        dest_filepath = os.path.join (self.get_dest_dir (), self.get_test_music ())
+        origin_filepath = os.path.join(self.get_data_dir(), self.get_test_music())
+        dest_filepath = os.path.join(self.get_dest_dir(), self.get_test_music())
         dest_fileuri = "file://" + dest_filepath
 
-        log ("Synchronizing audio file in '%s'..." % (dest_filepath))
+        log("Synchronizing audio file in '%s'..." % (dest_filepath))
 
         # Insert new resource in the store
         insert = """
@@ -103,28 +104,27 @@ class TrackerSyncApplicationTests (CommonTrackerApplicationTest):
                                      nmm:artistName 'AbBaby'
         }
         """ % (dest_fileuri, dest_fileuri)
-        self.tracker.update (insert)
-        self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
+        self.tracker.update(insert)
+        self.assertEqual(self.get_urn_count_by_url(dest_fileuri), 1)
 
         resource_id = self.tracker.get_resource_id(dest_fileuri)
 
         miner_wakeup_count = self.system.miner_fs.wakeup_count()
 
         # Copy the image to the dest path
-        self.slowcopy_file (origin_filepath, dest_filepath)
-        assert os.path.exists (dest_filepath)
+        self.slowcopy_file(origin_filepath, dest_filepath)
+        assert os.path.exists(dest_filepath)
 
-        self.system.miner_fs.await_wakeup_count (miner_wakeup_count + 1)
+        self.system.miner_fs.await_wakeup_count(miner_wakeup_count + 1)
 
-        self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 1)
+        self.assertEqual(self.get_urn_count_by_url(dest_fileuri), 1)
 
         # Clean the new file so the test directory is as before
-        log ("Remove and wait")
-        os.remove (dest_filepath)
-        self.tracker.await_resource_deleted (NMM_MUSICPIECE, resource_id)
-        self.assertEquals (self.get_urn_count_by_url (dest_fileuri), 0)
+        log("Remove and wait")
+        os.remove(dest_filepath)
+        self.tracker.await_resource_deleted(NMM_MUSICPIECE, resource_id)
+        self.assertEqual(self.get_urn_count_by_url(dest_fileuri), 0)
+
 
 if __name__ == "__main__":
-	ut.main()
-
-
+    ut.main()

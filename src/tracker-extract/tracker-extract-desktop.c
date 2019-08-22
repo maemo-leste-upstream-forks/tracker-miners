@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <gio/gio.h>
 
@@ -128,6 +128,7 @@ process_desktop_file (TrackerResource  *resource,
 	if (g_key_file_get_boolean (key_file, GROUP_DESKTOP_ENTRY, "Hidden", NULL)) {
 		g_debug ("Desktop file is hidden");
 		g_key_file_free (key_file);
+		g_free (type);
 		return FALSE;
 	}
 
@@ -163,6 +164,7 @@ process_desktop_file (TrackerResource  *resource,
 	} else {
 		/* Invalid type, all valid types are already listed above */
 		g_warning ("Unknown desktop entry type '%s'", type);
+		g_free (type);
 		g_key_file_free (key_file);
 		g_strfreev (cats);
 		g_free (lang);
@@ -253,6 +255,7 @@ process_desktop_file (TrackerResource  *resource,
 
 	g_free (name);
 	g_free (lang);
+	g_free (type);
 
 	return TRUE;
 }

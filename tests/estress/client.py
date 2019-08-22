@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2009, Nokia <ivan.frade@nokia.com>
 #
@@ -47,23 +47,23 @@ def run_query ():
     start = time.time ()
     results = iface.SparqlQuery (SPARQL_QUERY % ("10"))
     end = time.time ()
-    print int (time.time()), "%f" % (end - start)
+    print(int (time.time()), "%f" % (end - start))
     return True
 
 def exit_cb ():
     sys.exit (0)
 
 def usage ():
-    print "Usage:"
-    print "  client.py [OPTION...] - Run periodically a query on tracker"
-    print ""
-    print "Help Options:"
-    print "  -h, --help             Show help options"
-    print ""
-    print "Application Options:"
-    print "  -p, --period=NUM       Time (in sec) between queries"
-    print "  -t, --timeout=NUM      Switch off the program after NUM seconds"
-    print ""
+    print("Usage:")
+    print("  client.py [OPTION...] - Run periodically a query on tracker")
+    print("")
+    print("Help Options:")
+    print("  -h, --help             Show help options")
+    print("")
+    print("Application Options:")
+    print("  -p, --period=NUM       Time (in sec) between queries")
+    print("  -t, --timeout=NUM      Switch off the program after NUM seconds")
+    print("")
 
 
 if __name__ == "__main__":

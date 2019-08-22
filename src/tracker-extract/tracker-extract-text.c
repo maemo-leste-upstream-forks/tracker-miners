@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -45,11 +45,6 @@ get_file_content (GFile *file,
 {
 	gchar *text, *uri, *path;
 	int fd;
-
-	/* If no content requested, return */
-	if (n_bytes == 0) {
-		return NULL;
-	}
 
 	uri = g_file_get_uri (file);
 
@@ -85,12 +80,16 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 {
 	TrackerResource *metadata;
 	TrackerConfig *config;
-	gchar *content;
+	gchar *content = NULL;
 
 	config = tracker_main_get_config ();
 
-	content = get_file_content (tracker_extract_info_get_file (info),
-	                            tracker_config_get_max_bytes (config));
+	content = get_file_content (tracker_extract_info_get_file (info), tracker_config_get_max_bytes (config));
+
+	if (content == NULL) {
+		/* An error occurred, perhaps the file was deleted. */
+		return FALSE;
+	}
 
 	metadata = tracker_resource_new (NULL);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PlainTextDocument");

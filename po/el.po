@@ -9,17 +9,263 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2018-07-16 23:39+0000\n"
-"PO-Revision-Date: 2018-08-14 01:40+0300\n"
-"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
+"POT-Creation-Date: 2019-02-17 15:13+0000\n"
+"PO-Revision-Date: 2019-06-14 09:14+0300\n"
+"Last-Translator: Efstathios Iosifidis <eiosifidis@gnome.org>\n"
 "Language-Team: Ελληνικά <>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Project-Style: gnome\n"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Αρχείο καταγραφής με αναλυτική περιγραφή"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Αρχείο καταγραφής με αναλυτική περιγραφή"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Προτεραιότητα χρονοδρομολογητή όταν είναι σε κατάσταση αδράνειας"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr ""
+"Ο χρονοδρομολογητής είναι το κύριο συστατικό στοιχείο που αποφασίζει ποια "
+"εκτελούμενη εφαρμογή θα εκτελεστεί κατόπιν από την CPU. Κάθε εφαρμογή έχει "
+"μια συσχετισμένη πολιτική χρονοδρομολόγησης και προτεραιότητας."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Μέγιστος αριθμός bytes προς εξαγωγή"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "Μέγιστος αριθμός bytes UTF-8 προς εξαγωγή."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Max media art width"
+msgstr "Μέγιστο πλάτος πολυμέσων"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"Maximum width in pixels for any media art extracted. Anything bigger is "
+"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
+"no limit on the media art width."
+msgstr ""
+"Μέγιστο πλάτος σε εικονοστοιχεία για οποιοδήποτε εξαγόμενα πολυμέσα. "
+"Οτιδήποτε μεγαλύτερο αναπροσαρμόζεται. Ορίστε το σε -1 για απενεργοποίηση "
+"της αποθήκευσης πολυμέσων από αρχεία. Η ρύθμιση σε 0 δεν ορίζει κανένα όριο "
+"στο πλάτος των πολυμέσων."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:9
+msgid "Wait for FS miner to be done before extracting"
+msgstr "Πριν γίνει εξαγωγή, περιμένετε πρώτα να ολοκληρωθεί ο εξορύκτης FS"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:10
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr ""
+"Όταν είναι αληθές, το πρόγραμμα tracker-extract θα περιμένει να τελειώσει "
+"πρώτα το πρόγραμμα εξόρυξης tracker-miner-fs πριν αρχίσει την εξαγωγή "
+"μεταδεδομένων. Αυτή η επιλογή είναι χρήσιμη σε περιβάλλοντα περιορισμένων "
+"δυνατοτήτων, όπου είναι σημαντικό να μπορούν τα αρχεία να μπαίνουν σε λίστα "
+"όσο πιο γρήγορα γίνεται και μπορεί να περιμένει να γίνει αργότερα η λήψη "
+"μεταδεδομένων."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Αρχική αδράνεια"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Αρχικός χρόνος αδράνειας, σε δευτερόλεπτα."
+
+# #-#-#-#-#  anjuta.HEAD.el.po (anjuta 0.1.9)  #-#-#-#-#
+#
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Στραγγαλιστής"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Ταχύτητα ευρετηριοποίησης, όσο μεγαλύτερος ο αριθμός τόσο πιο αργή."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Χαμηλό όριο χώρου στο δίσκο"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr ""
+"Το κατώφλι του χώρου του δίσκου σε MB πέραν του οποίου παύει η "
+"ευρετηριοποίηση, ή -1 για την απενεργοποίηση."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Διάστημα σάρωσης"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr ""
+"Διάστημα σε ημέρες για τον έλεγχο ενημερότητας του συστήματος αρχείων στη "
+"βάση δεδομένων. Το 0 επιβάλλει σάρωση οποτεδήποτε, -1 το υποχρεώνει μόνο "
+"μετά από εσφαλμένους τερματισμούς και -2 το απενεργοποιεί πλήρως."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Κατώφλι για την παραμονή των δεδομένων στις αφαιρούμενες συσκευές"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr ""
+"Το κατώφλι σε ημέρες μετά το οποίο τα αρχεία από τις αφαιρούμενες συσκευές "
+"θα αφαιρεθούν από τη βάση δεδομένων εάν δεν προσαρτηθούν. 0 σημαίνει ποτέ, "
+"μέγιστο είναι 365."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Ενεργοποίηση παρακολούθησης"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr ""
+"Ρύθμιση σε ψευδές για πλήρη απενεργοποίηση οποιασδήποτε παρακολούθησης "
+"αρχείου"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Ενεργοποίηση επανεγγραφής"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr ""
+"Ρύθμιση σε ψευδές για πλήρη απενεργοποίηση οποιασδήποτε επανεγγραφής αρχείου"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Ευρετηριοποίηση αφαιρούμενων συσκευών"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr ""
+"Ορισμός σε αληθές για ενεργοποίηση ευρετηριοποίησης προσαρτημένων καταλόγων "
+"για αφαιρούμενες συσκευές."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Ευρετηριοποίηση οπτικών δίσκων"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr ""
+"Ορισμός σε αληθές για ενεργοποίηση ευρετηριοποίησης CD, DVD, και γενικά "
+"οπτικών μέσων (εάν οι αφαιρούμενες συσκευές δεν ευρετηριοποιηθούν, δεν θα "
+"ευρετηριοποιηθούν ούτε οι οπτικοί δίσκοι)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Ευρετηριοποίηση ενόσω λειτουργεί με μπαταρία"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr "Ορισμός σε αληθές για ευρετηριοποίηση όταν λειτουργεί με μπαταρία"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Εκτέλεση αρχικής ευρετηριοποίησης όταν λειτουργεί με μπαταρία"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr ""
+"Ορισμός σε αληθές για ευρετηριοποίηση όταν λειτουργεί με μπαταρία μόνο για "
+"την πρώτη φορά"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Κατάλογοι για ευρετηριοποίηση αναδρομικά"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Λίστα των καταλόγων για αναδρομική ευρετηριοποίηση, ειδικές τιμές "
+"περιλαμβάνουν: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. \n"
+"\n"
+"Δείτε /etc/xdg/user-dirs.defaults και $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Κατάλογοι για μη αναδρομική ευρετηριοποίηση"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Λίστα των καταλόγων για ευρετηριοποίηση επιθεωρώντας υποφακέλους, ειδικές "
+"τιμές περιλαμβάνουν: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;"
+"MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. \n"
+"\n"
+"Δείτε /etc/xdg/user-dirs.defaults και $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Αγνοημένα αρχεία"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Λίστα των αποφευκτέων προτύπων αρχείου"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Αγνοημένοι κατάλογοι"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Λίστα των καταλόγων προς αποφυγή"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Αγνοημένοι κατάλογοι με περιεχόμενο"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr "Αποφυγή οποιουδήποτε καταλόγου περιέχει αρχείο μαύρης λίστας εδώ"
 
 # #-#-#-#-#  nautilus.HEAD.el.po (el)  #-#-#-#-#
 #
@@ -84,55 +330,6 @@ msgid_plural " %2.2d seconds"
 msgstr[0] " σε %2.2d δευτερόλεπτο"
 msgstr[1] " σε %2.2d δευτερόλεπτα"
 
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Εφαρμογές"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Εξορύκτης δεδομένων εφαρμογών"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:72
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Καταγραφή, 0 = μόνο σφάλματα, 1 = ελάχιστα, 2= λεπτομερώς και 3 = "
-"αποσφαλμάτωση (εξ ορισμού=0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr ""
-"Εκτελείται μέχρι όλες οι εφαρμογές να ευρετηριοποιηθούν και έπειτα εξέρχεται"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:90
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:102
-msgid "Runs for a specific domain ontology"
-msgstr "Εκτελείται για μια συγκεκριμένη οντολογία τομέα"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:94
-#: ../src/tracker-extract/tracker-main.c:106
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Εμφανίζει πληροφορίες έκδοσης"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— έναρξη εξορύκτη δεδομένων εφαρμογής"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Εξορύκτης Tracker"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Οι πληροφορίες ευρετηρίων για τις εγκατεστημένες εφαρμογές"
-
 # #-#-#-#-#  anjuta.HEAD.el.po (anjuta 0.1.9)  #-#-#-#-#
 #
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
@@ -143,314 +340,131 @@ msgstr "Σύστημα αρχείων"
 msgid "File system data miner"
 msgstr "Εξορύκτης δεδομένων από τα αρχεία συστήματος"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
-msgid "Log verbosity"
-msgstr "Αρχείο καταγραφής με αναλυτική περιγραφή"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
-msgid "Log verbosity."
-msgstr "Αρχείο καταγραφής με αναλυτική περιγραφή"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
-msgid "Initial sleep"
-msgstr "Αρχική αδράνεια"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Αρχικός χρόνος αδράνειας, σε δευτερόλεπτα."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
-msgid "Scheduler priority when idle"
-msgstr "Προτεραιότητα χρονοδρομολογητή όταν είναι σε κατάσταση αδράνειας"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
 msgstr ""
-"Ο χρονοδρομολογητής είναι το κύριο συστατικό στοιχείο που αποφασίζει ποια "
-"εκτελούμενη εφαρμογή θα εκτελεστεί κατόπιν από την CPU. Κάθε εφαρμογή έχει "
-"μια συσχετισμένη πολιτική χρονοδρομολόγησης και προτεραιότητας."
+"Καταγραφή, 0 = μόνο σφάλματα, 1 = ελάχιστα, 2= λεπτομερώς και 3 = "
+"αποσφαλμάτωση (εξ ορισμού=0)"
 
-# #-#-#-#-#  anjuta.HEAD.el.po (anjuta 0.1.9)  #-#-#-#-#
-#
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
-msgid "Throttle"
-msgstr "Στραγγαλιστής"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Ταχύτητα ευρετηριοποίησης, όσο μεγαλύτερος ο αριθμός τόσο πιο αργή."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
-msgid "Low disk space limit"
-msgstr "Χαμηλό όριο χώρου στο δίσκο"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Το κατώφλι του χώρου του δίσκου σε MB πέραν του οποίου παύει η "
-"ευρετηριοποίηση, ή -1 για την απενεργοποίηση."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
-msgid "Crawling interval"
-msgstr "Διάστημα σάρωσης"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Διάστημα σε ημέρες για τον έλεγχο ενημερότητας του συστήματος αρχείων στη "
-"βάση δεδομένων. Το 0 επιβάλλει σάρωση οποτεδήποτε, -1 το υποχρεώνει μόνο "
-"μετά από εσφαλμένους τερματισμούς και -2 το απενεργοποιεί πλήρως."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Κατώφλι για την παραμονή των δεδομένων στις αφαιρούμενες συσκευές"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Το κατώφλι σε ημέρες μετά το οποίο τα αρχεία από τις αφαιρούμενες συσκευές "
-"θα αφαιρεθούν από τη βάση δεδομένων εάν δεν προσαρτηθούν. 0 σημαίνει ποτέ, "
-"μέγιστο είναι 365."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
-msgid "Enable monitors"
-msgstr "Ενεργοποίηση παρακολούθησης"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr ""
-"Ρύθμιση σε ψευδές για πλήρη απενεργοποίηση οποιασδήποτε παρακολούθησης "
-"αρχείου"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
-msgid "Enable writeback"
-msgstr "Ενεργοποίηση επανεγγραφής"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr ""
-"Ρύθμιση σε ψευδές για πλήρη απενεργοποίηση οποιασδήποτε επανεγγραφής αρχείου"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
-msgid "Index removable devices"
-msgstr "Ευρετηριοποίηση αφαιρούμενων συσκευών"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Ορισμός σε αληθές για ενεργοποίηση ευρετηριοποίησης προσαρτημένων καταλόγων "
-"για αφαιρούμενες συσκευές."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
-msgid "Index optical discs"
-msgstr "Ευρετηριοποίηση οπτικών δίσκων"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Ορισμός σε αληθές για ενεργοποίηση ευρετηριοποίησης CD, DVD, και γενικά "
-"οπτικών μέσων (εάν οι αφαιρούμενες συσκευές δεν ευρετηριοποιηθούν, δεν θα "
-"ευρετηριοποιηθούν ούτε οι οπτικοί δίσκοι)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
-msgid "Index when running on battery"
-msgstr "Ευρετηριοποίηση ενόσω λειτουργεί με μπαταρία"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
-msgid "Set to true to index while running on battery"
-msgstr "Ορισμός σε αληθές για ευρετηριοποίηση όταν λειτουργεί με μπαταρία"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Εκτέλεση αρχικής ευρετηριοποίησης όταν λειτουργεί με μπαταρία"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr ""
-"Ορισμός σε αληθές για ευρετηριοποίηση όταν λειτουργεί με μπαταρία μόνο για "
-"την πρώτη φορά"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
-msgid "Directories to index recursively"
-msgstr "Κατάλογοι για ευρετηριοποίηση αναδρομικά"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
-msgstr ""
-"Λίστα των καταλόγων για αναδρομική ευρετηριοποίηση, ειδικές τιμές "
-"περιλαμβάνουν: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Δείτε /etc/xdg/"
-"user-dirs.defaults και $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
-msgid "Directories to index non-recursively"
-msgstr "Κατάλογοι για μη αναδρομική ευρετηριοποίηση"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Λίστα των καταλόγων για ευρετηριοποίηση επιθεωρώντας υποφακέλους, ειδικές "
-"τιμές περιλαμβάνουν: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;"
-"MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Δείτε /"
-"etc/xdg/user-dirs.defaults και $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
-msgid "Ignored files"
-msgstr "Αγνοημένα αρχεία"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
-msgid "List of file patterns to avoid"
-msgstr "Λίστα των αποφευκτέων προτύπων αρχείου"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
-msgid "Ignored directories"
-msgstr "Αγνοημένοι κατάλογοι"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
-msgid "List of directories to avoid"
-msgstr "Λίστα των καταλόγων προς αποφυγή"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
-msgid "Ignored directories with content"
-msgstr "Αγνοημένοι κατάλογοι με περιεχόμενο"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr "Αποφυγή οποιουδήποτε καταλόγου περιέχει αρχείο μαύρης λίστας εδώ"
-
-#: ../src/miners/fs/tracker-main.c:77
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Αρχικός χρόνος αδράνειας, σε δευτερόλεπτα, 0->1000 (προεπιλογή=15)"
 
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Εκτελείται μέχρι όλες οι ρυθμισμένες θέσεις να ευρετηριοποιηθούν και έπειτα "
 "εξέρχεται"
 
-#: ../src/miners/fs/tracker-main.c:86
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Κάνει έλεγχο για το αν το ΑΡΧΕΙΟ είναι διαθέσιμο για εξόρυξη, με βάση τις "
 "ρυθμίσεις"
 
-#: ../src/miners/fs/tracker-main.c:87 ../src/tracker-extract/tracker-main.c:88
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "ΑΡΧΕΙΟ"
 
-#: ../src/miners/fs/tracker-main.c:432
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Εκτελείται για μια συγκεκριμένη οντολογία τομέα"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Εμφανίζει πληροφορίες έκδοσης"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Υπάρχει το αντικείμενο δεδομένων «%s»"
 
-#: ../src/miners/fs/tracker-main.c:433
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Δεν υπάρχει το αντικείμενο δεδομένων «%s»"
 
-#: ../src/miners/fs/tracker-main.c:448
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Ο κατάλογος είναι διαθέσιμος για εξαγωγή (βασισμένο στους κανόνες)"
 
-#: ../src/miners/fs/tracker-main.c:449
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Ο κατάλογος ΔΕΝ είναι διαθέσιμος για εξαγωγή (βασισμένος σε κανόνες)"
 
-#: ../src/miners/fs/tracker-main.c:469
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Ο κατάλογος είναι διαθέσιμος για εξαγωγή (βασισμένος στα περιεχόμενα)"
 
-#: ../src/miners/fs/tracker-main.c:470
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr ""
 "Ο κατάλογος ΔΕΝ είναι διαθέσιμος για εξαγωγή (βασισμένος στα περιεχόμενα)"
 
-#: ../src/miners/fs/tracker-main.c:517
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Ο κατάλογος είναι διαθέσιμος για παρακολούθηση (βασισμένος στις ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:518
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Ο κατάλογος ΔΕΝ είναι διαθέσιμος για παρακολούθηση (βασισμένος στις "
 "ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:522
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Το αρχείο είναι διαθέσιμο για παρακολούθηση (βασισμένο στις ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:523
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Το αρχείο ΔΕΝ είναι διαθέσιμο για παρακολούθηση (βασισμένο στις ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:527
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Το αρχείο ή ο κατάλογος είναι διαθέσιμος για παρακολούθηση (βασισμένο στις "
 "ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:528
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Το αρχείο ή ο κατάλογος ΔΕΝ είναι διαθέσιμος για παρακολούθηση (βασισμένο "
 "στις ρυθμίσεις)"
 
-#: ../src/miners/fs/tracker-main.c:543
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Το αρχείο είναι διαθέσιμο για εξαγωγή (βασισμένο στους κανόνες)"
 
-#: ../src/miners/fs/tracker-main.c:544
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Το αρχείο ΔΕΝ είναι διαθέσιμο για εξαγωγή (βασισμένο στους κανόνες)"
 
-#: ../src/miners/fs/tracker-main.c:553
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "Θα ευρετηριοποιηθεί"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Ναι"
 
-#: ../src/miners/fs/tracker-main.c:554 ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Όχι"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "Θα παρακολουθείται"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:686
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— εκκίνηση ευρετηρίου του tracker"
 
@@ -517,47 +531,6 @@ msgstr "Εφαρμογή εξαγωγής"
 #: ../src/tracker-extract/org.freedesktop.Tracker1.Miner.Extract.service.in.in.h:2
 msgid "Metadata extractor"
 msgstr "Εφαρμογή εξαγωγής μεταδεδομένων"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
-msgid "Max bytes to extract"
-msgstr "Μέγιστος αριθμός bytes προς εξαγωγή"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "Μέγιστος αριθμός bytes UTF-8 προς εξαγωγή."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
-msgid "Max media art width"
-msgstr "Μέγιστο πλάτος πολυμέσων"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Μέγιστο πλάτος σε εικονοστοιχεία για οποιοδήποτε εξαγόμενα πολυμέσα. "
-"Οτιδήποτε μεγαλύτερο αναπροσαρμόζεται. Ορίστε το σε -1 για απενεργοποίηση "
-"της αποθήκευσης πολυμέσων από αρχεία. Η ρύθμιση σε 0 δεν ορίζει κανένα όριο "
-"στο πλάτος των πολυμέσων."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr "Πριν γίνει εξαγωγή, περιμένετε πρώτα να ολοκληρωθεί ο εξορύκτης FS"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"Όταν είναι αληθές, το πρόγραμμα tracker-extract θα περιμένει να τελειώσει "
-"πρώτα το πρόγραμμα εξόρυξης tracker-miner-fs πριν αρχίσει την εξαγωγή "
-"μεταδεδομένων. Αυτή η επιλογή είναι χρήσιμη σε περιβάλλοντα περιορισμένων "
-"δυνατοτήτων, όπου είναι σημαντικό να μπορούν τα αρχεία να μπαίνουν σε λίστα "
-"όσο πιο γρήγορα γίνεται και μπορεί να περιμένει να γίνει αργότερα η λήψη "
-"μεταδεδομένων."
 
 #: ../src/tracker-extract/tracker-extract.c:685
 msgid "Metadata extraction failed"
@@ -638,6 +611,26 @@ msgstr "Απενεργοποίηση τερματισμού μετά από 30 �
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— εκκίνηση της υπηρεσίας επανεγγραφής του tracker"
+
+#~ msgid "Applications"
+#~ msgstr "Εφαρμογές"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Εξορύκτης δεδομένων εφαρμογών"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr ""
+#~ "Εκτελείται μέχρι όλες οι εφαρμογές να ευρετηριοποιηθούν και έπειτα "
+#~ "εξέρχεται"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— έναρξη εξορύκτη δεδομένων εφαρμογής"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Εξορύκτης Tracker"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Οι πληροφορίες ευρετηρίων για τις εγκατεστημένες εφαρμογές"
 
 #~ msgid "All posts"
 #~ msgstr "Όλες οι καταχωρίσεις"

@@ -1,5 +1,5 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Copyright (C) 2010, Nokia (ivan.frade@nokia.com)
 #
@@ -42,67 +42,66 @@ class MinerFTSBasicTest (CommonTrackerMinerFTSTest):
     Tests different contents in a single file
     """
 
-    def test_01_single_word (self):
+    def test_01_single_word(self):
         TEXT = "automobile"
-        self.basic_test (TEXT, TEXT)
+        self.basic_test(TEXT, TEXT)
 
-    def test_02_multiple_words (self):
+    def test_02_multiple_words(self):
         TEXT = "automobile with unlimited power"
-        self.set_text (TEXT)
-        
-        results = self.search_word ("automobile")
-        self.assertEquals (len (results), 1)
-        self.assertIn (self.uri (self.testfile), results)
+        self.set_text(TEXT)
 
-        results = self.search_word ("unlimited")
-        self.assertEquals (len (results), 1)
-        self.assertIn (self.uri (self.testfile), results)
+        results = self.search_word("automobile")
+        self.assertEqual(len(results), 1)
+        self.assertIn(self.uri(self.testfile), results)
 
+        results = self.search_word("unlimited")
+        self.assertEqual(len(results), 1)
+        self.assertIn(self.uri(self.testfile), results)
 
-    def test_03_long_word (self):
+    def test_03_long_word(self):
         # TEXT is longer than the 20 characters specified in the fts configuration
         TEXT = "fsfsfsdfskfweeqrewqkmnbbvkdasdjefjewriqjfnc"
-        self.set_text (TEXT)
+        self.set_text(TEXT)
 
-        results = self.search_word (TEXT)
-        self.assertEquals (len (results), 0)
+        results = self.search_word(TEXT)
+        self.assertEqual(len(results), 0)
 
-    def test_04_non_existent_word (self):
+    def test_04_non_existent_word(self):
         TEXT = "This a trick"
-        self.set_text (TEXT)
-        results = self.search_word ("trikc")
-        self.assertEquals (len (results), 0)
+        self.set_text(TEXT)
+        results = self.search_word("trikc")
+        self.assertEqual(len(results), 0)
 
-    def test_05_word_multiple_times_in_file (self):
+    def test_05_word_multiple_times_in_file(self):
         TEXT = "automobile is red. automobile is big. automobile is great!"
-        self.basic_test (TEXT, "automobile")
+        self.basic_test(TEXT, "automobile")
 
-    def test_06_sentence (self):
+    def test_06_sentence(self):
         TEXT = "plastic is fantastic"
-        self.basic_test (TEXT, TEXT)
+        self.basic_test(TEXT, TEXT)
 
-    def test_07_partial_sentence (self):
+    def test_07_partial_sentence(self):
         TEXT = "plastic is fantastic"
-        self.basic_test (TEXT, "is fantastic")
+        self.basic_test(TEXT, "is fantastic")
 
     @ut.skip("Currently fails with: fts5: syntax error near '.'")
-    def test_08_strange_word (self):
+    def test_08_strange_word(self):
         # FIXME Not sure what are we testing here
         TEXT = "'summer.time'"
-        self.basic_test (TEXT, "summer.time")
+        self.basic_test(TEXT, "summer.time")
 
     # Skip the test 'search for .'
 
-    def test_09_mixed_letters_and_numbers (self):
+    def test_09_mixed_letters_and_numbers(self):
         TEXT = "abc123"
-        self.basic_test (TEXT, "abc123")
+        self.basic_test(TEXT, "abc123")
 
-    def test_10_ignore_numbers (self):
+    def test_10_ignore_numbers(self):
         TEXT = "palabra 123123"
-        self.set_text (TEXT)
-        results = self.search_word ("123123")
-        self.assertEquals (len (results), 0)
+        self.set_text(TEXT)
+        results = self.search_word("123123")
+        self.assertEqual(len(results), 0)
 
 
 if __name__ == "__main__":
-    ut.main (failfast=True)
+    ut.main(failfast=True)

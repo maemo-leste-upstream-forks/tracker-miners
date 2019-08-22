@@ -20,7 +20,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 /* Ensure we have a valid backend enabled */
 #if !defined(GSTREAMER_BACKEND_DISCOVERER) && \
@@ -363,6 +363,9 @@ get_embedded_cue_sheet_data (GstTagList *tag_list)
 	return NULL;
 }
 
+/* Utility function to convert from GstToc, as returned by
+ * gst_discoverer_info_get_toc(), to TrackerToc.
+ */
 static TrackerToc *
 translate_discoverer_toc (GstToc *gst_toc)
 {
@@ -385,12 +388,14 @@ translate_discoverer_toc (GstToc *gst_toc)
 
 		if (tags) {
 			copy = gst_tag_list_copy (tags);
+		} else {
+			copy = gst_tag_list_new_empty ();
+		}
 
-			if (gst_tag_list_get_tag_size (copy, GST_TAG_TRACK_NUMBER) == 0) {
-				gst_tag_list_add (copy, GST_TAG_MERGE_REPLACE,
-				                  GST_TAG_TRACK_NUMBER, i + 1,
-				                  NULL);
-			}
+		if (gst_tag_list_get_tag_size (copy, GST_TAG_TRACK_NUMBER) == 0) {
+			gst_tag_list_add (copy, GST_TAG_MERGE_REPLACE,
+			                  GST_TAG_TRACK_NUMBER, i + 1,
+			                  NULL);
 		}
 
 		gst_toc_entry_get_start_stop_times (entry, &start, &stop);
@@ -875,13 +880,6 @@ extract_metadata (MetadataExtractor      *extractor,
 		if (extractor->mime == EXTRACT_MIME_AUDIO) {
 			album_disc = extractor_maybe_get_album_disc (extractor, extractor->tagcache);
 
-			extractor_apply_audio_metadata (extractor,
-			                                extractor->tagcache,
-			                                resource,
-			                                performer,
-			                                composer,
-			                                album_disc);
-
 			/* If the audio file contains multiple tracks, we create the tracks
 			 * as abstract information element types and relate them to the
 			 * concrete nfo:FileDataObject using nie:isStoredAs.
@@ -892,10 +890,18 @@ extract_metadata (MetadataExtractor      *extractor,
 
 					track = extract_track (extractor, node->data, file_url, album_disc);
 					tracker_resource_set_relation (track, "nie:isStoredAs", resource);
-					g_object_unref (track);
+					tracker_resource_set_relation (track, "nie:isLogicalPartOf", resource);
+					tracker_resource_add_take_relation (resource, "nie:hasLogicalPart", track);
 				}
 
 				tracker_resource_set_string (resource, "nie:url", file_url);
+			} else {
+				extractor_apply_audio_metadata (extractor,
+				                                extractor->tagcache,
+				                                resource,
+				                                performer,
+				                                composer,
+				                                album_disc);
 			}
 
 			if (album_disc)

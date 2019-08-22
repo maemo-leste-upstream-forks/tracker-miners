@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -46,25 +46,27 @@ typedef struct {
 	gchar *track_number;
 	gchar *disc_number;
 	gchar *performer;
-	gchar *track_gain; 
+	gchar *track_gain;
 	gchar *track_peak_gain;
 	gchar *album_gain;
 	gchar *album_peak_gain;
-	gchar *date; 
+	gchar *date;
 	gchar *comment;
-	gchar *genre; 
+	gchar *genre;
 	gchar *codec;
 	gchar *codec_version;
 	gchar *sample_rate;
-	gchar *channels; 
-	gchar *mb_album_id; 
-	gchar *mb_artist_id; 
-	gchar *mb_album_artist_id;
-	gchar *mb_track_id; 
-	gchar *lyrics; 
-	gchar *copyright; 
-	gchar *license; 
-	gchar *organization; 
+	gchar *channels;
+	gchar *acoustid_fingerprint;
+	gchar *mb_release_id;
+	gchar *mb_release_group_id;
+	gchar *mb_track_id;
+	gchar *mb_artist_id;
+	gchar *mb_recording_id;
+	gchar *lyrics;
+	gchar *copyright;
+	gchar *license;
+	gchar *organization;
 	gchar *location;
 	gchar *publisher;
 } VorbisData;
@@ -147,10 +149,12 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		vd.codec_version = ogg_get_comment (comment, "CodecVersion");
 		vd.sample_rate = ogg_get_comment (comment, "SampleRate");
 		vd.channels = ogg_get_comment (comment, "Channels");
-		vd.mb_album_id = ogg_get_comment (comment, "MBAlbumID");
-		vd.mb_artist_id = ogg_get_comment (comment, "MBArtistID");
-		vd.mb_album_artist_id = ogg_get_comment (comment, "MBAlbumArtistID");
-		vd.mb_track_id = ogg_get_comment (comment, "MBTrackID");
+		vd.acoustid_fingerprint = ogg_get_comment (comment, "ACOUSTID_FINGERPRINT");
+		vd.mb_release_id = ogg_get_comment (comment, "MUSICBRAINZ_ALBUMID");
+		vd.mb_release_group_id = ogg_get_comment (comment, "MUSICBRAINZ_RELEASEGROUPID");
+		vd.mb_artist_id = ogg_get_comment (comment, "MUSICBRAINZ_ARTISTID");
+		vd.mb_track_id = ogg_get_comment (comment, "MUSICBRAINZ_RELEASETRACKID");
+		vd.mb_recording_id = ogg_get_comment (comment, "MUSICBRAINZ_TRACKID");
 		vd.lyrics = ogg_get_comment (comment, "Lyrics");
 		vd.copyright = ogg_get_comment (comment, "Copyright");
 		vd.license = ogg_get_comment (comment, "License");
@@ -166,11 +170,21 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	if (md.creator_name) {
 		md.creator = tracker_extract_new_artist (md.creator_name);
 
+		if (vd.mb_artist_id) {
+			TrackerResource *mb_artist_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Artist",
+											       vd.mb_artist_id);
+
+			tracker_resource_set_relation (md.creator, "tracker:hasExternalReference", mb_artist_id);
+			g_object_unref (mb_artist_id);
+			g_free (vd.mb_artist_id);
+		}
+
 		tracker_resource_set_relation (metadata, "nmm:performer", md.creator);
 	}
 
 	if (vd.album) {
 		TrackerResource *album, *album_disc, *album_artist;
+		TrackerResource *mb_release_id = NULL, *mb_release_group_id = NULL;
 
 		if (vd.album_artist) {
 			album_artist = tracker_extract_new_artist (vd.album_artist);
@@ -200,10 +214,33 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 			tracker_resource_set_double (album, "nmm:albumPeakGain", atof (vd.album_peak_gain));
 		}
 
+		if (vd.mb_release_id) {
+			mb_release_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release",
+									       vd.mb_release_id);
+
+			tracker_resource_set_relation (album, "tracker:hasExternalReference", mb_release_id);
+			g_free (vd.mb_release_id);
+		}
+
+		if (vd.mb_release_group_id) {
+			mb_release_group_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release_Group",
+										     vd.mb_release_group_id);
+
+			if (mb_release_id) {
+				tracker_resource_add_relation (album, "tracker:hasExternalReference", mb_release_group_id);
+
+			} else
+				tracker_resource_set_relation (album, "tracker:hasExternalReference", mb_release_group_id);
+
+			g_free (vd.mb_release_group_id);
+		}
+
 		tracker_resource_set_relation (metadata, "nmm:musicAlbum", album);
 		tracker_resource_set_relation (metadata, "nmm:musicAlbumDisc", album_disc);
 
 		g_object_unref (album_disc);
+		g_object_unref (mb_release_id);
+		g_object_unref (mb_release_group_id);
 	}
 
 	g_free (vd.track_count);
@@ -266,23 +303,44 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 		g_free (vd.channels);
 	}
 
-	if (vd.mb_album_id) {
-		/* TODO */
-		g_free (vd.mb_album_id);
+	if (vd.acoustid_fingerprint) {
+		TrackerResource *hash_resource;
+
+		hash_resource = tracker_resource_new (NULL);
+		tracker_resource_set_uri (hash_resource, "rdf:type", "nfo:FileHash");
+
+		tracker_resource_set_string (hash_resource, "nfo:hashValue", vd.acoustid_fingerprint);
+		tracker_resource_set_string (hash_resource, "nfo:hashAlgorithm", "chromaprint");
+
+		tracker_resource_set_relation (metadata, "nfo:hasHash", hash_resource);
+
+		g_object_unref (hash_resource);
+
+		g_free (vd.acoustid_fingerprint);
 	}
 
-	if (vd.mb_artist_id) {
-		/* TODO */
-		g_free (vd.mb_artist_id);
-	}
+	TrackerResource *mb_recording_id = NULL, *mb_track_id = NULL;
 
-	if (vd.mb_album_artist_id) {
-		/* TODO */
-		g_free (vd.mb_album_artist_id);
+	if (vd.mb_recording_id) {
+		mb_recording_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Recording",
+									 vd.mb_recording_id);
+
+		tracker_resource_set_relation (metadata, "tracker:hasExternalReference", mb_recording_id);
+		g_free (vd.mb_recording_id);
 	}
 
 	if (vd.mb_track_id) {
-		/* TODO */
+		mb_track_id = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Track",
+								     vd.mb_track_id);
+
+		if (mb_recording_id) {
+			tracker_resource_add_relation (metadata, "tracker:hasExternalReference", mb_track_id);
+			g_object_unref (mb_recording_id);
+		} else {
+			tracker_resource_set_relation (metadata, "tracker:hasExternalReference", mb_track_id);
+		}
+
+		g_object_unref (mb_track_id);
 		g_free (vd.mb_track_id);
 	}
 

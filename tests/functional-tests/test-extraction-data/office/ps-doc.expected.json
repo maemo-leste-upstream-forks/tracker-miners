@@ -1,0 +1,15 @@
+{
+    "test": {
+        "Filename": "ps-doc.ps",
+        "Comment": "PS document from the office tools"
+    },
+    "metadata": {
+        "nfo:pageCount": 1,
+        "nie:copyright": "copyleft",
+        "nco:creator": {
+            "nco:fullname": "vi",
+            "@type": "nco:Contact"
+        },
+        "@type": "nfo:PaginatedTextDocument"
+    }
+}

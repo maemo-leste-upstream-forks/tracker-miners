@@ -19,7 +19,7 @@
  * Authors: Philip Van Hoof <philip@codeminded.be>
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <time.h>
 #include <string.h>
@@ -213,6 +213,7 @@ test_date_to_iso8601 ()
         result = tracker_date_format_to_iso8601 ("2010:03:13 12:12:12", "%Y:%m:%d %H:%M:%S");
         g_assert (g_str_has_prefix (result, "2010-03-13T12:12:12"));
         g_assert_cmpint (strlen (result), <=, 25);
+        g_free (result);
 
         /* Pattern and string don't match */
         result = tracker_date_format_to_iso8601 ("2010:03:13 12:12", "%Y:%m:%d %H:%M:%S");
@@ -268,12 +269,17 @@ test_getline (void)
         f = fopen (TOP_SRCDIR "/tests/libtracker-extract/getline-test.txt", "r");
         g_assert_cmpint (tracker_getline (&line, &n, f), >, 0);
         g_assert_cmpstr (line, ==, "Line 1\n");
+        g_free (line);
+        line = NULL;
 
         g_assert_cmpint (tracker_getline (&line, &n, f), >, 0);
         g_assert_cmpstr (line, ==, "line 2\n");
+        g_free (line);
+        line = NULL;
 
         g_assert_cmpint (tracker_getline (&line, &n, f), >, 0);
         g_assert_cmpstr (line, ==, "line 3\n");
+        g_free (line);
 }
 
 int

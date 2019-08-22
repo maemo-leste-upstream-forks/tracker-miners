@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <locale.h>
 
@@ -574,7 +574,9 @@ iterate_simple (const gchar    *uri,
                                 */
                         } else if (!current_region->type && g_ascii_strcasecmp (propname, "mwg-rs:Type") == 0) {
                                 current_region->type = g_strdup (value);
-                        } else if (!current_region->link_class && !current_region->link_uri &&
+                        }
+                        else if (!current_region->link_class && !current_region->link_uri &&
+                                   strrchr (path, ']')  != NULL && strrchr (path, ']') + 2 < strrchr (path, '\0') &&
                                    g_str_has_prefix (strrchr (path, ']') + 2, "mwg-rs:Extensions")) {
                                 current_region->link_class = g_strdup (propname);
                                 current_region->link_uri = g_strdup (value);

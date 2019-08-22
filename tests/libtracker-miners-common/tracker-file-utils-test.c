@@ -168,6 +168,7 @@ test_path_evaluate_name (void)
 
 	result = tracker_path_evaluate_name ("just-a-filename");
 	g_assert_cmpstr (result, ==, "just-a-filename");
+	g_free (result);
 
 	result = tracker_path_evaluate_name ("$HOME/all/dir/");
 	expected = g_build_path (G_DIR_SEPARATOR_S, home, "/all/dir", NULL);
@@ -215,9 +216,11 @@ test_path_evaluate_name (void)
 
         result = tracker_path_evaluate_name ("$UNDEFINED/something");
         g_assert_cmpstr (result, ==, "/something");
+        g_free (result);
 
 	result = tracker_path_evaluate_name (tracker_test_helpers_get_nonutf8 ());
 	g_assert_cmpstr (result, ==, tracker_test_helpers_get_nonutf8 ());
+	g_free (result);
 
 	g_free (home);
 	g_free (pwd);

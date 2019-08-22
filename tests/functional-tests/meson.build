@@ -1,7 +1,14 @@
+test_runner = configure_file(
+    input: 'test-runner.sh.in',
+    output: 'test-runner.sh',
+    configuration: conf)
+test_runner = find_program(test_runner)
+
 extractor_tests = [
   'audio/audio-test-1',
   'audio/empty_albumi_song3',
   'audio/audio-test-2',
+  'audio/audio-test-vorbis-extractor',
   'images/test-image-1',
   'images/xmp-loaded-1',
   'images/test-image-3',
@@ -16,7 +23,13 @@ extractor_tests = [
   'office/office-doc',
   'office/powerpoint',
   'office/pdf-doc',
+  'office/ps-doc',
+  'office/ps-doc-atend'
 ]
+
+if get_option('unzip_ps_gz_files')
+  extractor_tests += 'office/psgz-doc'
+endif
 
 functional_tests = [
   '300-miner-basic-ops',
@@ -24,17 +37,14 @@ functional_tests = [
   '310-fts-basic',
   '311-fts-file-operations',
   '312-fts-stopwords',
+  '401-extractor-flac-cuesheet',
   '410-extractor-decorator',
-  '500-writeback',
-  '501-writeback-details',
+  '500-writeback-images',
+  '501-writeback-image-details',
+  '502-writeback-audio',
+  '600-applications-camera',
   '601-applications-sync',
 ]
-
-# FIXME: this is currently skipped as it doesn't work.
-# '600-applications-camera',
-
-
-test_runner = find_program('test-runner.sh')
 
 config_json = configure_file(
   input: 'configuration.json.in',
@@ -63,7 +73,7 @@ tracker_extractors_dir = join_paths(meson.current_build_dir(), '..', '..', 'src'
 
 test_env = environment()
 test_env.set('DCONF_PROFILE', dconf_profile_full_path)
-test_env.set('GSETTINGS_SCHEMA_DIR', join_paths(meson.build_root(), 'data'))
+test_env.set('GSETTINGS_SCHEMA_DIR', tracker_miners_uninstalled_gsettings_schema_dir)
 
 test_env.set('TRACKER_DB_ONTOLOGIES_DIR', tracker_uninstalled_nepomuk_ontologies_dir)
 test_env.set('TRACKER_EXTRACTORS_DIR', tracker_extractors_dir)

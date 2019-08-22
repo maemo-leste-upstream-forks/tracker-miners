@@ -66,6 +66,7 @@ test_exif_parse (void)
         g_assert_cmpstr (exif->gps_direction, ==, "12.3"); // -n -Exif:GPSImgDirection=12.3
         
         tracker_exif_free (exif);
+        g_free (blob);
 }
 
 static void
@@ -80,6 +81,7 @@ test_exif_parse_empty (void)
         exif = tracker_exif_new ((guchar *)blob, length, "test://file");
 
         tracker_exif_free (exif);
+        g_free (blob);
 }
 
 int

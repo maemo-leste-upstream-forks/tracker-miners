@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
+#include "config-miners.h"
 
 #include <sys/statvfs.h>
 #include <fcntl.h>
@@ -55,7 +55,7 @@
 
 #define TRACKER_EXTRACT_DATA_SOURCE TRACKER_PREFIX_TRACKER "extractor-data-source"
 
-#define TRACKER_MINER_FILES_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TRACKER_TYPE_MINER_FILES, TrackerMinerFilesPrivate))
+#define TRACKER_MINER_FILES_GET_PRIVATE(o) (tracker_miner_files_get_instance_private (TRACKER_MINER_FILES (o)))
 
 static GQuark miner_files_error_quark = 0;
 
@@ -239,6 +239,7 @@ static void        miner_files_update_filters                     (TrackerMinerF
 static GInitableIface* miner_files_initable_parent_iface;
 
 G_DEFINE_TYPE_WITH_CODE (TrackerMinerFiles, tracker_miner_files, TRACKER_TYPE_MINER_FS,
+                         G_ADD_PRIVATE (TrackerMinerFiles)
                          G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
                                                 miner_files_initable_iface_init));
 
@@ -377,8 +378,6 @@ tracker_miner_files_class_init (TrackerMinerFilesClass *klass)
 	                                                      "Config",
 	                                                      TRACKER_TYPE_CONFIG,
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-
-	g_type_class_add_private (klass, sizeof (TrackerMinerFilesPrivate));
 
 	miner_files_error_quark = g_quark_from_static_string ("TrackerMinerFiles");
 }
@@ -2360,7 +2359,7 @@ process_file_cb (GObject      *object,
 	GFileInfo *file_info;
 	guint64 time_;
 	GFile *file, *parent;
-	gchar *uri, *sparql_str, *time_str;
+	gchar *uri, *sparql_str, *sparql_update_str, *time_str;
 	GError *error = NULL;
 	gboolean is_iri;
 	gboolean is_directory;
@@ -2471,9 +2470,10 @@ process_file_cb (GObject      *object,
 		miner_files_add_rdf_types (resource, file, mime_type);
 
 	mount_point_sparql = update_mount_point_sparql (data);
+	sparql_update_str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN),
 	sparql_str = g_strdup_printf ("%s %s %s",
 	                              delete_properties_sparql ? delete_properties_sparql : "",
-	                              tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN),
+	                              sparql_update_str,
 	                              mount_point_sparql ? mount_point_sparql : "");
 	g_free (delete_properties_sparql);
 	g_free (mount_point_sparql);
@@ -2488,6 +2488,7 @@ process_file_cb (GObject      *object,
 	g_object_unref (file_info);
 	g_free (sparql_str);
 	g_free (uri);
+	g_free (sparql_update_str);
 }
 
 static gboolean
