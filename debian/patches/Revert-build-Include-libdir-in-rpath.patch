@@ -1,0 +1,80 @@
+From: Iain Lane <laney@debian.org>
+Date: Tue, 3 Sep 2019 17:16:10 +0100
+Subject: Revert "build: Include libdir in rpath"
+
+This reverts commit 6a9199a86a7047aa3d5db8d0faba8a5ae1e10bf4.
+
+We don't want these in rpath on Debian; the standard libdir is in the
+search path.
+---
+ meson.build                       | 1 -
+ src/miners/fs/meson.build         | 2 +-
+ src/miners/rss/meson.build        | 2 +-
+ src/tracker-extract/meson.build   | 2 +-
+ src/tracker-writeback/meson.build | 2 +-
+ 5 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 683c168..eae7da5 100644
+--- a/meson.build
++++ b/meson.build
+@@ -388,7 +388,6 @@ configinc = include_directories('./')
+ srcinc = include_directories('src/')
+ 
+ tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-' + tracker_api_version)
+-tracker_install_rpath = ':'.join([tracker_internal_libs_dir, libdir])
+ 
+ tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/extract-modules'.format(tracker_api_version))
+ # NOTE: We don't use ${TRACKER_API_VERSION} because other content like
+diff --git a/src/miners/fs/meson.build b/src/miners/fs/meson.build
+index b58bfbd..f96daa9 100644
+--- a/src/miners/fs/meson.build
++++ b/src/miners/fs/meson.build
+@@ -31,7 +31,7 @@ executable('tracker-miner-fs', sources,
+     c_args: tracker_c_args,
+     install: true,
+     install_dir: get_option('libexecdir'),
+-    install_rpath: tracker_install_rpath,
++    install_rpath: tracker_internal_libs_dir,
+ )
+ 
+ dbus_service_file_untranslated = configure_file(
+diff --git a/src/miners/rss/meson.build b/src/miners/rss/meson.build
+index 2393940..38949ec 100644
+--- a/src/miners/rss/meson.build
++++ b/src/miners/rss/meson.build
+@@ -8,7 +8,7 @@ executable('tracker-miner-rss', sources,
+     c_args: tracker_c_args,
+     install: true,
+     install_dir: get_option('libexecdir'),
+-    install_rpath: tracker_install_rpath,
++    install_rpath: tracker_internal_libs_dir,
+ )
+ 
+ dbus_service_file_untranslated = configure_file(
+diff --git a/src/tracker-extract/meson.build b/src/tracker-extract/meson.build
+index b8ab6ba..b4bb2f9 100644
+--- a/src/tracker-extract/meson.build
++++ b/src/tracker-extract/meson.build
+@@ -167,7 +167,7 @@ executable('tracker-extract',
+   dependencies: tracker_extract_dependencies,
+   install: true,
+   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
+-  install_rpath: tracker_install_rpath)
++  install_rpath: tracker_internal_libs_dir)
+ 
+ dbus_service_file_untranslated = configure_file(
+   input: 'org.freedesktop.Tracker1.Miner.Extract.service.in.in',
+diff --git a/src/tracker-writeback/meson.build b/src/tracker-writeback/meson.build
+index 168c715..375181d 100644
+--- a/src/tracker-writeback/meson.build
++++ b/src/tracker-writeback/meson.build
+@@ -47,7 +47,7 @@ executable('tracker-writeback',
+   dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
+   install: true,
+   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
+-  install_rpath: tracker_install_rpath)
++  install_rpath: tracker_internal_libs_dir)
+ 
+ dbus_service_file = configure_file(
+   input: 'org.freedesktop.Tracker1.Writeback.service.in',
