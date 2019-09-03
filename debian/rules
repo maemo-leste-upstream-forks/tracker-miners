@@ -46,9 +46,11 @@ override_dh_shlibdeps:
 	dh_shlibdeps -Ltracker-extract
 
 override_dh_auto_test:
+ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	mkdir -p -m0700 $(CHECK_HOME)
 	mkdir -m0700 $(CHECK_XRD)
 	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) dbus-run-session -- dh_auto_test
+endif
 
 override_dh_clean:
 	rm -rf $(CHECK_HOME)
