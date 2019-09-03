@@ -1,5 +1,6 @@
 tracker-miners (2.2.99.0-1) UNRELEASED; urgency=medium
 
+  [ Marco Trevisan (Treviño) ]
   * New upstream release
     + Support for reading Musicbrainz metadata from audio files.
     + Tracker Writeback now uses GStreamer to write metadata to audio files,
@@ -24,7 +25,14 @@ tracker-miners (2.2.99.0-1) UNRELEASED; urgency=medium
   * tracker-miner-fs.install: Remove tracker-miner-apps
   * debian/docs: Use README.md
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Aug 2019 12:41:51 +0200
+  [ Iain Lane ]
+  * debian/rules: Don't run dh_auto_test if nocheck is set in
+    DEB_BUILD_OPTIONS
+  * Revert "build: Include libdir in rpath" This reverts commit
+    6a9199a86a7047aa3d5db8d0faba8a5ae1e10bf4. We don't want these in rpath on
+    Debian; the standard libdir is in the search path.
+
+ -- Iain Lane <laney@debian.org>  Tue, 03 Sep 2019 17:17:09 +0100
 
 tracker-miners (2.1.6-1) unstable; urgency=medium
 
