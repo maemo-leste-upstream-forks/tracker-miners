@@ -1,4 +1,4 @@
-tracker-miners (2.2.99.0-1) UNRELEASED; urgency=medium
+tracker-miners (2.2.99.0-1) experimental; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release
@@ -32,7 +32,7 @@ tracker-miners (2.2.99.0-1) UNRELEASED; urgency=medium
     6a9199a86a7047aa3d5db8d0faba8a5ae1e10bf4. We don't want these in rpath on
     Debian; the standard libdir is in the search path.
 
- -- Iain Lane <laney@debian.org>  Tue, 03 Sep 2019 17:17:09 +0100
+ -- Iain Lane <laney@debian.org>  Tue, 03 Sep 2019 17:50:30 +0100
 
 tracker-miners (2.1.6-1) unstable; urgency=medium
 
