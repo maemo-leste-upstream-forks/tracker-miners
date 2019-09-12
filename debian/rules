@@ -20,6 +20,12 @@ MESON_TEST_ARGS = \
 	-C $(BUILDDIR) \
 	--no-rebuild \
 	--verbose
+TEST_SUITES_FILTER = \
+	functional
+ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH),hppa ppc64 s390x))
+TEST_SUITES_FILTER += \
+	audio
+endif
 
 # Disable 'universe' dependencies (libosinfo & libiptcdata) on Ubuntu
 ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
@@ -58,11 +64,11 @@ ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
 	    dbus-run-session -- \
 	    meson test $(MESON_TEST_ARGS) \
-	    --no-suite functional
+	    $(addprefix --no-suite ,${TEST_SUITES_FILTER})
 	-env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
 	    dbus-run-session -- \
 	    meson test $(MESON_TEST_ARGS) \
-	    --suite functional
+	    $(addprefix --suite ,${TEST_SUITES_FILTER})
 endif
 
 override_dh_clean:
