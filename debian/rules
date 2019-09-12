@@ -3,6 +3,7 @@
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,-O1 -Wl,--as-needed -Wl,-Bsymbolic
 
+BUILDDIR=$(CURDIR)/obj-$(DEB_HOST_GNU_TYPE)
 CHECK_HOME = $(CURDIR)/debian/tmp/home
 CHECK_XRD = $(CHECK_HOME)/XRD
 
@@ -14,6 +15,11 @@ FEATURE_FLAGS = \
 	-Dminer_rss=false \
 	-Dbattery_detection=upower \
 	-Dcharset_detection=icu
+
+MESON_TEST_ARGS = \
+	-C $(BUILDDIR) \
+	--no-rebuild \
+	--verbose
 
 # Disable 'universe' dependencies (libosinfo & libiptcdata) on Ubuntu
 ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
@@ -49,7 +55,14 @@ override_dh_auto_test:
 ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	mkdir -p -m0700 $(CHECK_HOME)
 	mkdir -m0700 $(CHECK_XRD)
-	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) dbus-run-session -- dh_auto_test
+	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
+	    dbus-run-session -- \
+	    meson test $(MESON_TEST_ARGS) \
+	    --no-suite functional
+	-env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
+	    dbus-run-session -- \
+	    meson test $(MESON_TEST_ARGS) \
+	    --suite functional
 endif
 
 override_dh_clean:
