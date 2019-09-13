@@ -1,3 +1,16 @@
+tracker-miners (2.3.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release:
+    - The ~/Downloads folder is now indexed non-recursively by default.
+      + This reduces the risk of Tracker unnecessarily crawling large
+        directories of source code or video game data.
+      + If users are storing data such as music or photos in subfolders of the
+        Downloads folder, they will need to move it to an appropriate place
+        (~/Music, ~/Pictures, etc.) so that it is still indexed.
+    - Fixes in Musicbrainz metadata extraction
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 14 Sep 2019 01:18:12 +0200
+
 tracker-miners (2.2.99.0-1) experimental; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
