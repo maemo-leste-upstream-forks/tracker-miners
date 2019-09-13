@@ -4,131 +4,277 @@
 #
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2014, 2015, 2016, 2017.
 # Edurne Labaka <elabaka@uzei.com>, 2015.
+# Asier Sarasua Garmendia  <asier.sarasua@gmail.com>, 2019.
+#
 msgid ""
-msgstr ""
-"Project-Id-Version: tracker master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=tracker&keywords=I18N+L10N&component=Miners\n"
-"POT-Creation-Date: 2017-08-10 22:45+0000\n"
-"PO-Revision-Date: 2017-08-27 16:05+0200\n"
-"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
+msgstr "Project-Id-Version: tracker master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
+"POT-Creation-Date: 2019-06-22 16:32+0000\n"
+"PO-Revision-Date: 2019-08-11 10:00+0100\n"
+"Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 1.5\n"
 
-#: ../src/libtracker-common/tracker-utils.c:90
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Erregistro xehatua"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Erregistro xehatua."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Antolatzailearen lehentasuna inaktibo dagoenean"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr "Antolatzailea nukleoaren osagaia da, zein izango den PUZean exekutatzen den hurrengo aplikazio exekutagarri erabakitzen du. Aplikazio bakoitzak antolaketarekin zerikusia duten arauak eta lehentasuna dauka esleituta."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Gehienezko byte kopurua erauzteko"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "UTF-8 kodeketaren gehienezko byte kopurua erauzteko."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Wait for FS miner to be done before extracting"
+msgstr "Itxaron fitxategi-sistemaren biltzaileari erauzi aurretik."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr "TRUE (egia) gisa ezartzean 'tracker-extract' prozesua 'tracker-miner-fs' amaitu arte zain egongo da meta-datuak erauzi aurretik. Aukera hau erabilgarria da murriztutako inguruetan, garrantzitsua baita ahalik eta azkarren fitxategiak zerrendatzea eta itxaroten egon daiteke meta-datuak geroago lortzeko."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Hasierako pausa"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Hasierako pausaren iraupena, segundotan."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Bizkortzailea"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Indexatzearen abiadura, altuagoa motelagoa."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Diskoaren lekuaren beheko muga"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr "Diskoaren lekuaren atalasea ehunekotan indexatzea pausatzeko, edo -1 desgaitzeko."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Indexazioaren bitartea"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr "Fitxategi-sistema datu-basean eguneratuta dagoen edo ez begiratzeko bitartea (egunetan). 0 balioak indexazioa edozer unetan egitea bultzatzen du, -1 balioak ordenagailua gaizki itzalitakoan, eta -2 balioak erabat desgaitzen du."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Gailu aldagarrien datuak gordetzeko muga"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr "Gailu aldagarriko fitxategiak datu-basetik ezabatuko dira ez bada mugaren (egunetan) barruan muntatzen. 0 balioak 'inoiz ere ez' adierazten du, balio handiena 365."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Gaitu monitoreak"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr "Ezarri FALSE (faltsua) gisa edozer fitxategi monitorizatzea erabat desgaitzeko"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Gaitu atzerapeneko idazketa"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr "Ezarri FALSE (faltsua) gisa edozer fitxategiren atzerapeneko idazketa desgaitzeko"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Indexatu gailu aldagarriak"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr "Ezarri TRUE (egia) gisa muntatutako gailu aldagarrien direktorioak indexatzeko."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Indexatu disko optikoak"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr "Ezarri TRUE (egia) gisa CDak, DVDak eta euskarri optiko orokorrak indexatzeko (gailu aldagarriak ez badira indexatuko, disko optikoak ere ez dira indexatuko)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Indexatu bateriarekin lanean ari denean"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr "Ezarri TRUE (egia) gisa indexatzeko bateriarekin lanean ari denean"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Landu hasierako indexazioa bateriarekin lanean ari denean"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr "Ezarri TRUE (egia) gisa bateriarekin lanean ari denean indexatzean, baina soilik aurreneko aldiz"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Direktorioak errekurtsiboki indexatzeko"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr "Errekurtsiboki indexatuko diren direktorioen zerrenda. Balio bereziak: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Ikus /etc/xdg/user-dirs.defaults eta $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Direktorioak indexatzeko (ez-errekurtsiboki)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr "Azpikarpetak aztertu gabe indexatuko diren direktorioen zerrenda. Balio bereziak: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Ikus /etc/xdg/user-dirs.defaults eta $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Baztertutako fitxategiak"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Fitxategien ereduen zerrenda saihesteko"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Baztertutako direktorioak"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Direktorioen zerrenda saihesteko"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Baztertutako direktorioak edukiekin"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr "Saihestu hemen zerrendatutako fitxategietariko bat duen edozer direktorio"
+
+#: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
 msgstr "ordu ezezaguna"
 
-#: ../src/libtracker-common/tracker-utils.c:104
-#: ../src/libtracker-common/tracker-utils.c:155
+#: ../src/libtracker-miners-common/tracker-utils.c:104
+#: ../src/libtracker-miners-common/tracker-utils.c:155
 msgid "less than one second"
 msgstr "segundo bat baino gutxiago"
 
 #. Translators: this is %d days
-#: ../src/libtracker-common/tracker-utils.c:119
+#: ../src/libtracker-miners-common/tracker-utils.c:119
 #, c-format
 msgid " %dd"
 msgstr " %de"
 
 #. Translators: this is %2.2d hours
-#: ../src/libtracker-common/tracker-utils.c:123
+#: ../src/libtracker-miners-common/tracker-utils.c:123
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2do"
 
 #. Translators: this is %2.2d minutes
-#: ../src/libtracker-common/tracker-utils.c:127
+#: ../src/libtracker-miners-common/tracker-utils.c:127
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2dm"
 
 #. Translators: this is %2.2d seconds
-#: ../src/libtracker-common/tracker-utils.c:131
+#: ../src/libtracker-miners-common/tracker-utils.c:131
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2ds"
 
-#: ../src/libtracker-common/tracker-utils.c:135
+#: ../src/libtracker-miners-common/tracker-utils.c:135
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
-msgstr[0] " egun  %d"
+msgstr[0] " egun %d"
 msgstr[1] " %d egun"
 
-#: ../src/libtracker-common/tracker-utils.c:139
+#: ../src/libtracker-miners-common/tracker-utils.c:139
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
 msgstr[0] " ordu  %2.2d"
 msgstr[1] " %2.2d ordu"
 
-#: ../src/libtracker-common/tracker-utils.c:143
+#: ../src/libtracker-miners-common/tracker-utils.c:143
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
 msgstr[0] " minutu %2.2d"
 msgstr[1] " %2.2d minutu"
 
-#: ../src/libtracker-common/tracker-utils.c:147
+#: ../src/libtracker-miners-common/tracker-utils.c:147
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
 msgstr[0] " segundo %2.2d"
 msgstr[1] " %2.2d segundo"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:1
-msgid "Applications"
-msgstr "Aplikazioak"
-
-#: ../src/miners/apps/org.freedesktop.Tracker1.Miner.Applications.service.in.in.h:2
-msgid "Applications data miner"
-msgstr "Aplikazioen datuen biltzailea"
-
-#: ../src/miners/apps/tracker-main.c:60 ../src/miners/fs/tracker-main.c:77
-#: ../src/miners/rss/tracker-main.c:43
-#: ../src/tracker-writeback/tracker-main.c:55
-msgid ""
-"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
-msgstr ""
-"Erregistroa: 0 = erroreak soilik, 1 = gutxienekoa, 2 = xehea eta 3 = "
-"arazketa (lehenetsia=0)"
-
-#: ../src/miners/apps/tracker-main.c:65
-msgid "Runs until all applications are indexed and then exits"
-msgstr ""
-"Aplikazio guztiak indexatu arte exekutatzen da, eta gero irten egiten da"
-
-#: ../src/miners/apps/tracker-main.c:69 ../src/miners/fs/tracker-main.c:95
-#: ../src/miners/rss/tracker-main.c:57
-#: ../src/tracker-extract/tracker-main.c:101
-msgid "Runs for a specific domain ontology"
-msgstr "Domeinu zehatzaren ontologia batentzako exekutatzen du"
-
-#: ../src/miners/apps/tracker-main.c:73 ../src/miners/fs/tracker-main.c:99
-#: ../src/tracker-extract/tracker-main.c:105
-#: ../src/tracker-writeback/tracker-main.c:51
-msgid "Displays version information"
-msgstr "Bertsioari buruzko informazioa bistaratzen du"
-
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: ../src/miners/apps/tracker-main.c:205
-msgid "— start the application data miner"
-msgstr "— abiarazi aplikazio-datuen biltzailea"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:1
-msgid "Tracker Application Miner"
-msgstr "Tracker-en aplikazio-biltzailea"
-
-#: ../src/miners/apps/tracker-miner-apps.desktop.in.in.h:2
-msgid "Indexes information about applications installed"
-msgstr "Instalatutako aplikazioei buruzko indize-informazioa"
 
 #: ../src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in.h:1
 msgid "File System"
@@ -138,314 +284,116 @@ msgstr "Fitxategi-sistema"
 msgid "File system data miner"
 msgstr "Fitxategi-sistemako datuen biltzailea"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:1
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:1
-msgid "Log verbosity"
-msgstr "Erregistro xehatua"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:2
-#: ../src/tracker-writeback/org.freedesktop.Tracker.Writeback.gschema.xml.in.h:2
-msgid "Log verbosity."
-msgstr "Erregistro xehatua."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:3
-msgid "Initial sleep"
-msgstr "Hasierako pausa"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Hasierako pausaren iraupena, segundotan."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:3
-msgid "Scheduler priority when idle"
-msgstr "Antolatzailearen lehentasuna inaktibo dagoenean"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:4
+#: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
+#: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
-msgstr ""
-"Antolatzailea nukleoaren osagaia da, zein izango den PUZean exekutatzen den "
-"hurrengo aplikazio exekutagarri erabakitzen du. Aplikazio bakoitzak "
-"antolaketarekin zerikusia duten arauak eta lehentasuna dauka esleituta."
+"Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
+msgstr "Erregistroa: 0 = erroreak soilik, 1 = gutxienekoa, 2 = xehea eta 3 = arazketa (lehenetsia=0)"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:7
-msgid "Throttle"
-msgstr "Bizkortzailea"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Indexatzearen abiadura, altuagoa motelagoa."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:9
-msgid "Low disk space limit"
-msgstr "Diskoaren lekuaren beheko muga"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Diskoaren lekuaren atalasea ehunekotan indexatzea pausatzeko, edo -1 "
-"desgaitzeko."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:11
-msgid "Crawling interval"
-msgstr "Indexazioaren bitartea"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Fitxategi-sistema datu-basean eguneratuta dagoen edo ez begiratzeko bitartea "
-"(egunetan). 0 balioak indexazioa edozer unetan egitea bultzatzen du, -1 "
-"balioak ordenagailua gaizki itzalitakoan, eta -2 balioak erabat desgaitzen "
-"du."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Gailu aldagarrien datuak gordetzeko muga"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Gailu aldagarriko fitxategiak datu-basetik ezabatuko dira ez bada mugaren "
-"(egunetan) barruan muntatzen. 0 balioak 'inoiz ere ez' adierazten du, balio "
-"handiena 365."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:15
-msgid "Enable monitors"
-msgstr "Gaitu monitoreak"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr ""
-"Ezarri FALSE (faltsua) gisa edozer fitxategi monitorizatzea erabat "
-"desgaitzeko"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:17
-msgid "Enable writeback"
-msgstr "Gaitu atzerapeneko idazketa"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr ""
-"Ezarri FALSE (faltsua) gisa edozer fitxategiren atzerapeneko idazketa "
-"desgaitzeko"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:19
-msgid "Index removable devices"
-msgstr "Indexatu gailu aldagarriak"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Ezarri TRUE (egia) gisa muntatutako gailu aldagarrien direktorioak "
-"indexatzeko."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:21
-msgid "Index optical discs"
-msgstr "Indexatu disko optikoak"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Ezarri TRUE (egia) gisa CDak, DVDak eta euskarri optiko orokorrak "
-"indexatzeko (gailu aldagarriak ez badira indexatuko, disko optikoak ere ez "
-"dira indexatuko)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:23
-msgid "Index when running on battery"
-msgstr "Indexatu bateriarekin lanean ari denean"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:24
-msgid "Set to true to index while running on battery"
-msgstr "Ezarri TRUE (egia) gisa indexatzeko bateriarekin lanean ari denean"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Landu hasierako indexazioa bateriarekin lanean ari denean"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr ""
-"Ezarri TRUE (egia) gisa bateriarekin lanean ari denean indexatzean, baina "
-"soilik aurreneko aldiz"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:27
-msgid "Directories to index recursively"
-msgstr "Direktorioak errekurtsiboki indexatzeko"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:28
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs.defaults "
-"and $HOME/.config/user-dirs.default"
-msgstr ""
-"Direktorioen zerrenda errekurtsiboki indexatzeko. Balio bereziak: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Ikus /etc/xdg/user-dirs.defaults "
-"eta $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:29
-msgid "Directories to index non-recursively"
-msgstr "Direktorioak indexatzeko (ez-errekurtsiboki)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:30
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-"
-"dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Direktorioen zerrenda azpikarpetak aztertu gabe indexatzeko. Balio bereziak: "
-"&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. Ikus /etc/xdg/user-dirs.defaults "
-"eta $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:31
-msgid "Ignored files"
-msgstr "Baztertutako fitxategiak"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:32
-msgid "List of file patterns to avoid"
-msgstr "Fitxategien ereduen zerrenda saihesteko"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:33
-msgid "Ignored directories"
-msgstr "Baztertutako direktorioak"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:34
-msgid "List of directories to avoid"
-msgstr "Direktorioen zerrenda saihesteko"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:35
-msgid "Ignored directories with content"
-msgstr "Baztertutako direktorioak edukiekin"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.in.h:36
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr ""
-"Saihestu hemen zerrendatutako fitxategietariko bat duen edozer direktorio"
-
-#: ../src/miners/fs/tracker-main.c:82
+#: ../src/miners/fs/tracker-main.c:78
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Hasierako pausaren iraupena (segundotan). 0 -> 1000 (lehenetsia=15)"
 
-#: ../src/miners/fs/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:83
 msgid "Runs until all configured locations are indexed and then exits"
-msgstr ""
-"Konfiguratutako kokaleku guztiak indexatu arte exekutatzen da, eta gero "
-"irten egiten da"
+msgstr "Konfiguratutako kokaleku guztiak indexatu arte exekutatzen da, eta gero irten egiten da"
 
-#: ../src/miners/fs/tracker-main.c:91
+#: ../src/miners/fs/tracker-main.c:87
 msgid "Checks if FILE is eligible for being mined based on configuration"
-msgstr ""
-"FITXATEGIA indexatzeko hautagaia den egiaztatzen du konfigurazioaren arabera"
+msgstr "FITXATEGIA indexatzeko hautagaia den egiaztatzen du konfigurazioaren arabera"
 
-#: ../src/miners/fs/tracker-main.c:92 ../src/tracker-extract/tracker-main.c:87
+#: ../src/miners/fs/tracker-main.c:88 ../src/tracker-extract/tracker-main.c:88
 msgid "FILE"
 msgstr "FITXATEGIA"
 
-#: ../src/miners/fs/tracker-main.c:460
+#: ../src/miners/fs/tracker-main.c:91 ../src/miners/rss/tracker-main.c:57
+#: ../src/tracker-extract/tracker-main.c:102
+msgid "Runs for a specific domain ontology"
+msgstr "Domeinu zehatzaren ontologia batentzako exekutatzen du"
+
+#: ../src/miners/fs/tracker-main.c:95 ../src/tracker-extract/tracker-main.c:106
+#: ../src/tracker-writeback/tracker-main.c:51
+msgid "Displays version information"
+msgstr "Bertsioari buruzko informazioa bistaratzen du"
+
+#: ../src/miners/fs/tracker-main.c:539
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "“%s“ objektuaren datuak badaude"
 
-#: ../src/miners/fs/tracker-main.c:461
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "“%s“ objektuaren datuak ez daude"
 
-#: ../src/miners/fs/tracker-main.c:476
+#: ../src/miners/fs/tracker-main.c:555
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Direktorioa hautagaia da biltzeko (arauetan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:477
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Direktorioa ez da hautagaia biltzeko (arauetan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:497
+#: ../src/miners/fs/tracker-main.c:576
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Direktorioa hautagaia da biltzeko (edukian oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:498
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Direktorioa ez da hautagaia biltzeko (edukian oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:545
+#: ../src/miners/fs/tracker-main.c:624
 msgid "Directory is eligible to be monitored (based on config)"
-msgstr ""
-"Direktorioa hautagaia da monitorizatua izateko (konfigurazioan oinarrituta)"
+msgstr "Direktorioa hautagaia da monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:546
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is NOT eligible to be monitored (based on config)"
-msgstr ""
-"Direktorioa ez da hautagaia monitorizatua izateko (konfigurazioan "
-"oinarrituta)"
+msgstr "Direktorioa ez da hautagaia monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:550
+#: ../src/miners/fs/tracker-main.c:629
 msgid "File is eligible to be monitored (based on config)"
-msgstr ""
-"Fitxategia hautagaia da monitorizatua izateko (konfigurazioan oinarrituta)"
+msgstr "Fitxategia hautagaia da monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:551
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is NOT eligible to be monitored (based on config)"
-msgstr ""
-"Fitxategia ez da hautagaia monitorizatua izateko (konfigurazioan oinarrituta)"
+msgstr "Fitxategia ez da hautagaia monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:634
 msgid "File or Directory is eligible to be monitored (based on config)"
-msgstr ""
-"Fitxategia edo direktorioa hautagaia da monitorizatua izateko "
-"(konfigurazioan oinarrituta)"
+msgstr "Fitxategia edo direktorioa hautagaia da monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
-msgstr ""
-"Fitxategia edo direktorioa ez da hautagaia monitorizatua izateko "
-"(konfigurazioan oinarrituta)"
+msgstr "Fitxategia edo direktorioa ez da hautagaia monitorizatua izateko (konfigurazioan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:571
+#: ../src/miners/fs/tracker-main.c:650
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Fitxategia hautagaia da biltzeko (arauetan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:572
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Fitxategia ez da hautagaia biltzeko (arauetan oinarrituta)"
 
-#: ../src/miners/fs/tracker-main.c:581
+#: ../src/miners/fs/tracker-main.c:660
 msgid "Would be indexed"
 msgstr "Indexatu beharko litzateke"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "Yes"
 msgstr "Bai"
 
-#: ../src/miners/fs/tracker-main.c:582 ../src/miners/fs/tracker-main.c:584
+#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
 msgid "No"
 msgstr "Ez"
 
-#: ../src/miners/fs/tracker-main.c:583
+#: ../src/miners/fs/tracker-main.c:662
 msgid "Would be monitored"
 msgstr "Monitorizatu beharko litzateke"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:715
+#: ../src/miners/fs/tracker-main.c:793
 msgid "— start the tracker indexer"
 msgstr "— abiarazi tracker-en indexatzailea"
 
@@ -459,16 +407,16 @@ msgstr "fitxategi-sistemako fitxategiak indexatzen eta aztertzen ditu"
 
 #: ../src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in.h:1
 msgid "RSS/ATOM Feeds"
-msgstr "RSS/ATOM iturriak"
+msgstr "RSS/ATOM jarioak"
 
 #: ../src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in.h:2
 msgid "Fetch RSS/ATOM Feeds"
-msgstr "Eskuratu RSS/ATOM iturriak"
+msgstr "Eskuratu RSS/ATOM jarioak"
 
 #. Translators: this is a "feed" as in RSS
 #: ../src/miners/rss/tracker-main.c:49
 msgid "Add feed"
-msgstr "Gehitu iturria"
+msgstr "Gehitu jarioa"
 
 #: ../src/miners/rss/tracker-main.c:50
 msgid "URL"
@@ -483,7 +431,7 @@ msgstr "Titulua (--add-feed aukerarekin erabili)"
 #.
 #: ../src/miners/rss/tracker-main.c:94
 msgid "— start the feeds indexer"
-msgstr "— abiarazi iturrien indexatzailea"
+msgstr "— abiarazi jarioen indexatzailea"
 
 #: ../src/miners/rss/tracker-main.c:128
 msgid "Could not establish a connection to Tracker"
@@ -495,15 +443,15 @@ msgstr "Ez da errorerik eman"
 
 #: ../src/miners/rss/tracker-main.c:156
 msgid "Could not add feed"
-msgstr "Ezin izan da iturria gehitu"
+msgstr "Ezin izan da jarioa gehitu"
 
 #: ../src/miners/rss/tracker-miner-rss.desktop.in.in.h:1
 msgid "Tracker RSS/ATOM Feeds Miner"
-msgstr "Tracker RSS/ATOM iturrien biltzailea"
+msgstr "Tracker RSS/ATOM jarioen biltzailea"
 
 #: ../src/miners/rss/tracker-miner-rss.desktop.in.in.h:2
 msgid "Fetch RSS/ATOM feeds"
-msgstr "Eskuratu RSS/ATOM iturriak"
+msgstr "Eskuratu RSS/ATOM jarioak"
 
 #: ../src/tracker-extract/org.freedesktop.Tracker1.Miner.Extract.service.in.in.h:1
 msgid "Extractor"
@@ -513,104 +461,60 @@ msgstr "Erauzlea"
 msgid "Metadata extractor"
 msgstr "Meta-datuen erauzlea"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:5
-msgid "Max bytes to extract"
-msgstr "Gehienezko byte kopurua erauzteko"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "UTF-8 kodeketaren gehienezko byte kopurua erauzteko."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:7
-msgid "Max media art width"
-msgstr "Multimediaren irudiaren gehienezko zabalera"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Erauzitako multimediaren irudiaren gehienezko zabalera pixeletan. Handiagoei "
-"tamaina aldatuko zaie. Ezarri -1 balioarekin irudiak fitxategietatik "
-"gordetzea desgaitzeko. 0 balioak irudiaren zabalerari mugak kentzen dizkio."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr "Itxaron fitxategi-sistemaren biltzaileari erauzi aurretik."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.in.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"TRUE (egia) gisa ezartzean 'tracker-extract' prozesua 'tracker-miner-fs' "
-"amaitu arte zain egongo da meta-datuak erauzi aurretik. Aukera hau "
-"erabilgarria da murriztutako inguruetan, garrantzitsua baita ahalik eta "
-"azkarren fitxategiak zerrendatzea eta itxaroten egon daiteke meta-datuak "
-"geroago lortzeko."
-
 #: ../src/tracker-extract/tracker-extract.c:685
 msgid "Metadata extraction failed"
 msgstr "Huts egin du meta-datuak erauztean"
 
-#: ../src/tracker-extract/tracker-extract.c:751
+#: ../src/tracker-extract/tracker-extract.c:765
 msgid "No metadata or extractor modules found to handle this file"
-msgstr ""
-"Ez da meta-datuen edo erauzlearen modulurik aurkitu fitxategi hau kudeatzeko"
+msgstr "Ez da meta-datuen edo erauzlearen modulurik aurkitu fitxategi hau kudeatzeko"
 
-#: ../src/tracker-extract/tracker-main.c:81
+#: ../src/tracker-extract/tracker-main.c:82
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default = "
 "0)"
-msgstr ""
-"Erregistroa:  0 = erroreak soilik, 1 = gutxienekoa, 2 = xehea eta 3 = "
-"arazketa (lehenetsia=0)"
+msgstr "Erregistroa:  0 = erroreak soilik, 1 = gutxienekoa, 2 = xehea eta 3 = arazketa (lehenetsia=0)"
 
-#: ../src/tracker-extract/tracker-main.c:86
+#: ../src/tracker-extract/tracker-main.c:87
 msgid "File to extract metadata for"
 msgstr "Fitxategia meta-datuak erauzteko"
 
-#: ../src/tracker-extract/tracker-main.c:90
+#: ../src/tracker-extract/tracker-main.c:91
 msgid "MIME type for file (if not provided, this will be guessed)"
 msgstr "Fitxategiaren MIME mota (ez bada ematen, asmatu egingo da)"
 
-#: ../src/tracker-extract/tracker-main.c:91
+#: ../src/tracker-extract/tracker-main.c:92
 msgid "MIME"
 msgstr "MIME"
 
-#: ../src/tracker-extract/tracker-main.c:94
-msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
-msgstr ""
-"Behartu modulu bat erabiltzera erauzteko (adib. “lelo“ erabili “lelo.so“ "
-"adierazteko)"
-
 #: ../src/tracker-extract/tracker-main.c:95
+msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
+msgstr "Behartu modulu bat erabiltzera erauzteko (adib. “lelo“ erabili “lelo.so“ adierazteko)"
+
+#: ../src/tracker-extract/tracker-main.c:96
 msgid "MODULE"
 msgstr "MODULUA"
 
-#: ../src/tracker-extract/tracker-main.c:97
-msgid "Output results format: “sparql”, or “turtle”"
-msgstr "Irteerako emaitzaren formatua: “sparql“, edo “turtle“"
-
 #: ../src/tracker-extract/tracker-main.c:98
+msgid "Output results format: “sparql”, “turtle” or “json-ld”"
+msgstr "Irteerako emaitzaren formatua: “sparql”, “turtle” edo “json-ld”"
+
+#: ../src/tracker-extract/tracker-main.c:99
 msgid "FORMAT"
 msgstr "FORMATUA"
 
-#: ../src/tracker-extract/tracker-main.c:271
+#: ../src/tracker-extract/tracker-main.c:272
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "“%s“ serializazio-formatua onartu gabe\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:331
+#: ../src/tracker-extract/tracker-main.c:362
 msgid "— Extract file meta data"
 msgstr "— Erauzi fitxategiaren meta-datuak"
 
-#: ../src/tracker-extract/tracker-main.c:340
+#: ../src/tracker-extract/tracker-main.c:377
 msgid "Filename and mime type must be provided together"
 msgstr "Fitxategia eta MIME mota elkarrekin eman behar dira"
 
@@ -632,6 +536,38 @@ msgstr "Desgaitu itzaltzea 30 segundotako inaktibitatearen ondoren"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— abiarazi atzerapeneko idazketa zerbitzua"
+
+#~ msgid "Applications"
+#~ msgstr "Aplikazioak"
+
+#~ msgid "Applications data miner"
+#~ msgstr "Aplikazioen datuen biltzailea"
+
+#~ msgid "Runs until all applications are indexed and then exits"
+#~ msgstr ""
+#~ "Aplikazio guztiak indexatu arte exekutatzen da, eta gero irten egiten da"
+
+#~ msgid "— start the application data miner"
+#~ msgstr "— abiarazi aplikazio-datuen biltzailea"
+
+#~ msgid "Tracker Application Miner"
+#~ msgstr "Tracker-en aplikazio-biltzailea"
+
+#~ msgid "Indexes information about applications installed"
+#~ msgstr "Instalatutako aplikazioei buruzko indize-informazioa"
+
+#~ msgid "Max media art width"
+#~ msgstr "Multimediaren irudiaren gehienezko zabalera"
+
+#~ msgid ""
+#~ "Maximum width in pixels for any media art extracted. Anything bigger is "
+#~ "resized. Set to -1 to disable saving media art from files. Setting to 0 "
+#~ "sets no limit on the media art width."
+#~ msgstr ""
+#~ "Erauzitako multimediaren irudiaren gehienezko zabalera pixeletan. "
+#~ "Handiagoei tamaina aldatuko zaie. Ezarri -1 balioarekin irudiak "
+#~ "fitxategietatik gordetzea desgaitzeko. 0 balioak irudiaren zabalerari "
+#~ "mugak kentzen dizkio."
 
 #~ msgid "All posts"
 #~ msgstr "Albiste guztiak"
