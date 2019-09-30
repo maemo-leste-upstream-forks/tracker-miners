@@ -1,5 +1,5 @@
 From: =?utf-8?b?Ik1hcmNvIFRyZXZpc2FuIChUcmV2acOxbyki?= <mail@3v1n0.net>
-Date: Fri, 23 Aug 2019 01:13:51 +0300
+Date: Fri, 23 Aug 2019 00:13:51 +0200
 Subject: tests: Use meson test suites to group tests
 
 Instead of using old-style separators for tests, use native meson suites.
@@ -14,10 +14,10 @@ Origin: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
  3 files changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/tests/functional-tests/meson.build b/tests/functional-tests/meson.build
-index ee7cbc4..54be9e3 100644
+index d8684e0..ff27832 100644
 --- a/tests/functional-tests/meson.build
 +++ b/tests/functional-tests/meson.build
-@@ -91,14 +91,23 @@ test_env.set('TRACKER_TESTS_VERBOSE', '1')
+@@ -93,14 +93,23 @@ test_env.set('TRACKER_TESTS_VERBOSE', '1')
  
  foreach t: extractor_tests
    data = join_paths('test-extraction-data', t) + '.expected.json'

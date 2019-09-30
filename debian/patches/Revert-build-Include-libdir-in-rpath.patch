@@ -1,5 +1,5 @@
 From: Iain Lane <laney@debian.org>
-Date: Tue, 3 Sep 2019 17:16:10 +0100
+Date: Tue, 3 Sep 2019 18:16:10 +0200
 Subject: Revert "build: Include libdir in rpath"
 
 This reverts commit 6a9199a86a7047aa3d5db8d0faba8a5ae1e10bf4.
@@ -15,7 +15,7 @@ search path.
  5 files changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 683c168..eae7da5 100644
+index a7d38e3..ee0036f 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -388,7 +388,6 @@ configinc = include_directories('./')
