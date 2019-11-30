@@ -1,5 +1,10 @@
 tracker-miners (2.3.1-2) UNRELEASED; urgency=medium
 
+  [ Andreas Henriksson ]
+  * Drop superfluous build-deps on python and python-gi
+    - already switched to python3 in tracker-miners 2.3 (Closes: #945717)
+
+  [ Laurent Bigonville ]
   * debian/tracker-miner-fs.maintscript: Remove
     /etc/xdg/autostart/tracker-miner-apps.desktop on upgrade
 
