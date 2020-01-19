@@ -1,0 +1,14 @@
+Description: libseccomp does not support riscv64 architecture
+Author: Laurent Bigonville <bigon@debian.org>
+Bug: https://gitlab.gnome.org/GNOME/tracker-miners/issues/94
+
+--- a/meson.build
++++ b/meson.build
+@@ -272,6 +272,7 @@ unsupported_cpus = [
+   'sh4',
+   'sparc',
+   'sparc64',
++  'riscv64',
+ ]
+ 
+ system_supports_seccomp = host_system == 'linux'
