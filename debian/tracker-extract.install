@@ -1,5 +1,5 @@
 usr/lib/*/tracker-miners-2.0/libtracker-extract.so
-usr/lib/tracker/tracker-extract
+usr/libexec/tracker-extract
 etc/xdg/autostart/tracker-extract.desktop
 usr/lib/*/tracker-miners-2.0/extract-modules/*.so
 usr/lib/systemd/user/tracker-extract.service
@@ -10,7 +10,7 @@ usr/share/tracker-miners/extract-rules/
 
 usr/lib/systemd/user/tracker-writeback.service
 usr/share/dbus-1/services/org.freedesktop.Tracker1.Writeback.service
-usr/lib/tracker/tracker-writeback
+usr/libexec/tracker-writeback
 usr/lib/*/tracker-miners-2.0/writeback-modules/*.so
 usr/share/man/man1/tracker-writeback.1*
 usr/share/glib-2.0/schemas/org.freedesktop.Tracker.Extract.gschema.xml

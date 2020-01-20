@@ -40,8 +40,7 @@ endif
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		-Dauto_features=enabled \
-		$(FEATURE_FLAGS) \
-		--libexecdir=/usr/lib/tracker
+		$(FEATURE_FLAGS)
 
 override_dh_install:
 	find debian/tmp -name 01-writeback.py -print -delete

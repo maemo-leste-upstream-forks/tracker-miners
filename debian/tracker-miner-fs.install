@@ -1,4 +1,4 @@
-usr/lib/tracker/tracker-miner-fs
+usr/libexec/tracker-miner-fs
 etc/xdg/autostart/tracker-miner-fs.desktop
 usr/lib/systemd/user/tracker-miner-fs.service
 usr/share/dbus-1/services/org.freedesktop.Tracker1.Miner.Files.service
