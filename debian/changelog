@@ -1,4 +1,4 @@
-tracker-miners (2.3.2-1) UNRELEASED; urgency=medium
+tracker-miners (2.3.2-1) unstable; urgency=medium
 
   [ Laurent Bigonville ]
   * debian/patches/no-seccomp-riscv64.patch: Fix FTBFS on riscv64 architecture
