@@ -10,6 +10,8 @@ tracker-miners (2.3.2-1) UNRELEASED; urgency=medium
 
   [ Olivier Tilloy ]
   * New upstream release
+  * debian/patches/upstream-scheduler-settings-fix.patch: cherry-pick an
+    upstream patch that fixes https://gitlab.gnome.org/GNOME/tracker/issues/180
 
  -- Olivier Tilloy <olivier.tilloy@canonical.com>  Tue, 03 Mar 2020 12:00:55 +0100
 
