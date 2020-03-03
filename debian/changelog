@@ -1,5 +1,6 @@
-tracker-miners (2.3.1-4) UNRELEASED; urgency=medium
+tracker-miners (2.3.2-1) UNRELEASED; urgency=medium
 
+  [ Laurent Bigonville ]
   * debian/patches/no-seccomp-riscv64.patch: Fix FTBFS on riscv64 architecture
     by not requiring libseccomp
   * Bump debhelper compatibility to 12
@@ -7,7 +8,10 @@ tracker-miners (2.3.1-4) UNRELEASED; urgency=medium
     policy
   * debian/control.in: Bump Standards-Version to 4.4.1 (no further changes)
 
- -- Laurent Bigonville <bigon@debian.org>  Mon, 20 Jan 2020 16:02:48 +0100
+  [ Olivier Tilloy ]
+  * New upstream release
+
+ -- Olivier Tilloy <olivier.tilloy@canonical.com>  Tue, 03 Mar 2020 12:00:55 +0100
 
 tracker-miners (2.3.1-3) unstable; urgency=medium
 
