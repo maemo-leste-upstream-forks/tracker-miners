@@ -1,3 +1,18 @@
+NEW in 2.3.2 - 2020-02-18
+=========================
+
+  * Blocked parsing of image/x-dds image files, which were previously
+    being passed to GStreamer and triggering system lockups for some people
+  * Fixed incorrect MIME type for .raw images, which were previously
+    being passed to GStreamer and triggering system lockups for some people
+  * Improved how the MP3 extractor calculates durations of variable bitrate
+    MP3s, which fixes incorrect durations being shown in GNOME Music.
+  * Fixed a bug in the GStreamer writeback module.
+  * Fix race condition that might leave tracker-miner-fs paused after a
+    writeback operation.
+
+Translations: ms
+
 NEW in 2.3.1 - 2019-10-12
 =========================
 

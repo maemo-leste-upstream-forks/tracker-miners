@@ -28,8 +28,10 @@
 #define SHUTDOWN_FUNCTION  "tracker_extract_module_shutdown"
 
 typedef struct {
+	const gchar *rule_path;
 	const gchar *module_path; /* intern string */
-	GList *patterns;
+	GList *allow_patterns;
+	GList *block_patterns;
 	GStrv fallback_rdf_types;
 } RuleInfo;
 
@@ -65,12 +67,13 @@ dummy_extract_func (TrackerExtractInfo *info)
 }
 
 static gboolean
-load_extractor_rule (GKeyFile  *key_file,
-                     GError   **error)
+load_extractor_rule (GKeyFile    *key_file,
+                     const gchar *rule_path,
+                     GError     **error)
 {
 	GError *local_error = NULL;
-	gchar *module_path, **mimetypes;
-	gsize n_mimetypes, i;
+	gchar *module_path, **allow_mimetypes, **block_mimetypes;
+	gsize n_allow_mimetypes, n_block_mimetypes, i;
 	RuleInfo rule = { 0 };
 
 	module_path = g_key_file_get_string (key_file, "ExtractorRule", "ModulePath", &local_error);
@@ -102,9 +105,9 @@ load_extractor_rule (GKeyFile  *key_file,
 		module_path = tmp;
 	}
 
-	mimetypes = g_key_file_get_string_list (key_file, "ExtractorRule", "MimeTypes", &n_mimetypes, &local_error);
+	allow_mimetypes = g_key_file_get_string_list (key_file, "ExtractorRule", "MimeTypes", &n_allow_mimetypes, &local_error);
 
-	if (!mimetypes) {
+	if (!allow_mimetypes) {
 		g_free (module_path);
 
 		if (local_error) {
@@ -114,20 +117,33 @@ load_extractor_rule (GKeyFile  *key_file,
 		return FALSE;
 	}
 
+	/* This key is optional */
+	block_mimetypes = g_key_file_get_string_list (key_file, "ExtractorRule", "BlockMimeTypes", &n_block_mimetypes, &local_error);
+
+	rule.rule_path = g_strdup (rule_path);
+
 	rule.fallback_rdf_types = g_key_file_get_string_list (key_file, "ExtractorRule", "FallbackRdfTypes", NULL, NULL);
 
 	/* Construct the rule */
 	rule.module_path = g_intern_string (module_path);
 
-	for (i = 0; i < n_mimetypes; i++) {
+	for (i = 0; i < n_allow_mimetypes; i++) {
 		GPatternSpec *pattern;
 
-		pattern = g_pattern_spec_new (mimetypes[i]);
-		rule.patterns = g_list_prepend (rule.patterns, pattern);
+		pattern = g_pattern_spec_new (allow_mimetypes[i]);
+		rule.allow_patterns = g_list_prepend (rule.allow_patterns, pattern);
+	}
+
+	for (i = 0; i < n_block_mimetypes; i++) {
+		GPatternSpec *pattern;
+
+		pattern = g_pattern_spec_new (block_mimetypes[i]);
+		rule.block_patterns = g_list_prepend (rule.block_patterns, pattern);
 	}
 
 	g_array_append_val (rules, rule);
-	g_strfreev (mimetypes);
+	g_strfreev (allow_mimetypes);
+	g_strfreev (block_mimetypes);
 	g_free (module_path);
 
 	return TRUE;
@@ -189,7 +205,7 @@ tracker_extract_module_manager_init (void)
 		key_file = g_key_file_new ();
 
 		if (!g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, &error) ||
-		    !load_extractor_rule (key_file, &error)) {
+		    !load_extractor_rule (key_file, path, &error)) {
 			g_warning ("  Could not load extractor rule file '%s': %s", name, error->message);
 			g_clear_error (&error);
 		} else {
@@ -241,15 +257,27 @@ lookup_rules (const gchar *mimetype)
 	/* Apply the rules! */
 	for (i = 0; i < rules->len; i++) {
 		GList *l;
+		gboolean matched_allow_pattern = FALSE, matched_block_pattern = FALSE;
 
 		info = &g_array_index (rules, RuleInfo, i);
 
-		for (l = info->patterns; l; l = l->next) {
+		for (l = info->allow_patterns; l; l = l->next) {
 			if (g_pattern_match (l->data, len, mimetype, reversed)) {
-				/* Match, store for future queries and return */
-				mimetype_rules = g_list_prepend (mimetype_rules, info);
+				matched_allow_pattern = TRUE;
+				break;
 			}
 		}
+
+		for (l = info->block_patterns; l; l = l->next) {
+			if (g_pattern_match (l->data, len, mimetype, reversed)) {
+				matched_block_pattern = TRUE;
+				break;
+			}
+		}
+
+		if (matched_allow_pattern && !matched_block_pattern) {
+			mimetype_rules = g_list_prepend (mimetype_rules, info);
+		};
 	}
 
 	if (mimetype_rules) {
@@ -260,6 +288,29 @@ lookup_rules (const gchar *mimetype)
 	g_free (reversed);
 
 	return mimetype_rules;
+}
+
+/**
+ * tracker_extract_module_manager_get_matching_rules:
+ * @mimetype: a MIME type string
+ *
+ * Returns: (transfer none): a list of extract .rule files that support the given type.
+ **/
+GList *
+tracker_extract_module_manager_get_matching_rules (const gchar *mimetype)
+{
+	GList *rule_list, *l;
+	GList *rule_path_list = NULL;
+
+	rule_list = lookup_rules (mimetype);
+
+	for (l = rule_list; l; l = l->next) {
+		RuleInfo *info = l->data;
+
+		rule_path_list = g_list_prepend (rule_path_list, (char *)(info->rule_path));
+	}
+
+	return g_list_reverse (rule_path_list);
 }
 
 GStrv
