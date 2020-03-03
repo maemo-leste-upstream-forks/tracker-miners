@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '2.3.1',
+        version: '2.3.2',
         meson_version: '>=0.47')
 
 gnome = import('gnome')
@@ -360,7 +360,7 @@ conf.set('includedir', join_paths(get_option('prefix'), get_option('includedir')
 conf.set('libdir', libdir)
 conf.set('libexecdir', join_paths(get_option('prefix'), get_option('libexecdir')))
 conf.set('prefix', get_option('prefix'))
-conf.set('TRACKER_API_VERSION', '1.0')
+conf.set('TRACKER_API_VERSION', tracker_api_version)
 conf.set('VERSION', meson.project_version())
 
 # Configure functional tests to run completely from source tree.
