@@ -2,7 +2,7 @@ tracker-miners (2.3.2-1) unstable; urgency=medium
 
   [ Laurent Bigonville ]
   * debian/patches/no-seccomp-riscv64.patch: Fix FTBFS on riscv64 architecture
-    by not requiring libseccomp (Closes: #952410)
+    by not requiring libseccomp
   * Bump debhelper compatibility to 12
   * Move the daemons to /usr/libexec now that this is allowed in the debian
     policy
