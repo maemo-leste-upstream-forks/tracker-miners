@@ -3,4 +3,3 @@ functional-tests-Check-for-IPCT-image-tags-only-if-libipt.patch
 Revert-build-Include-libdir-in-rpath.patch
 tests-Use-meson-test-suites-to-group-tests.patch
 no-seccomp-riscv64.patch
-upstream-scheduler-settings-fix.patch
