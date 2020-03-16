@@ -1,9 +1,21 @@
-tracker-miners (2.3.3-1) UNRELEASED; urgency=medium
+tracker-miners (2.3.3-1) unstable; urgency=medium
 
+  [ Olivier Tilloy ]
   * New upstream release
   * debian/patches/upstream-scheduler-settings-fix.patch: removed, upstream
 
- -- Olivier Tilloy <olivier.tilloy@canonical.com>  Fri, 13 Mar 2020 16:56:12 +0100
+  [ Debian Janitor ]
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
+
+  [ Laurent Bigonville ]
+  * debian/control.in: Bump Standards-Version to 4.5.0 (no further changes)
+  * Build-depends on libseccomp-dev on linux-riscv64 now that's available
+    (Closes: #952410)
+  * debian/patches/prefer_systemd_activation.patch: Prefer systemd activation
+    over XDG autostart
+
+ -- Laurent Bigonville <bigon@debian.org>  Mon, 16 Mar 2020 12:19:35 +0100
 
 tracker-miners (2.3.2-1) unstable; urgency=medium
 
