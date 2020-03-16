@@ -1,3 +1,10 @@
+tracker-miners (2.3.3-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * debian/patches/upstream-scheduler-settings-fix.patch: removed, upstream
+
+ -- Olivier Tilloy <olivier.tilloy@canonical.com>  Fri, 13 Mar 2020 16:56:12 +0100
+
 tracker-miners (2.3.2-1) unstable; urgency=medium
 
   [ Laurent Bigonville ]
