@@ -1,0 +1,62 @@
+From 422e675e77ddfe50aae11e56c36c6fba23fd673a Mon Sep 17 00:00:00 2001
+From: Sam Thursfield <sam@afuera.me.uk>
+Date: Thu, 5 Mar 2020 22:37:48 +0100
+Subject: [PATCH] Prefer systemd activation over xdg autostart
+
+Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
+---
+ src/miners/fs/tracker-miner-fs.desktop.in.in      | 1 +
+ src/miners/fs/tracker-miner-fs.service.in         | 3 +++
+ src/miners/rss/tracker-miner-rss.desktop.in.in    | 1 +
+ src/tracker-extract/tracker-extract.desktop.in.in | 1 +
+ src/tracker-extract/tracker-extract.service.in    | 3 +++
+ 5 files changed, 9 insertions(+)
+
+--- a/src/miners/fs/tracker-miner-fs.desktop.in.in
++++ b/src/miners/fs/tracker-miner-fs.desktop.in.in
+@@ -7,6 +7,7 @@ Terminal=false
+ Type=Application
+ Categories=Utility;
+ X-GNOME-Autostart-enabled=true
++X-GNOME-HiddenUnderSystemd=true
+ X-KDE-autostart-after=panel
+ X-KDE-StartupNotify=false
+ X-KDE-UniqueApplet=true
+--- a/src/miners/fs/tracker-miner-fs.service.in
++++ b/src/miners/fs/tracker-miner-fs.service.in
+@@ -8,3 +8,6 @@ ExecStart=@libexecdir@/tracker-miner-fs
+ Restart=on-failure
+ # Don't restart after tracker daemon -k (aka tracker-control -k)
+ RestartPreventExitStatus=SIGKILL
++
++[Install]
++WantedBy=graphical-session.target
+--- a/src/miners/rss/tracker-miner-rss.desktop.in.in
++++ b/src/miners/rss/tracker-miner-rss.desktop.in.in
+@@ -7,6 +7,7 @@ Terminal=false
+ Type=Application
+ Categories=Utility;
+ X-GNOME-Autostart-enabled=false
++X-GNOME-HiddenUnderSystemd=true
+ X-KDE-autostart-after=panel
+ X-KDE-StartupNotify=false
+ X-KDE-UniqueApplet=true
+--- a/src/tracker-extract/tracker-extract.desktop.in.in
++++ b/src/tracker-extract/tracker-extract.desktop.in.in
+@@ -7,6 +7,7 @@ Terminal=false
+ Type=Application
+ Categories=Utility;
+ X-GNOME-Autostart-enabled=true
++X-GNOME-HiddenUnderSystemd=true
+ X-KDE-autostart-after=panel
+ X-KDE-StartupNotify=false
+ X-KDE-UniqueApplet=true
+--- a/src/tracker-extract/tracker-extract.service.in
++++ b/src/tracker-extract/tracker-extract.service.in
+@@ -9,3 +9,6 @@ Restart=on-abnormal
+ # Don't restart after tracker daemon -k (aka tracker-control -k)
+ # Don't restart after seccomp raises SIGSYS either
+ RestartPreventExitStatus=SIGKILL SIGSYS
++
++[Install]
++WantedBy=graphical-session.target
