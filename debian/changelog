@@ -1,3 +1,11 @@
+tracker-miners (2.3.3-2) unstable; urgency=medium
+
+  * d/p/prefer_systemd_activation.patch: Updated to use the version merged
+    upstream.  The services will now be started by the systemd default.target
+    and only for non-root user
+
+ -- Laurent Bigonville <bigon@debian.org>  Sat, 04 Apr 2020 18:54:17 +0200
+
 tracker-miners (2.3.3-1) unstable; urgency=medium
 
   [ Olivier Tilloy ]
