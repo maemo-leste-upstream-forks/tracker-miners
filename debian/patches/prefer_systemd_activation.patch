@@ -1,16 +1,17 @@
-From 422e675e77ddfe50aae11e56c36c6fba23fd673a Mon Sep 17 00:00:00 2001
+From 95e114898b7ea43ce77e6c89595f575dd684fc02 Mon Sep 17 00:00:00 2001
 From: Sam Thursfield <sam@afuera.me.uk>
 Date: Thu, 5 Mar 2020 22:37:48 +0100
 Subject: [PATCH] Prefer systemd activation over xdg autostart
 
 Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
 ---
- src/miners/fs/tracker-miner-fs.desktop.in.in      | 1 +
- src/miners/fs/tracker-miner-fs.service.in         | 3 +++
- src/miners/rss/tracker-miner-rss.desktop.in.in    | 1 +
- src/tracker-extract/tracker-extract.desktop.in.in | 1 +
- src/tracker-extract/tracker-extract.service.in    | 3 +++
- 5 files changed, 9 insertions(+)
+ src/miners/fs/tracker-miner-fs.desktop.in.in                   | 1 +
+ src/miners/fs/tracker-miner-fs.service.in                      | 3 +++
+ .../rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in       | 3 +++
+ src/miners/rss/tracker-miner-rss.desktop.in.in                 | 1 +
+ src/tracker-extract/tracker-extract.desktop.in.in              | 1 +
+ src/tracker-extract/tracker-extract.service.in                 | 3 +++
+ 6 files changed, 12 insertions(+)
 
 --- a/src/miners/fs/tracker-miner-fs.desktop.in.in
 +++ b/src/miners/fs/tracker-miner-fs.desktop.in.in
@@ -30,7 +31,16 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
  RestartPreventExitStatus=SIGKILL
 +
 +[Install]
-+WantedBy=graphical-session.target
++WantedBy=default.target
+--- a/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
++++ b/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
+@@ -8,3 +8,6 @@ Path=/org/freedesktop/Tracker1/Miner/RSS
+ NameSuffix=Miner.RSS
+ _DisplayName=RSS/ATOM Feeds
+ _Comment=Fetch RSS/ATOM Feeds
++
++[Install]
++WantedBy=default.target
 --- a/src/miners/rss/tracker-miner-rss.desktop.in.in
 +++ b/src/miners/rss/tracker-miner-rss.desktop.in.in
 @@ -7,6 +7,7 @@ Terminal=false
@@ -59,4 +69,4 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
  RestartPreventExitStatus=SIGKILL SIGSYS
 +
 +[Install]
-+WantedBy=graphical-session.target
++WantedBy=default.target

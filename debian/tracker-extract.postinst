@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for tracker-miner-fs
+# postinst script for tracker-extract
 #
 # see: dh_installdeb(1)
 
@@ -20,13 +20,10 @@ set -e
 
 case "$1" in
     configure)
-        if [ -x /lib/systemd/systemd-sysctl ] ; then
-            /lib/systemd/systemd-sysctl 30-tracker.conf || true
-        fi
 	if dpkg --compare-versions "$2" le-nl "2.3.3-2~"; then
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/graphical-session.target.wants/tracker-miner-fs.service
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/tracker-miner-fs.service.dsh-also
-            rm -f /etc/systemd/user/graphical-session.target.wants/tracker-miner-fs.service
+            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/graphical-session.target.wants/tracker-extract.service
+            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/tracker-extract.service.dsh-also
+            rm -f /etc/systemd/user/graphical-session.target.wants/tracker-extract.service
 	fi
     ;;
 
