@@ -6,7 +6,8 @@ Instead of using old-style separators for tests, use native meson suites.
 
 So we can optionally just run (or not) one test suite.
 
-Origin: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
+Forwarded: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
+Applied-upstream: 2.99.1, commit:58c96a81631bdbad33c75c7e75f7c8943932792c
 ---
  tests/functional-tests/meson.build         | 13 +++++++++++--
  tests/libtracker-extract/meson.build       |  5 ++---

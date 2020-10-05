@@ -9,6 +9,8 @@ probably not wanted.
 In addition to that, running the extractor as root could lead to
 security issues. Let's do like pulseaudio and not start the daemons for
 the root user.
+
+Applied-upstream: 2.99.1, commit:ae07b49a86fc85c832ba51160e289c355533c8a9
 ---
  src/miners/fs/tracker-miner-fs.service.in      | 1 +
  src/miners/rss/tracker-miner-rss.service.in    | 1 +
@@ -38,7 +40,7 @@ index 2bebf4c..5dfd10a 100644
  [Service]
  Type=dbus
 diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
-index 3abc9be..40fb52c 100644
+index 8e1d59d..33ab2e3 100644
 --- a/src/tracker-extract/tracker-extract.service.in
 +++ b/src/tracker-extract/tracker-extract.service.in
 @@ -1,5 +1,6 @@

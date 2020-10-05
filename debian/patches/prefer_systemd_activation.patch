@@ -1,8 +1,9 @@
 From: Sam Thursfield <sam@afuera.me.uk>
 Date: Thu, 5 Mar 2020 22:37:48 +0100
-Subject: [PATCH] Prefer systemd activation over xdg autostart
+Subject: Prefer systemd activation over xdg autostart
 
-Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
+Bug: https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
+Applied-upstream: 2.99.1, commit:95e114898b7ea43ce77e6c89595f575dd684fc02
 ---
  src/miners/fs/tracker-miner-fs.desktop.in.in                    | 1 +
  src/miners/fs/tracker-miner-fs.service.in                       | 3 +++
@@ -71,13 +72,13 @@ index 59fc0af..7b2ab1d 100644
  X-KDE-StartupNotify=false
  X-KDE-UniqueApplet=true
 diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
-index 3c70a93..3abc9be 100644
+index 1c6c716..8e1d59d 100644
 --- a/src/tracker-extract/tracker-extract.service.in
 +++ b/src/tracker-extract/tracker-extract.service.in
-@@ -9,3 +9,6 @@ Restart=on-abnormal
+@@ -8,3 +8,6 @@ ExecStart=@libexecdir@/tracker-extract
+ Restart=on-abnormal
  # Don't restart after tracker daemon -k (aka tracker-control -k)
- # Don't restart after seccomp raises SIGSYS either
- RestartPreventExitStatus=SIGKILL SIGSYS
+ RestartPreventExitStatus=SIGKILL
 +
 +[Install]
 +WantedBy=default.target
