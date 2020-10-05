@@ -22,7 +22,7 @@ Applied-Upstream: 2.9
  create mode 100644 tests/functional-tests/test-extraction-data/images/test-image-1-iptc-tags.expected.json
 
 diff --git a/tests/functional-tests/meson.build b/tests/functional-tests/meson.build
-index d3c4bd3..d8684e0 100644
+index 873f736..78c37fb 100644
 --- a/tests/functional-tests/meson.build
 +++ b/tests/functional-tests/meson.build
 @@ -13,7 +13,6 @@ extractor_tests = [
@@ -33,7 +33,7 @@ index d3c4bd3..d8684e0 100644
    'images/roi2',
    'images/test-image-4',
    'images/test-image-2',
-@@ -31,6 +30,13 @@ if get_option('unzip_ps_gz_files')
+@@ -32,6 +31,13 @@ if get_option('unzip_ps_gz_files')
    extractor_tests += 'office/psgz-doc'
  endif
  

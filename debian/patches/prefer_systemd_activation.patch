@@ -1,18 +1,19 @@
-From 95e114898b7ea43ce77e6c89595f575dd684fc02 Mon Sep 17 00:00:00 2001
 From: Sam Thursfield <sam@afuera.me.uk>
 Date: Thu, 5 Mar 2020 22:37:48 +0100
 Subject: [PATCH] Prefer systemd activation over xdg autostart
 
 Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
 ---
- src/miners/fs/tracker-miner-fs.desktop.in.in                   | 1 +
- src/miners/fs/tracker-miner-fs.service.in                      | 3 +++
- .../rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in       | 3 +++
- src/miners/rss/tracker-miner-rss.desktop.in.in                 | 1 +
- src/tracker-extract/tracker-extract.desktop.in.in              | 1 +
- src/tracker-extract/tracker-extract.service.in                 | 3 +++
+ src/miners/fs/tracker-miner-fs.desktop.in.in                    | 1 +
+ src/miners/fs/tracker-miner-fs.service.in                       | 3 +++
+ src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in | 3 +++
+ src/miners/rss/tracker-miner-rss.desktop.in.in                  | 1 +
+ src/tracker-extract/tracker-extract.desktop.in.in               | 1 +
+ src/tracker-extract/tracker-extract.service.in                  | 3 +++
  6 files changed, 12 insertions(+)
 
+diff --git a/src/miners/fs/tracker-miner-fs.desktop.in.in b/src/miners/fs/tracker-miner-fs.desktop.in.in
+index 29d5364..b5c9277 100644
 --- a/src/miners/fs/tracker-miner-fs.desktop.in.in
 +++ b/src/miners/fs/tracker-miner-fs.desktop.in.in
 @@ -7,6 +7,7 @@ Terminal=false
@@ -23,6 +24,8 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
  X-KDE-autostart-after=panel
  X-KDE-StartupNotify=false
  X-KDE-UniqueApplet=true
+diff --git a/src/miners/fs/tracker-miner-fs.service.in b/src/miners/fs/tracker-miner-fs.service.in
+index fad973a..c6f56b1 100644
 --- a/src/miners/fs/tracker-miner-fs.service.in
 +++ b/src/miners/fs/tracker-miner-fs.service.in
 @@ -8,3 +8,6 @@ ExecStart=@libexecdir@/tracker-miner-fs
@@ -32,6 +35,8 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
 +
 +[Install]
 +WantedBy=default.target
+diff --git a/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in b/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
+index 372c219..609474e 100644
 --- a/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
 +++ b/src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
 @@ -8,3 +8,6 @@ Path=/org/freedesktop/Tracker1/Miner/RSS
@@ -41,6 +46,8 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
 +
 +[Install]
 +WantedBy=default.target
+diff --git a/src/miners/rss/tracker-miner-rss.desktop.in.in b/src/miners/rss/tracker-miner-rss.desktop.in.in
+index 49be401..fa570bb 100644
 --- a/src/miners/rss/tracker-miner-rss.desktop.in.in
 +++ b/src/miners/rss/tracker-miner-rss.desktop.in.in
 @@ -7,6 +7,7 @@ Terminal=false
@@ -51,6 +58,8 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
  X-KDE-autostart-after=panel
  X-KDE-StartupNotify=false
  X-KDE-UniqueApplet=true
+diff --git a/src/tracker-extract/tracker-extract.desktop.in.in b/src/tracker-extract/tracker-extract.desktop.in.in
+index 59fc0af..7b2ab1d 100644
 --- a/src/tracker-extract/tracker-extract.desktop.in.in
 +++ b/src/tracker-extract/tracker-extract.desktop.in.in
 @@ -7,6 +7,7 @@ Terminal=false
@@ -61,6 +70,8 @@ Fixes https://gitlab.gnome.org/GNOME/tracker-miners/issues/98
  X-KDE-autostart-after=panel
  X-KDE-StartupNotify=false
  X-KDE-UniqueApplet=true
+diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
+index 3c70a93..3abc9be 100644
 --- a/src/tracker-extract/tracker-extract.service.in
 +++ b/src/tracker-extract/tracker-extract.service.in
 @@ -9,3 +9,6 @@ Restart=on-abnormal
