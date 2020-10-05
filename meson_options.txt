@@ -77,6 +77,8 @@ option('generic_media_extractor', type: 'combo', choices: ['auto', 'gstreamer', 
 option('gstreamer_backend', type: 'combo', choices: ['discoverer', 'gupnp'], value: 'discoverer',
        description: 'When GStreamer is used, this enables one of the (discoverer, gupnp) GStreamer backends')
 
+option('autostart', type: 'boolean', value: false,
+       description: 'Install .desktop files into $sysconfdir/xdg/autostart so miners start along with desktop session')
 option('dbus_services', type: 'string', value: '',
        description: 'Directory to install D-Bus .service files (leave blank to use the value from dbus-1.pc)')
 option('systemd_user_services', type: 'string', value: 'yes',

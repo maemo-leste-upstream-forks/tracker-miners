@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker-miners master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2019-02-17 15:13+0000\n"
-"PO-Revision-Date: 2019-03-25 23:38+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2019-09-21 08:24+0000\n"
+"PO-Revision-Date: 2020-04-01 18:38+0200\n"
+"Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
@@ -56,24 +56,10 @@ msgid "Maximum number of UTF-8 bytes to extract."
 msgstr "Najveći broj UTF-8 bajtova za izdvajanje."
 
 #: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
-msgid "Max media art width"
-msgstr "Najveća širina omota medija"
-
-#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Najveća širina u pikselima za svaki izdvojeni omot medija. Svemu većem se "
-"promijeni veličina. Postavite -1 za onemogućavanje spremanja omota medija iz "
-"datoteka. Postavite 0 za neograničenu širinu omota medija."
-
-#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:9
 msgid "Wait for FS miner to be done before extracting"
 msgstr "Čekaj da rudar datotečnog sustava završi prije izlaska"
 
-#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:10
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
 msgid ""
 "When true, tracker-extract will wait for tracker-miner-fs to be done "
 "crawling before extracting meta-data. This option is useful on constrained "
@@ -213,7 +199,7 @@ msgid ""
 "See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Popis direktorija za dubinsko stvaranje sadržaja. Posebne vrijednosti "
-"uklJučuju: &amp;RADNA POVRŠINA, &amp;DOKUMENTI, &amp;PREUZIMANJA, &amp;"
+"uključuju: &amp;RADNA POVRŠINA, &amp;DOKUMENTI, &amp;PREUZIMANJA, &amp;"
 "GLAZBA, &amp;SLIKE, &amp;JAVNO_DIJELJENJE, &amp;PREDLOŠCI, &amp;SNIMKE.\n"
 "\n"
 "Pogledajte /etc/xdg/user-dirs.defaults i $HOME/.config/user-dirs.default"
@@ -231,7 +217,7 @@ msgid ""
 "See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
 msgstr ""
 "Popis direktorija za površno stvaranje sadržaja bez podmapa, Posebne "
-"vrijednosti uklJučuju: &amp;RADNA POVRŠINA, &amp;DOKUMENTI, &amp;"
+"vrijednosti uključuju: &amp;RADNA POVRŠINA, &amp;DOKUMENTI, &amp;"
 "PREUZIMANJA, &amp;GLAZBA, &amp;SLIKE, &amp;JAVNO_DIJELJENJE, &amp;PREDLOŠCI, "
 "&amp;SNIMKE.\n"
 "\n"
@@ -370,80 +356,80 @@ msgstr "Pokrenut je za određenu ontologiju domene"
 msgid "Displays version information"
 msgstr "Prikazuje informacije inačice"
 
-#: ../src/miners/fs/tracker-main.c:539
+#: ../src/miners/fs/tracker-main.c:540
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Objekt podataka “%s” trenutno postoji"
 
-#: ../src/miners/fs/tracker-main.c:540
+#: ../src/miners/fs/tracker-main.c:541
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Objekt podataka “%s” trenutno ne postoji"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:556
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Direktorij je prikladan za rudarenje (na temelju pravila)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:557
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Direktorij NIJE prikladan za rudarenje (na temelju pravila)"
 
-#: ../src/miners/fs/tracker-main.c:576
+#: ../src/miners/fs/tracker-main.c:577
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Direktorij je prikladan za rudarenje (na temelju sadržaja)"
 
-#: ../src/miners/fs/tracker-main.c:577
+#: ../src/miners/fs/tracker-main.c:578
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Direktorij NIJE prikladan za rudarenje (na temelju sadržaja)"
 
-#: ../src/miners/fs/tracker-main.c:624
+#: ../src/miners/fs/tracker-main.c:625
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Direktorij je prikladan za nadgledanje (na temelju podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:625
+#: ../src/miners/fs/tracker-main.c:626
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Direktorij NIJE prikladan za nadgledanje (na temelju podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:629
+#: ../src/miners/fs/tracker-main.c:630
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Datoteka je prikladna za nadgledanje (na temelju podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:630
+#: ../src/miners/fs/tracker-main.c:631
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Datoteka NIJE prikladna za nadgledanje (na temelju podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:634
+#: ../src/miners/fs/tracker-main.c:635
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Datoteka ili direktorij su prikladni za nadgledanje (na temelju podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:635
+#: ../src/miners/fs/tracker-main.c:636
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Datoteka ili direktorij NISU prikladni za nadgledanje (na temelju "
 "podešavanja)"
 
-#: ../src/miners/fs/tracker-main.c:650
+#: ../src/miners/fs/tracker-main.c:651
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Datoteka je prikladna za rudarenje (na temelju pravila)"
 
-#: ../src/miners/fs/tracker-main.c:651
+#: ../src/miners/fs/tracker-main.c:652
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Datoteka NIJE prikladna za rudarenje (na temelju pravila)"
 
-#: ../src/miners/fs/tracker-main.c:660
+#: ../src/miners/fs/tracker-main.c:661
 msgid "Would be indexed"
 msgstr "Biti će u sadržaju"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:662 ../src/miners/fs/tracker-main.c:664
 msgid "Yes"
 msgstr "Da"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:662 ../src/miners/fs/tracker-main.c:664
 msgid "No"
 msgstr "Ne"
 
-#: ../src/miners/fs/tracker-main.c:662
+#: ../src/miners/fs/tracker-main.c:663
 msgid "Would be monitored"
 msgstr "Biti će nadzirnao"
 
@@ -486,19 +472,19 @@ msgstr "Naslov za korištenje (mora se koristiti sa --add-feed)"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/rss/tracker-main.c:94
+#: ../src/miners/rss/tracker-main.c:93
 msgid "— start the feeds indexer"
 msgstr "— pokreće sadržaja kanala"
 
-#: ../src/miners/rss/tracker-main.c:128
+#: ../src/miners/rss/tracker-main.c:127
 msgid "Could not establish a connection to Tracker"
 msgstr "Nemoguće uspostavljanje povezivanja s pratiteljem"
 
-#: ../src/miners/rss/tracker-main.c:129
+#: ../src/miners/rss/tracker-main.c:128
 msgid "No error given"
 msgstr "Nema zadane greške"
 
-#: ../src/miners/rss/tracker-main.c:156
+#: ../src/miners/rss/tracker-main.c:155
 msgid "Could not add feed"
 msgstr "Nemoguće dodavanje kanala"
 
@@ -518,11 +504,11 @@ msgstr "Izdvajač"
 msgid "Metadata extractor"
 msgstr "Izdvajač metapodataka"
 
-#: ../src/tracker-extract/tracker-extract.c:685
+#: ../src/tracker-extract/tracker-extract.c:683
 msgid "Metadata extraction failed"
 msgstr "Neuspjela izdvajanje metapodataka"
 
-#: ../src/tracker-extract/tracker-extract.c:765
+#: ../src/tracker-extract/tracker-extract.c:763
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Nema pronađenih metapodataka ili modula izdvajača za rukovanje s ovom "
@@ -564,18 +550,18 @@ msgstr "Format izlaznih rezultata: “sparql” “turtle” ili“json-ld”"
 msgid "FORMAT"
 msgstr "FORMAT"
 
-#: ../src/tracker-extract/tracker-main.c:272
+#: ../src/tracker-extract/tracker-main.c:238
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Nepodržani format serijalizacije “%s”\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:362
+#: ../src/tracker-extract/tracker-main.c:327
 msgid "— Extract file meta data"
 msgstr "— Izdvoji metapodatke iz datoteke"
 
-#: ../src/tracker-extract/tracker-main.c:377
+#: ../src/tracker-extract/tracker-main.c:342
 msgid "Filename and mime type must be provided together"
 msgstr "Naziv datoteke i mime vrsta moraju biti zadani zajedno"
 
@@ -597,6 +583,18 @@ msgstr "Onemogući isključivanje nakon 30 sekundi neaktivnosti"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— pokreni uslugu povratnog zapisivanja pratitelja"
+
+#~ msgid "Max media art width"
+#~ msgstr "Najveća širina omota medija"
+
+#~ msgid ""
+#~ "Maximum width in pixels for any media art extracted. Anything bigger is "
+#~ "resized. Set to -1 to disable saving media art from files. Setting to 0 "
+#~ "sets no limit on the media art width."
+#~ msgstr ""
+#~ "Najveća širina u pikselima za svaki izdvojeni omot medija. Svemu većem se "
+#~ "promijeni veličina. Postavite -1 za onemogućavanje spremanja omota medija "
+#~ "iz datoteka. Postavite 0 za neograničenu širinu omota medija."
 
 #~ msgid "Applications"
 #~ msgstr "Aplikacije"

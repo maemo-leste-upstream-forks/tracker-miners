@@ -31,9 +31,13 @@ desktop_file_untranslated = configure_file(
 desktop_file = custom_target('tracker-miner-rss-desktop-file',
     input: desktop_file_untranslated,
     output: 'tracker-miner-rss.desktop',
-    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
-    install: true,
-    install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'])
+
+if get_option('autostart')
+  install_data(desktop_file,
+      install: true,
+      install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+endif
 
 if install_systemd_user_services
   configure_file(
