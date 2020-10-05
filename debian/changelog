@@ -1,3 +1,10 @@
+tracker-miners (2.3.3-3) UNRELEASED; urgency=medium
+
+  * debian/watch: Only match tracker-2.
+    tracker-3 will need packaging separately.
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 05 Oct 2020 12:54:52 +0100
+
 tracker-miners (2.3.3-2) unstable; urgency=medium
 
   * d/p/prefer_systemd_activation.patch: Updated to use the version merged
