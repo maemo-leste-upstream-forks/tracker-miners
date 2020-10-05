@@ -1,3 +1,23 @@
+NEW in 2.3.5 - 2020-09-07
+=========================
+  * Disable miners autostart by default. This is a measure to make Tracker 2.x
+    get as much out of the way as possible with Tracker 3.x available. This
+    default can be undone with -Dautostart=true.
+  * Whitelist statx syscall, used in recent glib.
+
+Translations: lt
+
+NEW in 2.3.4 - 2020-08-24
+=========================
+   * Block image/ktx files in 90-gstreamer-image-generic.rule
+   * Set a deadline of 30 seconds for extraction tasks
+   * Remove generic gstreamer-based image extraction codepath
+   * Several fixes to libav-based extractor
+   * Replace sensitive words
+   * get the systemd user unit dir from pkg-config
+
+Translations: es, hr, id, it, lt, pl, pt_BR, ro, sv, tr, uk
+
 NEW in 2.3.3 - 2020-03-09
 =========================
 

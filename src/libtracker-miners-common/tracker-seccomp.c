@@ -97,6 +97,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (statfs64);
 	ALLOW_RULE (lstat);
 	ALLOW_RULE (lstat64);
+	ALLOW_RULE (statx);
 	ALLOW_RULE (access);
 	ALLOW_RULE (getdents);
 	ALLOW_RULE (getdents64);

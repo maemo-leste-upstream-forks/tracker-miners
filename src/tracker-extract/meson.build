@@ -39,7 +39,7 @@ endif
 
 if generic_media_handler_name == 'gstreamer'
   sources = ['tracker-extract-gstreamer.c', 'tracker-cue-sheet.c']
-  rules = ['10-svg.rule', '15-gstreamer-guess.rule', '90-gstreamer-image-generic.rule', '90-gstreamer-audio-generic.rule', '90-gstreamer-video-generic.rule']
+  rules = ['10-svg.rule', '15-gstreamer-guess.rule', '90-gstreamer-audio-generic.rule', '90-gstreamer-video-generic.rule']
   dependencies = [gstreamer, gstreamer_pbutils, libcue, tracker_miners_common_dep]
 
   if gstreamer_backend_name == 'GUPnP-DLNA'
@@ -189,9 +189,13 @@ desktop_file_untranslated = configure_file(
 desktop_file = custom_target('tracker-extract-desktop-file',
   input: desktop_file_untranslated,
   output: 'tracker-extract.desktop',
-  command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
-  install: true,
-  install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+  command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'])
+
+if get_option('autostart')
+  install_data(desktop_file,
+      install: true,
+      install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+endif
 
 if install_systemd_user_services
   configure_file(

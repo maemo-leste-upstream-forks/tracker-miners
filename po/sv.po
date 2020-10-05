@@ -1,16 +1,16 @@
 # Swedish translation for tracker.
-# Copyright © 2006-2019 Free Software Foundation
+# Copyright © 2006-2020 Free Software Foundation
 # This file is distributed under the same license as the tracker package.
 # Daniel Nylander <po@danielnylander.se>, 2007, 2008, 2009, 2010, 2011.
 # Josef Andersson <josef.andersson@fripost.org>, 2015.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2015, 2016, 2017, 2018, 2019.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2015, 2016, 2017, 2018, 2019, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2019-02-09 15:52+0000\n"
-"PO-Revision-Date: 2019-02-09 22:27+0100\n"
+"POT-Creation-Date: 2020-07-19 03:03+0000\n"
+"PO-Revision-Date: 2020-07-30 12:17+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -18,8 +18,230 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3.1\n"
 "X-Project-Style: gnome\n"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Loggutförlighet"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Loggutförlighet."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Schemaläggarprioritet vid inaktivitet"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr ""
+"Schemaläggaren är kärnkomponenten som avgör vilket körbart program som ska "
+"köras härnäst av processorn. Varje program har en tillhörande "
+"schemaläggarpolicy och prioritet."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Maximalt antal byte att extrahera"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "Maximalt antal UTF-8 byte att extrahera."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Wait for FS miner to be done before extracting"
+msgstr "Vänta på att FS miner ska vara klar innan extrahering"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr ""
+"Om true (sant) kommer tracker-extract att vänta på att tracker-miner-fs ska "
+"vara klar med indexering innan extrahering av metadata. Detta alternativ är "
+"användbart i begränsade miljöer där det är viktigt att lista filer så snabbt "
+"som möjligt och där metadata kan komma senare."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Initial sömn"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Initial sovtid, i sekunder."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Bromsvärde"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Indexeringshastighet, ju högre desto långsammare."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Gräns för lågt diskutrymme"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr ""
+"Tröskeln för diskutrymme i procent att pausa indexeringen för, eller -1 för "
+"att inaktivera."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Sökintervall"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr ""
+"Intervall i dagar för att kontrollera huruvida filsystemet är uppdaterat i "
+"databasen. 0 ger indexering närsomhelst, -1 framtvingar det endast efter "
+"smutsiga nedstängningar och -2 inaktiverar det helt."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Flyttbara enheters tröskel för datalivslängd"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr ""
+"Tröskel i dagar då filer på ej monterade flyttbara enheter tas bort från "
+"databasen. 0 betyder aldrig, maximalt är 365."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Aktivera övervakare"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr "Sätt till false för att helt inaktivera filövervakning"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Aktivera skrivning"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr "Sätt till false för att helt inaktivera filskrivning"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Indexera flyttbara enheter"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr ""
+"Sätt till true (sant) för att aktivera indexering av monterade kataloger för "
+"flyttbara enheter."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Indexera optiska skivor"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr ""
+"Sätt till true (sant) för att aktivera indexering av cd-skivor, dvd-skivor "
+"och allmän optisk media (om flyttbara enheter inte indexeras gäller detsamma "
+"för optiska enheter)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Indexera vid batteridrift"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr "Sätt till true (sant) för att indexera vid batteridrift"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Genomför initial indexering vid batteridrift"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr ""
+"Sätt till true (sant) för att indexera vid batteridrift endast första gången"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Kataloger att indexera rekursivt"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Lista över kataloger att indexera rekursivt, speciella värden inkluderar: "
+"&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Se /etc/xdg/user-dirs.defaults och $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Kataloger att inkludera för indexering icke-rekursivt"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Lista över kataloger att indexera utan att kontrollera undermappar, "
+"speciella värden inkluderar: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, "
+"&amp;MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Se /etc/xdg/user-dirs.defaults och $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Ignorerade filer"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Lista över filmönster att undvika"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Inkluderade kataloger"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Lista över kataloger att undvika"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Ignorerade kataloger med innehåll"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr "Undvik kataloger som innehåller en fil i blockeringslistan här"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
@@ -90,202 +312,6 @@ msgstr "Filsystem"
 msgid "File system data miner"
 msgstr "Datainsamlare för filsystem"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:1
-msgid "Log verbosity"
-msgstr "Loggutförlighet"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:2
-msgid "Log verbosity."
-msgstr "Loggutförlighet."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
-msgid "Initial sleep"
-msgstr "Initial sömn"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Initial sovtid, i sekunder."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:3
-msgid "Scheduler priority when idle"
-msgstr "Schemaläggarprioritet vid inaktivitet"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:4
-msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
-msgstr ""
-"Schemaläggaren är kärnkomponenten som avgör vilket körbart program som ska "
-"köras härnäst av processorn. Varje program har en tillhörande "
-"schemaläggarpolicy och prioritet."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
-msgid "Throttle"
-msgstr "Bromsvärde"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Indexeringshastighet, ju högre desto långsammare."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
-msgid "Low disk space limit"
-msgstr "Gräns för lågt diskutrymme"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Tröskeln för diskutrymme i procent att pausa indexeringen för, eller -1 för "
-"att inaktivera."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
-msgid "Crawling interval"
-msgstr "Sökintervall"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Intervall i dagar för att kontrollera huruvida filsystemet är uppdaterat i "
-"databasen. 0 ger indexering närsomhelst, -1 framtvingar det endast efter "
-"smutsiga nedstängningar och -2 inaktiverar det helt."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Flyttbara enheters tröskel för datalivslängd"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Tröskel i dagar då filer på ej monterade flyttbara enheter tas bort från "
-"databasen. 0 betyder aldrig, maximalt är 365."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
-msgid "Enable monitors"
-msgstr "Aktivera övervakare"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr "Sätt till false för att helt inaktivera filövervakning"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
-msgid "Enable writeback"
-msgstr "Aktivera skrivning"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr "Sätt till false för att helt inaktivera filskrivning"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
-msgid "Index removable devices"
-msgstr "Indexera flyttbara enheter"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Sätt till true (sant) för att aktivera indexering av monterade kataloger för "
-"flyttbara enheter."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
-msgid "Index optical discs"
-msgstr "Indexera optiska skivor"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Sätt till true (sant) för att aktivera indexering av cd-skivor, dvd-skivor "
-"och allmän optisk media (om flyttbara enheter inte indexeras gäller detsamma "
-"för optiska enheter)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
-msgid "Index when running on battery"
-msgstr "Indexera vid batteridrift"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
-msgid "Set to true to index while running on battery"
-msgstr "Sätt till true (sant) för att indexera vid batteridrift"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Genomför initial indexering vid batteridrift"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr ""
-"Sätt till true (sant) för att indexera vid batteridrift endast första gången"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
-msgid "Directories to index recursively"
-msgstr "Kataloger att indexera rekursivt"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Lista över kataloger att indexera rekursivt, speciella värden inkluderar: "
-"&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"Se /etc/xdg/user-dirs.defaults och $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
-msgid "Directories to index non-recursively"
-msgstr "Kataloger att inkludera för indexering icke-rekursivt"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Lista över kataloger att indexera utan att kontrollera undermappar, "
-"speciella värden inkluderar: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, "
-"&amp;MUSIC, &amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"Se /etc/xdg/user-dirs.defaults och $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
-msgid "Ignored files"
-msgstr "Ignorerade filer"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
-msgid "List of file patterns to avoid"
-msgstr "Lista över filmönster att undvika"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
-msgid "Ignored directories"
-msgstr "Inkluderade kataloger"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
-msgid "List of directories to avoid"
-msgstr "Lista över kataloger att undvika"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
-msgid "Ignored directories with content"
-msgstr "Ignorerade kataloger med innehåll"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr "Undvik kataloger som innehåller en svartlistad fil"
-
 #: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
 #: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
@@ -321,89 +347,89 @@ msgstr "Körs för en specifik domänontologi"
 msgid "Displays version information"
 msgstr "Visar versionsinformation"
 
-#: ../src/miners/fs/tracker-main.c:539
+#: ../src/miners/fs/tracker-main.c:536
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Dataobjektet ”%s” finns för tillfället"
 
-#: ../src/miners/fs/tracker-main.c:540
+#: ../src/miners/fs/tracker-main.c:537
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Dataobjektet ”%s” finns inte för tillfället"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:552
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Katalogen kvalificerar till att samlas in (baserat på regler)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:553
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Katalogen kvalificerar INTE till att samlas in (baserat på regler)"
 
-#: ../src/miners/fs/tracker-main.c:576
+#: ../src/miners/fs/tracker-main.c:573
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Katalogen kvalificerar till att samlas in (baserat på innehåll)"
 
-#: ../src/miners/fs/tracker-main.c:577
+#: ../src/miners/fs/tracker-main.c:574
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Katalogen kvalificerar INTE till att samlas in (baserat på innehåll)"
 
-#: ../src/miners/fs/tracker-main.c:624
+#: ../src/miners/fs/tracker-main.c:621
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Katalogen kvalificerar till övervakning (baserat på konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:625
+#: ../src/miners/fs/tracker-main.c:622
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Katalogen kvalificerar INTE till övervakning (baserat på konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:629
+#: ../src/miners/fs/tracker-main.c:626
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Filen kvalificerar till övervakning (baserat på konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:630
+#: ../src/miners/fs/tracker-main.c:627
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Filen kvalificerar INTE till övervakning (baserat på konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:634
+#: ../src/miners/fs/tracker-main.c:631
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr ""
 "Filen eller katalogen kvalificerar till övervakning (baserat på "
 "konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:635
+#: ../src/miners/fs/tracker-main.c:632
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr ""
 "Filen eller katalogen kvalificerar INTE till övervakning (baserat på "
 "konfiguration)"
 
-#: ../src/miners/fs/tracker-main.c:650
+#: ../src/miners/fs/tracker-main.c:647
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Filen kvalificerar till att samlas in (baserat på regler)"
 
-#: ../src/miners/fs/tracker-main.c:651
+#: ../src/miners/fs/tracker-main.c:648
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Filen kvalificerar INTE till att samlas in (baserat på regler)"
 
-#: ../src/miners/fs/tracker-main.c:660
+#: ../src/miners/fs/tracker-main.c:657
 msgid "Would be indexed"
 msgstr "Kommer att indexeras"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:658 ../src/miners/fs/tracker-main.c:660
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:658 ../src/miners/fs/tracker-main.c:660
 msgid "No"
 msgstr "Nej"
 
-#: ../src/miners/fs/tracker-main.c:662
+#: ../src/miners/fs/tracker-main.c:659
 msgid "Would be monitored"
 msgstr "Kommer att övervakas"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:793
+#: ../src/miners/fs/tracker-main.c:789
 msgid "— start the tracker indexer"
 msgstr "— starta tracker-indexeraren"
 
@@ -439,19 +465,19 @@ msgstr "Namn att använda (måste användas med --add-feed)"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/rss/tracker-main.c:94
+#: ../src/miners/rss/tracker-main.c:93
 msgid "— start the feeds indexer"
 msgstr "— starta webbflödesindexeraren"
 
-#: ../src/miners/rss/tracker-main.c:128
+#: ../src/miners/rss/tracker-main.c:127
 msgid "Could not establish a connection to Tracker"
 msgstr "Kunde inte etablera en anslutning till Tracker"
 
-#: ../src/miners/rss/tracker-main.c:129
+#: ../src/miners/rss/tracker-main.c:128
 msgid "No error given"
 msgstr "Inget fel gavs"
 
-#: ../src/miners/rss/tracker-main.c:156
+#: ../src/miners/rss/tracker-main.c:155
 msgid "Could not add feed"
 msgstr "Kunde inte lägga till webbflöde"
 
@@ -471,49 +497,11 @@ msgstr "Extraherare"
 msgid "Metadata extractor"
 msgstr "Metadataextraherare"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:5
-msgid "Max bytes to extract"
-msgstr "Maximalt antal byte att extrahera"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "Maximalt antal UTF-8 byte att extrahera."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:7
-msgid "Max media art width"
-msgstr "Maximal bredd för media"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Maximal bredd i pixlar för extraherad media. Större skalas om. Sätt till -1 "
-"för att inaktivera att spara media från filer. Att sätta till 0 medför att "
-"det inte finns begränsningar på mediets bredd."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr "Vänta på att FS miner ska vara klar innan extrahering"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"Om true (sant) kommer tracker-extract att vänta på att tracker-miner-fs ska "
-"vara klar med indexering innan extrahering av metadata. Detta alternativ är "
-"användbart i begränsade miljöer där det är viktigt att lista filer så snabbt "
-"som möjligt och där metadata kan komma senare."
-
-#: ../src/tracker-extract/tracker-extract.c:685
+#: ../src/tracker-extract/tracker-extract.c:711
 msgid "Metadata extraction failed"
 msgstr "Misslyckades med extrahering av metadata"
 
-#: ../src/tracker-extract/tracker-extract.c:765
+#: ../src/tracker-extract/tracker-extract.c:791
 msgid "No metadata or extractor modules found to handle this file"
 msgstr "Fann inga metadata- eller extraherarmoduler som kan hantera denna fil"
 
@@ -554,18 +542,18 @@ msgstr "Format för utdataresultat: ”sparql”, ”turtle” eller ”json-ld�
 msgid "FORMAT"
 msgstr "FORMAT"
 
-#: ../src/tracker-extract/tracker-main.c:272
+#: ../src/tracker-extract/tracker-main.c:237
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Serialiseringsformatet ”%s” stöds inte\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:362
+#: ../src/tracker-extract/tracker-main.c:323
 msgid "— Extract file meta data"
 msgstr "— Extrahera filmetadata"
 
-#: ../src/tracker-extract/tracker-main.c:377
+#: ../src/tracker-extract/tracker-main.c:338
 msgid "Filename and mime type must be provided together"
 msgstr "Filnamn och mime-typ måste anges tillsammans"
 
@@ -587,6 +575,18 @@ msgstr "Inaktivera avstängning efter 30 sekunders inaktivitet"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "— starta trackers skrivtjänst"
+
+#~ msgid "Max media art width"
+#~ msgstr "Maximal bredd för media"
+
+#~ msgid ""
+#~ "Maximum width in pixels for any media art extracted. Anything bigger is "
+#~ "resized. Set to -1 to disable saving media art from files. Setting to 0 "
+#~ "sets no limit on the media art width."
+#~ msgstr ""
+#~ "Maximal bredd i pixlar för extraherad media. Större skalas om. Sätt till "
+#~ "-1 för att inaktivera att spara media från filer. Att sätta till 0 medför "
+#~ "att det inte finns begränsningar på mediets bredd."
 
 #~ msgid "Applications"
 #~ msgstr "Program"
