@@ -8,6 +8,7 @@ CHECK_HOME = $(CURDIR)/debian/tmp/home
 CHECK_XRD = $(CHECK_HOME)/XRD
 
 FEATURE_FLAGS = \
+	-Dautostart=true \
 	-Dgeneric_media_extractor=gstreamer \
 	-Dsystemd_user_services=/usr/lib/systemd/user \
 	-Ddocs=true \
