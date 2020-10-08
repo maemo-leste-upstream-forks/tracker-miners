@@ -1,5 +1,6 @@
-tracker-miners (2.3.5-1) UNRELEASED; urgency=medium
+tracker-miners (2.3.5-1) unstable; urgency=medium
 
+  [ Simon McVittie ]
   * debian/watch: Only match tracker-2.
     tracker-3 will need packaging separately (see #964376).
   * New upstream release
@@ -7,8 +8,12 @@ tracker-miners (2.3.5-1) UNRELEASED; urgency=medium
     - Allow statx in seccomp filter, used by newer GLib (Closes: #970589)
     - Set a deadline of 30 seconds for extraction tasks
     - Several fixes to libav-based extractor
+  * d/rules: Enable autostart option to preserve existing functionality
+  * Add patch from upstream to fix build
+  * Build-Depend on systemd (on Linux), for systemd.pc
+  * Refresh patch series with closest-to-upstream patches first
 
- -- Simon McVittie <smcv@debian.org>  Mon, 05 Oct 2020 12:56:46 +0100
+ -- Laurent Bigonville <bigon@debian.org>  Thu, 08 Oct 2020 16:22:33 +0200
 
 tracker-miners (2.3.3-2) unstable; urgency=medium
 
