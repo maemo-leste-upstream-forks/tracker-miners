@@ -6,7 +6,8 @@ Instead of using old-style separators for tests, use native meson suites.
 
 So we can optionally just run (or not) one test suite.
 
-Origin: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
+Forwarded: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
+Applied-upstream: 2.99.1, commit:58c96a81631bdbad33c75c7e75f7c8943932792c
 ---
  tests/functional-tests/meson.build         | 13 +++++++++++--
  tests/libtracker-extract/meson.build       |  5 ++---
@@ -14,10 +15,10 @@ Origin: https://gitlab.gnome.org/GNOME/tracker-miners/merge_requests/98
  3 files changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/tests/functional-tests/meson.build b/tests/functional-tests/meson.build
-index d8684e0..ff27832 100644
+index 78c37fb..25c1732 100644
 --- a/tests/functional-tests/meson.build
 +++ b/tests/functional-tests/meson.build
-@@ -93,14 +93,23 @@ test_env.set('TRACKER_TESTS_VERBOSE', '1')
+@@ -94,14 +94,23 @@ test_env.set('TRACKER_TESTS_VERBOSE', '1')
  
  foreach t: extractor_tests
    data = join_paths('test-extraction-data', t) + '.expected.json'
@@ -44,10 +45,10 @@ index d8684e0..ff27832 100644
      env: test_env,
      workdir: meson.current_source_dir(),
 diff --git a/tests/libtracker-extract/meson.build b/tests/libtracker-extract/meson.build
-index ba1b02f..65f6da0 100644
+index 196f332..90042cc 100644
 --- a/tests/libtracker-extract/meson.build
 +++ b/tests/libtracker-extract/meson.build
-@@ -20,13 +20,12 @@ libtracker_extract_test_deps = [
+@@ -21,13 +21,12 @@ libtracker_extract_test_deps = [
  foreach base_name: libtracker_extract_tests
      source = 'tracker-@0@-test.c'.format(base_name)
      binary_name = 'tracker-@0@-test'.format(base_name)
@@ -62,7 +63,7 @@ index ba1b02f..65f6da0 100644
  endforeach
  
  if libiptcdata.found() and libjpeg.found()
-@@ -35,5 +34,5 @@ if libiptcdata.found() and libjpeg.found()
+@@ -36,5 +35,5 @@ if libiptcdata.found() and libjpeg.found()
      dependencies: libtracker_extract_test_deps + [libjpeg],
      c_args: test_c_args,
    )

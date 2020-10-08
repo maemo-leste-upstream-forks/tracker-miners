@@ -4,14 +4,14 @@
 # This file is distributed under the same license as the tracker package.
 # Gintautas Miliauskas <gintas@akl.lt>, 2008.
 # Žygimantas Beručka <zygis@gnome.org>, 2009, 2010, 2013.
-# Aurimas Černius <aurisc4@gmail.com>, 2013-2019.
+# Aurimas Černius <aurisc4@gmail.com>, 2013-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: HEAD\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2019-02-09 15:52+0000\n"
-"PO-Revision-Date: 2019-02-09 23:09+0200\n"
+"POT-Creation-Date: 2020-08-24 21:15+0000\n"
+"PO-Revision-Date: 2020-08-25 22:33+0300\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
@@ -19,9 +19,233 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Gtranslator 3.30.1\n"
+"%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 3.36.0\n"
 "X-Project-Style: gnome\n"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:1
+msgid "Log verbosity"
+msgstr "Žurnalo išsamumas"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
+#: ../data/org.freedesktop.Tracker.Writeback.gschema.xml.h:2
+msgid "Log verbosity."
+msgstr "Žurnalo išsamumas."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:3
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
+msgid "Scheduler priority when idle"
+msgstr "Planuoklės prioritetas esant neveikos būsenai"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:4
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
+msgid ""
+"The scheduler is the kernel component that decides which runnable "
+"application will be executed by the CPU next. Each application has an "
+"associated scheduling policy and priority."
+msgstr ""
+"Planuoklė – tai branduolio komponentas, nustatantis, kurią programą "
+"centrinis procesorius toliau vykdys. Kiekvienai programai nustatoma "
+"planavimo tvarką ir prioritetas."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:5
+msgid "Max bytes to extract"
+msgstr "Didžiausias išgautinų baitų skaičius"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:6
+msgid "Maximum number of UTF-8 bytes to extract."
+msgstr "Didžiausias išgautinų UTF-8 baitų skaičius."
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:7
+msgid "Wait for FS miner to be done before extracting"
+msgstr "Prieš gaudami duomenis, palaukite, kol FS išgavėjas baigs darbą"
+
+#: ../data/org.freedesktop.Tracker.Extract.gschema.xml.h:8
+msgid ""
+"When true, tracker-extract will wait for tracker-miner-fs to be done "
+"crawling before extracting meta-data. This option is useful on constrained "
+"environment where it is important to list files as fast as possible and can "
+"wait to get meta-data later."
+msgstr ""
+"Kai teigiama, tracker-extract palauks kol tracker-miner-fs baigs darbą prieš "
+"pradėdamas išgavinėti metaduomenis. Šis parametras yra naudingas apribotoje "
+"aplinkoje, kur yra svarbu išvardinti failus kiek galima greičiau bei galima "
+"palaukti metaduomenų."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
+msgid "Initial sleep"
+msgstr "Pradinis laukimas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
+msgid "Initial sleep time, in seconds."
+msgstr "Pradinis laukimo laikas sekundėmis."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
+msgid "Throttle"
+msgstr "Stabdymas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
+msgid "Indexing speed, the higher the slower."
+msgstr "Indeksavimo greitis. Kuo didesnis, tuo labiau apkraunama sistema."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
+msgid "Low disk space limit"
+msgstr "Laisvos vietos diske riba"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
+msgid ""
+"Disk space threshold in percent at which to pause indexing, or -1 to disable."
+msgstr ""
+"Laisvos disko vietos riba megabaitais, kai reikia pristabdyti indeksavimą "
+"arba „-1“ išjungimui."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
+msgid "Crawling interval"
+msgstr "Perėjimo intervalas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
+msgid ""
+"Interval in days to check whether the filesystem is up to date in the "
+"database. 0 forces crawling anytime, -1 forces it only after unclean "
+"shutdowns, and -2 disables it entirely."
+msgstr ""
+"Intervalas dienomis patikrinimui, ar failų sistema nepasenusi duomenų "
+"bazėje. 0 verčia perėjimą bet kada, -1 verčia tik po neaiškių išjungimų, -2 "
+"visiškai išjungia."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
+msgid "Removable devices’ data permanence threshold"
+msgstr "Išimamų laikmenų duomenų saugojimo slenkstis"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
+msgid ""
+"Threshold in days after which files from removables devices will be removed "
+"from database if not mounted. 0 means never, maximum is 365."
+msgstr ""
+"Slenkstis dienomis, po kurio failai iš išimamų įrenginių bus pašalinti iš "
+"duomenų bazės, jei neprijungti. 0 reikšia niekada, daugiausia 365."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
+msgid "Enable monitors"
+msgstr "Įjungti stebėtojus"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
+msgid "Set to false to completely disable any file monitoring"
+msgstr "Nustatykite neigiamą visiškam bet kokių failų stebėjimui"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
+msgid "Enable writeback"
+msgstr "Įjungti atgalinį rašymą"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
+msgid "Set to false to completely disable any file writeback"
+msgstr ""
+"Nustatykite neigiamą visiškam bet kokio failo atgalinio rašymo uždraudimui"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
+msgid "Index removable devices"
+msgstr "Indeksuoti išimamas laikmenas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
+msgid ""
+"Set to true to enable indexing mounted directories for removable devices."
+msgstr ""
+"Nustatykite teigiamą prijungtų katalogų ir išimamų įrenginių indeksavimui "
+"įjungti."
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
+msgid "Index optical discs"
+msgstr "Indeksuoti optinius diskus"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
+msgid ""
+"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
+"removable devices are not indexed, optical discs won’t be either)"
+msgstr ""
+"Nustatykite teigiamą CD, DVD ir kitų optinių laikmenų indeksavimui įjungti "
+"(jei išimami įrenginiai nėra indeksuojami, optiniai diskai taip pat nebus)"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
+msgid "Index when running on battery"
+msgstr "Indeksuoti naudojant baterijos energiją"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
+msgid "Set to true to index while running on battery"
+msgstr "Nustatykite teigiamą indeksavimui, kai naudojama baterijos energija"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
+msgid "Perform initial indexing when running on battery"
+msgstr "Vykdyti pradinį indeksavimą, kai naudojama baterijos energija"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
+msgid "Set to true to index while running on battery for the first time only"
+msgstr ""
+"Nustatykite teigiamą indeksavimui naudojant baterijos energiją tik pirmą "
+"kartą"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
+msgid "Directories to index recursively"
+msgstr "Katalogai rekursyviam indeksavimui"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
+msgid ""
+"List of directories to index recursively, Special values include: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Sąrašas katalogų rekursyviam indeksavimui, specialios reikšmės: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Žiūrėkite /etc/xdg/user-dirs.defaults ir $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
+msgid "Directories to index non-recursively"
+msgstr "Katalogai nerekursyviam indeksavimui"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
+msgid ""
+"List of directories to index without inspecting subfolders, Special values "
+"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
+"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
+msgstr ""
+"Sąrašas katalogų indeksavimui be pakatalogių, specialios reikšmės: &amp;"
+"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
+"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
+"\n"
+"Žiūrėkite /etc/xdg/user-dirs.defaults ir $HOME/.config/user-dirs.default"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
+msgid "Ignored files"
+msgstr "Nepaisomi failai"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
+msgid "List of file patterns to avoid"
+msgstr "Vengiamų šablonų sąrašas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
+msgid "Ignored directories"
+msgstr "Nepaisomi katalogai"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
+msgid "List of directories to avoid"
+msgstr "Vengiamų katalogų sąrašas"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
+msgid "Ignored directories with content"
+msgstr "Nepaisomi katalogai su turiniu"
+
+#: ../data/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
+#| msgid "Avoid any directory containing a file blocklisted here"
+msgid "Avoid any directory containing a file blacklisted here"
+msgstr "Vengti bet kokių katalogų, turinčių čia nurodytą failą"
 
 #: ../src/libtracker-miners-common/tracker-utils.c:90
 msgid "unknown time"
@@ -96,213 +320,6 @@ msgstr "Failų sistema"
 msgid "File system data miner"
 msgstr "Failų sistemos duomenų rinkiklis"
 
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:1
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:1
-msgid "Log verbosity"
-msgstr "Žurnalo išsamumas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:2
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:2
-msgid "Log verbosity."
-msgstr "Žurnalo išsamumas."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:3
-msgid "Initial sleep"
-msgstr "Pradinis laukimas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:4
-msgid "Initial sleep time, in seconds."
-msgstr "Pradinis laukimo laikas sekundėmis."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:5
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:3
-msgid "Scheduler priority when idle"
-msgstr "Planuoklės prioritetas esant neveikos būsenai"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:6
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:4
-msgid ""
-"The scheduler is the kernel component that decides which runnable "
-"application will be executed by the CPU next. Each application has an "
-"associated scheduling policy and priority."
-msgstr ""
-"Planuoklė – tai branduolio komponentas, nustatantis, kurią programą "
-"centrinis procesorius toliau vykdys. Kiekvienai programai nustatoma "
-"planavimo tvarką ir prioritetas."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:7
-msgid "Throttle"
-msgstr "Stabdymas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:8
-msgid "Indexing speed, the higher the slower."
-msgstr "Indeksavimo greitis. Kuo didesnis, tuo labiau apkraunama sistema."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:9
-msgid "Low disk space limit"
-msgstr "Laisvos vietos diske riba"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:10
-msgid ""
-"Disk space threshold in percent at which to pause indexing, or -1 to disable."
-msgstr ""
-"Laisvos disko vietos riba megabaitais, kai reikia pristabdyti indeksavimą "
-"arba „-1“ išjungimui."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:11
-msgid "Crawling interval"
-msgstr "Perėjimo intervalas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:12
-msgid ""
-"Interval in days to check whether the filesystem is up to date in the "
-"database. 0 forces crawling anytime, -1 forces it only after unclean "
-"shutdowns, and -2 disables it entirely."
-msgstr ""
-"Intervalas dienomis patikrinimui, ar failų sistema nepasenusi duomenų "
-"bazėje. 0 verčia perėjimą bet kada, -1 verčia tik po neaiškių išjungimų, -2 "
-"visiškai išjungia."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:13
-msgid "Removable devices’ data permanence threshold"
-msgstr "Išimamų laikmenų duomenų saugojimo slenkstis"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:14
-msgid ""
-"Threshold in days after which files from removables devices will be removed "
-"from database if not mounted. 0 means never, maximum is 365."
-msgstr ""
-"Slenkstis dienomis, po kurio failai iš išimamų įrenginių bus pašalinti iš "
-"duomenų bazės, jei neprijungti. 0 reikšia niekada, daugiausia 365."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:15
-msgid "Enable monitors"
-msgstr "Įjungti stebėtojus"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:16
-msgid "Set to false to completely disable any file monitoring"
-msgstr "Nustatykite neigiamą visiškam bet kokių failų stebėjimui"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:17
-msgid "Enable writeback"
-msgstr "Įjungti atgalinį rašymą"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:18
-msgid "Set to false to completely disable any file writeback"
-msgstr ""
-"Nustatykite neigiamą visiškam bet kokio failo atgalinio rašymo uždraudimui"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:19
-msgid "Index removable devices"
-msgstr "Indeksuoti išimamas laikmenas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:20
-msgid ""
-"Set to true to enable indexing mounted directories for removable devices."
-msgstr ""
-"Nustatykite teigiamą prijungtų katalogų ir išimamų įrenginių indeksavimui "
-"įjungti."
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:21
-msgid "Index optical discs"
-msgstr "Indeksuoti optinius diskus"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:22
-msgid ""
-"Set to true to enable indexing CDs, DVDs, and generally optical media (if "
-"removable devices are not indexed, optical discs won’t be either)"
-msgstr ""
-"Nustatykite teigiamą CD, DVD ir kitų optinių laikmenų indeksavimui įjungti "
-"(jei išimami įrenginiai nėra indeksuojami, optiniai diskai taip pat nebus)"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:23
-msgid "Index when running on battery"
-msgstr "Indeksuoti naudojant baterijos energiją"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:24
-msgid "Set to true to index while running on battery"
-msgstr "Nustatykite teigiamą indeksavimui, kai naudojama baterijos energija"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:25
-msgid "Perform initial indexing when running on battery"
-msgstr "Vykdyti pradinį indeksavimą, kai naudojama baterijos energija"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:26
-msgid "Set to true to index while running on battery for the first time only"
-msgstr ""
-"Nustatykite teigiamą indeksavimui naudojant baterijos energiją tik pirmą "
-"kartą"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:27
-msgid "Directories to index recursively"
-msgstr "Katalogai rekursyviam indeksavimui"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:28
-#| msgid ""
-#| "List of directories to index recursively, Special values include: &amp;"
-#| "DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-#| "PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/xdg/user-dirs."
-#| "defaults and $HOME/.config/user-dirs.default"
-msgid ""
-"List of directories to index recursively, Special values include: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Sąrašas katalogų rekursyviam indeksavimui, specialios reikšmės: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"Žiūrėkite /etc/xdg/user-dirs.defaults ir $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:31
-msgid "Directories to index non-recursively"
-msgstr "Katalogai nerekursyviam indeksavimui"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:32
-#| msgid ""
-#| "List of directories to index without inspecting subfolders, Special "
-#| "values include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, "
-#| "&amp;PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS. See /etc/"
-#| "xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
-msgid ""
-"List of directories to index without inspecting subfolders, Special values "
-"include: &amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;"
-"PICTURES, &amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default"
-msgstr ""
-"Sąrašas katalogų indeksavimui be pakatalogių, specialios reikšmės: &amp;"
-"DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES, &amp;"
-"PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.\n"
-"\n"
-"Žiūrėkite /etc/xdg/user-dirs.defaults ir $HOME/.config/user-dirs.default"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:35
-msgid "Ignored files"
-msgstr "Nepaisomi failai"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:36
-msgid "List of file patterns to avoid"
-msgstr "Vengiamų šablonų sąrašas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:37
-msgid "Ignored directories"
-msgstr "Nepaisomi katalogai"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:38
-msgid "List of directories to avoid"
-msgstr "Vengiamų katalogų sąrašas"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:39
-msgid "Ignored directories with content"
-msgstr "Nepaisomi katalogai su turiniu"
-
-#: ../src/miners/fs/org.freedesktop.Tracker.Miner.Files.gschema.xml.h:40
-msgid "Avoid any directory containing a file blacklisted here"
-msgstr "Vengti bet kokių katalogų, turinčių čia nurodytą failą"
-
 #: ../src/miners/fs/tracker-main.c:73 ../src/miners/rss/tracker-main.c:43
 #: ../src/tracker-writeback/tracker-main.c:55
 msgid ""
@@ -339,84 +356,84 @@ msgstr "Vykdomas specifinei domeno ontologijai"
 msgid "Displays version information"
 msgstr "Rodo versijos informaciją"
 
-#: ../src/miners/fs/tracker-main.c:539
+#: ../src/miners/fs/tracker-main.c:536
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Duomenų objektas „%s“ šiuo metu jau yra"
 
-#: ../src/miners/fs/tracker-main.c:540
+#: ../src/miners/fs/tracker-main.c:537
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Šiuo metu nėra duomenų objekto „%s“"
 
-#: ../src/miners/fs/tracker-main.c:555
+#: ../src/miners/fs/tracker-main.c:552
 msgid "Directory is eligible to be mined (based on rules)"
 msgstr "Katalogas yra tinkamas apdorojimui (pagal taisykles)"
 
-#: ../src/miners/fs/tracker-main.c:556
+#: ../src/miners/fs/tracker-main.c:553
 msgid "Directory is NOT eligible to be mined (based on rules)"
 msgstr "Katalogas NETINKAMAS apdorojimui (pagal taisykles)"
 
-#: ../src/miners/fs/tracker-main.c:576
+#: ../src/miners/fs/tracker-main.c:573
 msgid "Directory is eligible to be mined (based on contents)"
 msgstr "Katalogas yra tinkamas apdorojimui (pagal turinį)"
 
-#: ../src/miners/fs/tracker-main.c:577
+#: ../src/miners/fs/tracker-main.c:574
 msgid "Directory is NOT eligible to be mined (based on contents)"
 msgstr "Katalogas NETINKAMAS apdorojimui (pagal turinį)"
 
-#: ../src/miners/fs/tracker-main.c:624
+#: ../src/miners/fs/tracker-main.c:621
 msgid "Directory is eligible to be monitored (based on config)"
 msgstr "Katalogas tinkamas stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:625
+#: ../src/miners/fs/tracker-main.c:622
 msgid "Directory is NOT eligible to be monitored (based on config)"
 msgstr "Katalogas NETINKAMAS stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:629
+#: ../src/miners/fs/tracker-main.c:626
 msgid "File is eligible to be monitored (based on config)"
 msgstr "Failas yra tinkamas stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:630
+#: ../src/miners/fs/tracker-main.c:627
 msgid "File is NOT eligible to be monitored (based on config)"
 msgstr "Failas NETINKAMAS stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:634
+#: ../src/miners/fs/tracker-main.c:631
 msgid "File or Directory is eligible to be monitored (based on config)"
 msgstr "Failas arba katalogas yra tinkamas stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:635
+#: ../src/miners/fs/tracker-main.c:632
 msgid "File or Directory is NOT eligible to be monitored (based on config)"
 msgstr "Failas arba katalogas NETINKAMAS stebėjimui (pagal nustatymus)"
 
-#: ../src/miners/fs/tracker-main.c:650
+#: ../src/miners/fs/tracker-main.c:647
 msgid "File is eligible to be mined (based on rules)"
 msgstr "Failas yra tinkamas apdorojimui (pagal taisykles)"
 
-#: ../src/miners/fs/tracker-main.c:651
+#: ../src/miners/fs/tracker-main.c:648
 msgid "File is NOT eligible to be mined (based on rules)"
 msgstr "Failas NETINKAMAS apdorojimui (pagal taisykles)"
 
-#: ../src/miners/fs/tracker-main.c:660
+#: ../src/miners/fs/tracker-main.c:657
 msgid "Would be indexed"
 msgstr "Bus suindeksuoti"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:658 ../src/miners/fs/tracker-main.c:660
 msgid "Yes"
 msgstr "Taip"
 
-#: ../src/miners/fs/tracker-main.c:661 ../src/miners/fs/tracker-main.c:663
+#: ../src/miners/fs/tracker-main.c:658 ../src/miners/fs/tracker-main.c:660
 msgid "No"
 msgstr "Ne"
 
-#: ../src/miners/fs/tracker-main.c:662
+#: ../src/miners/fs/tracker-main.c:659
 msgid "Would be monitored"
 msgstr "Bus stebimi"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/fs/tracker-main.c:793
+#: ../src/miners/fs/tracker-main.c:789
 msgid "— start the tracker indexer"
 msgstr "– paleisti tracker indeksavimo programą"
 
@@ -452,19 +469,19 @@ msgstr "Naudotinas pavadinimas (reikia naudoti su --add-feed)"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: ../src/miners/rss/tracker-main.c:94
+#: ../src/miners/rss/tracker-main.c:93
 msgid "— start the feeds indexer"
 msgstr "– paleisti sklaidos kanalų indeksavimo programą"
 
-#: ../src/miners/rss/tracker-main.c:128
+#: ../src/miners/rss/tracker-main.c:127
 msgid "Could not establish a connection to Tracker"
 msgstr "Nepavyko užmegzti ryšio su „Tracker“ sistema"
 
-#: ../src/miners/rss/tracker-main.c:129
+#: ../src/miners/rss/tracker-main.c:128
 msgid "No error given"
 msgstr "Nenurodyta klaida"
 
-#: ../src/miners/rss/tracker-main.c:156
+#: ../src/miners/rss/tracker-main.c:155
 msgid "Could not add feed"
 msgstr "Nepavyko pridėti sklaidos kanalo"
 
@@ -484,49 +501,11 @@ msgstr "Išgavėjas"
 msgid "Metadata extractor"
 msgstr "Metaduomenų išgavėjas"
 
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:5
-msgid "Max bytes to extract"
-msgstr "Didžiausias išgautinų baitų skaičius"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:6
-msgid "Maximum number of UTF-8 bytes to extract."
-msgstr "Didžiausias išgautinų UTF-8 baitų skaičius."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:7
-msgid "Max media art width"
-msgstr "Didžiausias leistinas viršelio paveikslėlio plotis"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:8
-msgid ""
-"Maximum width in pixels for any media art extracted. Anything bigger is "
-"resized. Set to -1 to disable saving media art from files. Setting to 0 sets "
-"no limit on the media art width."
-msgstr ""
-"Didžiausias leistinas gautino viršelio plotis. Jį viršijus keičiamas "
-"viršelio paveikslėlio dydis. Nustačius „-1“, failų viršelių paveikslėliai "
-"neįrašomi. Nustačius „0“ – plotis neribojamas."
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:9
-msgid "Wait for FS miner to be done before extracting"
-msgstr "Prieš gaudami duomenis, palaukite, kol FS išgavėjas baigs darbą"
-
-#: ../src/tracker-extract/org.freedesktop.Tracker.Extract.gschema.xml.h:10
-msgid ""
-"When true, tracker-extract will wait for tracker-miner-fs to be done "
-"crawling before extracting meta-data. This option is useful on constrained "
-"environment where it is important to list files as fast as possible and can "
-"wait to get meta-data later."
-msgstr ""
-"Kai teigiama, tracker-extract palauks kol tracker-miner-fs baigs darbą prieš "
-"pradėdamas išgavinėti metaduomenis. Šis parametras yra naudingas apribotoje "
-"aplinkoje, kur yra svarbu išvardinti failus kiek galima greičiau bei galima "
-"palaukti metaduomenų."
-
-#: ../src/tracker-extract/tracker-extract.c:685
+#: ../src/tracker-extract/tracker-extract.c:711
 msgid "Metadata extraction failed"
 msgstr "Metaduomenų išgavavimas nepavyko"
 
-#: ../src/tracker-extract/tracker-extract.c:765
+#: ../src/tracker-extract/tracker-extract.c:791
 msgid "No metadata or extractor modules found to handle this file"
 msgstr "Nerasta metaduomenų išgavėjo modulių šio failo apdorojimui"
 
@@ -566,18 +545,18 @@ msgstr "Išvesties rezultatų formatas: „sparql“, „turtle“ arba „json-
 msgid "FORMAT"
 msgstr "FORMATAS"
 
-#: ../src/tracker-extract/tracker-main.c:272
+#: ../src/tracker-extract/tracker-main.c:237
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
 msgstr "Nepalaikomas serializacijos formatas „%s“\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: ../src/tracker-extract/tracker-main.c:362
+#: ../src/tracker-extract/tracker-main.c:323
 msgid "— Extract file meta data"
 msgstr "– gauti failo metaduomenis"
 
-#: ../src/tracker-extract/tracker-main.c:377
+#: ../src/tracker-extract/tracker-main.c:338
 msgid "Filename and mime type must be provided together"
 msgstr "Failas ir mime tipas turi būti pateikti kartu"
 
@@ -599,6 +578,18 @@ msgstr "Uždrausti išjungimą po 30 sekundžių neaktyvumo"
 #: ../src/tracker-writeback/tracker-main.c:98
 msgid "— start the tracker writeback service"
 msgstr "– paleisti tracker rašymo posistemę"
+
+#~ msgid "Max media art width"
+#~ msgstr "Didžiausias leistinas viršelio paveikslėlio plotis"
+
+#~ msgid ""
+#~ "Maximum width in pixels for any media art extracted. Anything bigger is "
+#~ "resized. Set to -1 to disable saving media art from files. Setting to 0 "
+#~ "sets no limit on the media art width."
+#~ msgstr ""
+#~ "Didžiausias leistinas gautino viršelio plotis. Jį viršijus keičiamas "
+#~ "viršelio paveikslėlio dydis. Nustačius „-1“, failų viršelių paveikslėliai "
+#~ "neįrašomi. Nustačius „0“ – plotis neribojamas."
 
 #~ msgid "Applications"
 #~ msgstr "Programos"

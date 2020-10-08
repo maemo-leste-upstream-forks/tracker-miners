@@ -45,6 +45,7 @@ Build-Depends: debhelper-compat (= 12),
                procps <!nocheck>,
                python3-gi <!nocheck>,
                shared-mime-info <!nocheck>,
+               systemd (>= 242) [linux-any],
 Standards-Version: 4.5.0
 Vcs-Browser: https://salsa.debian.org/gnome-team/tracker-miners
 Vcs-Git: https://salsa.debian.org/gnome-team/tracker-miners.git

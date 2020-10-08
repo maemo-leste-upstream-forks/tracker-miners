@@ -6,6 +6,8 @@ This reverts commit 6a9199a86a7047aa3d5db8d0faba8a5ae1e10bf4.
 
 We don't want these in rpath on Debian; the standard libdir is in the
 search path.
+
+Forwarded: no, Debian-specific
 ---
  meson.build                       | 1 -
  src/miners/fs/meson.build         | 2 +-
@@ -15,10 +17,10 @@ search path.
  5 files changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index a7d38e3..ee0036f 100644
+index f690fc1..e23dd63 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -388,7 +388,6 @@ configinc = include_directories('./')
+@@ -389,7 +389,6 @@ configinc = include_directories('./')
  srcinc = include_directories('src/')
  
  tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-' + tracker_api_version)
@@ -27,7 +29,7 @@ index a7d38e3..ee0036f 100644
  tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/extract-modules'.format(tracker_api_version))
  # NOTE: We don't use ${TRACKER_API_VERSION} because other content like
 diff --git a/src/miners/fs/meson.build b/src/miners/fs/meson.build
-index b58bfbd..f96daa9 100644
+index 5a23bd0..dec258a 100644
 --- a/src/miners/fs/meson.build
 +++ b/src/miners/fs/meson.build
 @@ -31,7 +31,7 @@ executable('tracker-miner-fs', sources,
@@ -40,7 +42,7 @@ index b58bfbd..f96daa9 100644
  
  dbus_service_file_untranslated = configure_file(
 diff --git a/src/miners/rss/meson.build b/src/miners/rss/meson.build
-index 2393940..38949ec 100644
+index 0bf0bb7..6f6ff5a 100644
 --- a/src/miners/rss/meson.build
 +++ b/src/miners/rss/meson.build
 @@ -8,7 +8,7 @@ executable('tracker-miner-rss', sources,
@@ -53,7 +55,7 @@ index 2393940..38949ec 100644
  
  dbus_service_file_untranslated = configure_file(
 diff --git a/src/tracker-extract/meson.build b/src/tracker-extract/meson.build
-index b8ab6ba..b4bb2f9 100644
+index aec37bf..699d90b 100644
 --- a/src/tracker-extract/meson.build
 +++ b/src/tracker-extract/meson.build
 @@ -167,7 +167,7 @@ executable('tracker-extract',

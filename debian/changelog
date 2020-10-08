@@ -1,9 +1,14 @@
-tracker-miners (2.3.3-3) UNRELEASED; urgency=medium
+tracker-miners (2.3.5-1) UNRELEASED; urgency=medium
 
   * debian/watch: Only match tracker-2.
-    tracker-3 will need packaging separately.
+    tracker-3 will need packaging separately (see #964376).
+  * New upstream release
+    - Remove generic gstreamer-based image extraction codepath
+    - Allow statx in seccomp filter, used by newer GLib (Closes: #970589)
+    - Set a deadline of 30 seconds for extraction tasks
+    - Several fixes to libav-based extractor
 
- -- Simon McVittie <smcv@debian.org>  Mon, 05 Oct 2020 12:54:52 +0100
+ -- Simon McVittie <smcv@debian.org>  Mon, 05 Oct 2020 12:56:46 +0100
 
 tracker-miners (2.3.3-2) unstable; urgency=medium
 
