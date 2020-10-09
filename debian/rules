@@ -23,7 +23,7 @@ MESON_TEST_ARGS = \
 	--verbose
 TEST_SUITES_FILTER = \
 	functional
-ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH),hppa ppc64 s390x))
+ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH),hppa powerpc ppc64 s390x sparc64))
 TEST_SUITES_FILTER += \
 	audio
 endif
