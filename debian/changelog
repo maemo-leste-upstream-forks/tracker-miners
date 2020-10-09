@@ -1,3 +1,9 @@
+tracker-miners (2.3.5-2) unstable; urgency=medium
+
+  * Make the 'audio' tests non-fatal on powerpc and sparc64 as well
+
+ -- Laurent Bigonville <bigon@debian.org>  Fri, 09 Oct 2020 11:13:36 +0200
+
 tracker-miners (2.3.5-1) unstable; urgency=medium
 
   [ Simon McVittie ]
