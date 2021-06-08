@@ -12,27 +12,29 @@ Forwarded: no, Debian-specific
  meson.build                       | 1 -
  src/miners/fs/meson.build         | 2 +-
  src/miners/rss/meson.build        | 2 +-
+ src/tracker-control/meson.build   | 2 +-
  src/tracker-extract/meson.build   | 2 +-
  src/tracker-writeback/meson.build | 2 +-
- 5 files changed, 4 insertions(+), 5 deletions(-)
+ src/tracker/meson.build           | 2 +-
+ 7 files changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index f690fc1..e23dd63 100644
+index 8874973..08b0c78 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -389,7 +389,6 @@ configinc = include_directories('./')
- srcinc = include_directories('src/')
- 
- tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-' + tracker_api_version)
+@@ -420,7 +420,6 @@ build_root = meson.current_build_dir()
+ # directory, following the existing convention in that directory.
+ tracker_api_versioned_name = 'tracker-miners-@0@'.format(tracker_api_version)
+ tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name)
 -tracker_install_rpath = ':'.join([tracker_internal_libs_dir, libdir])
  
- tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/extract-modules'.format(tracker_api_version))
- # NOTE: We don't use ${TRACKER_API_VERSION} because other content like
+ tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'extract-modules')
+ tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'writeback-modules')
 diff --git a/src/miners/fs/meson.build b/src/miners/fs/meson.build
-index 5a23bd0..dec258a 100644
+index e700dee..84326be 100644
 --- a/src/miners/fs/meson.build
 +++ b/src/miners/fs/meson.build
-@@ -31,7 +31,7 @@ executable('tracker-miner-fs', sources,
+@@ -26,7 +26,7 @@ executable('tracker-miner-fs-@0@'.format(tracker_api_major),
      c_args: tracker_c_args,
      install: true,
      install_dir: get_option('libexecdir'),
@@ -40,12 +42,12 @@ index 5a23bd0..dec258a 100644
 +    install_rpath: tracker_internal_libs_dir,
  )
  
- dbus_service_file_untranslated = configure_file(
+ # This file allows starting the service with D-Bus autoactivation.
 diff --git a/src/miners/rss/meson.build b/src/miners/rss/meson.build
-index 0bf0bb7..6f6ff5a 100644
+index 84eaa6b..51af115 100644
 --- a/src/miners/rss/meson.build
 +++ b/src/miners/rss/meson.build
-@@ -8,7 +8,7 @@ executable('tracker-miner-rss', sources,
+@@ -9,7 +9,7 @@ executable('tracker-miner-rss-@0@'.format(tracker_api_major),
      c_args: tracker_c_args,
      install: true,
      install_dir: get_option('libexecdir'),
@@ -53,25 +55,38 @@ index 0bf0bb7..6f6ff5a 100644
 +    install_rpath: tracker_internal_libs_dir,
  )
  
- dbus_service_file_untranslated = configure_file(
+ # This file allows starting the service with D-Bus autoactivation.
+diff --git a/src/tracker-control/meson.build b/src/tracker-control/meson.build
+index 9270350..1a2a352 100644
+--- a/src/tracker-control/meson.build
++++ b/src/tracker-control/meson.build
+@@ -36,7 +36,7 @@ executable('tracker-miner-fs-control-@0@'.format(tracker_api_major),
+     c_args: tracker_c_args,
+     install: true,
+     install_dir: get_option('libexecdir'),
+-    install_rpath: tracker_install_rpath,
++    install_rpath: tracker_internal_libs_dir,
+ )
+ 
+ # This file allows starting the service with D-Bus autoactivation.
 diff --git a/src/tracker-extract/meson.build b/src/tracker-extract/meson.build
-index aec37bf..699d90b 100644
+index ebb6b16..88ce49f 100644
 --- a/src/tracker-extract/meson.build
 +++ b/src/tracker-extract/meson.build
-@@ -167,7 +167,7 @@ executable('tracker-extract',
+@@ -162,7 +162,7 @@ executable('tracker-extract-@0@'.format(tracker_api_major),
    dependencies: tracker_extract_dependencies,
    install: true,
    install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
 -  install_rpath: tracker_install_rpath)
 +  install_rpath: tracker_internal_libs_dir)
  
- dbus_service_file_untranslated = configure_file(
-   input: 'org.freedesktop.Tracker1.Miner.Extract.service.in.in',
+ # This file allows starting the service with D-Bus autoactivation.
+ # It's also used by tracker-control to identify the miner.
 diff --git a/src/tracker-writeback/meson.build b/src/tracker-writeback/meson.build
-index 168c715..375181d 100644
+index 321e149..04ac38c 100644
 --- a/src/tracker-writeback/meson.build
 +++ b/src/tracker-writeback/meson.build
-@@ -47,7 +47,7 @@ executable('tracker-writeback',
+@@ -45,7 +45,7 @@ executable('tracker-writeback-@0@'.format(tracker_api_major),
    dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
    install: true,
    install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
@@ -79,4 +94,17 @@ index 168c715..375181d 100644
 +  install_rpath: tracker_internal_libs_dir)
  
  dbus_service_file = configure_file(
-   input: 'org.freedesktop.Tracker1.Writeback.service.in',
+   input: 'org.freedesktop.Tracker3.Writeback.service.in',
+diff --git a/src/tracker/meson.build b/src/tracker/meson.build
+index 1433f83..368f34d 100644
+--- a/src/tracker/meson.build
++++ b/src/tracker/meson.build
+@@ -24,7 +24,7 @@ foreach m: modules
+             '-DMANDIR="@0@"'.format(join_paths(get_option('prefix'), get_option('datadir'), 'man')),
+         ],
+         install: true,
+-        install_rpath: tracker_install_rpath,
++        install_rpath: tracker_internal_libs_dir,
+         install_dir: join_paths(get_option('libexecdir'), 'tracker@0@'.format(tracker_api_major)),
+         dependencies: [tracker_sparql, tracker_miners_common_dep],
+         include_directories: [commoninc, configinc, srcinc],

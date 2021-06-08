@@ -1,7 +1,1 @@
-build-Fix-Dautostart-true.patch
-functional-tests-Check-for-IPCT-image-tags-only-if-libipt.patch
-tests-Use-meson-test-suites-to-group-tests.patch
-prefer_systemd_activation.patch
-dont_start_for_root.patch
-Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch
 debian/Revert-build-Include-libdir-in-rpath.patch
