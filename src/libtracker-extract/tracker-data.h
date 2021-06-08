@@ -87,7 +87,8 @@ gboolean tracker_extract_module_shutdown (void);
  *
  * Since: 0.12
  */
-gboolean tracker_extract_get_metadata (TrackerExtractInfo *info);
+gboolean tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                                       GError             **error);
 
 G_END_DECLS
 

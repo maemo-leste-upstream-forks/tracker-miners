@@ -75,9 +75,9 @@ gif_error (const gchar *action, int err)
 {
 	const char *str = GifErrorString (err);
 	if (str != NULL) {
-		g_message ("%s, error: '%s'", action, str);
+		g_debug ("%s, error: '%s'", action, str);
 	} else {
-		g_message ("%s, undefined error %d", action, err);
+		g_debug ("%s, undefined error %d", action, err);
 	}
 }
 #else /* GIFLIB_MAJOR >= 5 */
@@ -86,9 +86,9 @@ static inline void print_gif_error()
 #if defined(GIFLIB_MAJOR) && defined(GIFLIB_MINOR) && ((GIFLIB_MAJOR == 4 && GIFLIB_MINOR >= 2) || GIFLIB_MAJOR > 4)
 	const char *str = GifErrorString ();
 	if (str != NULL) {
-		g_message ("GIF, error: '%s'", str);
+		g_debug ("GIF, error: '%s'", str);
 	} else {
-		g_message ("GIF, undefined error");
+		g_debug ("GIF, undefined error");
 	}
 #else
 	PrintGifError();
@@ -104,6 +104,7 @@ static inline void print_gif_error()
 
 static TrackerResource *
 read_metadata (GifFileType          *gifFile,
+               GFile                *file,
                const gchar          *uri)
 {
 	TrackerResource *metadata;
@@ -118,6 +119,7 @@ read_metadata (GifFileType          *gifFile,
 	MergeData md = { 0 };
 	GifData   gd = { 0 };
 	TrackerXmpData *xd = NULL;
+	gchar *sidecar = NULL;
 
 	do {
 		GifByteType *ExtData;
@@ -240,6 +242,10 @@ read_metadata (GifFileType          *gifFile,
 
 
 	if (!xd) {
+		xd = tracker_xmp_new_from_sidecar (file, &sidecar);
+	}
+
+	if (!xd) {
 		xd = g_new0 (TrackerXmpData, 1);
 	}
 
@@ -250,6 +256,16 @@ read_metadata (GifFileType          *gifFile,
 	metadata = tracker_resource_new (NULL);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (metadata, "rdf:type", "nmm:Photo");
+
+	if (sidecar) {
+		TrackerResource *sidecar_resource;
+
+		sidecar_resource = tracker_resource_new (sidecar);
+		tracker_resource_add_uri (sidecar_resource, "rdf:type", "nfo:FileDataObject");
+		tracker_resource_add_relation (sidecar_resource, "nie:interpretedAs", metadata);
+
+		tracker_resource_add_take_relation (metadata, "nie:isStoredAs", sidecar_resource);
+	}
 
 	if (xd->license) {
 		tracker_resource_set_string (metadata, "nie:license", xd->license);
@@ -455,7 +471,8 @@ read_metadata (GifFileType          *gifFile,
 
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	goffset size;
@@ -479,12 +496,14 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	fd = tracker_file_open_fd (filename);
 
 	if (fd == -1) {
-		g_warning ("Could not open GIF file '%s': %s\n",
-		           filename,
-		           g_strerror (errno));
+		g_set_error (error,
+		             G_IO_ERROR,
+		             g_io_error_from_errno (errno),
+		             "Could not open GIF file: %s\n",
+		             g_strerror (errno));
 		g_free (filename);
 		return FALSE;
-	}	
+	}
 
 #if GIFLIB_MAJOR < 5
 	if ((gifFile = DGifOpenFileHandle (fd)) == NULL) {
@@ -502,7 +521,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	uri = g_file_get_uri (file);
 
-	metadata = read_metadata (gifFile, uri);
+	metadata = read_metadata (gifFile, file, uri);
 
 	g_free (uri);
 

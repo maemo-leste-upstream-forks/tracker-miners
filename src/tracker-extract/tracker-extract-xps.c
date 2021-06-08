@@ -25,32 +25,31 @@
 #include <libtracker-extract/tracker-extract.h>
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *resource;
 	GXPSDocument *document;
 	GXPSFile *xps_file;
 	GFile *file;
 	gchar *filename;
-	GError *error = NULL;
+	GError *inner_error = NULL;
 
 	file = tracker_extract_info_get_file (info);
-	xps_file = gxps_file_new (file, &error);
+	xps_file = gxps_file_new (file, &inner_error);
 	filename = g_file_get_path (file);
 
-	if (error != NULL) {
-		g_warning ("Unable to open '%s': %s", filename, error->message);
-		g_error_free (error);
+	if (inner_error != NULL) {
+		g_propagate_prefixed_error (error, inner_error, "Unable to open: ");
 		g_free (filename);
 		return FALSE;
 	}
 
-	document = gxps_file_get_document (xps_file, 0, &error);
+	document = gxps_file_get_document (xps_file, 0, &inner_error);
 	g_object_unref (xps_file);
 
-	if (error != NULL) {
-		g_warning ("Unable to read '%s': %s", filename, error->message);
-		g_error_free (error);
+	if (inner_error != NULL) {
+		g_propagate_prefixed_error (error, inner_error, "Unable to read: ");
 		g_free (filename);
 		return FALSE;
 	}

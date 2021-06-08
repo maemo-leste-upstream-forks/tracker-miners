@@ -57,9 +57,6 @@ gboolean tracker_filename_casecmp_without_extension         (const gchar *a,
                                                              const gchar *b);
 
 /* File system utils */
-gboolean tracker_file_system_has_enough_space               (const gchar *path,
-                                                             gulong       required_bytes,
-                                                             gboolean     creating_db);
 guint64  tracker_file_system_get_remaining_space            (const gchar *path);
 gdouble  tracker_file_system_get_remaining_space_percentage (const gchar *path);
 

@@ -2,3 +2,5 @@
 ModulePath=libextract-ps.so
 MimeTypes=application/x-gzpostscript;application/postscript;
 FallbackRdfTypes=nfo:PaginatedTextDocument
+Graph=tracker:Documents
+Hash=@hash@

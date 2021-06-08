@@ -49,8 +49,7 @@ struct _TrackerMinerRSSPrivate {
 	GHashTable *channel_updates;
 	GHashTable *channels;
 
-	gint rdf_type_id;
-	gint mfo_feed_channel_id;
+	TrackerNotifier *notifier;
 };
 
 typedef struct {
@@ -72,12 +71,10 @@ typedef struct {
 	GHashTable *items;
 } FeedItemListInsertData;
 
-static void         graph_updated_cb                (GDBusConnection       *connection,
-                                                     const gchar           *sender_name,
-                                                     const gchar           *object_path,
-                                                     const gchar           *interface_name,
-                                                     const gchar           *signal_name,
-                                                     GVariant              *parameters,
+static void         notifier_events_cb              (TrackerNotifier       *notifier,
+                                                     const gchar           *service,
+                                                     const gchar           *graph,
+                                                     GPtrArray             *events,
                                                      gpointer               user_data);
 static void         miner_started                   (TrackerMiner          *miner);
 static void         miner_stopped                   (TrackerMiner          *miner);
@@ -168,6 +165,20 @@ parse_html_text (const gchar *html)
 }
 
 static void
+tracker_miner_rss_constructed (GObject *object)
+{
+	TrackerMinerRSSPrivate *priv;
+	TrackerSparqlConnection *connection;
+
+	priv = TRACKER_MINER_RSS_GET_PRIVATE (object);
+	connection = tracker_miner_get_connection (TRACKER_MINER (object));
+
+	priv->notifier = tracker_sparql_connection_create_notifier (connection);
+	g_signal_connect (priv->notifier, "events",
+	                  G_CALLBACK (notifier_events_cb), object);
+}
+
+static void
 tracker_miner_rss_finalize (GObject *object)
 {
 	TrackerMinerRSSPrivate *priv;
@@ -177,44 +188,12 @@ tracker_miner_rss_finalize (GObject *object)
 	priv->stopped = TRUE;
 	g_free (priv->last_status);
 	g_object_unref (priv->pool);
-
-	g_dbus_connection_signal_unsubscribe (priv->connection, priv->graph_updated_id);
-	g_object_unref (priv->connection);
+	g_object_unref (priv->notifier);
 
 	g_hash_table_unref (priv->channel_updates);
 	g_hash_table_unref (priv->channels);
 
 	G_OBJECT_CLASS (tracker_miner_rss_parent_class)->finalize (object);
-}
-
-static gint
-get_class_id (TrackerSparqlConnection *conn,
-              const gchar             *class)
-{
-	TrackerSparqlCursor *cursor;
-	GError *error = NULL;
-	gchar *query;
-	gint id = -1;
-
-	query = g_strdup_printf ("select tracker:id (%s) {}", class);
-	cursor = tracker_sparql_connection_query (conn, query, NULL, &error);
-	g_free (query);
-
-	if (error) {
-		g_critical ("Could not get class ID for '%s': %s\n",
-		            class, error->message);
-		g_error_free (error);
-		return -1;
-	}
-
-	if (tracker_sparql_cursor_next (cursor, NULL, NULL))
-		id = tracker_sparql_cursor_get_integer (cursor, 0);
-	else
-		g_critical ("'%s' didn't resolve to a known class ID", class);
-
-	g_object_unref (cursor);
-
-	return id;
 }
 
 static gboolean
@@ -232,6 +211,7 @@ tracker_miner_rss_class_init (TrackerMinerRSSClass *klass)
 	TrackerMinerOnlineClass *miner_online_class = TRACKER_MINER_ONLINE_CLASS (klass);
 
 	object_class->finalize = tracker_miner_rss_finalize;
+	object_class->constructed = tracker_miner_rss_constructed;
 
 	miner_class->started = miner_started;
 	miner_class->stopped = miner_stopped;
@@ -244,22 +224,11 @@ tracker_miner_rss_class_init (TrackerMinerRSSClass *klass)
 static void
 tracker_miner_rss_init (TrackerMinerRSS *object)
 {
-	GError *error = NULL;
 	TrackerMinerRSSPrivate *priv;
-	gchar *dbus_domain_name;
 
 	g_message ("Initializing...");
 
 	priv = TRACKER_MINER_RSS_GET_PRIVATE (object);
-
-	priv->connection = g_bus_get_sync (TRACKER_IPC_BUS, NULL, &error);
-
-	if (!priv->connection) {
-		g_critical ("Could not connect to the D-Bus session bus, %s",
-			    error ? error->message : "no error given.");
-		g_error_free (error);
-		return;
-	}
 
 	/* Key object reference is cleaned up in value destroy func */
 	priv->channel_updates = g_hash_table_new_full (g_direct_hash,
@@ -273,25 +242,6 @@ tracker_miner_rss_init (TrackerMinerRSS *object)
 	g_signal_connect (priv->pool, "feed-fetching", G_CALLBACK (feed_fetching_cb), object);
 	g_signal_connect (priv->pool, "feed-ready", G_CALLBACK (feed_ready_cb), object);
 	priv->now_fetching = 0;
-
-	g_message ("Listening for GraphUpdated changes on D-Bus interface...");
-	g_message ("  arg0:'%s'", TRACKER_PREFIX_MFO "FeedChannel");
-
-	tracker_load_domain_config (tracker_sparql_connection_get_domain (), &dbus_domain_name, &error);
-
-	priv->graph_updated_id =
-		g_dbus_connection_signal_subscribe  (priv->connection,
-		                                     dbus_domain_name,
-		                                     "org.freedesktop.Tracker1.Resources",
-		                                     "GraphUpdated",
-		                                     "/org/freedesktop/Tracker1/Resources",
-		                                     TRACKER_PREFIX_MFO "FeedChannel",
-		                                     G_DBUS_SIGNAL_FLAGS_NONE,
-		                                     graph_updated_cb,
-		                                     object,
-		                                     NULL);
-
-	g_free (dbus_domain_name);
 }
 
 static void
@@ -304,7 +254,6 @@ delete_unbound_messages (TrackerMinerRSS *miner)
 	                                        "                mfo:enclosureList ?encl ."
 	                                        "              FILTER(!BOUND(nmo:communicationChannel(?msg)))"
 	                                        "}",
-	                                        G_PRIORITY_DEFAULT,
 	                                        NULL, NULL, NULL);
 }
 
@@ -365,7 +314,7 @@ delete_message_channels (TrackerMinerRSS *miner,
 	                        "}", ids_str->str);
 
 	tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (miner)),
-	                                        query->str, G_PRIORITY_DEFAULT,
+	                                        query->str,
 	                                        NULL,
 	                                        delete_message_channels_cb,
 	                                        miner);
@@ -374,70 +323,42 @@ delete_message_channels (TrackerMinerRSS *miner,
 }
 
 static void
-handle_deletes (TrackerMinerRSS *miner,
-                GVariantIter    *iter)
+notifier_events_cb (TrackerNotifier *notifier,
+                    const gchar     *service,
+                    const gchar     *graph,
+                    GPtrArray       *events,
+                    gpointer         user_data)
 {
-	GArray *deleted = g_array_new (FALSE, FALSE, sizeof (gint));
-	gint graph, subject, pred, object;
-	TrackerMinerRSSPrivate *priv;
+	TrackerMinerRSS *miner = user_data;
+	GArray *inserted, *deleted;
+	gint i;
 
-	priv = TRACKER_MINER_RSS_GET_PRIVATE (miner);
+	inserted = g_array_new (FALSE, FALSE, sizeof (gint));
+	deleted = g_array_new (FALSE, FALSE, sizeof (gint));
 
-	while (g_variant_iter_next (iter, "(iiii)",
-	                            &graph, &subject, &pred, &object)) {
-		if (pred == priv->rdf_type_id &&
-		    object == priv->mfo_feed_channel_id) {
-			g_array_append_val (deleted, subject);
+	for (i = 0; i < events->len; i++) {
+		TrackerNotifierEvent *event;
+		TrackerNotifierEventType event_type;
+		gint64 id;
+
+		event = g_ptr_array_index (events, i);
+		event_type = tracker_notifier_event_get_event_type (event);
+		id = tracker_notifier_event_get_id (event);
+
+		if (event_type == TRACKER_NOTIFIER_EVENT_CREATE) {
+			g_array_append_val (inserted, id);
+		} else if (event_type == TRACKER_NOTIFIER_EVENT_DELETE) {
+			g_array_append_val (deleted, id);
 		}
 	}
 
 	if (deleted->len > 0)
 		delete_message_channels (miner, deleted);
+	if (inserted->len > 0)
+		retrieve_and_schedule_feeds (miner, inserted);
 
-	g_array_free (deleted, TRUE);
-}
-
-static void
-handle_updates (TrackerMinerRSS *miner,
-                GVariantIter    *iter)
-{
-	GArray *updated = g_array_new (FALSE, FALSE, sizeof (gint));
-	gint graph, subject, pred, object;
-	TrackerMinerRSSPrivate *priv;
-
-	priv = TRACKER_MINER_RSS_GET_PRIVATE (miner);
-
-	while (g_variant_iter_next (iter, "(iiii)",
-	                            &graph, &subject, &pred, &object)) {
-		if (pred == priv->rdf_type_id &&
-		    object == priv->mfo_feed_channel_id) {
-			g_array_append_val (updated, subject);
-		}
-	}
-
-	if (updated->len > 0)
-		retrieve_and_schedule_feeds (miner, updated);
-
-	g_array_free (updated, TRUE);
-}
-
-static void
-graph_updated_cb (GDBusConnection *connection,
-                  const gchar     *sender_name,
-                  const gchar     *object_path,
-                  const gchar     *interface_name,
-                  const gchar     *signal_name,
-                  GVariant        *parameters,
-                  gpointer         user_data)
-{
-	TrackerMinerRSS *miner = TRACKER_MINER_RSS (user_data);
-	GVariantIter *deletes, *updates;
-
-	g_variant_get (parameters, "(&sa(iiii)a(iiii))", NULL, &deletes, &updates);
-	handle_deletes (miner, deletes);
-	handle_updates (miner, updates);
-	g_variant_iter_free (deletes);
-	g_variant_iter_free (updates);
+	g_array_unref (inserted);
+	g_array_unref (deleted);
 }
 
 static FeedChannelUpdateData *
@@ -567,8 +488,7 @@ feed_channel_changed_timeout_cb (gpointer user_data)
 	g_free (time_str);
 
 	tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (fcud->miner)),
-	                                        tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN),
-	                                        G_PRIORITY_DEFAULT,
+	                                        tracker_resource_print_sparql_update (resource, NULL, NULL),
 	                                        fcud->cancellable,
 	                                        feed_channel_change_updated_time_cb,
 	                                        fcud);
@@ -864,30 +784,15 @@ feed_channel_content_update_cb (GObject      *source,
                                 gpointer      user_data)
 {
 	TrackerSparqlConnection *connection;
-	GPtrArray *errors, *array = user_data;
+	GPtrArray *array = user_data;
 	GError *error = NULL;
-	guint i;
 
 	connection = TRACKER_SPARQL_CONNECTION (source);
-	errors = tracker_sparql_connection_update_array_finish (connection,
-	                                                        result, &error);
-
-	if (error) {
+	if (!tracker_sparql_connection_update_array_finish (connection,
+	                                                    result, &error)) {
 		g_warning ("Could not update feed items: %s",
 		           error->message);
 		g_error_free (error);
-	} else {
-		for (i = 0; i < errors->len; i++) {
-			GError *error = g_ptr_array_index (errors, i);
-
-			if (!error)
-				continue;
-
-			g_warning ("Error in item %d of update: %s\nQuery: %s", i,
-			           error->message, (gchar *) g_ptr_array_index (array, i));
-		}
-
-		g_ptr_array_unref (errors);
 	}
 
 	g_ptr_array_unref (array);
@@ -937,7 +842,7 @@ check_feed_items_cb (GObject      *source_object,
 
 			resource = feed_message_create_resource (data->miner,
 			                                       item, urn);
-			str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN);
+			str = tracker_resource_print_sparql_update (resource, NULL, NULL);
 			g_ptr_array_add (array, g_strdup (str));
 			g_object_unref (resource);
 		}
@@ -963,7 +868,7 @@ check_feed_items_cb (GObject      *source_object,
 	while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &item)) {
 		resource = feed_message_create_resource (data->miner,
 		                                       item, NULL);
-		str = tracker_resource_print_sparql_update (resource, NULL, TRACKER_OWN_GRAPH_URN);
+		str = tracker_resource_print_sparql_update (resource, NULL, NULL);
 		g_ptr_array_add (array, g_strdup (str));
 		g_object_unref (resource);
 	}
@@ -977,7 +882,7 @@ check_feed_items_cb (GObject      *source_object,
 	tracker_sparql_connection_update_array_async (tracker_miner_get_connection (TRACKER_MINER (data->miner)),
 	                                              (gchar **) array->pdata,
 	                                              array->len,
-	                                              G_PRIORITY_DEFAULT, NULL,
+	                                              NULL,
 	                                              feed_channel_content_update_cb,
 	                                              array);
 	feed_channel_change_updated_time (data->miner, data->channel);
@@ -1084,7 +989,7 @@ update_feed_channel_info (TrackerMinerRSS *miner,
 	g_string_append (update, "}");
 
 	tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (miner)),
-	                                        update->str, G_PRIORITY_DEFAULT,
+	                                        update->str,
 	                                        NULL, NULL, NULL);
 	g_string_free (update, TRUE);
 }
@@ -1258,14 +1163,10 @@ static void
 miner_started (TrackerMiner *miner)
 {
 	TrackerMinerRSSPrivate *priv;
-	TrackerSparqlConnection *conn;
 
 	g_object_set (miner, "progress", 0.0, "status", "Initializing", NULL);
 
 	priv = TRACKER_MINER_RSS_GET_PRIVATE (miner);
-	conn = tracker_miner_get_connection (miner);
-	priv->rdf_type_id = get_class_id (conn, "rdf:type");
-	priv->mfo_feed_channel_id = get_class_id (conn, "mfo:FeedChannel");
 	retrieve_and_schedule_feeds (TRACKER_MINER_RSS (miner), NULL);
 	grss_feeds_pool_switch (priv->pool, TRUE);
 }
@@ -1309,10 +1210,12 @@ miner_resumed (TrackerMiner *miner)
 }
 
 TrackerMinerRSS *
-tracker_miner_rss_new (GError **error)
+tracker_miner_rss_new (TrackerSparqlConnection  *connection,
+                       GError                  **error)
 {
 	return g_initable_new (TRACKER_TYPE_MINER_RSS,
 	                       NULL,
 	                       error,
+	                       "connection", connection,
 	                       NULL);
 }

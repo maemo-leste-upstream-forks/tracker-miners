@@ -48,36 +48,23 @@ struct TrackerMinerFilesClass {
 
 GType         tracker_miner_files_get_type                 (void) G_GNUC_CONST;
 
-TrackerMiner *tracker_miner_files_new                      (TrackerConfig  *config,
-                                                            GError        **error);
-
-/* Convenience functions for --eligible tracker-miner-fs cmdline */
-gboolean      tracker_miner_files_check_file               (GFile             *file,
-                                                            GSList            *ignored_file_paths,
-                                                            GSList            *ignored_file_patterns);
-gboolean      tracker_miner_files_check_directory          (GFile             *file,
-                                                            GSList            *index_recursive_directories,
-                                                            GSList            *index_single_directories,
-                                                            GSList            *ignored_directory_paths,
-                                                            GSList            *ignored_directory_patterns);
-gboolean      tracker_miner_files_check_directory_contents (GFile             *parent,
-                                                            GList             *children,
-                                                            GSList            *ignored_content);
-gboolean      tracker_miner_files_monitor_directory        (GFile             *file,
-                                                            gboolean           enable_monitors,
-                                                            GSList            *directories_to_check);
-gboolean      tracker_miner_files_is_file_eligible         (TrackerMinerFiles *miner,
-                                                            GFile             *file);
+TrackerMiner *tracker_miner_files_new                      (TrackerSparqlConnection  *connection,
+                                                            TrackerConfig            *config,
+                                                            const gchar              *domain,
+                                                            GError                  **error);
 
 /* Global functions to handle timestamp files */
-gboolean tracker_miner_files_get_first_index_done (void);
-void     tracker_miner_files_set_first_index_done (gboolean done);
+gboolean tracker_miner_files_get_first_index_done (TrackerMinerFiles *mf);
+void     tracker_miner_files_set_first_index_done (TrackerMinerFiles *mf,
+                                                   gboolean           done);
 
-guint64  tracker_miner_files_get_last_crawl_done  (void);
-void     tracker_miner_files_set_last_crawl_done  (gboolean done);
+guint64  tracker_miner_files_get_last_crawl_done  (TrackerMinerFiles *mf);
+void     tracker_miner_files_set_last_crawl_done  (TrackerMinerFiles *mf,
+                                                   gboolean           done);
 
-gboolean tracker_miner_files_get_need_mtime_check (void);
-void     tracker_miner_files_set_need_mtime_check (gboolean needed);
+gboolean tracker_miner_files_get_need_mtime_check (TrackerMinerFiles *mf);
+void     tracker_miner_files_set_need_mtime_check (TrackerMinerFiles *mf,
+                                                   gboolean           needed);
 
 void     tracker_miner_files_set_mtime_checking   (TrackerMinerFiles *miner,
                                                    gboolean           mtime_checking);

@@ -77,7 +77,7 @@ entry_parsed (TotemPlParser *parser,
 
 	if (data->track_counter > 1000) {
 		/* limit playlists to 1000 entries for query performance reasons */
-		g_message ("Playlist has > 1000 entries. Ignoring for performance reasons.");
+		g_debug ("Playlist has > 1000 entries. Ignoring for performance reasons.");
 		return;
 	}
 
@@ -115,7 +115,8 @@ entry_parsed (TotemPlParser *parser,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TotemPlParser *pl;
 	TrackerResource *metadata;
@@ -143,11 +144,11 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 	if (totem_pl_parser_parse (pl, uri, FALSE) == TOTEM_PL_PARSER_RESULT_SUCCESS) {
 		if (data.title != NULL) {
-			g_message ("Playlist title:'%s'", data.title);
+			g_debug ("Playlist title:'%s'", data.title);
 			tracker_resource_set_string (metadata, "nie:title", data.title);
 			g_free (data.title);
 		} else {
-			g_message ("Playlist has no title, attempting to get one from filename");
+			g_debug ("Playlist has no title, attempting to get one from filename");
 			tracker_guarantee_resource_title_from_file (metadata, "nie:title", NULL, uri, NULL);
 		}
 

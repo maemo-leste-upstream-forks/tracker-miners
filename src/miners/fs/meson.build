@@ -3,13 +3,7 @@ sources = [
     'tracker-extract-watchdog.c',
     'tracker-main.c',
     'tracker-miner-files.c',
-    'tracker-miner-files-index.c',
-    'tracker-miner-files-peer-listener.c',
     'tracker-storage.c',
-    'tracker-thumbnailer.c',
-    'tracker-writeback-listener.c',
-    'tracker-writeback-dispatcher.c',
-    'tracker-writeback.c',
 ]
 
 tracker_miner_fs_deps = [
@@ -26,7 +20,8 @@ elif battery_detection_library_name == 'hal'
   tracker_miner_fs_deps += hal
 endif
 
-executable('tracker-miner-fs', sources,
+executable('tracker-miner-fs-@0@'.format(tracker_api_major),
+    sources,
     dependencies: tracker_miner_fs_deps,
     c_args: tracker_c_args,
     install: true,
@@ -34,38 +29,37 @@ executable('tracker-miner-fs', sources,
     install_rpath: tracker_install_rpath,
 )
 
-dbus_service_file_untranslated = configure_file(
-    input: 'org.freedesktop.Tracker1.Miner.Files.service.in.in',
-    output: 'org.freedesktop.Tracker1.Miner.Files.service.in',
-    configuration: conf)
-
-dbus_service_file = custom_target('tracker-miner-files-dbus-service-file',
-    input: dbus_service_file_untranslated,
-    output: 'org.freedesktop.Tracker1.Miner.Files.service',
-    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
-    install: true,
-    install_dir: dbus_services_dir)
-
-desktop_file_untranslated = configure_file(
-    input: 'tracker-miner-fs.desktop.in.in',
-    output: 'tracker-miner-fs.desktop.in',
-    configuration: conf)
-
-desktop_file = custom_target('tracker-miner-fs-desktop-file',
-    input: desktop_file_untranslated,
-    output: 'tracker-miner-fs.desktop',
-    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'])
-
-if get_option('autostart')
-  install_data(desktop_file,
-      install: true,
-      install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
+# This file allows starting the service with D-Bus autoactivation.
+# It's also used by tracker-control to identify the miner.
+tmp_conf = configuration_data()
+tmp_conf.merge_from(conf)
+if get_option('domain_prefix') == 'org.freedesktop'
+  tmp_conf.set ('SYSTEMD_SERVICE', 'SystemdService=tracker-miner-fs-3.service')
+else
+  tmp_conf.set ('SYSTEMD_SERVICE', '')
 endif
+dbus_service_file = configure_file(
+    input: 'org.freedesktop.Tracker3.Miner.Files.service.in',
+    output: get_option('domain_prefix') + '.Tracker3.Miner.Files.service',
+    configuration: tmp_conf,
+    install: true,
+    install_dir: dbus_services_dir,
+)
 
-if install_systemd_user_services
+# This file allows starting the service automatically using XDG autostart.
+# systemd user service activation is preferred if available.
+desktop_file = configure_file(
+    input: 'tracker-miner-fs.desktop.in',
+    output: 'tracker-miner-fs-@0@.desktop'.format(tracker_api_major),
+    configuration: conf,
+    install: true,
+    install_dir: xdg_autostart_dir)
+
+if get_option('systemd_user_services')
+  # This file allows starting the service as a systemd user service.
   configure_file(
       input: 'tracker-miner-fs.service.in',
-      output: 'tracker-miner-fs.service',
+      output: 'tracker-miner-fs-@0@.service'.format(tracker_api_major),
       configuration: conf,
       install: true,
       install_dir: systemd_user_services_dir)

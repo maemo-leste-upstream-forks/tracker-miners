@@ -24,15 +24,10 @@
 #include <errno.h>
 #include <string.h>
 
+/* Avoid warnings about deprecated GParameter from gsf headers */
+#define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_40
 #include <glib.h>
 #include <gsf/gsf.h>
-#include <gsf/gsf-doc-meta-data.h>
-#include <gsf/gsf-infile.h>
-#include <gsf/gsf-infile-msole.h>
-#include <gsf/gsf-input-stdio.h>
-#include <gsf/gsf-msole-utils.h>
-#include <gsf/gsf-utils.h>
-#include <gsf/gsf-infile-zip.h>
 
 #include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
@@ -1620,7 +1615,8 @@ extract_summary (TrackerResource *metadata,
  * @param metadata where to store extracted data to
  */
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	TrackerConfig *config;
@@ -1646,8 +1642,11 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	g_free (filename);
 
 	if (!mfile) {
-		g_warning ("Can't open file from uri '%s': %s",
-		           uri, g_strerror (errno));
+		g_set_error (error,
+		             G_IO_ERROR,
+		             g_io_error_from_errno (errno),
+		             "Can't open file: %s",
+		             g_strerror (errno));
 		g_free (uri);
 		return FALSE;
 	}
@@ -1687,7 +1686,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 
 		content = extract_excel_content (infile, max_bytes, &is_encrypted);
 	} else {
-		g_message ("Mime type was not recognised:'%s'", mime_used);
+		g_debug ("Mime type was not recognised:'%s'", mime_used);
 	}
 
 	if (content) {

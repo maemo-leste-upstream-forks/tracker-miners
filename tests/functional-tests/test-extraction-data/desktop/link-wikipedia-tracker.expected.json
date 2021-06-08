@@ -1,0 +1,16 @@
+{
+    "test": {
+        "Filename": "link-wikipedia-tracker.desktop"
+    },
+    "metadata": {
+        "nie:title" : "Wikipedia Tracker",
+        "nfo:bookmarks": {
+            "@id": "https://en.wikipedia.org/wiki/Tracker_(search_software)",
+            "@type": [
+                "nie:DataObject",
+                "nfo:Website"
+            ],
+            "nie:url": "https://en.wikipedia.org/wiki/Tracker_(search_software)"
+        }
+    }
+}

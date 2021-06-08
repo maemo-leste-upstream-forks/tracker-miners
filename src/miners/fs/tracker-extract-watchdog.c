@@ -25,6 +25,7 @@
 #include <libtracker-miner/tracker-miner.h>
 
 enum {
+	STATUS,
 	LOST,
 	N_SIGNALS
 };
@@ -33,7 +34,10 @@ static guint signals[N_SIGNALS] = { 0, };
 
 struct _TrackerExtractWatchdog {
 	GObject parent_class;
+	GDBusConnection *conn;
+	gchar *domain;
 	guint extractor_watchdog_id;
+	guint progress_signal_id;
 	gboolean initializing;
 };
 
@@ -45,10 +49,37 @@ G_DEFINE_TYPE (TrackerExtractWatchdog, tracker_extract_watchdog, G_TYPE_OBJECT)
 static void
 extract_watchdog_stop (TrackerExtractWatchdog *watchdog)
 {
+	if (watchdog->conn && watchdog->progress_signal_id) {
+		g_dbus_connection_signal_unsubscribe (watchdog->conn,
+		                                      watchdog->progress_signal_id);
+		watchdog->progress_signal_id = 0;
+		watchdog->conn = NULL;
+	}
+
 	if (watchdog->extractor_watchdog_id) {
 		g_bus_unwatch_name (watchdog->extractor_watchdog_id);
 		watchdog->extractor_watchdog_id = 0;
 	}
+}
+
+static void
+on_extract_progress_cb (GDBusConnection *conn,
+                        const gchar     *sender_name,
+                        const gchar     *object_path,
+                        const gchar     *interface_name,
+                        const gchar     *signal_name,
+                        GVariant        *parameters,
+                        gpointer         user_data)
+{
+	TrackerExtractWatchdog *watchdog = user_data;
+	const gchar *status;
+	gdouble progress;
+	gint32 remaining;
+
+	g_variant_get (parameters, "(&sdi)",
+	               &status, &progress, &remaining);
+	g_signal_emit (watchdog, signals[STATUS], 0,
+	               status, progress, (gint) remaining);
 }
 
 static void
@@ -61,6 +92,19 @@ extract_watchdog_name_appeared (GDBusConnection *conn,
 
 	if (watchdog->initializing)
 		watchdog->initializing = FALSE;
+
+	watchdog->conn = conn;
+	watchdog->progress_signal_id =
+		g_dbus_connection_signal_subscribe (watchdog->conn,
+		                                    "org.freedesktop.Tracker3.Miner.Extract",
+		                                    "org.freedesktop.Tracker3.Miner",
+		                                    "Progress",
+		                                    "/org/freedesktop/Tracker3/Miner/Extract",
+		                                    NULL,
+		                                    G_DBUS_SIGNAL_FLAGS_NONE,
+		                                    on_extract_progress_cb,
+		                                    watchdog,
+		                                    NULL);
 }
 
 static void
@@ -88,6 +132,7 @@ extract_watchdog_name_vanished (GDBusConnection *conn,
 		return;
 	}
 
+	g_signal_emit (watchdog, signals[STATUS], 0, "Idle", 1.0, 0);
 	g_signal_emit (watchdog, signals[LOST], 0);
 }
 
@@ -95,18 +140,17 @@ static void
 extract_watchdog_start (TrackerExtractWatchdog *watchdog,
 			gboolean                autostart)
 {
-	gchar *domain_name, *tracker_extract_dbus_name;
-
-	g_debug ("Setting up watch on tracker-extract (autostart: %s)",
-		 autostart ? "yes" : "no");
-
-	domain_name = tracker_sparql_connection_get_domain ();
+	const gchar *domain_name = watchdog->domain;
+	gchar *tracker_extract_dbus_name;
 
 	if (domain_name == NULL) {
 		tracker_extract_dbus_name = g_strdup (TRACKER_MINER_DBUS_NAME_PREFIX "Extract");
 	} else {
-		tracker_extract_dbus_name = g_strconcat (domain_name, ".Tracker1.Miner.Extract", NULL);
+		tracker_extract_dbus_name = g_strconcat (domain_name, ".Tracker3.Miner.Extract", NULL);
 	}
+
+	g_debug ("Setting up watch on tracker-extract at %s (autostart: %s)",
+		 tracker_extract_dbus_name, autostart ? "yes" : "no");
 
 	watchdog->extractor_watchdog_id =
 		g_bus_watch_name (TRACKER_IPC_BUS,
@@ -119,7 +163,6 @@ extract_watchdog_start (TrackerExtractWatchdog *watchdog,
 				  watchdog, NULL);
 
 	g_free (tracker_extract_dbus_name);
-	g_free (domain_name);
 }
 
 static void
@@ -128,6 +171,7 @@ tracker_extract_watchdog_finalize (GObject *object)
 	TrackerExtractWatchdog *watchdog = TRACKER_EXTRACT_WATCHDOG (object);
 
 	extract_watchdog_stop (watchdog);
+	g_free (watchdog->domain);
 
 	G_OBJECT_CLASS (tracker_extract_watchdog_parent_class)->finalize (object);
 }
@@ -139,6 +183,14 @@ tracker_extract_watchdog_class_init (TrackerExtractWatchdogClass *klass)
 
 	object_class->finalize = tracker_extract_watchdog_finalize;
 
+	signals[STATUS] = g_signal_new ("status",
+	                                G_OBJECT_CLASS_TYPE (object_class),
+	                                G_SIGNAL_RUN_LAST,
+	                                0, NULL, NULL, NULL,
+	                                G_TYPE_NONE, 3,
+	                                G_TYPE_STRING,
+	                                G_TYPE_DOUBLE,
+	                                G_TYPE_INT);
 	signals[LOST] = g_signal_new ("lost",
 	                              G_OBJECT_CLASS_TYPE (object_class),
 	                              G_SIGNAL_RUN_LAST,
@@ -149,15 +201,21 @@ tracker_extract_watchdog_class_init (TrackerExtractWatchdogClass *klass)
 static void
 tracker_extract_watchdog_init (TrackerExtractWatchdog *watchdog)
 {
-	watchdog->initializing = TRUE;
-	extract_watchdog_start (watchdog, FALSE);
 }
 
 TrackerExtractWatchdog *
-tracker_extract_watchdog_new (void)
+tracker_extract_watchdog_new (const gchar *domain)
 {
-	return g_object_new (TRACKER_TYPE_EXTRACT_WATCHDOG,
-			     NULL);
+	TrackerExtractWatchdog *watchdog;
+
+	watchdog = g_object_new (TRACKER_TYPE_EXTRACT_WATCHDOG,
+	                         NULL);
+
+	watchdog->initializing = TRUE;
+	watchdog->domain = g_strdup (domain);
+	extract_watchdog_start (watchdog, FALSE);
+
+	return watchdog;
 }
 
 void

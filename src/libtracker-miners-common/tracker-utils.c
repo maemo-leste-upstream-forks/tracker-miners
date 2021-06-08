@@ -86,9 +86,6 @@ tracker_seconds_estimate_to_string (gdouble   seconds_elapsed,
 	                                     items_done,
 	                                     items_remaining);
 
-	if (estimate == 0)
-		return g_strdup (_("unknown time"));
-
 	return tracker_seconds_to_string (estimate, short_string);
 }
 

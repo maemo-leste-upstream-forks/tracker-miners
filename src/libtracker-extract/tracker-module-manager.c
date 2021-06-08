@@ -23,6 +23,8 @@
 
 #include "tracker-module-manager.h"
 
+#include "libtracker-miners-common/tracker-debug.h"
+
 #define EXTRACTOR_FUNCTION "tracker_extract_get_metadata"
 #define INIT_FUNCTION      "tracker_extract_module_init"
 #define SHUTDOWN_FUNCTION  "tracker_extract_module_shutdown"
@@ -33,6 +35,8 @@ typedef struct {
 	GList *allow_patterns;
 	GList *block_patterns;
 	GStrv fallback_rdf_types;
+	gchar *graph;
+	gchar *hash;
 } RuleInfo;
 
 typedef struct {
@@ -42,7 +46,8 @@ typedef struct {
 	TrackerExtractShutdownFunc shutdown_func;
 } ModuleInfo;
 
-static gboolean dummy_extract_func (TrackerExtractInfo *info);
+static gboolean dummy_extract_func (TrackerExtractInfo  *info,
+                                    GError             **error);
 
 static ModuleInfo dummy_module = {
 	NULL, dummy_extract_func, NULL, NULL
@@ -56,12 +61,12 @@ static GArray *rules = NULL;
 struct _TrackerMimetypeInfo {
 	const GList *rules;
 	const GList *cur;
-
-	ModuleInfo *cur_module_info;
+	ModuleInfo *module;
 };
 
 static gboolean
-dummy_extract_func (TrackerExtractInfo *info)
+dummy_extract_func (TrackerExtractInfo  *info,
+                    GError             **error)
 {
 	return TRUE;
 }
@@ -96,8 +101,6 @@ load_extractor_rule (GKeyFile    *key_file,
 		extractors_dir = g_getenv ("TRACKER_EXTRACTORS_DIR");
 		if (G_LIKELY (extractors_dir == NULL)) {
 			extractors_dir = TRACKER_EXTRACTORS_DIR;
-		} else {
-			g_message ("Extractor rules directory is '%s' (set in env)", extractors_dir);
 		}
 
 		tmp = g_build_filename (extractors_dir, module_path, NULL);
@@ -118,11 +121,13 @@ load_extractor_rule (GKeyFile    *key_file,
 	}
 
 	/* This key is optional */
-	block_mimetypes = g_key_file_get_string_list (key_file, "ExtractorRule", "BlockMimeTypes", &n_block_mimetypes, &local_error);
+	block_mimetypes = g_key_file_get_string_list (key_file, "ExtractorRule", "BlockMimeTypes", &n_block_mimetypes, NULL);
 
 	rule.rule_path = g_strdup (rule_path);
 
 	rule.fallback_rdf_types = g_key_file_get_string_list (key_file, "ExtractorRule", "FallbackRdfTypes", NULL, NULL);
+	rule.graph = g_key_file_get_string (key_file, "ExtractorRule", "Graph", NULL);
+	rule.hash = g_key_file_get_string (key_file, "ExtractorRule", "Hash", NULL);
 
 	/* Construct the rule */
 	rule.module_path = g_intern_string (module_path);
@@ -169,8 +174,6 @@ tracker_extract_module_manager_init (void)
 	extractors_dir = g_getenv ("TRACKER_EXTRACTOR_RULES_DIR");
 	if (G_LIKELY (extractors_dir == NULL)) {
 		extractors_dir = TRACKER_EXTRACTOR_RULES_DIR;
-	} else {
-		g_message ("Extractor rules directory is '%s' (set in env)", extractors_dir);
 	}
 
 	dir = g_dir_open (extractors_dir, 0, &error);
@@ -185,7 +188,7 @@ tracker_extract_module_manager_init (void)
 		files = g_list_insert_sorted (files, (gpointer) name, (GCompareFunc) g_strcmp0);
 	}
 
-	g_message ("Loading extractor rules... (%s)", extractors_dir);
+	TRACKER_NOTE (CONFIG, g_message ("Loading extractor rules... (%s)", extractors_dir));
 
 	rules = g_array_new (FALSE, TRUE, sizeof (RuleInfo));
 
@@ -197,7 +200,7 @@ tracker_extract_module_manager_init (void)
 		name = l->data;
 
 		if (!g_str_has_suffix (l->data, ".rule")) {
-			g_message ("  Skipping file '%s', no '.rule' suffix", name);
+			TRACKER_NOTE (CONFIG, g_message ("  Skipping file '%s', no '.rule' suffix", name));
 			continue;
 		}
 
@@ -209,14 +212,14 @@ tracker_extract_module_manager_init (void)
 			g_warning ("  Could not load extractor rule file '%s': %s", name, error->message);
 			g_clear_error (&error);
 		} else {
-			g_debug ("  Loaded rule '%s'", name);
+			TRACKER_NOTE (CONFIG, g_message ("  Loaded rule '%s'", name));
 		}
 
 		g_key_file_free (key_file);
 		g_free (path);
 	}
 
-	g_message ("Extractor rules loaded");
+	TRACKER_NOTE (CONFIG, g_message ("Extractor rules loaded"));
 	g_list_free (files);
 	g_dir_close (dir);
 
@@ -314,7 +317,7 @@ tracker_extract_module_manager_get_matching_rules (const gchar *mimetype)
 }
 
 GStrv
-tracker_extract_module_manager_get_fallback_rdf_types (const gchar *mimetype)
+tracker_extract_module_manager_get_rdf_types (const gchar *mimetype)
 {
 	GList *l, *list;
 	GHashTable *rdf_types;
@@ -364,7 +367,7 @@ tracker_extract_module_manager_get_fallback_rdf_types (const gchar *mimetype)
 }
 
 GStrv
-tracker_extract_module_manager_get_rdf_types (void)
+tracker_extract_module_manager_get_all_rdf_types (void)
 {
 	GHashTable *rdf_types;
 	gchar **types, *type;
@@ -475,44 +478,42 @@ load_module (RuleInfo *info)
 static gboolean
 initialize_first_module (TrackerMimetypeInfo *info)
 {
-	ModuleInfo *module_info = NULL;
-
 	/* Actually iterates through the list loaded + initialized module */
-	while (info->cur && !module_info) {
-		module_info = load_module (info->cur->data);
+	while (info->cur) {
+		info->module = load_module (info->cur->data);
+		if (info->module)
+			return TRUE;
 
-		if (!module_info) {
-			info->cur = info->cur->next;
-		}
+		info->cur = info->cur->next;
 	}
 
-	info->cur_module_info = module_info;
-	return (info->cur_module_info != NULL);
+	return FALSE;
 }
 
 /**
- * tracker_extract_module_manager_get_mimetype_handlers:
+ * tracker_extract_module_manager_get_module:
  * @mimetype: a mimetype string
+ * @rule_out: (out): Return location for the rule name
+ * @extract_func_out: (out): Return location for the extraction function
  *
- * Returns a #TrackerMimetypeInfo struct containing information about
- * the modules that handle @mimetype, or %NULL if no modules handle
+ * Returns the module, extraction function and rule name for the module
+ * that handles @mimetype, or %NULL if there are no modules that handle
  * @mimetype.
  *
- * The modules are ordered from most to least specific, and the
- * returned #TrackerMimetypeInfo already points to the first
- * module.
- *
- * Returns: (transfer full): (free-function: tracker_mimetype_info_free): (allow-none):
+ * Returns: (transfer none): (allow-none): #GModule handling the mimetype
  * A #TrackerMimetypeInfo holding the information about the different
  * modules handling @mimetype, or %NULL if no modules handle @mimetype.
- *
- * Since: 0.12
  **/
-TrackerMimetypeInfo *
-tracker_extract_module_manager_get_mimetype_handlers (const gchar *mimetype)
+GModule *
+tracker_extract_module_manager_get_module (const gchar                 *mimetype,
+                                           const gchar                **rule_out,
+                                           TrackerExtractMetadataFunc  *extract_func_out)
 {
-	TrackerMimetypeInfo *info;
+	TrackerMimetypeInfo info = { 0, };
 	GList *mimetype_rules;
+	const gchar *rule = NULL;
+	TrackerExtractMetadataFunc func = NULL;
+	GModule *module = NULL;
 
 	g_return_val_if_fail (mimetype != NULL, NULL);
 
@@ -522,77 +523,23 @@ tracker_extract_module_manager_get_mimetype_handlers (const gchar *mimetype)
 		return NULL;
 	}
 
-	info = g_slice_new0 (TrackerMimetypeInfo);
-	info->rules = mimetype_rules;
-	info->cur = info->rules;
+	info.rules = mimetype_rules;
+	info.cur = info.rules;
 
-	if (!initialize_first_module (info)) {
-		tracker_mimetype_info_free (info);
-		info = NULL;
+	if (initialize_first_module (&info)) {
+		RuleInfo *rule_info = info.cur->data;
+
+		func = info.module->extract_func;
+		module = info.module->module;
+		rule = rule_info->rule_path;
 	}
 
-	return info;
-}
+	if (rule_out)
+		*rule_out = rule;
+	if (extract_func_out)
+		*extract_func_out = func;
 
-/**
- * tracker_mimetype_info_get_module:
- * @info: a #TrackerMimetypeInfo
- * @extract_func: (out): (allow-none): return value for the extraction function
- *
- * Returns the #GModule that @info is currently pointing to, if @extract_func is
- * not %NULL, it will be filled in with the pointer to the metadata extraction
- * function.
- *
- * Returns: The %GModule currently pointed to by @info.
- *
- * Since: 0.12
- **/
-GModule *
-tracker_mimetype_info_get_module (TrackerMimetypeInfo          *info,
-                                  TrackerExtractMetadataFunc   *extract_func)
-{
-	g_return_val_if_fail (info != NULL, NULL);
-
-	if (!info->cur_module_info) {
-		return NULL;
-	}
-
-	if (extract_func) {
-		*extract_func = info->cur_module_info->extract_func;
-	}
-
-	return info->cur_module_info->module;
-}
-
-/**
- * tracker_mimetype_info_iter_next:
- * @info: a #TrackerMimetypeInfo
- *
- * Iterates to the next module handling the mimetype.
- *
- * Returns: %TRUE if there is a next module.
- *
- * Since: 0.12
- **/
-gboolean
-tracker_mimetype_info_iter_next (TrackerMimetypeInfo *info)
-{
-	g_return_val_if_fail (info != NULL, FALSE);
-
-	if (info->cur->next) {
-		info->cur = info->cur->next;
-		return initialize_first_module (info);
-	}
-
-	return FALSE;
-}
-
-void
-tracker_mimetype_info_free (TrackerMimetypeInfo *info)
-{
-	g_return_if_fail (info != NULL);
-
-	g_slice_free (TrackerMimetypeInfo, info);
+	return module;
 }
 
 void
@@ -607,4 +554,46 @@ tracker_module_manager_load_modules (void)
 		rule_info = &g_array_index (rules, RuleInfo, i);
 		load_module (rule_info);
 	}
+}
+
+const gchar *
+tracker_extract_module_manager_get_graph (const gchar *mimetype)
+{
+	GList *l, *list;
+
+	if (!tracker_extract_module_manager_init ()) {
+		return NULL;
+	}
+
+	list = lookup_rules (mimetype);
+
+	for (l = list; l; l = l->next) {
+		RuleInfo *r_info = l->data;
+
+		if (r_info->graph)
+			return r_info->graph;
+	}
+
+	return NULL;
+}
+
+const gchar *
+tracker_extract_module_manager_get_hash (const gchar *mimetype)
+{
+	GList *l, *list;
+
+	if (!tracker_extract_module_manager_init ()) {
+		return NULL;
+	}
+
+	list = lookup_rules (mimetype);
+
+	for (l = list; l; l = l->next) {
+		RuleInfo *r_info = l->data;
+
+		if (r_info->graph)
+			return r_info->hash;
+	}
+
+	return NULL;
 }

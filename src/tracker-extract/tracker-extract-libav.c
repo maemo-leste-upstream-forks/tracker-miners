@@ -41,7 +41,8 @@ static AVDictionaryEntry *find_tag (AVFormatContext *format, AVStream *stream, c
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	GFile *file;
 	TrackerResource *metadata;

@@ -134,10 +134,10 @@ test_iptc_extraction (void)
         TrackerIptcData *data;
 
         data = load_iptc_blob (TOP_SRCDIR "/tests/libtracker-extract/iptc-img.jpg");
-        g_assert (data);
+        g_assert_true (data);
 
         g_assert_cmpstr (data->keywords, ==, "Coverage, test");
-        g_assert (g_str_has_prefix (data->date_created, "2011-10-22"));
+        g_assert_true (g_str_has_prefix (data->date_created, "2011-10-22"));
         g_assert_cmpstr (data->byline, ==, "BylineValue");
         g_assert_cmpstr (data->byline_title, ==, "BylineTitleValue");
         g_assert_cmpstr (data->credit, ==, "CreditValue");

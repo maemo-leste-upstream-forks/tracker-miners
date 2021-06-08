@@ -19,8 +19,6 @@
 
 #include "tracker-extract-persistence.h"
 
-#define MAX_RETRIES 3
-
 typedef struct _TrackerExtractPersistencePrivate TrackerExtractPersistencePrivate;
 
 struct _TrackerExtractPersistencePrivate
@@ -30,12 +28,9 @@ struct _TrackerExtractPersistencePrivate
 
 G_DEFINE_TYPE_WITH_PRIVATE (TrackerExtractPersistence, tracker_extract_persistence, G_TYPE_OBJECT)
 
-static GQuark n_retries_quark = 0;
-
 static void
 tracker_extract_persistence_class_init (TrackerExtractPersistenceClass *klass)
 {
-	n_retries_quark = g_quark_from_static_string ("tracker-extract-n-retries-quark");
 }
 
 static void
@@ -46,7 +41,7 @@ tracker_extract_persistence_init (TrackerExtractPersistence *persistence)
 
 	priv = tracker_extract_persistence_get_instance_private (persistence);
 
-	dirname = g_strdup_printf ("tracker-extract-files.%d", getuid ());
+	dirname = g_strdup_printf ("tracker-extract-3-files.%d", getuid ());
 	tmp_path = g_build_filename (g_get_tmp_dir (), dirname, NULL);
 	g_free (dirname);
 
@@ -60,31 +55,19 @@ tracker_extract_persistence_init (TrackerExtractPersistence *persistence)
 	g_free (tmp_path);
 }
 
-static void
-increment_n_retries (GFile *file)
-{
-	guint n_retries;
-
-	n_retries = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (file), n_retries_quark));
-	g_object_set_qdata (G_OBJECT (file), n_retries_quark, GUINT_TO_POINTER (n_retries + 1));
-}
-
 static GFile *
 persistence_create_symlink_file (TrackerExtractPersistence *persistence,
                                  GFile                     *file)
 {
 	TrackerExtractPersistencePrivate *priv;
-	guint n_retries = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (file), n_retries_quark));
-	gchar *link_name, *path, *md5;
+	gchar *path, *md5;
 	GFile *link_file;
 
 	priv = tracker_extract_persistence_get_instance_private (persistence);
 	path = g_file_get_path (file);
 	md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, path, -1);
-	link_name = g_strdup_printf ("%d-%s", n_retries, md5);
-	link_file = g_file_get_child (priv->tmp_dir, link_name);
+	link_file = g_file_get_child (priv->tmp_dir, md5);
 
-	g_free (link_name);
 	g_free (path);
 	g_free (md5);
 
@@ -95,9 +78,8 @@ static GFile *
 persistence_symlink_get_file (GFileInfo *info)
 {
 	const gchar *symlink_name, *symlink_target;
-	gchar *md5, **items;
+	gchar *md5;
 	GFile *file = NULL;
-	guint n_retries;
 
 	symlink_name = g_file_info_get_name (info);
 	symlink_target = g_file_info_get_symlink_target (info);
@@ -109,19 +91,14 @@ persistence_symlink_get_file (GFileInfo *info)
 	}
 
 	md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, symlink_target, -1);
-	items = g_strsplit (symlink_name, "-", 2);
-	n_retries = g_strtod (items[0], NULL);
 
-	if (g_strcmp0 (items[1], md5) == 0) {
+	if (g_strcmp0 (symlink_name, md5) == 0) {
 		file = g_file_new_for_path (symlink_target);
-		g_object_set_qdata (G_OBJECT (file), n_retries_quark,
-		                    GUINT_TO_POINTER (n_retries));
 	} else {
 		g_critical ("path MD5 for '%s' doesn't match with symlink '%s'",
 		            symlink_target, symlink_name);
 	}
 
-	g_strfreev (items);
 	g_free (md5);
 
 	return file;
@@ -136,7 +113,6 @@ persistence_store_file (TrackerExtractPersistence *persistence,
 	GFile *link_file;
 	gchar *path;
 
-	increment_n_retries (file);
 	path = g_file_get_path (file);
 	link_file = persistence_create_symlink_file (persistence, file);
 
@@ -180,7 +156,6 @@ persistence_remove_file (TrackerExtractPersistence *persistence,
 
 static void
 persistence_retrieve_files (TrackerExtractPersistence *persistence,
-                            TrackerFileRecoveryFunc    retry_func,
                             TrackerFileRecoveryFunc    ignore_func,
                             gpointer                   user_data)
 {
@@ -199,7 +174,6 @@ persistence_retrieve_files (TrackerExtractPersistence *persistence,
 
 	while ((info = g_file_enumerator_next_file (enumerator, NULL, NULL)) != NULL) {
 		GFile *file, *symlink_file;
-		guint n_retries;
 
 		symlink_file = g_file_enumerator_get_child (enumerator, info);
 		file = persistence_symlink_get_file (info);
@@ -211,20 +185,13 @@ persistence_retrieve_files (TrackerExtractPersistence *persistence,
 			continue;
 		}
 
-		/* Delete the symlink, it will get probably added back soon after,
-		 * and n_retries incremented.
+		/* Delete the symlink.
 		 */
 		g_file_delete (symlink_file, NULL, NULL);
 		g_object_unref (symlink_file);
 
-		n_retries = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (file), n_retries_quark));
-
-		/* Trigger retry/ignore func for the symlink target */
-		if (n_retries >= MAX_RETRIES) {
-			ignore_func (file, user_data);
-		} else {
-			retry_func (file, user_data);
-		}
+		/* Trigger ignore func for the symlink target */
+		ignore_func (file, user_data);
 
 		g_object_unref (file);
 		g_object_unref (info);
@@ -235,8 +202,7 @@ persistence_retrieve_files (TrackerExtractPersistence *persistence,
 }
 
 TrackerExtractPersistence *
-tracker_extract_persistence_initialize (TrackerFileRecoveryFunc retry_func,
-                                        TrackerFileRecoveryFunc ignore_func,
+tracker_extract_persistence_initialize (TrackerFileRecoveryFunc ignore_func,
                                         gpointer                user_data)
 {
 	static TrackerExtractPersistence *persistence = NULL;
@@ -245,7 +211,7 @@ tracker_extract_persistence_initialize (TrackerFileRecoveryFunc retry_func,
 		persistence = g_object_new (TRACKER_TYPE_EXTRACT_PERSISTENCE,
 		                            NULL);
 		persistence_retrieve_files (persistence,
-		                            retry_func, ignore_func,
+		                            ignore_func,
 		                            user_data);
 	}
 

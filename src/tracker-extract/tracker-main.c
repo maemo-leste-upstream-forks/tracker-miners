@@ -60,12 +60,12 @@
 	"\n" \
 	"  http://www.gnu.org/licenses/gpl.txt\n"
 
-#define DBUS_NAME_SUFFIX "Tracker1.Miner.Extract"
-#define DBUS_PATH "/org/freedesktop/Tracker1/Miner/Extract"
+#define DBUS_NAME_SUFFIX "Tracker3.Miner.Extract"
+#define MINER_FS_NAME_SUFFIX "Tracker3.Miner.Files"
+#define DBUS_PATH "/org/freedesktop/Tracker3/Miner/Extract"
 
 static GMainLoop *main_loop;
 
-static gint verbosity = -1;
 static gchar *filename;
 static gchar *mime_type;
 static gchar *force_module;
@@ -77,11 +77,6 @@ static guint shutdown_timeout_id = 0;
 static TrackerConfig *config;
 
 static GOptionEntry entries[] = {
-	{ "verbosity", 'v', 0,
-	  G_OPTION_ARG_INT, &verbosity,
-	  N_("Logging, 0 = errors only, "
-	     "1 = minimal, 2 = detailed and 3 = debug (default = 0)"),
-	  NULL },
 	{ "file", 'f', 0,
 	  G_OPTION_ARG_FILENAME, &filename,
 	  N_("File to extract metadata for"),
@@ -124,33 +119,14 @@ initialize_priority_and_scheduling (void)
 	 * successful call so we have to check value of errno too.
 	 * Stupid...
 	 */
-	g_message ("Setting priority nice level to 19");
+	TRACKER_NOTE (CONFIG, g_message ("Setting priority nice level to 19"));
 
 	if (nice (19) == -1) {
 		const gchar *str = g_strerror (errno);
 
-		g_message ("Couldn't set nice value to 19, %s",
-		           str ? str : "no error given");
+		TRACKER_NOTE (CONFIG, g_message ("Couldn't set nice value to 19, %s",
+		                      str ? str : "no error given"));
 	}
-}
-
-static void
-initialize_directories (void)
-{
-	gchar *user_data_dir;
-
-	/* NOTE: We don't create the database directories here, the
-	 * tracker-db-manager does that for us.
-	 */
-
-	user_data_dir = g_build_filename (g_get_user_data_dir (),
-	                                  "tracker",
-	                                  NULL);
-
-	/* g_message ("Checking directory exists:'%s'", user_data_dir); */
-	g_mkdir_with_parents (user_data_dir, 00755);
-
-	g_free (user_data_dir);
 }
 
 static gboolean
@@ -174,8 +150,7 @@ signal_handler (gpointer user_data)
 		/* Fall through */
 	default:
 		if (g_strsignal (signo)) {
-			g_print ("\n");
-			g_print ("Received signal:%d->'%s'\n",
+			g_debug ("Received signal:%d->'%s'",
 			         signo,
 			         g_strsignal (signo));
 		}
@@ -195,15 +170,15 @@ initialize_signal_handler (void)
 }
 
 static void
-sanity_check_option_values (TrackerConfig *config)
+log_option_values (TrackerConfig *config)
 {
-	g_message ("General options:");
-	g_message ("  Verbosity  ............................  %d",
-	           tracker_config_get_verbosity (config));
-	g_message ("  Sched Idle  ...........................  %d",
-	           tracker_config_get_sched_idle (config));
-	g_message ("  Max bytes (per file)  .................  %d",
-	           tracker_config_get_max_bytes (config));
+#ifdef G_ENABLE_DEBUG
+	if (TRACKER_DEBUG_CHECK (CONFIG)) {
+		g_message ("General options:");
+		g_message ("  Max bytes (per file)  .................  %d",
+		           tracker_config_get_max_bytes (config));
+	}
+#endif
 }
 
 TrackerConfig *
@@ -296,8 +271,24 @@ on_decorator_finished (TrackerDecorator *decorator,
 {
 	if (shutdown_timeout_id != 0)
 		return;
+
+	/* For debugging convenience, avoid the shutdown timeout if running
+	 * on a terminal.
+	 */
+	if (tracker_term_is_tty ())
+		return;
+
 	shutdown_timeout_id = g_timeout_add_seconds (10, shutdown_timeout_cb,
 	                                             main_loop);
+}
+
+static GFile *
+get_cache_dir (TrackerDomainOntology *domain_ontology)
+{
+	GFile *cache;
+
+	cache = tracker_domain_ontology_get_cache (domain_ontology);
+	return g_file_get_child (cache, "files");
 }
 
 int
@@ -308,15 +299,20 @@ main (int argc, char *argv[])
 	TrackerExtract *extract;
 	TrackerDecorator *decorator;
 	TrackerExtractController *controller;
-	gchar *log_filename = NULL;
 	GMainLoop *my_main_loop;
 	GDBusConnection *connection;
 	TrackerMinerProxy *proxy;
-	gchar *dbus_domain_name, *dbus_name;
+	TrackerSparqlConnection *sparql_connection;
+	TrackerDomainOntology *domain_ontology;
+	gchar *dbus_name, *miner_dbus_name;
+	GFile *cache_dir;
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
+
+	/* This makes sure we don't steal all the system's resources */
+	initialize_priority_and_scheduling ();
 
 	/* Translators: this message will appear immediately after the  */
 	/* usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>     */
@@ -356,19 +352,13 @@ main (int argc, char *argv[])
 
 	setlocale (LC_ALL, "");
 
-	tracker_sparql_connection_set_domain (domain_ontology_name);
-
-	tracker_load_domain_config (domain_ontology_name, &dbus_domain_name, &error);
-
+	domain_ontology = tracker_domain_ontology_new (domain_ontology_name, NULL, &error);
 	if (error) {
 		g_critical ("Could not load domain ontology '%s': %s",
 		            domain_ontology_name, error->message);
 		g_error_free (error);
 		return EXIT_FAILURE;
 	}
-
-	/* This makes sure we don't steal all the system's resources */
-	initialize_priority_and_scheduling ();
 
 	connection = g_bus_get_sync (TRACKER_IPC_BUS, NULL, &error);
 	if (error) {
@@ -378,45 +368,46 @@ main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	cache_dir = get_cache_dir (domain_ontology);
+	tracker_error_report_init (cache_dir);
+	g_object_unref (cache_dir);
+
 	config = tracker_config_new ();
 
 	/* Extractor command line arguments */
-	if (verbosity > -1) {
-		tracker_config_set_verbosity (config, verbosity);
-	}
-
-	tracker_log_init (tracker_config_get_verbosity (config), &log_filename);
-	if (log_filename != NULL) {
-		g_message ("Using log file:'%s'", log_filename);
-		g_free (log_filename);
-	}
-
-	sanity_check_option_values (config);
+	log_option_values (config);
 
 	/* Set conditions when we use stand alone settings */
 	if (filename) {
 		return run_standalone (config);
 	}
 
-	/* Initialize subsystems */
-	initialize_directories ();
-
 	extract = tracker_extract_new (TRUE, force_module);
 
 	if (!extract) {
 		g_object_unref (config);
-		tracker_log_shutdown ();
 		return EXIT_FAILURE;
 	}
 
 	tracker_module_manager_load_modules ();
 
-	decorator = tracker_extract_decorator_new (extract, NULL, &error);
+	miner_dbus_name = tracker_domain_ontology_get_domain (domain_ontology,
+	                                                      MINER_FS_NAME_SUFFIX);
+	sparql_connection = tracker_sparql_connection_bus_new (miner_dbus_name,
+	                                                       NULL, NULL, &error);
+
+	if (error) {
+		g_critical ("Could not connect to filesystem miner endpoint: %s",
+		            error->message);
+		g_error_free (error);
+		return EXIT_FAILURE;
+	}
+
+	decorator = tracker_extract_decorator_new (sparql_connection, extract, NULL, &error);
 
 	if (error) {
 		g_critical ("Could not start decorator: %s\n", error->message);
 		g_object_unref (config);
-		tracker_log_shutdown ();
 		return EXIT_FAILURE;
 	}
 
@@ -426,7 +417,6 @@ main (int argc, char *argv[])
 		g_error_free (error);
 		g_object_unref (decorator);
 		g_object_unref (config);
-		tracker_log_shutdown ();
 		return EXIT_FAILURE;
 	}
 
@@ -438,10 +428,16 @@ main (int argc, char *argv[])
 	tracker_locale_sanity_check ();
 
 	controller = tracker_extract_controller_new (decorator, connection);
-	tracker_miner_start (TRACKER_MINER (decorator));
 
 	/* Request DBus name */
-	dbus_name = g_strconcat (dbus_domain_name, ".", DBUS_NAME_SUFFIX, NULL);
+	dbus_name = tracker_domain_ontology_get_domain (domain_ontology, DBUS_NAME_SUFFIX);
+
+	if (tracker_term_is_tty ()) {
+		g_debug ("tracker-extract-3 running as %s", dbus_name);
+	} else {
+		g_debug ("tracker-extract-3 running as %s. The service will exit when %s "
+		         "disappears from the bus.", dbus_name, miner_dbus_name);
+	}
 
 	if (!tracker_dbus_request_name (connection, dbus_name, &error)) {
 		g_critical ("Could not request DBus name '%s': %s",
@@ -456,17 +452,11 @@ main (int argc, char *argv[])
 	/* Main loop */
 	main_loop = g_main_loop_new (NULL, FALSE);
 
-	if (domain_ontology_name) {
-		/* If we are running for a specific domain, we tie the lifetime of this
-		 * process to the domain. For example, if the domain name is
-		 * org.example.MyApp then this tracker-extract process will exit as
-		 * soon as org.example.MyApp exits.
-		 */
-		g_bus_watch_name_on_connection (connection, dbus_domain_name,
-		                                G_BUS_NAME_WATCHER_FLAGS_NONE,
-		                                NULL, on_domain_vanished,
-		                                main_loop, NULL);
-	}
+	g_bus_watch_name_on_connection (connection, miner_dbus_name,
+	                                G_BUS_NAME_WATCHER_FLAGS_NONE,
+	                                NULL, on_domain_vanished,
+	                                main_loop, NULL);
+	g_free (miner_dbus_name);
 
 	g_signal_connect (decorator, "finished",
 	                  G_CALLBACK (on_decorator_finished),
@@ -474,6 +464,8 @@ main (int argc, char *argv[])
 	g_signal_connect (decorator, "items-available",
 	                  G_CALLBACK (on_decorator_items_available),
 	                  main_loop);
+
+	tracker_miner_start (TRACKER_MINER (decorator));
 
 	initialize_signal_handler ();
 
@@ -491,9 +483,9 @@ main (int argc, char *argv[])
 	g_object_unref (controller);
 	g_object_unref (proxy);
 	g_object_unref (connection);
-	g_free (dbus_domain_name);
-
-	tracker_log_shutdown ();
+	tracker_domain_ontology_unref (domain_ontology);
+	tracker_sparql_connection_close (sparql_connection);
+	g_object_unref (sparql_connection);
 
 	g_object_unref (config);
 

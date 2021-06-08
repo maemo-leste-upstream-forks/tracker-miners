@@ -20,6 +20,7 @@
 #include "config-miners.h"
 
 #include <locale.h>
+#include <string.h>
 
 #include <libtracker-miners-common/tracker-utils.h>
 
@@ -135,8 +136,9 @@ gps_coordinate_dup (const gchar *coordinates)
 	}
 
 	if (g_regex_match (reg, coordinates, 0, &info)) {
-		gchar *deg,*min,*ref;
-		gdouble r,d,m;
+		gchar buf[G_ASCII_DTOSTR_BUF_SIZE];
+		gchar *deg, *min, *ref;
+		gdouble r, d, m;
 
 		deg = g_match_info_fetch (info, 1);
 		min = g_match_info_fetch (info, 2);
@@ -156,7 +158,7 @@ gps_coordinate_dup (const gchar *coordinates)
 		g_free (ref);
                 g_match_info_free (info);
 
-		return g_strdup_printf ("%f", r);
+                return g_strdup (g_ascii_dtostr (buf, sizeof (buf), r));
 	} else {
                 g_match_info_free (info);
 		return NULL;
@@ -213,7 +215,10 @@ div_str_dup (const gchar *value)
 		b = atoi (cpy + (ptr - value) + 1);
 
 		if (b != 0) {
-			ret = g_strdup_printf ("%G", ((gdouble)((gdouble) a / (gdouble) b)));
+			gchar buf[G_ASCII_DTOSTR_BUF_SIZE];
+
+			ret = g_strdup (g_ascii_dtostr (buf, sizeof (buf),
+			                                ((gdouble) a / b)));
 		} else {
 			ret = NULL;
 		}
@@ -783,6 +788,66 @@ tracker_xmp_new (const gchar *buffer,
 	}
 
 	return data;
+}
+
+gchar *
+replace_extension (gchar *path)
+{
+	const gchar *dot;
+	gchar *prefix, *xmp_path;
+
+	dot = strrchr (path, '.');
+	if (!dot)
+		return NULL;
+
+	prefix = g_strndup (path, dot - path);
+	xmp_path = g_strdup_printf ("%s.xmp", prefix);
+	g_free (prefix);
+
+	return xmp_path;
+}
+
+TrackerXmpData *
+tracker_xmp_new_from_sidecar (GFile  *orig_file,
+                              gchar **sidecar_uri)
+{
+	GMappedFile *mapped_file;
+	TrackerXmpData *xmp_data;
+	gchar *path, *xmp_path, *uri;
+	GBytes *bytes;
+
+	if (sidecar_uri)
+		*sidecar_uri = NULL;
+
+	path = g_file_get_path (orig_file);
+	xmp_path = replace_extension (path);
+	if (!xmp_path)
+		return NULL;
+
+	if (!g_file_test (xmp_path, G_FILE_TEST_IS_REGULAR))
+		return NULL;
+
+	mapped_file = g_mapped_file_new (xmp_path, FALSE, NULL);
+	if (!mapped_file) {
+		g_free (xmp_path);
+		return NULL;
+	}
+
+	bytes = g_mapped_file_get_bytes (mapped_file);
+	uri = g_file_get_uri (orig_file);
+	xmp_data = tracker_xmp_new (g_bytes_get_data (bytes, NULL),
+	                            g_bytes_get_size (bytes),
+	                            uri);
+	g_bytes_unref (bytes);
+	g_mapped_file_unref (mapped_file);
+	g_free (uri);
+
+	if (sidecar_uri)
+		*sidecar_uri = g_filename_to_uri (xmp_path, NULL, NULL);
+
+	g_free (xmp_path);
+
+	return xmp_data;
 }
 
 /**

@@ -1,0 +1,10 @@
+{
+    "test": {
+        "Filename": "psx-game-image-1.cue",
+        "Comment": "PSX game image with CUE file"
+    },
+    "metadata": {
+        "@type": [ "nfo:GameImage" ],
+	"nie:mimeType": "application/x-cue"
+    }
+}

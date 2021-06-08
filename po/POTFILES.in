@@ -1,20 +1,27 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 data/org.freedesktop.Tracker.Extract.gschema.xml
+data/org.freedesktop.Tracker.FTS.gschema.xml
 data/org.freedesktop.Tracker.Miner.Files.gschema.xml
-data/org.freedesktop.Tracker.Writeback.gschema.xml
 src/libtracker-miners-common/tracker-dbus.c
 src/libtracker-miners-common/tracker-utils.c
-src/miners/fs/org.freedesktop.Tracker1.Miner.Files.service.in.in
+src/libtracker-miner/tracker-data-provider.c
+src/libtracker-miner/tracker-miner-proxy.c
 src/miners/fs/tracker-main.c
 src/miners/fs/tracker-miner-files.c
-src/miners/fs/tracker-miner-fs.desktop.in.in
-src/miners/rss/org.freedesktop.Tracker1.Miner.RSS.service.in.in
 src/miners/rss/tracker-main.c
 src/miners/rss/tracker-miner-rss.c
-src/miners/rss/tracker-miner-rss.desktop.in.in
-src/tracker-extract/org.freedesktop.Tracker1.Miner.Extract.service.in.in
+src/tracker-control/tracker-main.c
 src/tracker-extract/tracker-extract.c
 src/tracker-extract/tracker-main.c
-src/tracker-extract/tracker-extract.desktop.in.in
+src/tracker/tracker-daemon.c
+src/tracker/tracker-dbus.c
+src/tracker/tracker-extract.c
+src/tracker/tracker-index.c
+src/tracker/tracker-info.c
+src/tracker/tracker-process.c
+src/tracker/tracker-reset.c
+src/tracker/tracker-search.c
+src/tracker/tracker-status.c
+src/tracker/tracker-tag.c
 src/tracker-writeback/tracker-main.c

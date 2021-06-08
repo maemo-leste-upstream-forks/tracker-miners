@@ -49,7 +49,7 @@ void        tracker_toc_add_entry       (TrackerToc *toc,
                                          gdouble     duration);
 
 TrackerToc *tracker_cue_sheet_parse     (const gchar *cue_sheet);
-TrackerToc *tracker_cue_sheet_parse_uri (const gchar *uri);
+TrackerToc *tracker_cue_sheet_guess_from_uri (const gchar *uri);
 
 G_END_DECLS
 

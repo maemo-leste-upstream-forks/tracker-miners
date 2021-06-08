@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=@DOMAIN_PREFIX@.Tracker3.Miner.Files.Control
+Exec=@libexecdir@/tracker-miner-fs-control-3
+@SYSTEMD_SERVICE@

@@ -319,9 +319,10 @@ out:
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
-	GError *error;
+	GError *inner_error = NULL;
 	GFile *file;
 	GExiv2Metadata *metadata = NULL;
 	GExiv2Orientation orientation;
@@ -339,10 +340,8 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	file = tracker_extract_info_get_file (info);
 	filename = g_file_get_path (file);
 
-	error = NULL;
-	if (!gexiv2_metadata_open_path (metadata, filename, &error)) {
-		g_warning ("Could not open %s for reading metadata: %s", filename, error->message);
-		g_error_free (error);
+	if (!gexiv2_metadata_open_path (metadata, filename, &inner_error)) {
+		g_propagate_prefixed_error (error, inner_error, "Could not open: ");
 		goto out;
 	}
 

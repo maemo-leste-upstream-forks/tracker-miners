@@ -24,9 +24,9 @@
 #include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-extract/tracker-extract.h>
 
-#define TRACKER_EXTRACT_SERVICE        "org.freedesktop.Tracker1.Extract"
-#define TRACKER_EXTRACT_PATH           "/org/freedesktop/Tracker1/Extract"
-#define TRACKER_EXTRACT_INTERFACE      "org.freedesktop.Tracker1.Extract"
+#define TRACKER_EXTRACT_SERVICE        "org.freedesktop.Tracker3.Extract"
+#define TRACKER_EXTRACT_PATH           "/org/freedesktop/Tracker3/Extract"
+#define TRACKER_EXTRACT_INTERFACE      "org.freedesktop.Tracker3.Extract"
 
 G_BEGIN_DECLS
 
@@ -43,7 +43,8 @@ typedef struct TrackerExtractClass TrackerExtractClass;
 
 typedef enum {
 	TRACKER_EXTRACT_ERROR_NO_MIMETYPE,
-	TRACKER_EXTRACT_ERROR_NO_EXTRACTOR
+	TRACKER_EXTRACT_ERROR_NO_EXTRACTOR,
+	TRACKER_EXTRACT_ERROR_IO_ERROR,
 } TrackerExtractError;
 
 struct TrackerExtract {

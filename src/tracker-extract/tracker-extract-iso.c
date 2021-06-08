@@ -32,7 +32,8 @@
 #include <libtracker-sparql/tracker-sparql.h>
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info_)
+tracker_extract_get_metadata (TrackerExtractInfo  *info_,
+                              GError             **error)
 {
 	/* NOTE: This function has to exist, tracker-extract checks
 	 * the symbol table for this function and if it doesn't
@@ -41,7 +42,7 @@ tracker_extract_get_metadata (TrackerExtractInfo *info_)
 
 	/* File information */
 	GFile *file;
-	GError *error = NULL;
+	GError *inner_error = NULL;
 	gchar *filename;
 	OsinfoLoader *loader = NULL;
 	OsinfoMedia *media;
@@ -61,14 +62,12 @@ tracker_extract_get_metadata (TrackerExtractInfo *info_)
 
 	metadata = tracker_resource_new (NULL);
 
-	media = osinfo_media_create_from_location (filename, NULL, &error);
-	if (error != NULL) {
-		if (error->code != OSINFO_MEDIA_ERROR_NOT_BOOTABLE) {
+	media = osinfo_media_create_from_location (filename, NULL, &inner_error);
+	if (inner_error != NULL) {
+		if (inner_error->code != OSINFO_MEDIA_ERROR_NOT_BOOTABLE) {
 			g_object_unref (metadata);
-			g_message ("Could not extract iso info from '%s': %s",
-				   filename, error->message);
 			g_free (filename);
-			g_error_free (error);
+			g_propagate_prefixed_error (error, inner_error, "Could not extract ISO info:");
 			return FALSE;
 		}
 		bootable = FALSE;
@@ -79,11 +78,11 @@ tracker_extract_get_metadata (TrackerExtractInfo *info_)
 	g_free (filename);
 
 	loader = osinfo_loader_new ();
-	osinfo_loader_process_default_path (loader, &error);
-	if (error != NULL) {
+	osinfo_loader_process_default_path (loader, &inner_error);
+	if (inner_error != NULL) {
 		g_message ("Error loading libosinfo OS data: %s",
-			   error->message);
-		g_error_free (error);
+			   inner_error->message);
+		g_error_free (inner_error);
 		goto no_os;
 	}
 	g_warn_if_fail (media != NULL);

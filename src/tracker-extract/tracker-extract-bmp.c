@@ -47,7 +47,7 @@ get_img_resolution (const GFile *file,
 
 	stream = g_file_read ((GFile *)file, NULL, &error);
 	if (error) {
-		g_message ("Could not read BMP file, %s", error->message);
+		g_debug ("Could not read BMP file, %s", error->message);
 		g_clear_error (&error);
 		return FALSE;
 	}
@@ -55,27 +55,27 @@ get_img_resolution (const GFile *file,
 	inputstream = G_INPUT_STREAM (stream);
 
 	if (!g_input_stream_read (inputstream, bfType, 2, NULL, &error)) {
-		g_message ("Could not read BMP header from stream, %s", error ? error->message : "No error given");
+		g_debug ("Could not read BMP header from stream, %s", error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_object_unref (stream);
 		return FALSE;
 	}
 
 	if (bfType[0] != 'B' || bfType[1] != 'M') {
-		g_message ("Expected BMP header to read 'B' or 'M', can not continue");
+		g_debug ("Expected BMP header to read 'B' or 'M', can not continue");
 		g_object_unref (stream);
 		return FALSE;
 	}
 
 	if (!g_input_stream_skip (inputstream, 16, NULL, &error)) {
-		g_message ("Could not read 16 bytes from BMP header, %s", error ? error->message : "No error given");
+		g_debug ("Could not read 16 bytes from BMP header, %s", error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_object_unref (stream);
 		return FALSE;
 	}
 
 	if (!g_input_stream_read (inputstream, &w, sizeof (uint), NULL, &error)) {
-		g_message ("Could not read width from BMP header, %s", error ? error->message : "No error given");
+		g_debug ("Could not read width from BMP header, %s", error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_object_unref (stream);
 		return FALSE;
@@ -103,7 +103,8 @@ get_img_resolution (const GFile *file,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *image;
 	goffset size;
@@ -112,16 +113,16 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	gint64 width = 0, height = 0;
 
 	file = tracker_extract_info_get_file (info);
-	if (!file) {
-		return FALSE;
-	}
-
 	filename = g_file_get_path (file);
 	size = tracker_file_get_size (filename);
 	g_free (filename);
 
 	if (size < 14) {
 		/* Smaller than BMP header, can't be a real BMP file */
+		g_set_error (error,
+		             G_IO_ERROR,
+		             G_IO_ERROR_INVALID_DATA,
+		             "File too small to be a BMP");
 		return FALSE;
 	}
 
