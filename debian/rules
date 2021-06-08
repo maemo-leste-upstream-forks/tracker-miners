@@ -8,14 +8,15 @@ CHECK_HOME = $(CURDIR)/debian/tmp/home
 CHECK_XRD = $(CHECK_HOME)/XRD
 
 FEATURE_FLAGS = \
-	-Dautostart=true \
 	-Dgeneric_media_extractor=gstreamer \
 	-Dsystemd_user_services=/usr/lib/systemd/user \
 	-Ddocs=true \
 	-Dfunctional_tests=true \
 	-Dminer_rss=false \
 	-Dbattery_detection=upower \
-	-Dcharset_detection=icu
+	-Dcharset_detection=icu \
+	-Dsystemd_user_services=true \
+	-Dsystemd_user_services_dir=/usr/lib/systemd/user/
 
 MESON_TEST_ARGS = \
 	-C $(BUILDDIR) \
@@ -52,7 +53,7 @@ override_dh_missing:
 	dh_missing --fail-missing
 
 override_dh_makeshlibs:
-	dh_makeshlibs -X/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-2.0/
+	dh_makeshlibs -X/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-3.0/
 
 override_dh_shlibdeps:
 	dh_shlibdeps -Ltracker-extract

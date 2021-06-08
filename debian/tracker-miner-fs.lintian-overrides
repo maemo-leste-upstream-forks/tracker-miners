@@ -1,2 +1,2 @@
-# The rpath is used to load the private libraries in /usr/lib/*/tracker-miners-2.0
-tracker-miner-fs: binary-or-shlib-defines-rpath * /usr/lib/*/tracker-miners-2.0
+# The rpath is used to load the private libraries in /usr/lib/*/tracker-miners-3.0
+tracker-miner-fs: custom-library-search-path * /usr/lib/*/tracker-miners-3.0

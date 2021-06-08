@@ -1,8 +1,17 @@
-usr/libexec/tracker-miner-fs
-etc/xdg/autostart/tracker-miner-fs.desktop
-usr/lib/systemd/user/tracker-miner-fs.service
-usr/share/dbus-1/services/org.freedesktop.Tracker1.Miner.Files.service
-usr/share/man/man1/tracker-miner-fs.1*
-usr/share/tracker/miners/org.freedesktop.Tracker1.Miner.Files.service
-#usr/share/tracker/tracker-miner-files-index.xml
+usr/libexec/tracker-miner-fs-3
+usr/libexec/tracker-miner-fs-control-3
+
+etc/xdg/autostart/tracker-miner-fs-3.desktop
+
+usr/lib/systemd/user/tracker-miner-fs*-3.service
+
+usr/share/dbus-1/interfaces/org.freedesktop.Tracker3.Miner.Files.Index.xml
+
+usr/share/dbus-1/services/org.freedesktop.Tracker3.Miner.Files.Control.service
+usr/share/dbus-1/services/org.freedesktop.Tracker3.Miner.Files.service
+
+usr/share/man/man1/tracker-miner-fs-3.1*
+
+usr/share/tracker3-miners/miners/org.freedesktop.Tracker3.Miner.Files.service
+
 debian/30-tracker.conf usr/lib/sysctl.d/
