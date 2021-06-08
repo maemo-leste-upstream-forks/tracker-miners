@@ -44,7 +44,7 @@ init_module_manager (void) {
 	g_setenv ("TRACKER_EXTRACTOR_RULES_DIR", test_rules_dir, TRUE);
 
 	success = tracker_extract_module_manager_init ();
-	g_assert (success);
+	g_assert_true (success);
 }
 
 static void
@@ -76,10 +76,7 @@ test_extract_rules (void)
 int
 main (int argc, char **argv)
 {
-	gchar *used_filename;
-
 	g_test_init (&argc, &argv, NULL);
-	tracker_log_init (3, &used_filename);
 	init_module_manager ();
 
 	g_test_add_func ("/libtracker-extract/module-manager/extract-rules",

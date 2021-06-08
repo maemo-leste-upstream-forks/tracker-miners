@@ -1,0 +1,26 @@
+tracker3-index(1)
+================
+
+== NAME
+
+tracker3-index - Index content using the Tracker filesystem miner
+
+== SYNOPSIS
+
+....
+tracker3 index
+tracker3 index --add [--recursive] <dir> [[dir] ...]
+tracker3 index --remove <path> [[dir] ...]
+....
+
+== DESCRIPTION
+
+This command causes the Tracker filesystem miner to process the given
+directories. These changes are persistent across future restarts.
+
+If invoked without arguments, the currently indexed locations will be
+listed.
+
+== SEE ALSO
+
+*tracker-miner-fs-3*(1).

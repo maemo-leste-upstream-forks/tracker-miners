@@ -55,39 +55,6 @@
 
 #include "tracker-cue-sheet.h"
 
-/* We wait this long (seconds) for NULL state before freeing */
-#define TRACKER_EXTRACT_GUARD_TIMEOUT 3
-
-/* An additional tag in gstreamer for the content source. Remove when in upstream */
-#ifndef GST_TAG_CLASSIFICATION
-#define GST_TAG_CLASSIFICATION "classification"
-#endif
-
-/* Some additional tagreadbin tags (FIXME until they are defined upstream)*/
-#ifndef GST_TAG_CHANNEL
-#define GST_TAG_CHANNEL "channels"
-#endif
-
-#ifndef GST_TAG_RATE
-#define GST_TAG_RATE "rate"
-#endif
-
-#ifndef GST_TAG_WIDTH
-#define GST_TAG_WIDTH "width"
-#endif
-
-#ifndef GST_TAG_HEIGHT
-#define GST_TAG_HEIGHT "height"
-#endif
-
-#ifndef GST_TAG_PIXEL_RATIO
-#define GST_TAG_PIXEL_RATIO "pixel-aspect-ratio"
-#endif
-
-#ifndef GST_TAG_FRAMERATE
-#define GST_TAG_FRAMERATE "framerate"
-#endif
-
 typedef enum {
 	EXTRACT_MIME_AUDIO,
 	EXTRACT_MIME_VIDEO,
@@ -266,6 +233,7 @@ extract_gst_date_time (gchar       *buf,
 	if (gst_tag_list_get_date_time (tag_list, tag_date_time, &date_time)) {
 		gboolean complete;
 
+		ret = gst_date_time_has_year (date_time);
 		complete = get_gst_date_time_to_buf (date_time, buf, size);
 		gst_date_time_unref (date_time);
 
@@ -273,8 +241,6 @@ extract_gst_date_time (gchar       *buf,
 			g_debug ("GstDateTime was not complete, parts of the date/time were missing (e.g. hours, minutes, seconds)");
 		}
 	} else if (gst_tag_list_get_date (tag_list, tag_date, &date)) {
-		gboolean ret = FALSE;
-
 		if (date && g_date_valid (date)) {
 			if (date->julian)
 				ret = g_date_valid_julian (date->julian_days);
@@ -352,7 +318,7 @@ get_embedded_cue_sheet_data (GstTagList *tag_list)
 			 * not have to jump past cuesheet= on the
 			 * returned value.
 			 */
-			g_memmove (buffer, buffer + 9, strlen ((gchar *) buffer + 9) + 1);
+			memmove (buffer, buffer + 9, strlen ((gchar *) buffer + 9) + 1);
 
 			return buffer;
 		}
@@ -491,28 +457,31 @@ extractor_apply_general_metadata (MetadataExtractor     *extractor,
                                   GstTagList            *tag_list,
                                   const gchar           *file_url,
                                   TrackerResource       *resource,
+                                  TrackerResource      **p_artist,
                                   TrackerResource      **p_performer,
                                   TrackerResource      **p_composer)
 {
-	const gchar *performer_name = NULL;
-	gchar *performer_temp = NULL;
-	gchar *artist_temp = NULL;
+	gchar *artist_name = NULL;
+	gchar *performer_name = NULL;
 	gchar *composer_name = NULL;
 	gchar *genre = NULL;
 	gchar *title = NULL;
 	gchar *title_guaranteed = NULL;
 
+	*p_artist = NULL;
 	*p_composer = NULL;
 	*p_performer = NULL;
 
-	gst_tag_list_get_string (tag_list, GST_TAG_PERFORMER, &performer_temp);
-	gst_tag_list_get_string (tag_list, GST_TAG_ARTIST, &artist_temp);
+	gst_tag_list_get_string (tag_list, GST_TAG_PERFORMER, &performer_name);
+	gst_tag_list_get_string (tag_list, GST_TAG_ARTIST, &artist_name);
 	gst_tag_list_get_string (tag_list, GST_TAG_COMPOSER, &composer_name);
-
-	performer_name = tracker_coalesce_strip (2, performer_temp, artist_temp);
 
 	if (performer_name != NULL) {
 		*p_performer = intern_artist (extractor, performer_name);
+	}
+
+	if (artist_name != NULL) {
+		*p_artist = intern_artist (extractor, artist_name);
 	}
 
 	if (composer_name != NULL) {
@@ -543,10 +512,11 @@ extractor_apply_general_metadata (MetadataExtractor     *extractor,
 	set_property_from_gst_tag (resource, "nie:license", tag_list, GST_TAG_LICENSE);
 	set_property_from_gst_tag (resource, "dc:coverage", tag_list, GST_TAG_LOCATION);
 	set_property_from_gst_tag (resource, "nie:comment", tag_list, GST_TAG_COMMENT);
+	set_property_from_gst_tag (resource, "nie:generator", tag_list, GST_TAG_ENCODER);
 
 	g_free (title_guaranteed);
-	g_free (performer_temp);
-	g_free (artist_temp);
+	g_free (performer_name);
+	g_free (artist_name);
 	g_free (composer_name);
 	g_free (genre);
 	g_free (title);
@@ -563,6 +533,11 @@ extractor_maybe_get_album_disc (MetadataExtractor *extractor,
 	gboolean has_it, has_date;
 	guint volume_number;
 	gchar album_datetime[26];
+	gchar *mb_release_id = NULL;
+
+	#if defined GST_TAG_MUSICBRAINZ_RELEASEGROUPID
+		gchar *mb_release_group_id = NULL;
+	#endif
 
 	gst_tag_list_get_string (tag_list, GST_TAG_ALBUM, &album_title);
 
@@ -587,6 +562,30 @@ extractor_maybe_get_album_disc (MetadataExtractor *extractor,
 	set_property_from_gst_tag (album, "nmm:albumTrackCount", tag_list, GST_TAG_TRACK_COUNT);
 	set_property_from_gst_tag (album, "nmm:albumGain", extractor->tagcache, GST_TAG_ALBUM_GAIN);
 	set_property_from_gst_tag (album, "nmm:albumPeakGain", extractor->tagcache, GST_TAG_ALBUM_PEAK);
+
+	gst_tag_list_get_string (tag_list, GST_TAG_MUSICBRAINZ_ALBUMID, &mb_release_id);
+	if (mb_release_id) {
+		g_autofree char *mb_release_uri = g_strdup_printf("https://musicbrainz.org/release/%s", mb_release_id);
+		TrackerResource *mb_release = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release",
+		                                                                     mb_release_id,
+		                                                                     mb_release_uri);
+
+		tracker_resource_add_take_relation (album, "tracker:hasExternalReference", mb_release);
+		g_free (mb_release_id);
+	}
+
+	#if defined GST_TAG_MUSICBRAINZ_RELEASEGROUPID
+		gst_tag_list_get_string (tag_list, GST_TAG_MUSICBRAINZ_RELEASEGROUPID, &mb_release_group_id);
+		if (mb_release_group_id) {
+			g_autofree char *mb_release_group_uri = g_strdup_printf("https://musicbrainz.org/release-group/%s", mb_release_group_id);
+			TrackerResource *mb_release_group = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Release_Group",
+			                                                                           mb_release_group_id,
+			                                                                           mb_release_group_uri);
+
+			tracker_resource_add_take_relation (album, "tracker:hasExternalReference", mb_release_group);
+			g_free (mb_release_group_id);
+		}
+	#endif
 
 	g_free (album_artist_name);
 	g_free (track_artist_temp);
@@ -616,18 +615,102 @@ extractor_get_equipment (MetadataExtractor    *extractor,
 	return equipment;
 }
 
+static TrackerResource *
+ensure_file_resource (TrackerResource *resource,
+                      const gchar     *file_url)
+{
+	TrackerResource *file_resource;
+
+	file_resource = tracker_resource_get_first_relation (resource, "nie:isStoredAs");
+	if (!file_resource) {
+		file_resource = tracker_resource_new (file_url);
+		tracker_resource_set_take_relation (resource, "nie:isStoredAs", file_resource);
+	}
+
+	return file_resource;
+}
+
 static void
 extractor_apply_audio_metadata (MetadataExtractor     *extractor,
                                 GstTagList            *tag_list,
+                                const gchar           *file_url,
                                 TrackerResource       *audio,
+                                TrackerResource       *artist,
                                 TrackerResource       *performer,
                                 TrackerResource       *composer,
                                 TrackerResource       *album_disc)
 {
+	gchar *mb_recording_id = NULL;
+
+	#if defined GST_TAG_MUSICBRAINZ_RELEASETRACKID
+		gchar *mb_track_id = NULL;
+	#endif
+
+	#if defined GST_TAG_ACOUSTID_FINGERPRINT
+		GValue acoustid_fingerprint = G_VALUE_INIT;
+		gboolean have_acoustid_fingerprint;
+	#endif
+
 	set_property_from_gst_tag (audio, "nmm:trackNumber", tag_list, GST_TAG_TRACK_NUMBER);
 	set_property_from_gst_tag (audio, "nfo:codec", tag_list, GST_TAG_AUDIO_CODEC);
 	set_property_from_gst_tag (audio, "nfo:gain", tag_list, GST_TAG_TRACK_GAIN);
 	set_property_from_gst_tag (audio, "nfo:peakGain", tag_list, GST_TAG_TRACK_PEAK);
+
+	gst_tag_list_get_string (tag_list, GST_TAG_MUSICBRAINZ_TRACKID, &mb_recording_id);
+	if (mb_recording_id) {
+		g_autofree char *mb_recording_uri = g_strdup_printf("https://musicbrainz.org/recording/%s", mb_recording_id);
+		TrackerResource *mb_recording = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Recording",
+		                                                                       mb_recording_id,
+		                                                                       mb_recording_uri);
+
+		tracker_resource_add_take_relation (audio, "tracker:hasExternalReference", mb_recording);
+		g_free (mb_recording_id);
+	}
+
+	#if defined GST_TAG_MUSICBRAINZ_RELEASETRACKID
+		gst_tag_list_get_string (tag_list, GST_TAG_MUSICBRAINZ_RELEASETRACKID, &mb_track_id);
+		if (mb_track_id) {
+			g_autofree char *mb_track_uri = g_strdup_printf("https://musicbrainz.org/track/%s", mb_track_id);
+			TrackerResource *mb_track = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Track",
+			                                                                   mb_track_id,
+			                                                                   mb_track_uri);
+
+			tracker_resource_add_take_relation (audio, "tracker:hasExternalReference", mb_track);
+			g_free (mb_track_id);
+		}
+	#endif
+
+	#if defined GST_TAG_ACOUSTID_FINGERPRINT
+		have_acoustid_fingerprint = gst_tag_list_copy_value (&acoustid_fingerprint, tag_list, GST_TAG_ACOUSTID_FINGERPRINT);
+		if (have_acoustid_fingerprint) {
+			TrackerResource *hash_resource = tracker_resource_new (NULL);
+			TrackerResource *file_resource = ensure_file_resource (audio, file_url);
+
+			tracker_resource_set_uri (hash_resource, "rdf:type", "nfo:FileHash");
+			tracker_resource_set_gvalue (hash_resource, "nfo:hashValue", &acoustid_fingerprint);
+			tracker_resource_set_string (hash_resource, "nfo:hashAlgorithm", "chromaprint");
+
+			tracker_resource_add_take_relation (file_resource, "nfo:hasHash", hash_resource);
+			g_value_unset (&acoustid_fingerprint);
+		}
+	#endif
+
+	if (artist) {
+		gchar *mb_artist_id = NULL;
+
+		tracker_resource_set_relation (audio, "nmm:artist", artist);
+
+		gst_tag_list_get_string (tag_list, GST_TAG_MUSICBRAINZ_ARTISTID, &mb_artist_id);
+		if (mb_artist_id) {
+			g_autofree char *mb_artist_uri = g_strdup_printf("https://musicbrainz.org/artist/%s", mb_artist_id);
+			TrackerResource *mb_artist = tracker_extract_new_external_reference("https://musicbrainz.org/doc/Artist",
+			                                                                    mb_artist_id,
+			                                                                    mb_artist_uri);
+
+			tracker_resource_add_take_relation (artist, "tracker:hasExternalReference", mb_artist);
+			g_free (mb_artist_id);
+		}
+	}
 
 	if (performer) {
 		tracker_resource_set_relation (audio, "nmm:performer", performer);
@@ -653,8 +736,6 @@ extractor_apply_video_metadata (MetadataExtractor *extractor,
                                 TrackerResource   *performer,
                                 TrackerResource   *composer)
 {
-	set_property_from_gst_tag (video, "dc:source", tag_list, GST_TAG_CLASSIFICATION);
-
 	if (performer) {
 		tracker_resource_set_relation (video, "nmm:leadActor", performer);
 	}
@@ -666,18 +747,16 @@ extractor_apply_video_metadata (MetadataExtractor *extractor,
 	set_keywords_from_gst_tag (video, tag_list);
 }
 
-static TrackerResource *
-extract_track (MetadataExtractor    *extractor,
+static void
+extract_track (TrackerResource      *track,
+               MetadataExtractor    *extractor,
                TrackerTocEntry      *toc_entry,
                const gchar          *file_url,
                TrackerResource      *album_disc)
 {
-	TrackerResource *track;
-	TrackerResource *track_performer = NULL, *track_composer = NULL;
-	gchar *track_uri;
-
-	track_uri = tracker_sparql_get_uuid_urn ();
-	track = tracker_resource_new (track_uri);
+	TrackerResource *track_artist = NULL;
+	TrackerResource *track_performer = NULL;
+	TrackerResource *track_composer = NULL;
 
 	tracker_resource_add_uri (track, "rdf:type", "nmm:MusicPiece");
 	tracker_resource_add_uri (track, "rdf:type", "nfo:Audio");
@@ -686,12 +765,15 @@ extract_track (MetadataExtractor    *extractor,
 	                                  toc_entry->tag_list,
 	                                  file_url,
 	                                  track,
+	                                  &track_artist,
 	                                  &track_performer,
 	                                  &track_composer);
 
 	extractor_apply_audio_metadata (extractor,
 	                                toc_entry->tag_list,
+	                                file_url,
 	                                track,
+	                                track_artist,
 	                                track_performer,
 	                                track_composer,
 	                                album_disc);
@@ -709,10 +791,6 @@ extract_track (MetadataExtractor    *extractor,
 	}
 
 	tracker_resource_set_double (track, "nfo:audioOffset", toc_entry->start);
-
-	g_free (track_uri);
-
-	return track;
 }
 
 #define CHUNK_N_BYTES (2 << 15)
@@ -841,13 +919,14 @@ extract_metadata (MetadataExtractor      *extractor,
 		GList *node;
 		TrackerResource *equipment;
 		TrackerResource *geolocation, *address;
-		TrackerResource *performer = NULL, *composer = NULL;
+		TrackerResource *artist = NULL, *performer = NULL, *composer = NULL;
 		TrackerResource *album_disc;
 
 		extractor_apply_general_metadata (extractor,
 		                                  extractor->tagcache,
 		                                  file_url,
 		                                  resource,
+		                                  &artist,
 		                                  &performer,
 		                                  &composer);
 
@@ -885,20 +964,31 @@ extract_metadata (MetadataExtractor      *extractor,
 			 * concrete nfo:FileDataObject using nie:isStoredAs.
 			 */
 			if (extractor->toc && g_list_length (extractor->toc->entry_list) > 1) {
+				TrackerResource *file_resource;
+
+				file_resource = ensure_file_resource (resource, file_url);
+
 				for (node = extractor->toc->entry_list; node; node = node->next) {
 					TrackerResource *track;
 
-					track = extract_track (extractor, node->data, file_url, album_disc);
-					tracker_resource_set_relation (track, "nie:isStoredAs", resource);
-					tracker_resource_set_relation (track, "nie:isLogicalPartOf", resource);
-					tracker_resource_add_take_relation (resource, "nie:hasLogicalPart", track);
-				}
+					/* Reuse the "root" InformationElement resource for the first track,
+					 * so there's no spare ones.
+					 */
+					if (node == extractor->toc->entry_list)
+						track = resource;
+					else
+						track = tracker_resource_new (NULL);
 
-				tracker_resource_set_string (resource, "nie:url", file_url);
+					extract_track (track, extractor, node->data, file_url, album_disc);
+					tracker_resource_set_relation (track, "nie:isStoredAs", file_resource);
+					tracker_resource_add_take_relation (file_resource, "nie:interpretedAs", track);
+				}
 			} else {
 				extractor_apply_audio_metadata (extractor,
 				                                extractor->tagcache,
+				                                file_url,
 				                                resource,
+				                                artist,
 				                                performer,
 				                                composer,
 				                                album_disc);
@@ -919,7 +1009,7 @@ extract_metadata (MetadataExtractor      *extractor,
 		g_object_unref (file);
 
 		if (hash) {
-			TrackerResource *hash_resource;
+			TrackerResource *file_resource, *hash_resource;
 			char *hash_str;
 
 			hash_resource = tracker_resource_new (NULL);
@@ -931,7 +1021,9 @@ extract_metadata (MetadataExtractor      *extractor,
 
 			tracker_resource_set_string (hash_resource, "nfo:hashAlgorithm", "gibest");
 
-			tracker_resource_set_relation (resource, "nfo:hasHash", hash_resource);
+			file_resource = ensure_file_resource (resource, file_url);
+
+			tracker_resource_set_relation (file_resource, "nfo:hasHash", hash_resource);
 
 			g_object_unref (hash_resource);
 		}
@@ -1095,8 +1187,8 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 	if (error) {
 		if (gst_discoverer_info_get_result(info) == GST_DISCOVERER_MISSING_PLUGINS) {
 			required_plugins_message = get_discoverer_required_plugins_message (info);
-			g_message ("Missing a GStreamer plugin for %s. %s", uri,
-			           required_plugins_message);
+			g_debug ("Missing a GStreamer plugin for %s. %s", uri,
+			         required_plugins_message);
 			g_free (required_plugins_message);
 		} else if (error->domain != GST_STREAM_ERROR ||
 		           (error->code != GST_STREAM_ERROR_TYPE_NOT_FOUND &&
@@ -1227,7 +1319,7 @@ tracker_extract_gstreamer (const gchar          *uri,
 		}
 
 		if (extractor->toc == NULL) {
-			extractor->toc = tracker_cue_sheet_parse_uri (uri);
+			extractor->toc = tracker_cue_sheet_guess_from_uri (uri);
 		}
 
 		if (extractor->toc == NULL &&
@@ -1263,7 +1355,8 @@ tracker_extract_gstreamer (const gchar          *uri,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	GFile *file;
 	gchar *uri;
@@ -1293,6 +1386,11 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	} else if (g_str_has_prefix (mimetype, "image/")) {
 		main_resource = tracker_extract_gstreamer (uri, info, EXTRACT_MIME_IMAGE);
 	} else {
+		g_set_error (error,
+		             G_IO_ERROR,
+		             G_IO_ERROR_INVALID_ARGUMENT,
+		             "Mimetype '%s is not supported",
+		             mimetype);
 		g_free (uri);
 		return FALSE;
 	}
@@ -1310,10 +1408,21 @@ G_MODULE_EXPORT gboolean
 tracker_extract_module_init (GError **error)
 {
 	/* Lifted from totem-video-thumbnailer */
-	const gchar *blacklisted[] = {
+	const gchar *blocklisted[] = {
 		"bcmdec",
+		"fluiddec",
 		"vaapi",
-		"video4linux2"
+		"video4linux2",
+		"nvmpegvideodec",
+		"nvmpeg2videodec",
+		"nvmpeg4videodec",
+		"nvh264sldec",
+		"nvh264dec",
+		"nvjpegdec",
+		"nvh265sldec",
+		"nvh265dec",
+		"nvvp8dec",
+		"nvvp9dec",
 	};
 	GstRegistry *registry;
 	guint i;
@@ -1321,10 +1430,10 @@ tracker_extract_module_init (GError **error)
 	gst_init (NULL, NULL);
 	registry = gst_registry_get ();
 
-	for (i = 0; i < G_N_ELEMENTS (blacklisted); i++) {
+	for (i = 0; i < G_N_ELEMENTS (blocklisted); i++) {
 		GstPlugin *plugin =
 			gst_registry_find_plugin (registry,
-						  blacklisted[i]);
+						  blocklisted[i]);
 		if (plugin)
 			gst_registry_remove_plugin (registry, plugin);
 	}

@@ -1,0 +1,49 @@
+{
+    "app-id" : "org.example.TrackerSearchApp",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "master",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "/app/bin/example-app",
+    "tags" : [
+        "nightly"
+    ],
+    "finish-args" : [
+        "--add-policy=Tracker3.dbus:org.freedesktop.Tracker3.Miner.Files=tracker:Audio;tracker:Documents;tracker:FileSystem;tracker:Pictures;tracker:Music;tracker:Software;tracker:Video"
+    ],
+    "modules" : [
+        {
+            "name": "tracker-miners",
+            "cleanup": [ "/bin", "/etc" ],
+            "buildsystem": "meson",
+            "config-opts" : [
+                "-Dman=false",
+                "-Dminer_fs=true",
+                "-Dminer_rss=false",
+                "-Dsystemd_user_services=false",
+                "-Dwriteback=false",
+                "-Ddomain_prefix=org.example.TrackerSearchApp",
+                "-Dminer_fs_cache_location=$XDG_CACHE_HOME/org.example.TrackerSearchApp/miner/files"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/tracker-miners.git"
+                }
+            ]
+        },
+        {
+            "name": "tracker-search-app",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "./example-app.py"
+                }
+            ],
+            "build-commands": [
+                "mkdir /app/bin",
+                "install -m 755 ./example-app.py /app/bin/example-app"
+            ]
+        }
+    ]
+}

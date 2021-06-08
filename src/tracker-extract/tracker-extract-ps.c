@@ -182,13 +182,11 @@ extract_ps (const gchar *uri)
 
 #ifdef USING_UNZIPPSFILES
 
-#include <zlib.h>
-
 static TrackerResource *
 extract_ps_gz (const gchar *uri)
 {
 	g_autoptr(GFile) file = NULL;
-	g_autoptr(GInputStream) stream, cstream = NULL;
+	g_autoptr(GInputStream) stream = NULL, cstream = NULL;
 	g_autoptr(GConverter) converter = NULL;
 	g_autoptr(GError) error = NULL;
 
@@ -211,7 +209,8 @@ extract_ps_gz (const gchar *uri)
 #endif /* USING_UNZIPPSFILES */
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	GFile *file;

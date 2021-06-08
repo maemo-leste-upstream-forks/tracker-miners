@@ -38,7 +38,6 @@
 #include <glib/gstdio.h>
 #include <gio/gio.h>
 
-#include "tracker-log.h"
 #include "tracker-file-utils.h"
 #include "tracker-type-utils.h"
 
@@ -318,44 +317,6 @@ tracker_file_system_get_remaining_space_percentage (const gchar *path)
 	} else {
 		return 0.0;
 	}
-}
-
-gboolean
-tracker_file_system_has_enough_space (const gchar *path,
-                                      gulong       required_bytes,
-                                      gboolean     creating_db)
-{
-	gchar *str1;
-	gchar *str2;
-	gboolean enough;
-	guint64 remaining;
-
-	g_return_val_if_fail (path != NULL, FALSE);
-
-	remaining = tracker_file_system_get_remaining_space (path);
-	enough = (remaining >= required_bytes);
-
-	if (creating_db) {
-		str1 = g_format_size (required_bytes);
-		str2 = g_format_size (remaining);
-
-		if (!enough) {
-			g_critical ("Not enough disk space to create databases, "
-			            "%s remaining, %s required as a minimum",
-			            str2,
-			            str1);
-		} else {
-			g_debug ("Checking for adequate disk space to create databases, "
-			         "%s remaining, %s required as a minimum",
-			         str2,
-			         str1);
-		}
-
-		g_free (str2);
-		g_free (str1);
-	}
-
-	return enough;
 }
 
 gboolean

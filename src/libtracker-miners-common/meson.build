@@ -10,10 +10,14 @@ tracker_miners_common_sources = [
   'tracker-date-time.c',
   'tracker-dbus.c',
   'tracker-domain-ontology.c',
+  'tracker-debug.c',
+  'tracker-error-report.c',
   'tracker-file-utils.c',
+  'tracker-fts-config.c',
   'tracker-ioprio.c',
-  'tracker-log.c',
+  'tracker-language.c',
   'tracker-sched.c',
+  'tracker-term-utils.c',
   'tracker-type-utils.c',
   'tracker-utils.c',
   'tracker-locale.c',
@@ -36,7 +40,10 @@ endif
 libtracker_miners_common = static_library('tracker-miners-common',
   tracker_miners_common_sources,
   dependencies: tracker_miners_common_dependencies + tracker_miners_common_private_dependencies,
-  c_args: tracker_c_args,
+  c_args: tracker_c_args + [
+      '-DTRACKERSHAREDIR="@0@"'.format(tracker_versioned_name),
+      '-DONTOLOGIESDIR="@0@"'.format(tracker_ontologies_dir),
+  ],
   include_directories: [configinc, srcinc],
 )
 

@@ -18,28 +18,12 @@ Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA  02110-1301, USA.
 -->
 <schemalist>
-  <schema id="org.freedesktop.Tracker.Miner.Files" path="/org/freedesktop/tracker/miner/files/" gettext-domain="tracker-miners">
-    <key name="verbosity" enum="org.freedesktop.TrackerMiners.TrackerVerbosity">
-      <default>'errors'</default>
-      <summary>Log verbosity</summary>
-      <description>Log verbosity.</description>
-    </key>
-
+  <schema id="org.freedesktop.Tracker3.Miner.Files" path="/org/freedesktop/tracker/miner/files/" gettext-domain="tracker-miners">
     <key name="initial-sleep" type="i">
       <summary>Initial sleep</summary>
       <description>Initial sleep time, in seconds.</description>
       <range min="0" max="1000"/>
       <default>15</default>
-    </key>
-
-    <key name="sched-idle" enum="org.freedesktop.TrackerMiners.TrackerSchedIdle">
-      <default>'first-index'</default>
-      <summary>Scheduler priority when idle</summary>
-      <description>
-	The scheduler is the kernel component that decides which
-	runnable application will be executed by the CPU next. Each
-	application has an associated scheduling policy and priority.
-      </description>
     </key>
 
     <key name="throttle" type="i">
@@ -84,12 +68,6 @@ Boston, MA  02110-1301, USA.
       <default>true</default>
     </key>
 
-    <key name="enable-writeback" type="b">
-      <summary>Enable writeback</summary>
-      <description>Set to false to completely disable any file writeback</description>
-      <default>true</default>
-    </key>
-
     <key name="index-removable-devices" type="b">
       <summary>Index removable devices</summary>
       <description>Set to true to enable indexing mounted directories for removable devices.</description>
@@ -119,26 +97,39 @@ Boston, MA  02110-1301, USA.
 
     <key name="index-recursive-directories" type="as">
       <summary>Directories to index recursively</summary>
+      <!-- Translators: Do NOT translate the directories names in capital. Those
+      are keys used by Tracker. -->
       <description>
 	List of directories to index recursively, Special values include:
-	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
-	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
+	‘&amp;DESKTOP’, ‘&amp;DOCUMENTS’, ‘&amp;DOWNLOAD’, ‘&amp;MUSIC’, ‘&amp;PICTURES’,
+	‘&amp;PUBLIC_SHARE’, ‘&amp;TEMPLATES’, ‘&amp;VIDEOS’.
 
 	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
       </description>
-      <default>[ '&amp;DESKTOP', '&amp;DOCUMENTS', '&amp;MUSIC', '&amp;PICTURES', '&amp;VIDEOS' ]</default>
+      <default>[ @INDEX_RECURSIVE_DIRS@ ]</default>
     </key>
 
     <key name="index-single-directories" type="as">
       <summary>Directories to index non-recursively</summary>
+      <!-- Translators: Do NOT translate the directories names in capital. Those
+      are keys used by Tracker. -->
       <description>
 	List of directories to index without inspecting subfolders, Special values include:
-	&amp;DESKTOP, &amp;DOCUMENTS, &amp;DOWNLOAD, &amp;MUSIC, &amp;PICTURES,
-	&amp;PUBLIC_SHARE, &amp;TEMPLATES, &amp;VIDEOS.
+	‘&amp;DESKTOP’, ‘&amp;DOCUMENTS’, ‘&amp;DOWNLOAD’, ‘&amp;MUSIC’, ‘&amp;PICTURES’,
+	‘&amp;PUBLIC_SHARE’, ‘&amp;TEMPLATES’, ‘&amp;VIDEOS’.
 
 	See /etc/xdg/user-dirs.defaults and $HOME/.config/user-dirs.default
       </description>
-      <default>[ '$HOME', '&amp;DOWNLOAD' ]</default>
+      <default>[ @INDEX_SINGLE_DIRS@ ]</default>
+    </key>
+
+    <key name="index-applications" type="b">
+      <summary>Index applications installed on the system</summary>
+      <description>
+          If this option is enabled, the filesystem miner will look for .desktop
+          files in the standard XDG system and user data directories.
+      </description>
+      <default>true</default>
     </key>
 
     <key name="ignored-files" type="as">
@@ -155,7 +146,7 @@ Boston, MA  02110-1301, USA.
 
     <key name="ignored-directories-with-content" type="as">
       <summary>Ignored directories with content</summary>
-      <description>Avoid any directory containing a file blacklisted here</description>
+      <description>Avoid any directory containing a file blocklisted here</description>
       <default>[ '.trackerignore', '.git', '.hg', '.nomedia' ]</default>
     </key>
   </schema>

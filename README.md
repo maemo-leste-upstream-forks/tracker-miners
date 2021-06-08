@@ -6,21 +6,24 @@ and mobile.
 
 The Tracker project is divided into two main repositories:
 
-  * [Tracker core](https://gitlab.gnome.org/GNOME/tracker) contains the database
-    (*tracker-store*), the database ontologies, the commandline user
-    interface (`tracker`), and several support libraries.
+  * [Tracker SPARQL](https://gitlab.gnome.org/GNOME/tracker) contains the
+    triplestore database, provided as the `libtracker-sparql` library
+    and implemented using [SQLite](http://sqlite.org/). This repo also contains
+    the database ontologies and the commandline user interface (`tracker3`).
 
   * [Tracker Miners](https://gitlab.gnome.org/GNOME/tracker-miners) contains
-    the indexer daemon (*tracker-miner-fs*) and tools to extract metadata
+    the indexer daemon (*tracker-miner-fs-3*) and tools to extract metadata
     from many different filetypes.
 
 More information on Tracker can be found at:
 
+  * <https://gnome.pages.gitlab.gnome.org/tracker/>
   * <https://wiki.gnome.org/Projects/Tracker>
 
 Source code and issue tracking:
 
   * <https://gitlab.gnome.org/GNOME/tracker>
+  * <https://gitlab.gnome.org/GNOME/tracker-miners>
 
 All discussion related to Tracker happens on:
 

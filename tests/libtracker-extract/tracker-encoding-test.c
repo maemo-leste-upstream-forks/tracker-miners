@@ -55,9 +55,9 @@ test_encoding_can_guess (void)
 {
         /* This just duplicates the function code... */
 #if defined (HAVE_ENCA) || defined (HAVE_LIBICU_CHARSET_DETECTION)
-        g_assert (tracker_encoding_can_guess ());
+        g_assert_true (tracker_encoding_can_guess ());
 #else
-        g_assert (!tracker_encoding_can_guess ());
+        g_assert_true (!tracker_encoding_can_guess ());
 #endif
 }
 

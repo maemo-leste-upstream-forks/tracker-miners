@@ -27,7 +27,7 @@
 
 #include "tracker-config.h"
 
-#define CONFIG_SCHEMA "org.freedesktop.Tracker.Extract"
+#define CONFIG_SCHEMA "org.freedesktop.Tracker3.Extract"
 #define CONFIG_PATH   "/org/freedesktop/tracker/extract/"
 
 static void     config_set_property         (GObject       *object,
@@ -43,10 +43,8 @@ static void     config_constructed          (GObject       *object);
 
 enum {
 	PROP_0,
-	PROP_VERBOSITY,
-	PROP_SCHED_IDLE,
 	PROP_MAX_BYTES,
-	PROP_MAX_MEDIA_ART_WIDTH,
+	PROP_TEXT_ALLOWLIST,
 	PROP_WAIT_FOR_MINER_FS,
 };
 
@@ -64,23 +62,6 @@ tracker_config_class_init (TrackerConfigClass *klass)
 
 	/* General */
 	g_object_class_install_property (object_class,
-	                                 PROP_VERBOSITY,
-	                                 g_param_spec_enum ("verbosity",
-	                                                    "Log verbosity",
-	                                                    "Log verbosity (0=errors, 1=minimal, 2=detailed, 3=debug)",
-	                                                    TRACKER_TYPE_VERBOSITY,
-	                                                    TRACKER_VERBOSITY_ERRORS,
-	                                                    G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-	                                 PROP_SCHED_IDLE,
-	                                 g_param_spec_enum ("sched-idle",
-	                                                    "Scheduler priority when idle",
-	                                                    "Scheduler priority when idle (0=always, 1=first-index, 2=never)",
-	                                                    TRACKER_TYPE_SCHED_IDLE,
-	                                                    TRACKER_SCHED_IDLE_FIRST_INDEX,
-	                                                    G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
 	                                 PROP_MAX_BYTES,
 	                                 g_param_spec_int ("max-bytes",
 	                                                   "Max Bytes",
@@ -89,6 +70,13 @@ tracker_config_class_init (TrackerConfigClass *klass)
 	                                                   1024 * 1024,
 	                                                   G_PARAM_READWRITE));
 
+	g_object_class_install_property (object_class,
+	                                 PROP_TEXT_ALLOWLIST,
+	                                 g_param_spec_boxed ("text-allowlist",
+	                                                     "Text file allowlist",
+	                                                     "Filename patterns for plain text documents that should be indexed",
+	                                                     G_TYPE_STRV,
+	                                                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
 	                                 PROP_WAIT_FOR_MINER_FS,
 	                                 g_param_spec_boolean ("wait-for-miner-fs",
@@ -109,21 +97,10 @@ config_set_property (GObject      *object,
                      const GValue *value,
                      GParamSpec   *pspec)
 {
-	TrackerConfig *config = TRACKER_CONFIG (object);
-
 	switch (param_id) {
-	/* General */
-	/* NOTE: We handle these because we have to be able
-	 * to save these based on command line overrides.
-	 */
-	case PROP_VERBOSITY:
-		tracker_config_set_verbosity (config, g_value_get_enum (value));
-		break;
-
-	/* We don't care about the others... we don't save anyway. */
-	case PROP_SCHED_IDLE:
+	/* We don't care about these... we don't save anyway. */
 	case PROP_MAX_BYTES:
-	case PROP_MAX_MEDIA_ART_WIDTH:
+	case PROP_TEXT_ALLOWLIST:
 	case PROP_WAIT_FOR_MINER_FS:
 		break;
 
@@ -142,19 +119,13 @@ config_get_property (GObject    *object,
 	TrackerConfig *config = TRACKER_CONFIG (object);
 
 	switch (param_id) {
-	case PROP_VERBOSITY:
-		g_value_set_enum (value,
-		                  tracker_config_get_verbosity (config));
-		break;
-
-	case PROP_SCHED_IDLE:
-		g_value_set_enum (value,
-		                  tracker_config_get_sched_idle (config));
-		break;
-
 	case PROP_MAX_BYTES:
 		g_value_set_int (value,
 		                 tracker_config_get_max_bytes (config));
+		break;
+
+	case PROP_TEXT_ALLOWLIST:
+		g_value_take_boxed (value, tracker_gslist_to_string_list (config->text_allowlist));
 		break;
 
 	case PROP_WAIT_FOR_MINER_FS:
@@ -169,13 +140,41 @@ config_get_property (GObject    *object,
 }
 
 static void
+config_set_text_allowlist_conveniences (TrackerConfig *config)
+{
+	GSList *l;
+	GSList *patterns = NULL;
+
+	g_slist_foreach (config->text_allowlist_patterns,
+	                 (GFunc) g_pattern_spec_free,
+	                 NULL);
+	g_slist_free (config->text_allowlist_patterns);
+
+	for (l = config->text_allowlist; l; l = l->next) {
+		GPatternSpec *spec;
+		const gchar *str = l->data;
+
+		if (str) {
+			spec = g_pattern_spec_new (l->data);
+			patterns = g_slist_prepend (patterns, spec);
+		}
+	}
+
+	config->text_allowlist_patterns = g_slist_reverse (patterns);
+}
+
+static void
 config_finalize (GObject *object)
 {
-	/* For now we do nothing here, we left this override in for
-	 * future expansion.
-	 */
+	TrackerConfig *config = TRACKER_CONFIG (object);
+
+	g_slist_foreach (config->text_allowlist_patterns,
+	                 (GFunc) g_pattern_spec_free,
+	                 NULL);
+	g_slist_free (config->text_allowlist);
 
 	(G_OBJECT_CLASS (tracker_config_parent_class)->finalize) (object);
+
 }
 
 static void
@@ -193,24 +192,14 @@ config_constructed (GObject *object)
 
 	/* Set up bindings:
 	 *
-	 * What's interesting here is that 'verbosity' and
-	 * 'initial-sleep' are command line arguments that can be
-	 * overridden, so we don't update the config when we set them
-	 * from main() because it's a session configuration only, not
-	 * a permanent one. To do this we use the flag
-	 * G_SETTINGS_BIND_GET_NO_CHANGES.
-	 *
-	 * For the other settings, we don't bind the
-	 * G_SETTINGS_BIND_SET because we don't want to save anything,
-	 * ever, we only want to know about updates to the settings as
+	 * We don't bind the G_SETTINGS_BIND_SET because we don't want to save
+	 * anything, ever, we only want to know about updates to the settings as
 	 * they're changed externally. The only time this may be
 	 * different is where we use the environment variable
 	 * TRACKER_USE_CONFIG_FILES and we want to write a config
 	 * file for convenience. But this is only necessary if the
 	 * config is different to the default.
 	 */
-	g_settings_bind (settings, "verbosity", object, "verbosity", G_SETTINGS_BIND_GET | G_SETTINGS_BIND_GET_NO_CHANGES);
-	g_settings_bind (settings, "sched-idle", object, "sched-idle", G_SETTINGS_BIND_GET);
 	g_settings_bind (settings, "wait-for-miner-fs", object, "wait-for-miner-fs", G_SETTINGS_BIND_GET);
 
 	/* Cache settings accessed from extractor modules, we don't want
@@ -218,6 +207,9 @@ config_constructed (GObject *object)
 	 * unintended open() calls.
 	 */
 	TRACKER_CONFIG (settings)->max_bytes = g_settings_get_int (settings, "max-bytes");
+	TRACKER_CONFIG (settings)->text_allowlist = tracker_string_list_to_gslist (g_settings_get_strv (settings, "text-allowlist"), -1);
+
+	config_set_text_allowlist_conveniences (TRACKER_CONFIG (settings));
 }
 
 TrackerConfig *
@@ -263,36 +255,19 @@ tracker_config_new (void)
 }
 
 gint
-tracker_config_get_verbosity (TrackerConfig *config)
-{
-	g_return_val_if_fail (TRACKER_IS_CONFIG (config), TRACKER_VERBOSITY_ERRORS);
-
-	return g_settings_get_enum (G_SETTINGS (config), "verbosity");
-}
-
-void
-tracker_config_set_verbosity (TrackerConfig *config,
-                              gint           value)
-{
-	g_return_if_fail (TRACKER_IS_CONFIG (config));
-
-	g_settings_set_enum (G_SETTINGS (config), "verbosity", value);
-}
-
-gint
-tracker_config_get_sched_idle (TrackerConfig *config)
-{
-	g_return_val_if_fail (TRACKER_IS_CONFIG (config), TRACKER_SCHED_IDLE_FIRST_INDEX);
-
-	return g_settings_get_enum (G_SETTINGS (config), "sched-idle");
-}
-
-gint
 tracker_config_get_max_bytes (TrackerConfig *config)
 {
 	g_return_val_if_fail (TRACKER_IS_CONFIG (config), 0);
 
 	return config->max_bytes;
+}
+
+GSList *
+tracker_config_get_text_allowlist (TrackerConfig *config)
+{
+	g_return_val_if_fail (TRACKER_IS_CONFIG (config), NULL);
+
+	return config->text_allowlist;
 }
 
 gboolean
@@ -301,4 +276,14 @@ tracker_config_get_wait_for_miner_fs (TrackerConfig *config)
 	g_return_val_if_fail (TRACKER_IS_CONFIG (config), FALSE);
 
 	return g_settings_get_boolean (G_SETTINGS (config), "wait-for-miner-fs");
+}
+
+
+/*
+ * Convenience functions
+ */
+GSList *
+tracker_config_get_text_allowlist_patterns (TrackerConfig *config)
+{
+	return config->text_allowlist_patterns;
 }

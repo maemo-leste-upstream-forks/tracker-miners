@@ -1,63 +1,52 @@
 project('tracker-miners', 'c',
-        version: '2.3.5',
-        meson_version: '>=0.47')
+        version: '3.1.1',
+        meson_version: '>=0.51')
 
 gnome = import('gnome')
 i18n = import('i18n')
 cc = meson.get_compiler('c')
 
 # This is the X.Y used in -llibtracker-FOO-X.Y
-tracker_api_version = '2.0'
+tracker_api_version = '3.0'
+tracker_api_major = tracker_api_version.split('.')[0]
+tracker_versioned_name = 'tracker@0@-miners'.format(tracker_api_major)
 
 libdir = join_paths(get_option('prefix'), get_option('libdir'))
 datadir = join_paths(get_option('prefix'), get_option('datadir'))
 
-glib_required = '2.40.0'
+glib_required = '2.62.0'
+tracker_required = '3.1.0'
 
 if get_option('tracker_core') == 'system'
-  tracker_sparql = dependency('tracker-sparql-2.0', version: '>= 2.2.0', required: false)
-  tracker_miner = dependency('tracker-miner-2.0', version: '>= 2.2.0', required: false)
+  tracker_sparql = dependency('tracker-sparql-3.0', version: '>=' + tracker_required, required: false)
+  tracker_testutils = dependency('tracker-testutils-3.0', required: false)
 
-  if not tracker_sparql.found() or not tracker_miner.found()
+  if not tracker_sparql.found() or not tracker_testutils.found()
     error('Did not find the required versions of the Tracker core libraries ' +
           'installed in the system. Please ensure they are installed, or ' +
           'use the -Dtracker_core=subproject option to build from Git.')
   endif
 
-  # The tracker-miners will not work unless installed into the same prefix as
-  # the base 'tracker' package as it expects to be able to access data files
-  # in ${prefix}/{datadir}/tracker.
-  #
-  # This check acts as a guard to make sure we are being configured with the
-  # right prefix, among other things.
-  tracker_store_path = tracker_sparql.get_pkgconfig_variable('tracker_store')
-
   # If we are building against an installed version of tracker core rather than
   # having it as a subproject, these 'uninstalled' locations point to the actual
   # installed locations.
-  tracker_uninstalled_domain_rule = join_paths (tracker_sparql.get_pkgconfig_variable('domain_ontologies_dir'), 'default.rule')
+  tracker_uninstalled_cli_dir = join_paths (tracker_sparql.get_pkgconfig_variable('exec_prefix'), 'bin')
   tracker_uninstalled_nepomuk_ontologies_dir = join_paths(tracker_sparql.get_pkgconfig_variable('ontologies_dir'), 'nepomuk')
-  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_pkgconfig_variable('datadir'), 'tracker', 'stop-words')
+  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_pkgconfig_variable('tracker_datadir'), 'stop-words')
+  tracker_uninstalled_testutils_dir = tracker_testutils.get_pkgconfig_variable('python_path')
+  tracker_ontologies_dir = tracker_sparql.get_pkgconfig_variable('ontologies_dir')
+
+  tracker_sparql_uninstalled_dir = tracker_sparql.get_pkgconfig_variable('libdir')
 else
-  tracker_subproject = subproject('tracker',
-    default_options: [
-       'dbus_services=@0@'.format(get_option('dbus_services')),
-       'docs=@0@'.format(get_option('docs')),
-       'systemd_user_services=@0@'.format(get_option('systemd_user_services')),
-    ])
+  tracker_subproject = subproject('tracker')
 
   tracker_sparql = tracker_subproject.get_variable('tracker_sparql_dep')
-  tracker_miner = tracker_subproject.get_variable('tracker_miner_dep')
 
-  tracker_store = tracker_subproject.get_variable('tracker_store')
-  tracker_store_path = tracker_store.full_path()
-
-  tracker_uninstalled_domain_rule = tracker_subproject.get_variable('tracker_uninstalled_domain_rule')
+  tracker_uninstalled_cli_dir = tracker_subproject.get_variable('tracker_uninstalled_cli_dir')
   tracker_uninstalled_nepomuk_ontologies_dir = tracker_subproject.get_variable('tracker_uninstalled_nepomuk_ontologies_dir')
   tracker_uninstalled_stop_words_dir = tracker_subproject.get_variable('tracker_uninstalled_stop_words_dir')
-
-  tracker_common_enums_header = tracker_subproject.get_variable('tracker_common_enums_header')
-  tracker_gsettings_schemas = tracker_subproject.get_variable('tracker_gsettings_schemas')
+  tracker_uninstalled_testutils_dir = tracker_subproject.get_variable('tracker_uninstalled_testutils_dir')
+  tracker_ontologies_dir = tracker_subproject.get_variable('tracker_ontologies_dir')
 endif
 
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
@@ -65,7 +54,6 @@ avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
 avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
 dbus = dependency('dbus-1', version: '>= 1.3.1')
 exempi = dependency('exempi-2.0', version: '>= 2.1.0', required: get_option('xmp'))
-flac = dependency('flac', version: '>= 1.2.1', required: get_option('flac'))
 gexiv2 = dependency('gexiv2', required: get_option('raw'))
 gio = dependency('gio-2.0', version: '>=' + glib_required)
 gio_unix = dependency('gio-unix-2.0', version: '>=' + glib_required)
@@ -80,7 +68,7 @@ gupnp_dlna = dependency('gupnp-dlna-2.0', version: '>= 0.9.4', required: false)
 gupnp_dlna_gst = dependency('gupnp-dlna-gst-2.0', version: '>= 0.9.4', required: false)
 icu_i18n = dependency('icu-i18n', version: '>= 4.8.1.1', required: false)
 icu_uc = dependency('icu-uc', version: '>= 4.8.1.1', required: false)
-libcue = dependency('libcue', required: get_option('cue'))
+libcue = dependency('libcue', version: '>= 2.0.0', required: get_option('cue'))
 libexif = dependency('libexif', version: '>= 0.6', required: get_option('exif'))
 libgsf = dependency('libgsf-1', version: '>= 1.14.24', required: get_option('gsf'))
 libgxps = dependency('libgxps', required: get_option('xps'))
@@ -91,14 +79,15 @@ libpng = dependency('libpng', version: '>= 0.89', required: get_option('png'))
 libseccomp = dependency('libseccomp', version: '>= 2.0', required: false)
 libtiff = dependency('libtiff-4', required: get_option('tiff'))
 libxml2 = dependency('libxml-2.0', version: '>= 2.6', required: get_option('xml'))
-libvorbis = dependency('vorbisfile', version: '>= 0.22', required: get_option('vorbis'))
 poppler = dependency('poppler-glib', version: '>= 0.16.0', required: get_option('pdf'))
 totem_plparser = dependency('totem-plparser', required: get_option('playlist'))
 upower = dependency('upower-glib', version: '>= 0.9.0', required: false)
-zlib = dependency('zlib')
 
 libgif = cc.find_library('gif', required: get_option('gif'))
 libmath = cc.find_library('m', required: false)
+
+network_manager = dependency('libnm', required: get_option('network_manager'))
+have_network_manager = network_manager.found()
 
 have_tracker_extract = get_option('extract')
 have_tracker_miner_fs = get_option('miner_fs')
@@ -113,6 +102,13 @@ if have_tracker_miner_rss
   endif
 endif
 
+if get_option('man')
+  asciidoc = find_program('asciidoc')
+  xsltproc = find_program('xsltproc')
+endif
+
+sha256sum = find_program('sha256sum')
+
 add_project_arguments('-Wformat', '-Wformat-security', language: 'c')
 
 # There are various gchar vs. unsigned char warnings that occur in extract
@@ -121,6 +117,29 @@ add_project_arguments('-Wno-pointer-sign', language: 'c')
 
 add_project_arguments('-DTRACKER_COMPILATION', language: 'c')
 add_project_arguments('-DG_LOG_DOMAIN="Tracker"', language: 'c')
+add_project_arguments('-DG_LOG_STRUCTURED=1', language: 'c')
+
+if get_option('buildtype') == 'plain'
+  # Default case is to allow TRACKER_DEBUG which is very useful for
+  # triaging user-reported issues.
+  # Use --buildtype=release to disable debug completely.
+  debug = true
+else
+  debug = get_option('debug')
+endif
+optimization = get_option('optimization')
+
+debug_cflags = []
+if debug
+  debug_cflags += '-DG_ENABLE_DEBUG'
+  if optimization in ['0', 'g']
+    debug_cflags += '-DG_ENABLE_CONSISTENCY_CHECKS'
+  endif
+elif optimization in ['2', '3', 's']
+  debug_cflags += '-DG_DISABLE_CAST_CHECKS'
+endif
+
+add_project_arguments(debug_cflags, language: 'c')
 
 ##################################################################
 # Check for libtracker-common: battery/mains power detection
@@ -233,7 +252,7 @@ elif get_option('generic_media_extractor') == 'libav'
 endif
 
 ###########################################################################
-# Check for gstreamer backend: tagreadbin/decodebin2/discoverer/gupnp-dlna
+# Check for gstreamer backend: decodebin2/discoverer/gupnp-dlna
 ###########################################################################
 
 gstreamer_backend_name = ''
@@ -269,6 +288,7 @@ unsupported_cpus = [
   'm68k',
   'parisc',
   'parisc64',
+  'riscv64',
   'sh4',
   'sparc',
   'sparc64',
@@ -276,50 +296,48 @@ unsupported_cpus = [
 
 system_supports_seccomp = host_system == 'linux'
 cpu_supports_seccomp = not unsupported_cpus.contains(host_cpu)
-seccomp_required = system_supports_seccomp and cpu_supports_seccomp
+seccomp_required = system_supports_seccomp and cpu_supports_seccomp and get_option('seccomp') and get_option('extract')
 
 if not libseccomp.found() and seccomp_required
-  error('Libseccomp is mandatory for sandboxed metadata extraction')
+  error('Libseccomp is necessary for sandboxed metadata extraction')
 endif
 
 ####################################################################
 # D-Bus service files
 ####################################################################
 
-if get_option('dbus_services') == ''
+dbus_services_dir = get_option('dbus_services_dir')
+if dbus_services_dir == ''
   dbus_services_dir = dbus.get_pkgconfig_variable('session_bus_services_dir',
                                                   define_variable: [ 'datadir', datadir ])
-else
-  dbus_services_dir = get_option('dbus_services')
 endif
 
 ####################################################################
 # systemd user services
 ####################################################################
 
-install_systemd_user_services = false
-if get_option('systemd_user_services') == 'yes' or get_option('systemd_user_services') == 'auto'
-  systemd = dependency('systemd', version: '>= 242', required: false)
-  if systemd.found()
-    install_systemd_user_services = true
-    systemd_user_services_dir = systemd.get_pkgconfig_variable('systemduserunitdir',
-                                                               define_variable: ['prefix', get_option('prefix')])
-  else
-    install_systemd_user_services = false
-    systemd_user_services_dir = '(not found)'
+if get_option('systemd_user_services')
+  systemd_user_services_dir = get_option('systemd_user_services_dir')
+
+  if systemd_user_services_dir == ''
+    systemd = dependency('systemd', version: '>= 242', required: false)
+    if systemd.found()
+      systemd_user_services_dir = systemd.get_pkgconfig_variable('systemduserunitdir',
+                                                                 define_variable: ['prefix', get_option('prefix')])
+    else
+      error('systemd user services were enabled, but systemd was not found. ' +
+            'Please set the systemd_user_services_dir option if you want to ' +
+            'install them, or set systemd_user_services=false to disable.')
+    endif
   endif
-elif get_option('systemd_user_services') == 'no' or get_option('systemd_user_services') == ''
-  install_systemd_user_services = false
-  systemd_user_services_dir = '(disabled)'
-else
-  install_systemd_user_services = true
-  systemd_user_services_dir = get_option('systemd_user_services')
 endif
+
 
 conf = configuration_data()
 
+have_malloc_trim = meson.get_compiler('c').has_function('malloc_trim')
+
 # Config that goes in config.h
-conf.set('DISABLE_JOURNAL', get_option('journal') == false)
 conf.set('GUARANTEE_METADATA', get_option('guarantee_metadata') == true)
 conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == true)
 
@@ -330,12 +348,28 @@ conf.set('GSTREAMER_BACKEND_DISCOVERER', gstreamer_backend_name == 'Discoverer')
 conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DLNA')
 conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
 conf.set('HAVE_LIBCUE', libcue.found())
-conf.set('HAVE_LIBCUE2', libcue.found() and libcue.version().version_compare('>= 2.0.0'))
 conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
-conf.set('HAVE_LIBSECCOMP', libseccomp.found())
+conf.set('HAVE_LIBSECCOMP', seccomp_required and libseccomp.found())
+conf.set('HAVE_MALLOC_TRIM', have_malloc_trim)
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
+conf.set('HAVE_NETWORK_MANAGER', have_network_manager)
+conf.set('DOMAIN_PREFIX', get_option('domain_prefix'))
+if get_option('domain_prefix') != 'org.freedesktop'
+  rule_file = get_option('domain_prefix') + '.domain.rule'
+  domain_rule_path = get_option('prefix') / get_option('datadir') / 'tracker@0@'.format(tracker_api_major) / 'domain-ontologies' / rule_file
+  conf.set('DOMAIN_ONTOLOGY_OPTIONS', '--domain-ontology ' + domain_rule_path)
+  conf.set('MINER_FILES_INITIAL_SLEEP', '--initial-sleep 0')
+  if get_option('miner_fs_cache_location') == ''
+    conf.set('MINER_FS_CACHE_LOCATION', '$XDG_CACHE_HOME/' + get_option('domain_prefix') + '/miner/files')
+  else
+    conf.set('MINER_FS_CACHE_LOCATION', get_option('miner_fs_cache_location'))
+  endif
+else
+  conf.set('DOMAIN_ONTOLOGY_OPTIONS', '')
+  conf.set('MINER_FILES_INITIAL_SLEEP', '')
+endif
 
 conf.set('HAVE_GETLINE', cc.has_function('getline', prefix : '#include <stdio.h>'))
 conf.set('HAVE_POSIX_FADVISE', cc.has_function('posix_fadvise', prefix : '#include <fcntl.h>'))
@@ -344,10 +378,9 @@ conf.set('HAVE_STRNLEN', cc.has_function('strnlen', prefix : '#include <string.h
 
 conf.set('LOCALEDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('localedir')))
 conf.set('SHAREDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('datadir')))
-conf.set('TRACKER_MINERS_DIR', '"@0@/@1@/tracker/miners"'.format(get_option('prefix'), get_option('datadir')))
-conf.set('TRACKER_UI_DIR', '"@0@/@1@/tracker/"'.format(get_option('prefix'), get_option('datadir')))
+conf.set('TRACKER_MINERS_DIR', '"@0@"'.format(join_paths(get_option('prefix'), get_option('datadir'), tracker_versioned_name, 'miners')))
 
-conf.set('GETTEXT_PACKAGE', '"tracker-miners"')
+conf.set('GETTEXT_PACKAGE', '"@0@"'.format(tracker_versioned_name))
 conf.set('PACKAGE_VERSION', '"@0@"'.format(meson.project_version()))
 conf.set('TRACKER_VERSION', '"@0@"'.format(meson.project_version()))
 
@@ -363,13 +396,6 @@ conf.set('libexecdir', join_paths(get_option('prefix'), get_option('libexecdir')
 conf.set('prefix', get_option('prefix'))
 conf.set('TRACKER_API_VERSION', tracker_api_version)
 conf.set('VERSION', meson.project_version())
-
-# Configure functional tests to run completely from source tree.
-conf.set('FUNCTIONAL_TESTS_TRACKER_EXTRACT_PATH', join_paths(meson.current_build_dir(), 'src', 'tracker-extract', 'tracker-extract'))
-conf.set('FUNCTIONAL_TESTS_TRACKER_MINER_FS_PATH', join_paths(meson.current_build_dir(), 'src', 'miners', 'fs', 'tracker-miner-fs'))
-conf.set('FUNCTIONAL_TESTS_TRACKER_WRITEBACK_PATH', join_paths(meson.current_build_dir(), 'src', 'tracker-writeback', 'tracker-writeback'))
-
-conf.set('FUNCTIONAL_TESTS_TRACKER_STORE_PATH', tracker_store_path)
 
 configure_file(input: 'config-miners.h.meson.in',
                output: 'config-miners.h',
@@ -388,37 +414,66 @@ tracker_c_args = [
 configinc = include_directories('./')
 srcinc = include_directories('src/')
 
-tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-' + tracker_api_version)
+build_root = meson.current_build_dir()
+
+# We use tracker-miners-3.0 rather than tracker3-miners inside the lib64
+# directory, following the existing convention in that directory.
+tracker_api_versioned_name = 'tracker-miners-@0@'.format(tracker_api_version)
+tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name)
 tracker_install_rpath = ':'.join([tracker_internal_libs_dir, libdir])
 
-tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/extract-modules'.format(tracker_api_version))
-# NOTE: We don't use ${TRACKER_API_VERSION} because other content like
-# the ontology is installed to the same location.
-tracker_extract_rules_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker-miners/extract-rules')
-tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadir'), 'tracker/miners')
-tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), 'tracker-miners-@0@/writeback-modules'.format(tracker_api_version))
+tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'extract-modules')
+tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'writeback-modules')
+tracker_extract_rules_dir = join_paths(get_option('prefix'), get_option('datadir'), tracker_versioned_name, 'extract-rules')
+tracker_miner_services_dir = join_paths(get_option('prefix'), get_option('datadir'), tracker_versioned_name, 'miners')
 
+tracker_uninstalled_cli_subcommands_dir = meson.current_build_dir() / 'src' / 'tracker' / 'subcommands'
 tracker_uninstalled_extract_rules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-extract', 'uninstalled-rules')
 tracker_uninstalled_writeback_modules_dir = join_paths(meson.current_build_dir(), 'src', 'tracker-writeback')
+uninstalled_tracker_extract_path = join_paths(meson.current_build_dir(), 'src', 'tracker-extract', 'tracker-extract-3')
 
 gsettings_schema_dir = join_paths(get_option('prefix'), get_option('datadir'), 'glib-2.0', 'schemas')
+po_dir = join_paths(meson.current_source_dir(), 'po')
+xdg_autostart_dir = join_paths(get_option('sysconfdir'), 'xdg', 'autostart')
 
 glib_compile_schemas = find_program('glib-compile-schemas')
 glib_mkenums = find_program('glib-mkenums')
 
 subdir('src')
 subdir('data')
-
-if get_option('docs')
-  subdir('docs')
-endif
+subdir('docs')
 
 test_c_args = tracker_c_args + [
   '-DTOP_BUILDDIR="@0@/"'.format(meson.build_root()),
   '-DTOP_SRCDIR="@0@/"'.format(meson.source_root()),
 ]
 
+if get_option('tests_tap_protocol')
+  test_protocol = 'tap'
+else
+  test_protocol = 'exitcode'
+endif
+
 subdir('tests')
+
+run_uninstalled_conf = configuration_data()
+run_uninstalled_conf.set('tracker_sparql_uninstalled_dir', tracker_sparql_uninstalled_dir)
+run_uninstalled_conf.set('tracker_uninstalled_cli_dir', tracker_uninstalled_cli_dir)
+run_uninstalled_conf.set('tracker_uninstalled_cli_subcommands_dir', tracker_uninstalled_cli_subcommands_dir)
+run_uninstalled_conf.set('tracker_uninstalled_domain_rule', meson.current_build_dir() / 'tests' / 'functional-tests' / 'test-domain.rule')
+run_uninstalled_conf.set('tracker_uninstalled_extract_rules_dir', tracker_uninstalled_extract_rules_dir)
+run_uninstalled_conf.set('tracker_uninstalled_extractors_dir', meson.current_build_dir() / 'src' / 'tracker-extract')
+run_uninstalled_conf.set('tracker_uninstalled_miner_services_dir', tracker_uninstalled_miner_services_dir)
+run_uninstalled_conf.set('tracker_uninstalled_stop_words_dir', tracker_uninstalled_stop_words_dir)
+run_uninstalled_conf.set('tracker_uninstalled_testutils_dir', tracker_uninstalled_testutils_dir)
+run_uninstalled_conf.set('tracker_uninstalled_writeback_modules_dir', tracker_uninstalled_writeback_modules_dir)
+run_uninstalled_conf.set('uninstalled_gsettings_schema_dir', tracker_miners_uninstalled_gsettings_schema_dir)
+run_uninstalled = configure_file(
+  input: 'run-uninstalled.in',
+  output: 'run-uninstalled',
+  configuration: run_uninstalled_conf)
+
+subdir('examples')
 
 subdir('po')
 
@@ -429,9 +484,13 @@ summary = [
   '    Prefix:                                 ' + get_option('prefix'),
   '    Source code location:                   ' + meson.source_root(),
   '    Compiler:                               ' + cc.get_id(),
+  '    Debug:                                  ' + get_option('debug').to_string(),
+  '    Optimization:                           ' + get_option('optimization'),
+  '    Domain prefix:                          ' + get_option('domain_prefix'),
   '\nFeature Support:',
   '    Battery/mains power detection:          ' + battery_detection_library_name,
-  '    Build with Journal support:             ' + get_option('journal').to_string(),
+  '    Support for network status detection:   ' + have_network_manager.to_string(),
+  '    Releasing heap memory with malloc_trim: ' + have_malloc_trim.to_string(),
   '\nData Miners / Writebacks:',
   '    FS (File System):                       ' + have_tracker_miner_fs.to_string(),
   '    RSS:                                    ' + have_tracker_miner_rss.to_string(),
@@ -452,8 +511,6 @@ if have_tracker_extract
     '    Support RAW:                            ' + gexiv2.found().to_string(),
     '    Support TIFF:                           @0@ (xmp: @1@, exif: @2@, iptc: @3@)'.format(
         libtiff.found().to_string(), exempi.found().to_string(), libexif.found().to_string(), libiptcdata.found().to_string()),
-    '    Support Vorbis (ogg/etc):               ' + libvorbis.found().to_string(),
-    '    Support Flac:                           ' + flac.found().to_string(),
     '    Support MS & Open Office:               ' + libgsf.found().to_string(),
     '    Support XML / HTML:                     ' + libxml2.found().to_string(),
     '    Support embedded / sidecar XMP:         ' + exempi.found().to_string(),
@@ -482,3 +539,7 @@ if have_tracker_writeback
 endif
 
 message('\n'.join(summary))
+
+if not get_option('seccomp')
+  warning('Sandboxing is disabled. Run at your own risk. Distribution is discouraged.')
+endif

@@ -24,9 +24,9 @@
 #include <gio/gio.h>
 #include <gio/gunixmounts.h>
 
-#include <libtracker-miners-common/tracker-log.h>
-
 #include "tracker-storage.h"
+
+#include "libtracker-miners-common/tracker-debug.h"
 
 /**
  * SECTION:tracker-storage
@@ -139,8 +139,6 @@ tracker_storage_init (TrackerStorage *storage)
 {
 	TrackerStoragePrivate *priv;
 
-	g_message ("Initializing Storage...");
-
 	priv = tracker_storage_get_instance_private (storage);
 
 	priv->mounts = g_node_new (NULL);
@@ -162,7 +160,7 @@ tracker_storage_init (TrackerStorage *storage)
 	g_signal_connect_object (priv->volume_monitor, "mount-added",
 	                         G_CALLBACK (mount_added_cb), storage, 0);
 
-	g_message ("Mount monitors set up for to watch for added, removed and pre-unmounts...");
+	TRACKER_NOTE (MONITORS, g_message ("Mount monitors set up for to watch for added, removed and pre-unmounts..."));
 
 	/* Get all mounts and set them up */
 	if (!mounts_setup (storage)) {
@@ -553,6 +551,8 @@ mount_add (TrackerStorage *storage,
 
 		g_debug ("Ignoring mount '%s', URI '%s' is not native",
 		         mount_name, uri);
+		g_object_unref (root);
+		g_free (mount_name);
 		g_free (uri);
 		return;
 	}
@@ -624,7 +624,7 @@ mount_add (TrackerStorage *storage,
 			if (drive) {
 				/* We can't mount/unmount system volumes, so tag
 				 * them as non removable. */
-				is_removable = g_volume_can_mount (volume);
+				is_removable = g_drive_is_media_removable (drive);
 				g_debug ("  Found mount with volume and drive which %s be mounted: "
 				         "Assuming it's %s removable, if wrong report a bug!",
 				         is_removable ? "can" : "cannot",
@@ -709,7 +709,7 @@ mounts_setup (TrackerStorage *storage)
 	mounts = g_volume_monitor_get_mounts (priv->volume_monitor);
 
 	if (!mounts) {
-		g_message ("No mounts found to iterate");
+		g_debug ("No mounts found to iterate");
 		return TRUE;
 	}
 
@@ -759,19 +759,21 @@ mount_remove (TrackerStorage *storage,
 	if (node) {
 		info = node->data;
 
-		g_message ("Mount:'%s' with UUID:'%s' now unmounted from:'%s'",
-		           name,
-		           info->uuid,
-		           mount_point);
+		TRACKER_NOTE (MONITORS,
+		              g_message ("Mount:'%s' with UUID:'%s' now unmounted from:'%s'",
+		                         name,
+		                         info->uuid,
+		                         mount_point));
 
 		g_signal_emit (storage, signals[MOUNT_POINT_REMOVED], 0, info->uuid, mount_point, NULL);
 
 		g_hash_table_remove (priv->mounts_by_uuid, info->uuid);
 		mount_node_free (node);
 	} else {
-		g_message ("Mount:'%s' now unmounted from:'%s' (was not tracked)",
-		           name,
-		           mount_point);
+		TRACKER_NOTE (MONITORS,
+		              g_message ("Mount:'%s' now unmounted from:'%s' (was not tracked)",
+		                         name,
+		                         mount_point));
 	}
 
 	g_free (name);

@@ -139,7 +139,7 @@ test_date_to_string (void)
 
 	result = tracker_date_to_string (input);
 
-	g_assert (result != NULL && strncmp (result, "2008-06-16T23:53:10Z", 19) == 0);
+	g_assert_true (result != NULL && strncmp (result, "2008-06-16T23:53:10Z", 19) == 0);
 
     g_free (result);
     g_free (original);
@@ -174,44 +174,44 @@ test_date_time_from_string ()
         g_value_init (&value, TRACKER_TYPE_DATE_TIME);
 
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00+03:00", &error);
-        g_assert (!error);
+        g_assert_true (!error);
         g_assert_cmpint (tracker_date_time_get_time (&value), ==, 1319812980);
         g_assert_cmpint (tracker_date_time_get_offset (&value), ==, 10800);
 
 
         /* Negative offset */
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00-03:00", &error);
-        g_assert (!error);
+        g_assert_true (!error);
         g_assert_cmpint (tracker_date_time_get_time (&value), ==, 1319834580);
         g_assert_cmpint (tracker_date_time_get_offset (&value), ==, -10800);
 
         /* No offset */
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00Z", &error);
-        g_assert (!error);
+        g_assert_true (!error);
         g_assert_cmpint (tracker_date_time_get_time (&value), ==, 1319823780);
         g_assert_cmpint (tracker_date_time_get_offset (&value), ==, 0);
 
         /* Invalid format */
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00Z0900", &error);
-        g_assert (error);
+        g_assert_true (error);
         g_error_free (error);
         error = NULL;
 
         /* There are no 28 months... */
         tracker_date_time_set_from_string (&value, "2011-28-10T17:43:00Z0900", &error);
-        g_assert (error);
+        g_assert_true (error);
         g_error_free (error);
         error = NULL;
 
         /* ... nor more than +-12 offsets */
         tracker_date_time_set_from_string (&value, "2011-28-10T17:43:00+17:00", &error);
-        g_assert (error);
+        g_assert_true (error);
         g_error_free (error);
         error = NULL;
 
         /* ... the same for the glory of the branch % */
         tracker_date_time_set_from_string (&value, "2011-28-10T17:43:00-17:00", &error);
-        g_assert (error);
+        g_assert_true (error);
         g_error_free (error);
         error = NULL;
 }
@@ -225,7 +225,7 @@ test_date_time_get_local_date ()
         g_value_init (&value, TRACKER_TYPE_DATE_TIME);
 
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00+03:00", &error);
-        g_assert (!error);
+        g_assert_true (!error);
 
         g_assert_cmpint (tracker_date_time_get_local_date (&value), ==, 15275);
 }
@@ -239,7 +239,7 @@ test_date_time_get_local_time ()
         g_value_init (&value, TRACKER_TYPE_DATE_TIME);
 
         tracker_date_time_set_from_string (&value, "2011-10-28T17:43:00+03:00", &error);
-        g_assert (!error);
+        g_assert_true (!error);
 
         g_assert_cmpint (tracker_date_time_get_local_time (&value), ==, 63780);
 }

@@ -74,7 +74,7 @@ tracker_power_class_init (TrackerPowerClass *klass)
 	                                                       "Battery in use",
 	                                                       "Whether the battery is being used",
 	                                                       FALSE,
-	                                                       G_PARAM_READABLE));
+	                                                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 	                                 PROP_ON_LOW_BATTERY,
@@ -82,7 +82,7 @@ tracker_power_class_init (TrackerPowerClass *klass)
 	                                                       "Battery low",
 	                                                       "Whether the battery is low",
 	                                                       FALSE,
-	                                                       G_PARAM_READABLE));
+	                                                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 #ifndef HAVE_UP_CLIENT_GET_ON_LOW_BATTERY
@@ -130,8 +130,6 @@ tracker_power_initable_init (GInitable     *initable,
 {
 	TrackerPower *power;
 	TrackerPowerPrivate *priv;
-
-	g_message ("Initializing UPower...");
 
 	power = TRACKER_POWER (initable);
 	priv = GET_PRIV (power);

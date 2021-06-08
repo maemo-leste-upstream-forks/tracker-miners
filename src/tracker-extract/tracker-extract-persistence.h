@@ -50,8 +50,7 @@ struct _TrackerExtractPersistenceClass
 GType tracker_extract_persistence_get_type (void) G_GNUC_CONST;
 
 TrackerExtractPersistence *
-     tracker_extract_persistence_initialize (TrackerFileRecoveryFunc     retry_func,
-                                             TrackerFileRecoveryFunc     ignore_func,
+     tracker_extract_persistence_initialize (TrackerFileRecoveryFunc     ignore_func,
                                              gpointer                    user_data);
 
 void tracker_extract_persistence_add_file    (TrackerExtractPersistence *persistence,

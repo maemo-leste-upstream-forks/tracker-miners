@@ -43,9 +43,9 @@ find_max_width_and_height (const gchar *uri,
 	file = g_file_new_for_uri (uri);
 	stream = g_file_read (file, NULL, &error);
 	if (error) {
-		g_message ("Could not read file '%s': %s",
-		           uri,
-		           error->message);
+		g_debug ("Could not read file '%s': %s",
+		         uri,
+		         error->message);
 		g_error_free (error);
 		g_object_unref (file);
 
@@ -65,8 +65,8 @@ find_max_width_and_height (const gchar *uri,
 	                              NULL,
 	                              NULL,
 	                              &error)) {
-		g_message ("Error reading icon header from stream: '%s'",
-		           error->message);
+		g_debug ("Error reading icon header from stream: '%s'",
+		         error->message);
 		g_error_free (error);
 		g_object_unref (stream);
 		g_object_unref (file);
@@ -91,9 +91,9 @@ find_max_width_and_height (const gchar *uri,
 		                              NULL,
 		                              NULL,
 		                              &error)) {
-			g_message ("Error reading icon image metadata '%u' from stream: '%s'",
-			           i,
-			           error->message);
+			g_debug ("Error reading icon image metadata '%u' from stream: '%s'",
+			         i,
+			         error->message);
 			g_error_free (error);
 			break;
 		}
@@ -125,7 +125,8 @@ find_max_width_and_height (const gchar *uri,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	guint max_width;

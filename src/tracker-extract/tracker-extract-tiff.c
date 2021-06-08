@@ -251,7 +251,8 @@ tag_to_string (TIFF    *image,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	TIFF *image;
@@ -284,15 +285,20 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	fd = tracker_file_open_fd (filename);
 
 	if (fd == -1) {
-		g_warning ("Could not open tiff file '%s': %s\n",
-		           filename,
-		           g_strerror (errno));
+		g_set_error (error,
+		             G_IO_ERROR,
+		             g_io_error_from_errno (errno),
+		             "Could not open tiff file: %s",
+		             g_strerror (errno));
 		g_free (filename);
 		return FALSE;
-	}	
+	}
 
 	if ((image = TIFFFdOpen (fd, filename, "r")) == NULL){
-		g_warning ("Could not open image:'%s'\n", filename);
+		g_set_error (error,
+		             G_IO_ERROR,
+		             G_IO_ERROR_INVALID_ARGUMENT,
+		             "Could not parse tiff file");
 		g_free (filename);
 		close (fd);
 		return FALSE;
@@ -326,6 +332,20 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 #ifdef HAVE_EXEMPI
 	if (TIFFGetField (image, TIFFTAG_XMLPACKET, &size, &xmp_offset)) {
 		xd = tracker_xmp_new (xmp_offset, size, uri);
+	} else {
+		gchar *sidecar = NULL;
+
+		xd = tracker_xmp_new_from_sidecar (file, &sidecar);
+
+		if (sidecar) {
+			TrackerResource *sidecar_resource;
+
+			sidecar_resource = tracker_resource_new (sidecar);
+			tracker_resource_add_uri (sidecar_resource, "rdf:type", "nfo:FileDataObject");
+			tracker_resource_add_relation (sidecar_resource, "nie:interpretedAs", metadata);
+
+			tracker_resource_add_take_relation (metadata, "nie:isStoredAs", sidecar_resource);
+		}
 	}
 #endif /* HAVE_EXEMPI */
 

@@ -185,7 +185,7 @@ test_parsing_xmp_invalid_file_subprocess (void)
 	TrackerXmpData *data;
 
 	data = tracker_xmp_new (BROKEN_XMP, strlen (BROKEN_XMP), "test://file");
-	g_assert (data != NULL);
+	g_assert_true (data != NULL);
 
 	tracker_xmp_free (data);
 }
@@ -291,9 +291,9 @@ test_xmp_apply (void)
 	resource = tracker_resource_new ("urn:uuid:test");
 
 	data = tracker_xmp_new (EXAMPLE_XMP, strlen (EXAMPLE_XMP), "urn:uuid:test");
-	g_assert (data != NULL);
+	g_assert_true (data != NULL);
 
-	g_assert (tracker_xmp_apply_to_resource (resource, data));
+	g_assert_true (tracker_xmp_apply_to_resource (resource, data));
 
 	/* We just check a few of the properties at random. */
 	g_assert_cmpstr (tracker_resource_get_first_string (resource, "nie:description"), ==,
@@ -319,7 +319,7 @@ test_xmp_apply_location (void)
 
 	resource = tracker_resource_new ("urn:uuid:test");
 
-	g_assert (tracker_xmp_apply_to_resource (resource, &data));
+	g_assert_true (tracker_xmp_apply_to_resource (resource, &data));
 
 	location = tracker_resource_get_first_relation (resource, "slo:location");
 	address = tracker_resource_get_first_relation (location, "slo:postalAddress");
@@ -349,7 +349,7 @@ test_xmp_regions (void)
 
 	filepath = g_build_filename (TOP_SRCDIR, "tests", "libtracker-extract", "areas.xmp", NULL);
 	f = g_file_new_for_path (filepath);
-	g_assert (g_file_load_contents (f, NULL, &contents, &size, NULL, NULL));
+	g_assert_true (g_file_load_contents (f, NULL, &contents, &size, NULL, NULL));
 	g_object_unref (f);
 	g_free (filepath);
 
@@ -392,7 +392,7 @@ test_xmp_regions_quill (void)
 
 	filepath = g_build_filename (TOP_SRCDIR, "tests", "libtracker-extract", "areas-with-contacts.xmp", NULL);
 	f = g_file_new_for_path (filepath);
-	g_assert (g_file_load_contents (f, NULL, &contents, &size, NULL, NULL));
+	g_assert_true (g_file_load_contents (f, NULL, &contents, &size, NULL, NULL));
 	g_object_unref (f);
 	g_free (filepath);
 

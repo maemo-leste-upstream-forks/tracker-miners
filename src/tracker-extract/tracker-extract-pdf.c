@@ -151,6 +151,10 @@ read_toc (PopplerIndexIter  *index,
 			case POPPLER_ACTION_RENDITION:
 			case POPPLER_ACTION_OCG_STATE:
 			case POPPLER_ACTION_JAVASCRIPT:
+			#if POPPLER_CHECK_VERSION (0, 90, 0)
+  			case POPPLER_ACTION_RESET_FORM:
+			#endif
+
 				/* Do nothing */
 				break;
 		}
@@ -278,11 +282,12 @@ write_pdf_data (PDFData          data,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerConfig *config;
-	GTime creation_date;
-	GError *error = NULL;
+	time_t creation_date;
+	GError *inner_error = NULL;
 	TrackerResource *metadata;
 	TrackerXmpData *xd = NULL;
 	PDFData pd = { 0 }; /* actual data */
@@ -341,10 +346,10 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	g_free (filename);
 	uri = g_file_get_uri (file);
 
-	document = poppler_document_new_from_data (contents, len, NULL, &error);
+	document = poppler_document_new_from_data (contents, len, NULL, &inner_error);
 
-	if (error) {
-		if (error->code == POPPLER_ERROR_ENCRYPTED) {
+	if (inner_error) {
+		if (inner_error->code == POPPLER_ERROR_ENCRYPTED) {
 			metadata = tracker_resource_new (NULL);
 
 			tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
@@ -353,17 +358,13 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 			tracker_extract_info_set_resource (info, metadata);
 			g_object_unref (metadata);
 
-			g_error_free (error);
+			g_error_free (inner_error);
 			g_free (uri);
 			close (fd);
 
 			return TRUE;
 		} else {
-			g_warning ("Couldn't create PopplerDocument from uri:'%s', %s",
-			           uri,
-			           error->message ? error->message : "no error given");
-
-			g_error_free (error);
+			g_propagate_prefixed_error (error, inner_error, "Couldn't open PopplerDocument:");
 			g_free (uri);
 			close (fd);
 
@@ -388,18 +389,36 @@ tracker_extract_get_metadata (TrackerExtractInfo *info)
 	              "author", &pd.author,
 	              "subject", &pd.subject,
 	              "keywords", &pd.keywords,
-	              "creation-date", &creation_date,
 	              "metadata", &xml,
 	              NULL);
 
+	creation_date = poppler_document_get_creation_date (document);
+
 	if (creation_date > 0) {
-		pd.creation_date = tracker_date_to_string ((time_t) creation_date);
+		pd.creation_date = tracker_date_to_string (creation_date);
 	}
 
 	keywords = g_ptr_array_new_with_free_func ((GDestroyNotify) g_free);
 
-	if (xml && *xml &&
-	    (xd = tracker_xmp_new (xml, strlen (xml), uri)) != NULL) {
+	if (xml && *xml) {
+		xd = tracker_xmp_new (xml, strlen (xml), uri);
+	} else {
+		gchar *sidecar = NULL;
+
+		xd = tracker_xmp_new_from_sidecar (file, &sidecar);
+
+		if (sidecar) {
+			TrackerResource *sidecar_resource;
+
+			sidecar_resource = tracker_resource_new (sidecar);
+			tracker_resource_add_uri (sidecar_resource, "rdf:type", "nfo:FileDataObject");
+			tracker_resource_add_relation (sidecar_resource, "nie:interpretedAs", metadata);
+
+			tracker_resource_add_take_relation (metadata, "nie:isStoredAs", sidecar_resource);
+		}
+	}
+
+	if (xd) {
 		/* The casts here are well understood and known */
 		md.title = (gchar *) tracker_coalesce_strip (4, pd.title, xd->title, xd->title2, xd->pdf_title);
 		md.subject = (gchar *) tracker_coalesce_strip (2, pd.subject, xd->subject);

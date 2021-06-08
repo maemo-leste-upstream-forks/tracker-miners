@@ -37,11 +37,31 @@
 #include <libtracker-extract/tracker-extract.h>
 
 #include "tracker-main.h"
+#include "tracker-extract.h"
 #include "tracker-read.h"
 
+static gboolean
+allow_file (GSList      *text_allowlist_patterns,
+            GFile       *file)
+{
+	GSList *l;
+	g_autofree gchar *basename = NULL;
+
+	basename = g_file_get_basename (file);
+
+	for (l = text_allowlist_patterns; l; l = l->next) {
+		if (g_pattern_match_string (l->data, basename)) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 static gchar *
-get_file_content (GFile *file,
-                  gsize  n_bytes)
+get_file_content (GFile   *file,
+                  gsize    n_bytes,
+                  GError **error)
 {
 	gchar *text, *uri, *path;
 	int fd;
@@ -54,9 +74,8 @@ get_file_content (GFile *file,
 	fd = tracker_file_open_fd (path);
 
 	if (fd == -1) {
-		g_message ("Could not open file '%s': %s",
-		           uri,
-		           g_strerror (errno));
+		g_set_error (error, TRACKER_EXTRACT_ERROR, TRACKER_EXTRACT_ERROR_IO_ERROR,
+		             "Could not open file '%s': %s", uri, g_strerror (errno));
 		g_free (uri);
 		g_free (path);
 		return NULL;
@@ -68,7 +87,7 @@ get_file_content (GFile *file,
 	/* Read up to n_bytes from stream. Output is always, always valid UTF-8,
 	 * this function closes the FD.
 	 */
-	text = tracker_read_text_from_fd (fd, n_bytes);
+	text = tracker_read_text_from_fd (fd, n_bytes, error);
 	g_free (uri);
 	g_free (path);
 
@@ -76,28 +95,40 @@ get_file_content (GFile *file,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 	TrackerConfig *config;
+	GFile *file;
+	GSList *text_allowlist_patterns;
 	gchar *content = NULL;
+	GError *inner_error = NULL;
 
 	config = tracker_main_get_config ();
-
-	content = get_file_content (tracker_extract_info_get_file (info), tracker_config_get_max_bytes (config));
-
-	if (content == NULL) {
-		/* An error occurred, perhaps the file was deleted. */
-		return FALSE;
-	}
+	text_allowlist_patterns = tracker_config_get_text_allowlist_patterns (config);
+	file = tracker_extract_info_get_file (info);
 
 	metadata = tracker_resource_new (NULL);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PlainTextDocument");
-	tracker_resource_add_uri (metadata, "rdf:type", "nfo:FileDataObject");
 
-	if (content) {
-		tracker_resource_set_string (metadata, "nie:plainTextContent", content);
-		g_free (content);
+	if (allow_file (text_allowlist_patterns, file)) {
+		content = get_file_content (tracker_extract_info_get_file (info),
+		                            tracker_config_get_max_bytes (config),
+		                            &inner_error);
+
+		if (inner_error != NULL) {
+			/* An error occurred, perhaps the file was deleted. */
+			g_propagate_prefixed_error (error, inner_error, "Could not open:");
+			return FALSE;
+		}
+
+		if (content) {
+			tracker_resource_set_string (metadata, "nie:plainTextContent", content);
+			g_free (content);
+		} else {
+			tracker_resource_set_string (metadata, "nie:plainTextContent", "");
+		}
 	}
 
 	tracker_extract_info_set_resource (info, metadata);

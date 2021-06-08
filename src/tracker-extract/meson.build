@@ -7,15 +7,11 @@
 modules = [
   ['extract-bmp', 'tracker-extract-bmp.c', ['10-bmp.rule'], [tracker_miners_common_dep]],
   ['extract-desktop', 'tracker-extract-desktop.c', ['10-desktop.rule'], [tracker_miners_common_dep]],
-  ['extract-dummy', 'tracker-extract-dummy.c', ['10-comics.rule', '10-ebooks.rule'], [tracker_miners_common_dep]]
+  ['extract-dummy', 'tracker-extract-dummy.c', ['10-comics.rule', '10-ebooks.rule', '15-games.rule', '15-executable.rule'], [tracker_miners_common_dep]]
 ]
 
 if get_option('abiword')
   modules += [['extract-abw', 'tracker-extract-abw.c', ['10-abw.rule'], [tracker_miners_common_dep]]]
-endif
-
-if get_option('dvi')
-  modules += [['extract-dvi', 'tracker-extract-dvi.c', ['10-dvi.rule'], [tracker_miners_common_dep]]]
 endif
 
 if libgsf.found()
@@ -23,10 +19,6 @@ if libgsf.found()
   modules += [['extract-msoffice', 'tracker-extract-msoffice.c', ['10-msoffice.rule'], [libgsf, tracker_miners_common_dep]]]
   modules += [['extract-msoffice-xml', 'tracker-extract-msoffice-xml.c', ['11-msoffice-xml.rule'], [libgsf, tracker_miners_common_dep]]]
   modules += [['extract-oasis', 'tracker-extract-oasis.c', ['10-oasis.rule'], [libgsf, tracker_miners_common_dep]]]
-endif
-
-if flac.found()
-  modules += [['extract-flac', 'tracker-extract-flac.c', ['10-flac.rule'], [flac, tracker_miners_common_dep]]]
 endif
 
 if gexiv2.found()
@@ -43,8 +35,7 @@ if generic_media_handler_name == 'gstreamer'
   dependencies = [gstreamer, gstreamer_pbutils, libcue, tracker_miners_common_dep]
 
   if gstreamer_backend_name == 'GUPnP-DLNA'
-    rules += '91-gstreamer-generic-dlna.rule'
-    dependencies += gupnp_dlna
+    dependencies += [gupnp_dlna, gupnp_dlna_gst]
   elif gstreamer_backend_name == 'discoverer'
     dependencies += gstreamer_pbutils
   endif
@@ -95,23 +86,19 @@ if get_option('ps')
 endif
 
 if get_option('text')
-  modules += [['extract-text', 'tracker-extract-text.c', ['15-source-code.rule', '90-text-generic.rule'], []]]
+  modules += [['extract-text', 'tracker-extract-text.c', ['15-text.rule'], []]]
 endif
 
 if libtiff.found()
   modules += [['extract-tiff', 'tracker-extract-tiff.c', ['10-tiff.rule'], [libtiff, tracker_miners_common_dep]]]
 endif
 
-if libvorbis.found()
-  modules += [['extract-vorbis', 'tracker-extract-vorbis.c', ['10-vorbis.rule'], [libvorbis, tracker_miners_common_dep]]]
-endif
-
-if exempi.found()
-  modules += [['extract-xmp', 'tracker-extract-xmp.c', ['10-xmp.rule'], []]]
-endif
-
 if libgxps.found()
   modules += [['extract-xps', 'tracker-extract-xps.c', ['10-xps.rule'], [libgxps, tracker_miners_common_dep]]]
+endif
+
+if libcue.found()
+  modules += [['extract-disc-generic', 'tracker-extract-disc-generic.c', ['90-disc-generic.rule'], dependencies]]
 endif
 
 enabled_rule_files = []
@@ -124,12 +111,20 @@ foreach module : modules
 
   shared_module(name, sources,
     c_args: tracker_c_args,
-    dependencies: [tracker_extract_dep] + dependencies,
-    include_directories: configinc,
+    dependencies: [tracker_extract_dep, tracker_miners_common_dep] + dependencies,
+    include_directories: [configinc, commoninc],
     install: true,
     install_dir: tracker_extract_modules_dir)
 
-  install_data(rules, install_dir: tracker_extract_rules_dir)
+  hash = run_command('calculate-hash.sh', sources)
+
+  foreach rule : rules
+    configure_file(input: rule,
+                   output: '@PLAINNAME@',
+                   install: true,
+                   install_dir: tracker_extract_rules_dir,
+                   configuration: { 'hash': hash.stdout() })
+  endforeach
 
   enabled_rule_files += rules
 endforeach
@@ -137,7 +132,7 @@ endforeach
 tracker_extract_priority_dbus = gnome.gdbus_codegen(
   'tracker-extract-priority-dbus',
   'tracker-extract-priority.xml',
-  interface_prefix: 'org.freedesktop.Tracker1.Extract.',
+  interface_prefix: 'org.freedesktop.Tracker3.Extract.',
   namespace: 'TrackerExtractDBus')
 
 tracker_extract_sources = [
@@ -160,7 +155,7 @@ if libgsf.found()
   tracker_extract_dependencies += libgsf
 endif
 
-executable('tracker-extract',
+executable('tracker-extract-@0@'.format(tracker_api_major),
   tracker_extract_sources,
   # Manually add the root dir to work around https://github.com/mesonbuild/meson/issues/1387
   c_args: tracker_c_args + ['-I' + meson.build_root()],
@@ -169,38 +164,27 @@ executable('tracker-extract',
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
   install_rpath: tracker_install_rpath)
 
-dbus_service_file_untranslated = configure_file(
-  input: 'org.freedesktop.Tracker1.Miner.Extract.service.in.in',
-  output: 'org.freedesktop.Tracker1.Miner.Extract.service.in',
-  configuration: conf)
-
-dbus_service_file = custom_target('tracker-extract-dbus-service-file',
-  input: dbus_service_file_untranslated,
-  output: 'org.freedesktop.Tracker1.Miner.Extract.service',
-  command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
+# This file allows starting the service with D-Bus autoactivation.
+# It's also used by tracker-control to identify the miner.
+tmp_conf = configuration_data()
+tmp_conf.merge_from(conf)
+if get_option('domain_prefix') == 'org.freedesktop'
+  tmp_conf.set ('SYSTEMD_SERVICE', 'SystemdService=tracker-extract-3.service')
+else
+  tmp_conf.set ('SYSTEMD_SERVICE', '')
+endif
+dbus_service_file = configure_file(
+  input: 'org.freedesktop.Tracker3.Miner.Extract.service.in',
+  output: get_option('domain_prefix') + '.Tracker3.Miner.Extract.service',
+  configuration: tmp_conf,
   install: true,
   install_dir: dbus_services_dir)
 
-desktop_file_untranslated = configure_file(
-  input: 'tracker-extract.desktop.in.in',
-  output: 'tracker-extract.desktop.in',
-  configuration: conf)
-
-desktop_file = custom_target('tracker-extract-desktop-file',
-  input: desktop_file_untranslated,
-  output: 'tracker-extract.desktop',
-  command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'])
-
-if get_option('autostart')
-  install_data(desktop_file,
-      install: true,
-      install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
-endif
-
-if install_systemd_user_services
+if get_option('systemd_user_services')
+  # This file allows starting the service as a systemd user service.
   configure_file(
     input: 'tracker-extract.service.in',
-    output: 'tracker-extract.service',
+    output: 'tracker-extract-@0@.service'.format(tracker_api_major),
     configuration: conf,
     install: true,
     install_dir: systemd_user_services_dir)

@@ -37,6 +37,10 @@ typedef struct TrackerConfigClass TrackerConfigClass;
 struct TrackerConfig {
 	GSettings parent;
 	gint max_bytes;
+	GSList *text_allowlist;
+
+	/* Convenience data */
+	GSList *text_allowlist_patterns;
 };
 
 struct TrackerConfigClass {
@@ -46,13 +50,18 @@ struct TrackerConfigClass {
 GType          tracker_config_get_type                (void) G_GNUC_CONST;
 
 TrackerConfig *tracker_config_new                     (void);
-gint           tracker_config_get_verbosity           (TrackerConfig *config);
-gint           tracker_config_get_sched_idle          (TrackerConfig *config);
 gint           tracker_config_get_max_bytes           (TrackerConfig *config);
+GSList *       tracker_config_get_text_allowlist      (TrackerConfig *config);
 gboolean       tracker_config_get_wait_for_miner_fs   (TrackerConfig *config);
 
-void           tracker_config_set_verbosity           (TrackerConfig *config,
-                                                       gint           value);
+/*
+ * Convenience functions:
+ */
+
+/* The _patterns() APIs return GPatternSpec pointers for basename
+ * pattern matching.
+ */
+GSList *       tracker_config_get_text_allowlist_patterns        (TrackerConfig *config);
 
 G_END_DECLS
 

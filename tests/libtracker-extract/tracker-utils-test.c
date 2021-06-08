@@ -52,7 +52,7 @@ test_guess_date (void)
 	gchar *result;
 
 	result = tracker_date_guess ("");
-	g_assert (result == NULL);
+	g_assert_true (result == NULL);
 
 	result = tracker_date_guess ("2008-06-14");
 	g_assert_cmpstr (result, ==, "2008-06-14T00:00:00");
@@ -79,10 +79,10 @@ test_guess_date (void)
         g_free (result);
 
         result = tracker_date_guess ("201a");
-        g_assert (!result);
+        g_assert_true (!result);
 
         result = tracker_date_guess ("A2010");
-        g_assert (!result);
+        g_assert_true (!result);
 
         /* Guessing from the code */
         result = tracker_date_guess ("20100318010203-00:03Z");
@@ -135,7 +135,7 @@ test_text_validate_utf8 ()
 		                                     &utf8_len);
 		g_assert_cmpuint (result, ==, 1);
 		g_assert_cmpuint (utf8_len, ==, strlen (valid_utf8[i]));
-		g_assert (s);
+		g_assert_true (s);
 		g_assert_cmpuint (s->len, ==, strlen (valid_utf8[i]));
 		g_assert_cmpstr (s->str, ==, valid_utf8[i]);
 		g_string_free (s, TRUE);
@@ -151,7 +151,7 @@ test_text_validate_utf8 ()
 		                                     &utf8_len);
 		g_assert_cmpuint (result, ==, 1);
 		g_assert_cmpuint (utf8_len, ==, strlen (valid_utf8[i]));
-		g_assert (s);
+		g_assert_true (s);
 		g_assert_cmpuint (s->len, ==, strlen (valid_utf8[i]));
 		g_assert_cmpstr (s->str, ==, valid_utf8[i]);
 		g_string_free (s, TRUE);
@@ -165,7 +165,7 @@ test_text_validate_utf8 ()
 		                                     &s,
 		                                     NULL);
 		g_assert_cmpuint (result, ==, 1);
-		g_assert (s);
+		g_assert_true (s);
 		g_assert_cmpuint (s->len, ==, strlen (valid_utf8[i]));
 		g_assert_cmpstr (s->str, ==, valid_utf8[i]);
 		g_string_free (s, TRUE);
@@ -198,7 +198,7 @@ test_text_validate_utf8 ()
 	                                     &utf8_len);
 	g_assert_cmpuint (result, ==, 1);
 	g_assert_cmpuint (utf8_len, ==, strlen ("abcdefghijk"));
-	g_assert (s);
+	g_assert_true (s);
 	g_assert_cmpuint (s->len, ==, strlen ("abcdefghijk"));
 	g_assert_cmpstr (s->str, ==, "abcdefghijk");
 	g_string_free (s, TRUE);
@@ -211,20 +211,20 @@ test_date_to_iso8601 ()
         gchar *result;
 
         result = tracker_date_format_to_iso8601 ("2010:03:13 12:12:12", "%Y:%m:%d %H:%M:%S");
-        g_assert (g_str_has_prefix (result, "2010-03-13T12:12:12"));
+        g_assert_true (g_str_has_prefix (result, "2010-03-13T12:12:12"));
         g_assert_cmpint (strlen (result), <=, 25);
         g_free (result);
 
         /* Pattern and string don't match */
         result = tracker_date_format_to_iso8601 ("2010:03:13 12:12", "%Y:%m:%d %H:%M:%S");
-        g_assert (result == NULL);
+        g_assert_true (result == NULL);
 }
 
 static void
 test_coalesce_strip ()
 {
         /* Used in other tests, but this one can try some corner cases */
-        g_assert (!tracker_coalesce_strip (0, NULL));
+        g_assert_true (!tracker_coalesce_strip (0, NULL));
 
         /* Allocate, do not use constant strings */
         char *e = g_strdup ("");
@@ -256,7 +256,7 @@ test_merge_const ()
         g_free (result);
 
         result = tracker_merge_const ("*", 0, NULL);
-        g_assert (!result);
+        g_assert_true (!result);
 }
 
 static void

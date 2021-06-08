@@ -30,6 +30,7 @@
 
 #define SOFTWARE_CATEGORY_URN_PREFIX "urn:software-category:"
 #define THEME_ICON_URN_PREFIX        "urn:theme-icon:"
+#define LINK_URN_PREFIX              "urn:link:"
 
 static GKeyFile *
 get_desktop_key_file (GFile   *file,
@@ -100,10 +101,11 @@ insert_data_from_desktop_file (TrackerResource *resource,
 
 static gboolean
 process_desktop_file (TrackerResource  *resource,
-                      GFile            *file)
+                      GFile            *file,
+                      GError          **error)
 {
 	GKeyFile *key_file;
-	GError *error = NULL;
+	GError *inner_error = NULL;
 	gchar *name = NULL;
 	gchar *type;
 	GStrv cats;
@@ -111,16 +113,12 @@ process_desktop_file (TrackerResource  *resource,
 	gboolean is_software = FALSE;
 	gchar *lang;
 
-	key_file = get_desktop_key_file (file, &type, &error);
-	if (!key_file) {
+	key_file = get_desktop_key_file (file, &type, &inner_error);
+	if (inner_error) {
 		gchar *uri;
 
 		uri = g_file_get_uri (file);
-		g_warning ("Could not load desktop file '%s': %s",
-		           uri,
-		           error->message ? error->message : "no error given");
-
-		g_error_free (error);
+		g_propagate_prefixed_error (error, inner_error, "Could not load desktop file:");
 		g_free (uri);
 		return FALSE;
 	}
@@ -129,7 +127,7 @@ process_desktop_file (TrackerResource  *resource,
 		g_debug ("Desktop file is hidden");
 		g_key_file_free (key_file);
 		g_free (type);
-		return FALSE;
+		return TRUE;
 	}
 
 	/* Retrieve LANG locale setup */
@@ -161,9 +159,43 @@ process_desktop_file (TrackerResource  *resource,
 	if (name && g_ascii_strcasecmp (type, "Application") == 0) {
 		tracker_resource_add_uri (resource, "rdf:type", "nfo:SoftwareApplication");
 		is_software = TRUE;
+	} else if (name && g_ascii_strcasecmp (type, "Link") == 0) {
+		gchar *link_url;
+
+		link_url = g_key_file_get_string (key_file, GROUP_DESKTOP_ENTRY, "URL", NULL);
+
+		if (link_url) {
+			TrackerResource *website_resource;
+
+			website_resource = tracker_resource_new (link_url);
+			tracker_resource_add_uri (website_resource, "rdf:type", "nie:DataObject");
+			tracker_resource_add_uri (website_resource, "rdf:type", "nfo:Website");
+			tracker_resource_set_string (website_resource, "nie:url", link_url);
+
+			tracker_resource_add_uri (resource, "rdf:type", "nfo:Bookmark");
+			tracker_resource_set_take_relation (resource, "nfo:bookmarks", website_resource);
+
+			g_free (link_url);
+		} else {
+			/* a Link desktop entry must have an URL */
+			g_set_error (error,
+			             G_IO_ERROR,
+			             G_IO_ERROR_INVALID_ARGUMENT,
+			             "Link desktop entry does not have an url");
+			g_free (type);
+			g_key_file_free (key_file);
+			g_strfreev (cats);
+			g_free (lang);
+			g_free (name);
+			return FALSE;
+		}
 	} else {
 		/* Invalid type, all valid types are already listed above */
-		g_warning ("Unknown desktop entry type '%s'", type);
+		g_set_error (error,
+		             G_IO_ERROR,
+		             G_IO_ERROR_INVALID_ARGUMENT,
+		             "Unknown desktop entry type '%s'",
+		             type);
 		g_free (type);
 		g_key_file_free (key_file);
 		g_strfreev (cats);
@@ -261,13 +293,14 @@ process_desktop_file (TrackerResource  *resource,
 }
 
 G_MODULE_EXPORT gboolean
-tracker_extract_get_metadata (TrackerExtractInfo *info)
+tracker_extract_get_metadata (TrackerExtractInfo  *info,
+                              GError             **error)
 {
 	TrackerResource *metadata;
 
 	metadata = tracker_resource_new (NULL);
 
-	if (!process_desktop_file (metadata, tracker_extract_info_get_file (info))) {
+	if (!process_desktop_file (metadata, tracker_extract_info_get_file (info), error)) {
 		g_object_unref (metadata);
 		return FALSE;
 	}

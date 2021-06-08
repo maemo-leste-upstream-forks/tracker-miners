@@ -61,12 +61,6 @@ namespace Tracker {
 		public static void save_directory_list (void *object, string property, GLib.KeyFile key_file, string group, string key);
 	}
 
-	[CCode (cheader_filename = "libtracker-miners-common/tracker-common.h")]
-	namespace Log {
-		public bool init (int verbosity, out string used_filename);
-		public void shutdown ();
-	}
-
 	[CCode (cheader_filename = "libtracker-miners-common/tracker-locale.h")]
 	namespace Locale {
 		public void sanity_check ();
@@ -92,7 +86,6 @@ namespace Tracker {
 	public class DomainOntology : GLib.Object, GLib.Initable {
 		public DomainOntology (string? name, GLib.Cancellable? cancellable) throws GLib.Error;
 		public GLib.File get_cache ();
-		public GLib.File? get_journal ();
 		public GLib.File get_ontology ();
 		public string get_domain (string? suffix = null);
 	}

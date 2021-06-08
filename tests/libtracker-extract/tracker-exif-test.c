@@ -29,7 +29,7 @@ test_exif_parse (void)
         gsize  length;
 
 
-        g_assert (g_file_get_contents (TOP_SRCDIR "/tests/libtracker-extract/exif-img.jpg", &blob, &length, NULL));
+        g_assert_true (g_file_get_contents (TOP_SRCDIR "/tests/libtracker-extract/exif-img.jpg", &blob, &length, NULL));
 
         exif = tracker_exif_new ((guchar *)blob, length, "test://file");
 
@@ -40,7 +40,7 @@ test_exif_parse (void)
 
         g_assert_cmpstr (exif->document_name, ==, "test-documentname");
         //g_assert_cmpstr (exif->time, ==, "test-documentname");
-        g_assert (exif->time_original);
+        g_assert_true (exif->time_original);
         g_assert_cmpstr (exif->artist, ==, "EXIFspec"); // -Exif:Artist
         g_assert_cmpstr (exif->user_comment, ==, "libexif demonstration image");
         g_assert_cmpstr (exif->description, ==, "Justfortest"); //-Exif:ImageDescription
@@ -60,10 +60,10 @@ test_exif_parse (void)
         g_assert_cmpstr (exif->y_resolution, ==, "72");
         g_assert_cmpint (exif->resolution_unit, ==, 2);
 
-        g_assert_cmpstr (exif->gps_altitude, ==, "237.000000"); // -n -exif:gpsaltitude=237 
-        g_assert_cmpstr (exif->gps_latitude, ==, "-42.500000"); // -exif:gpslatitude="42 30 0.00" -exif:gpslatituderef=S
-        g_assert_cmpstr (exif->gps_longitude, ==, "-10.166675"); // -exif:gpslongitude="10 10 0.03" -exif:gpslongituderef=W
-        g_assert_cmpstr (exif->gps_direction, ==, "12.3"); // -n -Exif:GPSImgDirection=12.3
+        g_assert_cmpstr (exif->gps_altitude, ==, "237"); // -n -exif:gpsaltitude=237
+        g_assert_cmpstr (exif->gps_latitude, ==, "-42.5"); // -exif:gpslatitude="42 30 0.00" -exif:gpslatituderef=S
+        g_assert_cmpstr (exif->gps_longitude, ==, "-10.166674613952637"); // -exif:gpslongitude="10 10 0.03" -exif:gpslongituderef=W
+        g_assert_cmpstr (exif->gps_direction, ==, "12.300000000000001"); // -n -Exif:GPSImgDirection=12.3
         
         tracker_exif_free (exif);
         g_free (blob);
@@ -76,7 +76,7 @@ test_exif_parse_empty (void)
         gchar *blob;
         gsize  length;
 
-        g_assert (g_file_get_contents (TOP_SRCDIR "/tests/libtracker-extract/exif-free-img.jpg", &blob, &length, NULL));
+        g_assert_true (g_file_get_contents (TOP_SRCDIR "/tests/libtracker-extract/exif-free-img.jpg", &blob, &length, NULL));
 
         exif = tracker_exif_new ((guchar *)blob, length, "test://file");
 

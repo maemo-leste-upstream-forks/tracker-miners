@@ -3,7 +3,8 @@ sources = [
     'tracker-miner-rss.c',
 ]
 
-executable('tracker-miner-rss', sources,
+executable('tracker-miner-rss-@0@'.format(tracker_api_major),
+    sources,
     dependencies: [libgrss, tracker_miner, tracker_miners_common_dep, tracker_extract_dep],
     c_args: tracker_c_args,
     install: true,
@@ -11,38 +12,30 @@ executable('tracker-miner-rss', sources,
     install_rpath: tracker_install_rpath,
 )
 
-dbus_service_file_untranslated = configure_file(
-    input: 'org.freedesktop.Tracker1.Miner.RSS.service.in.in',
-    output: 'org.freedesktop.Tracker1.Miner.RSS.service.in',
-    configuration: conf)
-
-dbus_service_file = custom_target('tracker-miner-rss-dbus-service-file',
-    input: dbus_service_file_untranslated,
-    output: 'org.freedesktop.Tracker1.Miner.RSS.service',
-    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'],
+# This file allows starting the service with D-Bus autoactivation.
+# It's also used by tracker-control to identify the miner.
+dbus_service_file = configure_file(
+    input: 'org.freedesktop.Tracker3.Miner.RSS.service.in',
+    output: 'org.freedesktop.Tracker3.Miner.RSS.service',
+    configuration: conf,
     install: true,
-    install_dir: dbus_services_dir)
+    install_dir: dbus_services_dir,
+)
 
-desktop_file_untranslated = configure_file(
-    input: 'tracker-miner-rss.desktop.in.in',
-    output: 'tracker-miner-rss.desktop.in',
-    configuration: conf)
+# This file allows starting the service automatically using XDG autostart.
+# systemd user service activation is preferred if available.
+desktop_file = configure_file(
+    input: 'tracker-miner-rss.desktop.in',
+    output: 'tracker-miner-rss-@0@.desktop'.format(tracker_api_major),
+    configuration: conf,
+    install: true,
+    install_dir: xdg_autostart_dir)
 
-desktop_file = custom_target('tracker-miner-rss-desktop-file',
-    input: desktop_file_untranslated,
-    output: 'tracker-miner-rss.desktop',
-    command: ['intltool-merge', '--quiet', '--desktop-style', '--utf8', join_paths(meson.source_root(), 'po'), '@INPUT@', '@OUTPUT@'])
-
-if get_option('autostart')
-  install_data(desktop_file,
-      install: true,
-      install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart'))
-endif
-
-if install_systemd_user_services
+if get_option('systemd_user_services')
+  # This file allows starting the service as a systemd user service.
   configure_file(
       input: 'tracker-miner-rss.service.in',
-      output: 'tracker-miner-rss.service',
+      output: 'tracker-miner-rss-@0@.service'.format(tracker_api_major),
       configuration: conf,
       install: true,
       install_dir: systemd_user_services_dir)
