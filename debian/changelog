@@ -1,8 +1,45 @@
 tracker-miners (3.1.1-1) UNRELEASED; urgency=medium
 
-  * New upstream release
+  * New upstream release.
+  * Update patches:
+    - build-Fix-Dautostart-true.patch,
+      functional-tests-Check-for-IPCT-image-tags-only-if-libipt.patch,
+      tests-Use-meson-test-suites-to-group-tests.patch,
+      prefer_systemd_activation.patch,
+      dont_start_for_root.patch,
+      Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch: Drop,
+      upstream or not needed with 3.0.
+    - Revert-build-Include-libdir-in-rpath.patch: Refresh.
+  * Update build-deps, build flags and install paths for 3.0.
+  * psx-game-image-1.expected.json-Mark-as-XFAIL.patch: Mark test as XFAIL.
+    It's newly run in 3.0, and fails - seems buggy somehow upstream.
+  * rules:
+    - Use default build flags, strip Bsymbolic-functions-
+      We get
+        Bail out! GLib-GObject-FATAL-WARNING: cannot register existing type
+        'TrackerTaskPool'
+      otherwise.
+    - Don't run testsuites in parallel, they can interfere
+  * Drop-file-notifier-and-miner-fs-tests.patch: Drop 'file-notifier' and
+    'miner-fs' tests. There are flakiness problems here. See:
+    https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/174
+  * Bump to compat 13:
+      - Update dh_auto_test override:
+        + No need to check for 'nocheck' now.
+        + No need to set $HOME and $XDG_RUNTIME_DIR any more
+        + Call `dh_auto_test` instead of overriding it to call `meson test`
+          - this is what `dh_auto_test` calls for us in compat 13.
+      - Remove `dh_missing --fail-missing` override as this is the default
+        now.
+  * control: Set Rules-Requires-Root to no as we do not require root for
+    building/testing tracker-miners.
+  * tracker-extract-meson.build-Set-RPATH-for-the-extract-mod.patch: Add. Set
+    RPATH for the extract modules, so they can find.
+    libtracker-extract.so in the pkglibdir.
+  * shlibs.local: Add libtracker-miner-3.0.
+  * debian/copyright: Update with `scan-copyright`, thanks
 
- -- Iain Lane <laney@debian.org>  Tue, 08 Jun 2021 11:09:38 +0100
+ -- Iain Lane <laney@debian.org>  Wed, 23 Jun 2021 13:36:50 +0100
 
 tracker-miners (2.3.5-2) unstable; urgency=medium
 
