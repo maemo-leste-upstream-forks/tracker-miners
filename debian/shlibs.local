@@ -1,1 +1,2 @@
 libtracker-extract 0 tracker-extract (= ${binary:Version})
+libtracker-miner 3.0 tracker-extract (= ${binary:Version})
