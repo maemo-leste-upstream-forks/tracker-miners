@@ -4,8 +4,6 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DEB_LDFLAGS_MAINT_STRIP = -Wl,-Bsymbolic-functions
 
 BUILDDIR=$(CURDIR)/obj-$(DEB_HOST_GNU_TYPE)
-CHECK_HOME = $(CURDIR)/debian/tmp/home
-CHECK_XRD = $(CHECK_HOME)/XRD
 
 FEATURE_FLAGS = \
 	-Dgeneric_media_extractor=gstreamer \
@@ -19,7 +17,6 @@ FEATURE_FLAGS = \
 	-Dsystemd_user_services_dir=/usr/lib/systemd/user/
 
 MESON_TEST_ARGS = \
-	-C $(BUILDDIR) \
 	--no-rebuild \
 	--verbose
 TEST_SUITES_FILTER = \
@@ -49,9 +46,6 @@ override_dh_install:
 	find debian/tmp -name tracker-tests -print -delete
 	dh_install
 
-override_dh_missing:
-	dh_missing --fail-missing
-
 override_dh_makeshlibs:
 	dh_makeshlibs -X/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-3.0/
 
@@ -59,19 +53,9 @@ override_dh_shlibdeps:
 	dh_shlibdeps -Ltracker-extract
 
 override_dh_auto_test:
-ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
-	mkdir -p -m0700 $(CHECK_HOME)
-	mkdir -m0700 $(CHECK_XRD)
-	env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
-	    dbus-run-session -- \
-	    meson test $(MESON_TEST_ARGS) \
+	dbus-run-session -- \
+	    dh_auto_test -- $(MESON_TEST_ARGS) \
 	    $(addprefix --no-suite ,${TEST_SUITES_FILTER})
-	-env HOME=$(CHECK_HOME) XDG_RUNTIME_DIR=$(CHECK_XRD) \
-	    dbus-run-session -- \
-	    meson test $(MESON_TEST_ARGS) \
+	-dbus-run-session -- \
+	    dh_auto_test -- $(MESON_TEST_ARGS) \
 	    $(addprefix --suite ,${TEST_SUITES_FILTER})
-endif
-
-override_dh_clean:
-	rm -rf $(CHECK_HOME)
-	dh_clean
