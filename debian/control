@@ -56,6 +56,7 @@ Standards-Version: 4.5.0
 Vcs-Browser: https://salsa.debian.org/gnome-team/tracker-miners
 Vcs-Git: https://salsa.debian.org/gnome-team/tracker-miners.git
 Homepage: https://wiki.gnome.org/Projects/Tracker
+Rules-Requires-Root: no
 
 Package: tracker-extract
 Architecture: any
