@@ -1,1 +1,2 @@
 debian/Revert-build-Include-libdir-in-rpath.patch
+psx-game-image-1.expected.json-Mark-as-XFAIL.patch

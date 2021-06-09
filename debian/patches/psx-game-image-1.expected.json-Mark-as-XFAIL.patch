@@ -1,0 +1,26 @@
+From: Iain Lane <laney@debian.org>
+Date: Wed, 9 Jun 2021 14:19:41 +0100
+Subject: psx-game-image-1.expected.json: Mark as XFAIL
+
+The test is newly run in 3.0, and seems to be buggy, see the upstream
+bug.
+
+Bug-Upstream: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/162
+---
+ .../test-extraction-data/disc-images/psx-game-image-1.expected.json    | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json b/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
+index 6f01116..1d57b5a 100644
+--- a/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
++++ b/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
+@@ -1,7 +1,8 @@
+ {
+     "test": {
+         "Filename": "psx-game-image-1.cue",
+-        "Comment": "PSX game image with CUE file"
++        "Comment": "PSX game image with CUE file",
++        "ExpectedFailure": true
+     },
+     "metadata": {
+         "@type": [ "nfo:GameImage" ],
