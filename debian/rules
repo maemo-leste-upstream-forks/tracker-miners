@@ -54,8 +54,8 @@ override_dh_shlibdeps:
 
 override_dh_auto_test:
 	dbus-run-session -- \
-	    dh_auto_test -- $(MESON_TEST_ARGS) \
+	    dh_auto_test --no-parallel -- $(MESON_TEST_ARGS) \
 	    $(addprefix --no-suite ,${TEST_SUITES_FILTER})
 	-dbus-run-session -- \
-	    dh_auto_test -- $(MESON_TEST_ARGS) \
+	    dh_auto_test --no-parallel -- $(MESON_TEST_ARGS) \
 	    $(addprefix --suite ,${TEST_SUITES_FILTER})
