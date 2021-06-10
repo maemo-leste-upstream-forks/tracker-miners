@@ -1,0 +1,24 @@
+From: Iain Lane <laney@debian.org>
+Date: Thu, 10 Jun 2021 13:12:01 +0100
+Subject: Drop 'file-notifier' and 'miner-fs' tests
+
+There are flakiness problems here.
+
+Bug-Upstream: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/174
+---
+ tests/libtracker-miner/meson.build | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/tests/libtracker-miner/meson.build b/tests/libtracker-miner/meson.build
+index ed88f10..311b8a6 100644
+--- a/tests/libtracker-miner/meson.build
++++ b/tests/libtracker-miner/meson.build
+@@ -7,8 +7,6 @@ libtracker_miner_tests = [
+ ]
+ 
+ libtracker_miner_slow_tests = [
+-    'file-notifier',
+-    'miner-fs',
+     'monitor',
+ ]
+ 
