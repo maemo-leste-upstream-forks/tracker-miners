@@ -1,0 +1,24 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Sun, 25 Oct 2020 15:37:13 +0100
+Subject: libtracker-miners-common: Add newstatat/statat64 syscalls
+
+These are done in recent glib versions, should be observed here.
+
+(cherry picked from commit b3fdbaf1ab23ce7191ace6db79575dfce5f90881)
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index c0327eb..01887e8 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -91,6 +91,8 @@ tracker_seccomp_init (void)
+ 	/* Basic filesystem access */
+ 	ALLOW_RULE (fstat);
+ 	ALLOW_RULE (fstat64);
++	ALLOW_RULE (fstatat64);
++	ALLOW_RULE (newfstatat);
+ 	ALLOW_RULE (stat);
+ 	ALLOW_RULE (stat64);
+ 	ALLOW_RULE (statfs);
