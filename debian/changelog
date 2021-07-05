@@ -1,3 +1,13 @@
+tracker-miners (2.3.5-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * libtracker-miners-common: Add newstatat/statat64 syscalls.
+    Backport upstream commit b3fdbaf to avoid constant crashes every 2s.
+    Thanks Julian Andres Klode for forwarding this initially.
+    (Closes: #983637)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 05 Jul 2021 12:40:50 +0200
+
 tracker-miners (2.3.5-2) unstable; urgency=medium
 
   * Make the 'audio' tests non-fatal on powerpc and sparc64 as well
