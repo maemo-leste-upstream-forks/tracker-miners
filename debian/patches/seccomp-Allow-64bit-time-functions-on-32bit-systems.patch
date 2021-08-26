@@ -1,0 +1,56 @@
+From: Sam Thursfield <sam@afuera.me.uk>
+Date: Sat, 15 May 2021 18:31:00 +0200
+Subject: seccomp: Allow 64bit time functions on 32bit systems
+
+These were added to Linux kernel 5.1:
+
+    https://lwn.net/ml/linux-kernel/20190110172216.313063-12-arnd@arndb.de/
+
+They are now causing failures on Fedora 34 on 32bit systems (e.g.
+Raspberry Pi)
+
+    (tracker-extract-3:442): Tracker-DEBUG: 16:20:57.646: Extracting metadata for 'file:///media/Music/Less%20Than%20Jake/Portrait%20of%20a%20Cigarette%20Smoker%20at%20Age%2019%20(acoustic).mp3'
+    (tracker-extract-3:442): Tracker-DEBUG: 16:20:57.647: MIME type guessed as 'audio/mpeg' (from GIO)
+    (tracker-extract-3:442): Tracker-DEBUG: 16:20:57.649: Loading seccomp rules.
+    Disallowed syscall "clock_gettime64" caught in sandbox
+
+(cherry picked from commit 550ea1b262d6555573bb718a82a49cdd92eb08bb)
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 63a6350..f8be949 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -151,6 +151,7 @@ tracker_seccomp_init (void)
+ 	/* Processes and threads */
+ 	ALLOW_RULE (clone);
+ 	ALLOW_RULE (futex);
++	ALLOW_RULE (futex_time64);
+ 	ALLOW_RULE (set_robust_list);
+ 	ALLOW_RULE (rt_sigaction);
+ 	ALLOW_RULE (rt_sigprocmask);
+@@ -159,12 +160,14 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (sched_setattr);
+ 	ALLOW_RULE (nanosleep);
+ 	ALLOW_RULE (clock_nanosleep);
++	ALLOW_RULE (clock_nanosleep_time64);
+ 	ALLOW_RULE (waitid);
+ 	ALLOW_RULE (waitpid);
+ 	ALLOW_RULE (wait4);
+ 	/* Main loops */
+ 	ALLOW_RULE (poll);
+ 	ALLOW_RULE (ppoll);
++	ALLOW_RULE (ppoll_time64);
+ 	ALLOW_RULE (fcntl);
+ 	ALLOW_RULE (fcntl64);
+ 	ALLOW_RULE (eventfd);
+@@ -179,6 +182,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (prctl);
+ 	ALLOW_RULE (getrandom);
+ 	ALLOW_RULE (clock_gettime);
++	ALLOW_RULE (clock_gettime64);
+ 	ALLOW_RULE (clock_getres);
+ 	ALLOW_RULE (gettimeofday);
+ 	/* Descriptors */

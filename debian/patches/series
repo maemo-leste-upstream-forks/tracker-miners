@@ -2,3 +2,4 @@ Drop-file-notifier-and-miner-fs-tests.patch
 psx-game-image-1.expected.json-Mark-as-XFAIL.patch
 debian/Revert-build-Include-libdir-in-rpath.patch
 debian/tracker-extract-meson.build-Set-RPATH-for-the-extract-mod.patch
+seccomp-Allow-64bit-time-functions-on-32bit-systems.patch
