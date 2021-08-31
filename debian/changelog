@@ -1,3 +1,9 @@
+tracker-miners (3.1.1-3) unstable; urgency=medium
+
+  * Release to unstable
+
+ -- Jeremy Bicha <jbicha@debian.org>  Mon, 30 Aug 2021 22:49:52 -0400
+
 tracker-miners (3.1.1-2) experimental; urgency=medium
 
   * Cherry-pick seccomp-Allow-64bit-time-functions-on-32bit-systems.patch
