@@ -80,7 +80,7 @@ Depends: ${shlibs:Depends},
          tracker-extract (= ${binary:Version}),
          procps
 Breaks: bijiben (<< 40),
-        brasero (<< 3.12.2-8~)
+        brasero (<< 3.12.2-8~),
         gnome-applets (<< 3.40.0-4~),
         gnome-books (<< 40),
         gnome-boxes (<< 40),
