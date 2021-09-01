@@ -75,6 +75,9 @@ Depends: ${shlibs:Depends},
          tracker (>= 3.1.1),
          tracker-extract (= ${binary:Version}),
          procps
+Breaks: gnome-photos (<< 40),
+        nautilus (<< 40),
+        netatalk (<< 3.1.12~ds-8.1)
 Description: metadata database, indexer and search tool - filesystem indexer
  This package contains the tracker indexer for indexing your files and folders.
  .
