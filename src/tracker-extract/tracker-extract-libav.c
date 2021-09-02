@@ -150,7 +150,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		}
 
 	} else if (audio_stream) {
-		TrackerResource *album_artist = NULL, *performer = NULL;
+		TrackerResource *album_artist = NULL, *artist = NULL, *performer = NULL;
 		char *album_artist_name = NULL;
 		char *album_title = NULL;
 
@@ -180,10 +180,10 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		}
 
 		if ((tag = find_tag (format, audio_stream, "artist"))) {
-			performer = tracker_extract_new_artist (tag->value);
+			artist = tracker_extract_new_artist (tag->value);
 		}
 
-		if (!performer && (tag = find_tag (format, audio_stream, "performer"))) {
+		if ((tag = find_tag (format, audio_stream, "performer"))) {
 			performer = tracker_extract_new_artist (tag->value);
 		}
 
@@ -192,6 +192,10 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			if (content_created) {
 				tracker_resource_set_string (metadata, "nie:contentCreated", content_created);
 			}
+		}
+
+		if (artist) {
+			tracker_resource_set_relation (metadata, "nmm:artist", artist);
 		}
 
 		if (performer) {
@@ -219,6 +223,9 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 			g_object_unref (album_disc);
 		}
+
+		if (artist)
+			g_object_unref (artist);
 
 		if (performer)
 			g_object_unref (performer);

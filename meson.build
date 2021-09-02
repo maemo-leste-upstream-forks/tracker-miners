@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.1.1',
+        version: '3.1.2',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -420,7 +420,6 @@ build_root = meson.current_build_dir()
 # directory, following the existing convention in that directory.
 tracker_api_versioned_name = 'tracker-miners-@0@'.format(tracker_api_version)
 tracker_internal_libs_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name)
-tracker_install_rpath = ':'.join([tracker_internal_libs_dir, libdir])
 
 tracker_extract_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'extract-modules')
 tracker_writeback_modules_dir = join_paths(get_option('prefix'), get_option('libdir'), tracker_api_versioned_name, 'writeback-modules')

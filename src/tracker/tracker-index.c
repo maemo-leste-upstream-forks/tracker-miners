@@ -324,11 +324,16 @@ print_list (GStrv    list,
 		else
 			continue;
 
-		str = tracker_term_ellipsize (path, len, TRACKER_ELLIPSIZE_START);
-		g_print ("%-*s " BOLD_BEGIN "%s" BOLD_END "\n",
-		         len, str,
-		         recursive ? "*" : "-");
-		g_free (str);
+		if (path) {
+			str = tracker_term_ellipsize (path, len, TRACKER_ELLIPSIZE_START);
+			g_print ("%-*s " BOLD_BEGIN "%s" BOLD_END "\n",
+		    	     len, str,
+		    	     recursive ? "*" : "-");
+			g_free (str);
+		}
+		else {
+			g_print("Could not expand XDG user directory %s", list[i]);
+		}
 	}
 }
 

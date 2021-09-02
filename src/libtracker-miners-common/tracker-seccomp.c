@@ -151,6 +151,7 @@ tracker_seccomp_init (void)
 	/* Processes and threads */
 	ALLOW_RULE (clone);
 	ALLOW_RULE (futex);
+	ALLOW_RULE (futex_time64);
 	ALLOW_RULE (set_robust_list);
 	ALLOW_RULE (rt_sigaction);
 	ALLOW_RULE (rt_sigprocmask);
@@ -159,12 +160,14 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (sched_setattr);
 	ALLOW_RULE (nanosleep);
 	ALLOW_RULE (clock_nanosleep);
+	ALLOW_RULE (clock_nanosleep_time64);
 	ALLOW_RULE (waitid);
 	ALLOW_RULE (waitpid);
 	ALLOW_RULE (wait4);
 	/* Main loops */
 	ALLOW_RULE (poll);
 	ALLOW_RULE (ppoll);
+	ALLOW_RULE (ppoll_time64);
 	ALLOW_RULE (fcntl);
 	ALLOW_RULE (fcntl64);
 	ALLOW_RULE (eventfd);
@@ -179,6 +182,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (prctl);
 	ALLOW_RULE (getrandom);
 	ALLOW_RULE (clock_gettime);
+	ALLOW_RULE (clock_gettime64);
 	ALLOW_RULE (clock_getres);
 	ALLOW_RULE (gettimeofday);
 	/* Descriptors */

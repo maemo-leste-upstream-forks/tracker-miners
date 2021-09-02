@@ -162,7 +162,7 @@ executable('tracker-extract-@0@'.format(tracker_api_major),
   dependencies: tracker_extract_dependencies,
   install: true,
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
-  install_rpath: tracker_install_rpath)
+  install_rpath: tracker_internal_libs_dir)
 
 # This file allows starting the service with D-Bus autoactivation.
 # It's also used by tracker-control to identify the miner.
