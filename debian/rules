@@ -16,6 +16,10 @@ FEATURE_FLAGS = \
 	-Dsystemd_user_services=true \
 	-Dsystemd_user_services_dir=/usr/lib/systemd/user/
 
+ifneq (linux,$(DEB_HOST_ARCH_OS))
+FEATURE_FLAGS += -Dnetwork_manager=disabled
+endif
+
 MESON_TEST_ARGS = \
 	--no-rebuild \
 	--verbose
