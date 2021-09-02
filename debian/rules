@@ -41,11 +41,6 @@ override_dh_auto_configure:
 		-Dauto_features=enabled \
 		$(FEATURE_FLAGS)
 
-override_dh_install:
-	find debian/tmp -name 01-writeback.py -print -delete
-	find debian/tmp -name tracker-tests -print -delete
-	dh_install
-
 override_dh_makeshlibs:
 	dh_makeshlibs -X/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-3.0/
 
