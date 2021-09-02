@@ -9,7 +9,6 @@ executable('tracker-miner-rss-@0@'.format(tracker_api_major),
     c_args: tracker_c_args,
     install: true,
     install_dir: get_option('libexecdir'),
-    install_rpath: tracker_install_rpath,
 )
 
 # This file allows starting the service with D-Bus autoactivation.
