@@ -1,8 +1,18 @@
-tracker-miners (3.1.2-1) UNRELEASED; urgency=medium
+tracker-miners (3.1.2-1) unstable; urgency=medium
 
+  [ Jeremy Bicha ]
   * New upstream release
+  * Drop an rpath and seccomp patches: applied in new release
+  * debian/rules: Drop obsolete delete rule
 
- -- Jeremy Bicha <jbicha@debian.org>  Wed, 01 Sep 2021 20:59:25 -0400
+  [ Laurent Bigonville ]
+  * Explicitly disable NetworkManager support on non-linux architectures
+  * Remove obsolete xdg autostart files (Closes: #993884, #993883)
+  * debian/rules: Search for the private libraries in the private path
+  * Cleanup old systemd .service files too
+  * Drop pre-Buster upgrade paths
+
+ -- Laurent Bigonville <bigon@debian.org>  Thu, 16 Sep 2021 15:17:48 +0200
 
 tracker-miners (3.1.1-4) unstable; urgency=medium
 
