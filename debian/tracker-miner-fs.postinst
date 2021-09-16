@@ -23,10 +23,9 @@ case "$1" in
         if [ -x /lib/systemd/systemd-sysctl ] ; then
             /lib/systemd/systemd-sysctl 30-tracker.conf || true
         fi
-	if dpkg --compare-versions "$2" le-nl "2.3.3-2~"; then
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/graphical-session.target.wants/tracker-miner-fs.service
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/tracker-miner-fs.service.dsh-also
-            rm -f /etc/systemd/user/graphical-session.target.wants/tracker-miner-fs.service
+	if dpkg --compare-versions "$2" le-nl "3.1.2-1~"; then
+            deb-systemd-helper --user purge 'tracker-miner-fs.service' >/dev/null || true
+            deb-systemd-helper --user unmask 'tracker-miner-fs.service' >/dev/null || true
 	fi
     ;;
 

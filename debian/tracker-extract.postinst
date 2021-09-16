@@ -20,11 +20,10 @@ set -e
 
 case "$1" in
     configure)
-	if dpkg --compare-versions "$2" le-nl "2.3.3-2~"; then
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/graphical-session.target.wants/tracker-extract.service
-            rm -f /var/lib/systemd/deb-systemd-user-helper-enabled/tracker-extract.service.dsh-also
-            rm -f /etc/systemd/user/graphical-session.target.wants/tracker-extract.service
-	fi
+        if dpkg --compare-versions "$2" le-nl "3.1.2-1~"; then
+            deb-systemd-helper --user purge 'tracker-extract.service' >/dev/null || true
+            deb-systemd-helper --user unmask 'tracker-extract.service' >/dev/null || true
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
