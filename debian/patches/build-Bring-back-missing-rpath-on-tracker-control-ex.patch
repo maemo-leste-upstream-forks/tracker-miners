@@ -1,0 +1,28 @@
+From a91dacc89fe961c120d933d3e61e147d3defcf1e Mon Sep 17 00:00:00 2001
+From: Laurent Bigonville <bigon@bigon.be>
+Date: Fri, 17 Sep 2021 10:33:48 +0200
+Subject: [PATCH] build: Bring back missing rpath on tracker-control executable
+
+This executable does need our private libtracker-miner library.
+Make sure it can get to it.
+
+Fixes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/197
+---
+ src/tracker-control/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/tracker-control/meson.build b/src/tracker-control/meson.build
+index 85fb19573..6cbb823f8 100644
+--- a/src/tracker-control/meson.build
++++ b/src/tracker-control/meson.build
+@@ -35,6 +35,7 @@ executable('tracker-miner-fs-control-@0@'.format(tracker_api_major),
+     c_args: tracker_c_args,
+     install: true,
+     install_dir: get_option('libexecdir'),
++    install_rpath: tracker_internal_libs_dir,
+ )
+ 
+ # This file allows starting the service with D-Bus autoactivation.
+-- 
+2.33.0
+

@@ -49,7 +49,7 @@ override_dh_makeshlibs:
 	dh_makeshlibs -X/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-3.0/
 
 override_dh_shlibdeps:
-	dh_shlibdeps -Ltracker-extract -l/usr/lib/$(DEB_HOST_MULTIARCH)/tracker-miners-3.0/
+	dh_shlibdeps -Ltracker-extract
 
 override_dh_auto_test:
 ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
