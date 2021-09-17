@@ -1,3 +1,12 @@
+tracker-miners (3.1.2-2) unstable; urgency=medium
+
+  * debian/rules: Completely disable the tests if nocheck option is used
+  * Fix the RPATH for the tracker-miner-fs-control-3 executable.
+    Drop Laney's patch that set it for the extract modules, this is not
+    needed anymore as the executable loading them has the RPATH set
+
+ -- Laurent Bigonville <bigon@debian.org>  Fri, 17 Sep 2021 10:46:52 +0200
+
 tracker-miners (3.1.2-1) unstable; urgency=medium
 
   [ Jeremy Bicha ]
