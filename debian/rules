@@ -52,11 +52,9 @@ override_dh_shlibdeps:
 	dh_shlibdeps -Ltracker-extract
 
 override_dh_auto_test:
-ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	dbus-run-session -- \
 	    dh_auto_test --no-parallel -- $(MESON_TEST_ARGS) \
 	    $(addprefix --no-suite ,${TEST_SUITES_FILTER})
 	-dbus-run-session -- \
 	    dh_auto_test --no-parallel -- $(MESON_TEST_ARGS) \
 	    $(addprefix --suite ,${TEST_SUITES_FILTER})
-endif
