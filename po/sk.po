@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker HEAD\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2020-09-15 14:26+0000\n"
-"PO-Revision-Date: 2020-09-16 11:34+0200\n"
+"POT-Creation-Date: 2021-04-27 14:34+0000\n"
+"PO-Revision-Date: 2021-06-15 20:49+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "Language: sk\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 3.0\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -276,41 +276,37 @@ msgid "Avoid any directory containing a file blocklisted here"
 msgstr ""
 "Preskočí akýkoľvek adresár obsahujúci súbor z tohto zoznamu blokovaných"
 
-#: src/libtracker-miners-common/tracker-utils.c:90
-msgid "unknown time"
-msgstr "neznámy čas"
-
-#: src/libtracker-miners-common/tracker-utils.c:104
-#: src/libtracker-miners-common/tracker-utils.c:155
+#: src/libtracker-miners-common/tracker-utils.c:101
+#: src/libtracker-miners-common/tracker-utils.c:152
 msgid "less than one second"
 msgstr "menej ako jedna sekunda"
 
 # PM: treba aby to bolo čo najrkatšie
 #. Translators: this is %d days
-#: src/libtracker-miners-common/tracker-utils.c:119
+#: src/libtracker-miners-common/tracker-utils.c:116
 #, c-format
 msgid " %dd"
 msgstr " %dd"
 
 #. Translators: this is %2.2d hours
-#: src/libtracker-miners-common/tracker-utils.c:123
+#: src/libtracker-miners-common/tracker-utils.c:120
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2dh"
 
 #. Translators: this is %2.2d minutes
-#: src/libtracker-miners-common/tracker-utils.c:127
+#: src/libtracker-miners-common/tracker-utils.c:124
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2dm"
 
 #. Translators: this is %2.2d seconds
-#: src/libtracker-miners-common/tracker-utils.c:131
+#: src/libtracker-miners-common/tracker-utils.c:128
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2ds"
 
-#: src/libtracker-miners-common/tracker-utils.c:135
+#: src/libtracker-miners-common/tracker-utils.c:132
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
@@ -318,7 +314,7 @@ msgstr[0] " %d dní"
 msgstr[1] " %d deň"
 msgstr[2] " %d dni"
 
-#: src/libtracker-miners-common/tracker-utils.c:139
+#: src/libtracker-miners-common/tracker-utils.c:136
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
@@ -326,7 +322,7 @@ msgstr[0] " %2.2d hodín"
 msgstr[1] " %2.2d hodina"
 msgstr[2] " %2.2d hodiny"
 
-#: src/libtracker-miners-common/tracker-utils.c:143
+#: src/libtracker-miners-common/tracker-utils.c:140
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
@@ -334,7 +330,7 @@ msgstr[0] " %2.2d minút"
 msgstr[1] " %2.2d minúta"
 msgstr[2] " %2.2d minúty"
 
-#: src/libtracker-miners-common/tracker-utils.c:147
+#: src/libtracker-miners-common/tracker-utils.c:144
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
@@ -358,22 +354,22 @@ msgstr ""
 "pozastavenie"
 
 # cmd desc
-#: src/miners/fs/tracker-main.c:77
+#: src/miners/fs/tracker-main.c:81
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Počiatočný čas spánku v sekundách, 0->1000 (predvolené=15)"
 
 # cmd desc
-#: src/miners/fs/tracker-main.c:82
+#: src/miners/fs/tracker-main.c:86
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Pobeží pokým nebudú všetky nastavené umiestnenia indexované, a potom skončí"
 
-#: src/miners/fs/tracker-main.c:86 src/tracker/tracker-info.c:74
+#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:74
 msgid "Checks if FILE is eligible for being mined based on configuration"
-msgstr "Skontroluje či je SÚBOR podľa konfigurácie určený na dolovanie"
+msgstr "Skontroluje či je SÚBOR určený podľa konfigurácie určený na dolovanie"
 
 # cmd desc
-#: src/miners/fs/tracker-main.c:87 src/tracker-extract/tracker-main.c:83
+#: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
 #: src/tracker/tracker-info.c:77 src/tracker/tracker-info.c:78
@@ -381,60 +377,60 @@ msgstr "Skontroluje či je SÚBOR podľa konfigurácie určený na dolovanie"
 msgid "FILE"
 msgstr "SÚBOR"
 
-#: src/miners/fs/tracker-main.c:90 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Spustí určenú ontológiu domény"
 
-#: src/miners/fs/tracker-main.c:94
+#: src/miners/fs/tracker-main.c:98
 msgid "Avoids changes in the filesystem"
 msgstr "Zabráni zmenám v súborovom systéme"
 
 # cmd desc
-#: src/miners/fs/tracker-main.c:98 src/tracker-control/tracker-main.c:61
+#: src/miners/fs/tracker-main.c:102 src/tracker-control/tracker-main.c:61
 #: src/tracker-extract/tracker-main.c:101
 #: src/tracker-writeback/tracker-main.c:48
 msgid "Displays version information"
 msgstr "Zobrazí informácie o verzii"
 
-#: src/miners/fs/tracker-main.c:603
+#: src/miners/fs/tracker-main.c:624
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Údajový objekt „%s“ momentálne existuje"
 
-#: src/miners/fs/tracker-main.c:604
+#: src/miners/fs/tracker-main.c:625
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Údajový objekt „%s“ momentálne neexistuje"
 
-#: src/miners/fs/tracker-main.c:640
+#: src/miners/fs/tracker-main.c:661
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Adresár NIE JE určený na indexovanie (na základe filtrov)"
 
-#: src/miners/fs/tracker-main.c:644
+#: src/miners/fs/tracker-main.c:665
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Súbor NIE JE určený na indexovanie (na základe filtrov)"
 
-#: src/miners/fs/tracker-main.c:647
+#: src/miners/fs/tracker-main.c:668
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Súbor NIE JE určený na indexovanie (skrytý súbor)"
 
-#: src/miners/fs/tracker-main.c:649
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Súbor NIE JE určený na indexovanie (nie je v indexovanom priečinku)"
 
-#: src/miners/fs/tracker-main.c:673
+#: src/miners/fs/tracker-main.c:694
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 "Nadradený adresár „%s“ NIE JE určený na indexovanie (na základe filtrov)"
 
-#: src/miners/fs/tracker-main.c:679
+#: src/miners/fs/tracker-main.c:700
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "Nadradený adresár „%s“ NIE JE určený na indexovanie (skrytý súbor)"
 
-#: src/miners/fs/tracker-main.c:687
+#: src/miners/fs/tracker-main.c:708
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
@@ -443,18 +439,18 @@ msgstr ""
 "Nadradený adresár „%s“ NIE JE určený na indexovanie (na základe filtrov "
 "obsahu)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:729
 msgid "Directory is eligible to be indexed"
 msgstr "Adresár je určený na indexovanie"
 
-#: src/miners/fs/tracker-main.c:709
+#: src/miners/fs/tracker-main.c:730
 msgid "File is eligible to be indexed"
 msgstr "Súbor je určený na indexovanie"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:966
+#: src/miners/fs/tracker-main.c:988
 msgid "— start the tracker indexer"
 msgstr "— spustí indexovač sledovača"
 
@@ -479,8 +475,8 @@ msgstr "Názov, ktorý sa použije (musí byť použité s voľbou --add-feed)"
 msgid "— start the feeds indexer"
 msgstr "— spustí indexovač kanálov"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:361
-#: src/tracker/tracker-search.c:1210 src/tracker/tracker-status.c:88
+#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:390
+#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:88
 #: src/tracker/tracker-status.c:201 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Nepodarilo sa nadviazať pripojenie k sledovaču"
@@ -490,10 +486,10 @@ msgstr "Nepodarilo sa nadviazať pripojenie k sledovaču"
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:362 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:251
-#: src/tracker/tracker-status.c:280 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:391 src/tracker/tracker-process.c:193
+#: src/tracker/tracker-search.c:1212 src/tracker/tracker-status.c:89
+#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:277 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Chybová správa nebola poskytnutá"
 
@@ -504,15 +500,15 @@ msgstr "Nepodarilo sa pridať kanál"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-control/tracker-main.c:135
+#: src/tracker-control/tracker-main.c:136
 msgid "— start the tracker index proxy"
 msgstr "— spustí proxy indexovač sledovača"
 
-#: src/tracker-extract/tracker-extract.c:680
+#: src/tracker-extract/tracker-extract.c:687
 msgid "Metadata extraction failed"
 msgstr "Zlyhalo extrahovanie metaúdajov"
 
-#: src/tracker-extract/tracker-extract.c:742
+#: src/tracker-extract/tracker-extract.c:762
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Nenašli sa žiadne moduly pre metaúdaje alebo nástroj na extrahovanie, ktoré "
@@ -839,7 +835,7 @@ msgstr "Všetky vlastnosti nie:plainTextContent sú vynechané"
 msgid "Common statuses include"
 msgstr "Medzi bežné patria stavy"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:279
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:276
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Nepodarilo sa získať stav, správca nemohol byť vytvorený, %s"
@@ -901,9 +897,9 @@ msgstr ""
 "Ak nie sú určené žiadne parametre, bude zobrazený stav dolovačov údajov"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:382 src/tracker/tracker-info.c:554
-#: src/tracker/tracker-reset.c:260 src/tracker/tracker-search.c:1400
-#: src/tracker/tracker-status.c:602 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:582
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1401
+#: src/tracker/tracker-status.c:599 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Nerozpoznané voľby"
 
@@ -917,7 +913,7 @@ msgstr ""
 "Nepodarilo sa vytvoriť sprostredkovateľa proxy zbernice D-Bus k úložisku "
 "sledovača"
 
-#: src/tracker/tracker-extract.c:68 src/tracker/tracker-info.c:506
+#: src/tracker/tracker-extract.c:68
 msgid "Could not run tracker-extract: "
 msgstr "Nepodarilo sa spustiť funkciu tracker-extract: "
 
@@ -933,35 +929,35 @@ msgstr "Odstráni SÚBOR z indexovaných umiestnení"
 msgid "Makes indexing recursive"
 msgstr "Zmení indexovanie na rekurzívne"
 
-#: src/tracker/tracker-index.c:194
+#: src/tracker/tracker-index.c:192
 #, c-format
 msgid "“%s” is not a directory"
 msgstr "„%s“ nie je adresárom"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:275
+#: src/tracker/tracker-index.c:282
 msgid "Either --add or --remove must be provided"
 msgstr "Musí byť zadaná voľba buď -add alebo --remove"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:279
+#: src/tracker/tracker-index.c:286
 msgid "--add and --remove are mutually exclusive"
 msgstr "Voľby --add a --remove sa navzájom vylučujú"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:289
+#: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
 msgstr "Parameter --recursive vyžaduje voľbu --add"
 
-#: src/tracker/tracker-index.c:344 src/tracker/tracker-status.c:403
+#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:400
 msgid "Path"
 msgstr "Cesta"
 
-#: src/tracker/tracker-index.c:345
+#: src/tracker/tracker-index.c:352
 msgid "Recursive"
 msgstr "Rekurzívne"
 
-#: src/tracker/tracker-index.c:395
+#: src/tracker/tracker-index.c:402
 msgid "Please specify one or more locations to index."
 msgstr "Prosím, určte jednu alebo viacero umiestnení na indexovanie."
 
@@ -1009,25 +1005,29 @@ msgstr "Nepodarilo sa získať predpony menných priestorov"
 msgid "No namespace prefixes were returned"
 msgstr "Neboli vrátené žiadne predpony menných priestorov"
 
-#: src/tracker/tracker-info.c:386
+#: src/tracker/tracker-info.c:221 src/tracker/tracker-search.c:1137
+msgid "Results"
+msgstr "Výsledky"
+
+#: src/tracker/tracker-info.c:414
 msgid "Querying information for entity"
 msgstr "Dopytujú sa informácie pre entitu"
 
-#: src/tracker/tracker-info.c:410
+#: src/tracker/tracker-info.c:438
 msgid "Unable to retrieve URN for URI"
 msgstr "Nepodarilo sa získať URN pre URI"
 
-#: src/tracker/tracker-info.c:420 src/tracker/tracker-info.c:454
+#: src/tracker/tracker-info.c:448 src/tracker/tracker-info.c:481
 msgid "Unable to retrieve data for URI"
 msgstr "Nepodarilo sa získať údaje pre URI"
 
-#: src/tracker/tracker-info.c:463
+#: src/tracker/tracker-info.c:504
 msgid "No metadata available for that URI"
 msgstr "Nie sú dostupné žiadne metaúdaje pre taký URI"
 
-#: src/tracker/tracker-info.c:468 src/tracker/tracker-search.c:1136
-msgid "Results"
-msgstr "Výsledky"
+#: src/tracker/tracker-info.c:509 src/tracker/tracker-info.c:538
+msgid "Could not get eligible status: "
+msgstr "Nepodarilo sa získať určený stav: "
 
 #: src/tracker/tracker-process.c:190
 #, c-format
@@ -1188,7 +1188,7 @@ msgstr ""
 #: src/tracker/tracker-search.c:262 src/tracker/tracker-search.c:576
 #: src/tracker/tracker-search.c:665 src/tracker/tracker-search.c:753
 #: src/tracker/tracker-search.c:837 src/tracker/tracker-search.c:919
-#: src/tracker/tracker-search.c:1123
+#: src/tracker/tracker-search.c:1124
 msgid "Could not get search results"
 msgstr "Nepodarilo sa získať výsledky hľadania"
 
@@ -1241,7 +1241,7 @@ msgstr "Nenašli sa žiadne kategórie softvéru"
 msgid "Software Categories"
 msgstr "Kategórie softvéru"
 
-#: src/tracker/tracker-search.c:1132
+#: src/tracker/tracker-search.c:1133
 msgid "No results were found matching your query"
 msgstr "Nenašli sa žiadne výsledky zhodujúce sa s vašou požiadavkou"
 
@@ -1296,19 +1296,19 @@ msgstr "Štatistiky:"
 msgid "None"
 msgstr "Nič"
 
-#: src/tracker/tracker-status.c:225 src/tracker/tracker-status.c:250
+#: src/tracker/tracker-status.c:222 src/tracker/tracker-status.c:247
 msgid "Could not get basic status for Tracker"
 msgstr "Nepodarilo sa získať základný stav sledovača"
 
-#: src/tracker/tracker-status.c:404 src/tracker/tracker-status.c:549
+#: src/tracker/tracker-status.c:401 src/tracker/tracker-status.c:546
 msgid "Message"
 msgstr "Správa"
 
-#: src/tracker/tracker-status.c:457
+#: src/tracker/tracker-status.c:454
 msgid "Currently indexed"
 msgstr "Aktuálne indexované"
 
-#: src/tracker/tracker-status.c:460 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:457 src/tracker/tracker-tag.c:557
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1316,7 +1316,7 @@ msgstr[0] "%d súborov"
 msgstr[1] "%d súbor"
 msgstr[2] "%d súbory"
 
-#: src/tracker/tracker-status.c:466
+#: src/tracker/tracker-status.c:463
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1324,24 +1324,24 @@ msgstr[0] "%d priečinkov"
 msgstr[1] "%d priečinok"
 msgstr[2] "%d priečinky"
 
-#: src/tracker/tracker-status.c:480
+#: src/tracker/tracker-status.c:477
 msgid "Remaining space on database partition"
 msgstr "Zostávajúce miesto na oddieli s databázou"
 
-#: src/tracker/tracker-status.c:492
+#: src/tracker/tracker-status.c:489
 msgid "Data is still being indexed"
 msgstr "Prebieha indexovanie údajov"
 
-#: src/tracker/tracker-status.c:493
+#: src/tracker/tracker-status.c:490
 #, c-format
 msgid "Estimated %s left"
 msgstr "Odhadovaný zostávajúci čas: %s"
 
-#: src/tracker/tracker-status.c:497
+#: src/tracker/tracker-status.c:494
 msgid "All data miners are idle, indexing complete"
 msgstr "Všetky dolovače údajov sú nečinné. Indexovanie je dokončené."
 
-#: src/tracker/tracker-status.c:504
+#: src/tracker/tracker-status.c:501
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
@@ -1349,7 +1349,7 @@ msgstr[0] "%d zaznamenaných zlyhaní"
 msgstr[1] "%d zaznamenané zlyhanie"
 msgstr[2] "%d zaznamenané zlyhania"
 
-#: src/tracker/tracker-status.c:565
+#: src/tracker/tracker-status.c:562
 msgid "No reports found"
 msgstr "Nenašli sa žiadne hlásenia"
 
@@ -1545,6 +1545,9 @@ msgstr "Zakáže vypnutie po 30 sekundách nečinnosti"
 #: src/tracker-writeback/tracker-main.c:85
 msgid "— start the tracker writeback service"
 msgstr "— spustí službu spätného zápisu sledovača"
+
+#~ msgid "unknown time"
+#~ msgstr "neznámy čas"
 
 #~ msgid "Log verbosity"
 #~ msgstr "Podrobnosť záznamu"
