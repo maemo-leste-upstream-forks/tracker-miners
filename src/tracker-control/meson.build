@@ -5,7 +5,6 @@ sources = [
 ]
 
 tracker_index_deps = [
-     tracker_miner,
      tracker_miners_common_dep,
      tracker_extract_dep
 ]

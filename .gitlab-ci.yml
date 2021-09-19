@@ -1,0 +1,114 @@
+# The container images used in this pipeline are built from this
+# GitLab project: https://gitlab.gnome.org/GNOME/tracker-oci-images
+
+variables:
+  # These can be used to see verbose log output from the functional-tests.
+  # See HACKING.md for more information.
+  G_MESSAGES_DEBUG: ""
+  TRACKER_DEBUG: ""
+
+  # This can be used when debugging test failures that only occur within GitLab CI.
+  MESON_TEST_EXTRA_ARGS: ""
+
+  TRACKER_TESTS_AWAIT_TIMEOUT: 60
+
+stages:
+  - test
+  - analysis
+
+.test_template: &test
+  stage: test
+
+  script:
+    # We can build and test tracker-miners against tracker just by building
+    # tracker as a submodule.
+    - .gitlab-ci/checkout-tracker.sh
+    - echo "Building tracker.git commit $(git -C ./subprojects/tracker rev-parse HEAD)"
+    - mkdir build
+    - cd build
+    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dtests_tap_protocol=true
+    - ninja
+    - |
+      # Remove the many "CI_" variables from the environment. Meson dumps the
+      # whole environment for every failed test, and that gives a whole
+      # screenful of junk each time unless we strip these.
+      unset $(env|grep -o '^CI_[^=]*')
+
+      dbus-run-session -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 eatmydata meson test --suite tracker-miners --print-errorlogs
+
+  after_script:
+    - |
+      echo "Distribution: "
+      echo
+      egrep '^NAME=|^VERSION=' /etc/os-release
+      echo
+      echo "Test suite settings:"
+      echo
+      echo "G_MESSAGES_DEBUG: ${G_MESSAGES_DEBUG}"
+      echo "TRACKER_DEBUG: ${TRACKER_DEBUG}"
+      echo "MESON_TEST_EXTRA_ARGS: ${MESON_TEST_EXTRA_ARGS}"
+      echo
+      echo "These values can be set at https://gitlab.gnome.org/GNOME/tracker/pipelines/new"
+
+  artifacts:
+    when: always
+    paths:
+    - build/meson-logs/*.txt
+    reports:
+      junit: "build/meson-logs/testlog.junit.xml"
+
+test-fedora-latest:
+  image: registry.gitlab.gnome.org/gnome/tracker-oci-images/amd64/fedora:latest
+  <<: *test
+
+test-fedora-rawhide:
+  image: registry.gitlab.gnome.org/gnome/tracker-oci-images/amd64/fedora:rawhide
+  <<: *test
+
+test-ubuntu-rolling:
+  image: registry.gitlab.gnome.org/gnome/tracker-oci-images/amd64/ubuntu:rolling
+  <<: *test
+
+coverage-analysis:
+  stage: analysis
+  image: registry.gitlab.gnome.org/gnome/tracker-oci-images/amd64/fedora:latest
+  allow_failure: true
+  script:
+    - .gitlab-ci/checkout-tracker.sh
+    - mkdir -p coverage-build/coveragereport
+    - cd coverage-build
+    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dseccomp=false
+    - ninja
+    - env LANG=C.UTF-8 LC_ALL=C.UTF-8 dbus-run-session eatmydata meson test --print-errorlogs ${MESON_TEST_EXTRA_ARGS}
+    - gcovr --html-details --print-summary --root=.. --exclude=subprojects --exclude=../subprojects --exclude=../tests --output coveragereport/index.html
+  coverage: '/^lines: (\d+\.\d+\%)/'
+  artifacts:
+    when: always
+    paths:
+    - coverage-build/coveragereport
+
+coverity:
+  stage: analysis
+  image: registry.gitlab.gnome.org/gnome/tracker-oci-images/amd64/fedora:latest
+  allow_failure: true
+  script:
+    # Build tracker, we must go out the subproject route as we don't want
+    # tracker code to be included in the coverity reports for tracker-miners.
+    - .gitlab-ci/checkout-tracker.sh
+    - export INSTALL=`pwd`/install
+    - pushd subprojects/tracker; meson build --libdir lib --prefix $INSTALL; pushd build; ninja install; popd; popd
+    - curl https://scan.coverity.com/download/linux64 --data "token=$COVERITY_TOKEN&project=tracker-miners" --output /tmp/coverity_tool.tgz
+    - tar zxf /tmp/coverity_tool.tgz
+    - mkdir coverity-build
+    - export CC=clang
+    - pushd coverity-build
+    - meson --pkg-config-path=$INSTALL/lib/pkgconfig ..
+    - ../cov-analysis-linux64-*/bin/cov-build --dir cov-int ninja
+    - tar czf cov-int.tar.gz cov-int
+    - popd
+    - curl https://scan.coverity.com/builds?project=tracker-miners
+      --form token=$COVERITY_TOKEN --form email=carlosg@gnome.org
+      --form file=@coverity-build/cov-int.tar.gz --form version="`git describe --tags`"
+      --form description="gitlab CI build"
+  only:
+    - master

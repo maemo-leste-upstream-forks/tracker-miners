@@ -150,6 +150,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (umask);
 	/* Processes and threads */
 	ALLOW_RULE (clone);
+	ALLOW_RULE (clone3);
 	ALLOW_RULE (futex);
 	ALLOW_RULE (futex_time64);
 	ALLOW_RULE (set_robust_list);
