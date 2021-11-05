@@ -8,7 +8,6 @@ BUILDDIR=$(CURDIR)/obj-$(DEB_HOST_GNU_TYPE)
 FEATURE_FLAGS = \
 	-Dgeneric_media_extractor=gstreamer \
 	-Dsystemd_user_services=/usr/lib/systemd/user \
-	-Ddocs=true \
 	-Dfunctional_tests=true \
 	-Dminer_rss=false \
 	-Dbattery_detection=upower \
