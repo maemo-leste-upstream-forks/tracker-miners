@@ -1,2 +1,3 @@
 Drop-file-notifier-and-miner-fs-tests.patch
 psx-game-image-1.expected.json-Mark-as-XFAIL.patch
+libtracker-miners-common-Allow-faccessat-faccessat2-sysca.patch

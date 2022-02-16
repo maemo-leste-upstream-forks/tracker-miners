@@ -1,0 +1,25 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Thu, 12 Aug 2021 14:07:59 +0200
+Subject: libtracker-miners-common: Allow faccessat/faccessat2 syscalls
+
+CI hits these missing when testing on aarch64. Add these syscalls
+together with the already allowed access(2).
+
+(cherry picked from commit 30b24e9d379458b66f2465422821a66bec3a749b)
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index b7864a7..7d88395 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -140,6 +140,8 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (lstat64);
+ 	ALLOW_RULE (statx);
+ 	ALLOW_RULE (access);
++	ALLOW_RULE (faccessat);
++	ALLOW_RULE (faccessat2);
+ 	ALLOW_RULE (getdents);
+ 	ALLOW_RULE (getdents64);
+ 	ALLOW_RULE (readlink);
