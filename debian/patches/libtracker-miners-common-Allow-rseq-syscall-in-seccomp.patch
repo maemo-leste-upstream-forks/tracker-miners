@@ -1,0 +1,26 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Wed, 5 Jan 2022 11:31:16 +0100
+Subject: libtracker-miners-common: Allow 'rseq' syscall in seccomp
+
+Allow this syscall for restartable sequences, a faster approach
+to critical sections. At the moment spotted via GStreamer in
+Fedora Rawhide, tt can be expected that more applications will
+be using this syscall.
+
+(cherry picked from commit 1982471a4605430eca05ec99ed9998246fabc3d2)
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index d5e3076..1768ef1 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -157,6 +157,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (futex);
+ 	ALLOW_RULE (futex_time64);
+ 	ALLOW_RULE (set_robust_list);
++	ALLOW_RULE (rseq);
+ 	ALLOW_RULE (rt_sigaction);
+ 	ALLOW_RULE (rt_sigprocmask);
+ 	ALLOW_RULE (sched_yield);
