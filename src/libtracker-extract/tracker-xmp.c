@@ -824,8 +824,10 @@ tracker_xmp_new_from_sidecar (GFile  *orig_file,
 	if (!xmp_path)
 		return NULL;
 
-	if (!g_file_test (xmp_path, G_FILE_TEST_IS_REGULAR))
+	if (!g_file_test (xmp_path, G_FILE_TEST_IS_REGULAR)) {
+		g_free (xmp_path);
 		return NULL;
+	}
 
 	mapped_file = g_mapped_file_new (xmp_path, FALSE, NULL);
 	if (!mapped_file) {

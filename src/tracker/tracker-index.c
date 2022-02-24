@@ -332,7 +332,7 @@ print_list (GStrv    list,
 			g_free (str);
 		}
 		else {
-			g_print("Could not expand XDG user directory %s", list[i]);
+			g_warning ("Could not expand XDG user directory %s", list[i]);
 		}
 	}
 }

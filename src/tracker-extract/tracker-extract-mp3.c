@@ -2636,7 +2636,7 @@ G_MODULE_EXPORT gboolean
 tracker_extract_get_metadata (TrackerExtractInfo  *info,
                               GError             **error)
 {
-	gchar *filename, *uri;
+	gchar *filename, *uri, *resource_uri;
 	int fd;
 	void *buffer;
 	void *id3v1_buffer;
@@ -2697,7 +2697,9 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 	g_free (id3v1_buffer);
 
-	main_resource = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	main_resource = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	/* Get other embedded tags */
 	uri = g_file_get_uri (file);

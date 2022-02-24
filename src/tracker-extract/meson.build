@@ -7,7 +7,7 @@
 modules = [
   ['extract-bmp', 'tracker-extract-bmp.c', ['10-bmp.rule'], [tracker_miners_common_dep]],
   ['extract-desktop', 'tracker-extract-desktop.c', ['10-desktop.rule'], [tracker_miners_common_dep]],
-  ['extract-dummy', 'tracker-extract-dummy.c', ['10-comics.rule', '10-ebooks.rule', '15-games.rule', '15-executable.rule'], [tracker_miners_common_dep]]
+  ['extract-dummy', 'tracker-extract-dummy.c', ['10-comics.rule', '10-ebooks.rule', '10-folder.rule', '15-games.rule', '15-executable.rule'], [tracker_miners_common_dep]]
 ]
 
 if get_option('abiword')
@@ -116,7 +116,7 @@ foreach module : modules
     install: true,
     install_dir: tracker_extract_modules_dir)
 
-  hash = run_command('calculate-hash.sh', sources)
+  hash = run_command('calculate-hash.sh', [sources] + files_extract)
 
   foreach rule : rules
     configure_file(input: rule,

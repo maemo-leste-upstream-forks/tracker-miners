@@ -844,10 +844,11 @@ indexing_tree_file_is_filtered (TrackerIndexingTree *tree,
 gboolean
 tracker_indexing_tree_file_is_indexable (TrackerIndexingTree *tree,
                                          GFile               *file,
-                                         GFileInfo           *info)
+                                         GFileInfo           *file_info)
 {
 	TrackerFilterType filter;
 	TrackerDirectoryFlags config_flags;
+	g_autoptr (GFileInfo) info = NULL;
 	GFile *config_file;
 	GFileType file_type;
 
@@ -859,6 +860,8 @@ tracker_indexing_tree_file_is_indexable (TrackerIndexingTree *tree,
 		/* Not under an added dir */
 		return FALSE;
 	}
+
+	g_set_object (&info, file_info);
 
 	if (info == NULL) {
 		info = g_file_query_info (file,

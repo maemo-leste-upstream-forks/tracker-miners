@@ -24,6 +24,7 @@
 #include <glib.h>
 
 #include <libtracker-extract/tracker-extract.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #include "tracker-main.h"
 #include "tracker-gsf.h"
@@ -810,7 +811,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 	GMarkupParseContext *context = NULL;
 	GError *inner_error = NULL;
 	GFile *file;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 
 	if (G_UNLIKELY (maximum_size_error_quark == 0)) {
 		maximum_size_error_quark = g_quark_from_static_string ("maximum_size_error");
@@ -827,8 +828,10 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 
 	g_debug ("Extracting MsOffice XML format...");
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
+	g_free (resource_uri);
 
 	/* Setup Parser info */
 	info.metadata = metadata;

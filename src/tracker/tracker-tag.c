@@ -297,9 +297,8 @@ get_all_tags_show_tag_id (TrackerSparqlConnection *connection,
 	gchar *query;
 
 	/* Get resources associated */
-	query = g_strdup_printf ("SELECT ?uri WHERE {"
+	query = g_strdup_printf ("SELECT (COALESCE (nie:isStoredAs(?urn), ?urn) AS ?uri) WHERE {"
 	                         "  ?urn a rdfs:Resource; "
-	                         "  nie:url ?uri ; "
 	                         "  nao:hasTag \"%s\" . "
 	                         "}",
 	                         id);
@@ -883,6 +882,7 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
 		            _("Could not remove tag"),
 		            error->message);
 		g_error_free (error);
+		g_strfreev (uris);
 
 		return FALSE;
 	}

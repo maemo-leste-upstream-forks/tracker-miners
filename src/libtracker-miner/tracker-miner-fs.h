@@ -165,11 +165,8 @@ void                  tracker_miner_fs_notify_finish         (TrackerMinerFS  *f
 							      GError          *error);
 
 /* URNs */
-gchar * tracker_miner_fs_get_identifier (TrackerMinerFS *miner,
-                                         GFile          *file,
-                                         gboolean        new_resource,
-                                         gboolean        check_batch,
-                                         gboolean       *is_iri);
+const gchar * tracker_miner_fs_get_identifier (TrackerMinerFS *miner,
+                                               GFile          *file);
 
 /* Progress */
 gboolean              tracker_miner_fs_has_items_to_process  (TrackerMinerFS  *fs);

@@ -1,20 +1,84 @@
-NEW in 3.1.3 - 2021-09-18
+NEW in 3.3.0.beta - 2022-02-14
+==============================
+  * Changed to skip mountpoints found during recursive indexing.
+    Mountpoints must be explicitly configured as indexed folders now
+  * Fixed FANotify monitor to safely fallback to inotify in the cases
+    not currently covered by FANotify (e.g. btrfs subvolumes)
+  * Improved the stable URN scheme so it is guaranteed to be stable
+  * Removed deprecated API usage in libav extractor
+  * Fix --show-files in "tracker3 tag"
+  * Fix possible crashes with Clang
+
+NEW in 3.3.0.alpha - 2022-01-09
+===============================
+  * Use FANotify for file monitoring if available
+  * Use a more stable URN scheme for file content
+  * Add indexing roots to content specific graphs for availability info
+  * Truly disable nvcodec in gstreamer extractor
+  * Use the configured domain prefix in miner symlinks
+  * Add seccomp rules for recently used syscalls
+  * Performance improvements to tracker-miner-fs-3
+  * Plug memory leaks in tracker-miner-fs-3
+
+Translations: ca, fur, id, it, zh_CN
+
+NEW in 3.2.1 - 2021-10-30
 =========================
+  * Fix files moving between hidden and non-hidden
+  * Update nfo:fileName on content specific graphs too when moved
+  * Update nfo:fileLastModified in content specific graphs
+  * Add nfo:fileSize to the basic set of file info on the graph
+  * Fix tracker-miner-fs-3 crash when finding internal SPARQL errors
+  * Handle symlinks to directories as indexed folders better
+  * Fix tracker-writeback support for musicbrainz release tags and artist
+  * Fix duplicate entries on files created and instantly modified
+  * Fix unintended double extraction with disc-generic extractor
+  * Fixes for coverity warnings
 
-  * Fix issue with missing rpath in control daemon.
-  * Add further newly used syscalls to seccomp
+Translations: fur, he, lv, sk, sr
 
-Translations: sk
-
-NEW in 3.1.2 - 2021-06-11
+NEW in 3.2.0 - 2021-09-18
 =========================
+Translations: da, de, en_GB, hr, hu, pl
 
+  Highlighted changes since 3.1:
+  * File creation time is now part of the stored metadata
+  * Show additional information in "tracker3 info"
+
+NEW in 3.2.0.rc - 2021-09-05
+============================
+
+Translations: fi, lt, nl
+
+NEW in 3.2.0.beta - 2021-09-01
+==============================
+  * Save file creation time
+  * Coverity fixes
+  * Fix chaining up of errors after porting to TrackerBatch
+  * Fixes for test flakiness
+  * Avoid falling back to year 0 in extractors
+  * Linking fixes on misc executables
+  * CI improvements
+
+Translations: cs, es, eu, fr, gl, id, kk, ko, pt, pt_BR, ro, ru, sk, sl,
+  sv, tr, zh_TW
+
+NEW in 3.2.0.alpha.1 - 2021-06-12
+=================================
+  * Brown paper bag release
+
+NEW in 3.2.0-alpha - 2021-06-09
+===============================
+  * Test fixes
+  * Remove default limit in "tracker3 search" command
+  * Show additional information in "tracker3 info"
   * Fixes to libav extractor
   * Allow 64bit time syscalls for 32bit systems in seccomp sandbox
   * Manpage fixes
   * Build fixes
+  * Fix "tracker index" crash on broken XDG directory setups
 
-Translations: ne, zh_TW
+Translations: ne, uk, zh_TW
 
 NEW in 3.1.1 - 2021-04-02
 =========================

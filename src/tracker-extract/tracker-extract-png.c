@@ -139,14 +139,13 @@ raw_profile_new (const gchar *input,
 		size++;
 	} while (g_ascii_isdigit (*ptr));
 
-	length_str = g_strndup (length_ptr, size - 1);
-
 	if (*ptr != '\n') {
 		return NULL;
 	}
 
 	ptr++;
 
+	length_str = g_strndup (length_ptr, size - 1);
 	length = atoi (length_str);
 	g_free (length_str);
 
@@ -230,7 +229,7 @@ read_metadata (TrackerResource      *metadata,
 				continue;
 			}
 
-			if (g_strcmp0 ("Raw profile type xmp", text_ptr[i].key) == 0) {
+			if (!xd && g_strcmp0 ("Raw profile type xmp", text_ptr[i].key) == 0) {
 				gchar *xmp_buffer;
 				guint xmp_buffer_length = 0;
 				guint input_len;
@@ -258,7 +257,7 @@ read_metadata (TrackerResource      *metadata,
 #endif /*HAVE_EXEMPI && PNG_iTXt_SUPPORTED */
 
 #if defined(HAVE_LIBEXIF) && defined(PNG_iTXt_SUPPORTED)
-			if (g_strcmp0 ("Raw profile type exif", text_ptr[i].key) == 0) {
+			if (!ed && g_strcmp0 ("Raw profile type exif", text_ptr[i].key) == 0) {
 				gchar *exif_buffer;
 				guint exif_buffer_length = 0;
 				guint input_len;
@@ -653,7 +652,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	gint bit_depth, color_type;
 	gint interlace_type, compression_type, filter_type;
 	const gchar *dlna_profile, *dlna_mimetype;
-	gchar *filename, *uri;
+	gchar *filename, *uri, *resource_uri;
 	GFile *file;
 
 	file = tracker_extract_info_get_file (info);
@@ -731,7 +730,9 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 	png_read_end (png_ptr, end_ptr);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (metadata, "rdf:type", "nmm:Photo");

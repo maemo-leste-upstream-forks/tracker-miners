@@ -299,7 +299,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	GPtrArray *keywords;
 	guint i;
 	GFile *file;
-	gchar *filename;
+	gchar *filename, *resource_uri;
 	int fd;
 	gchar *contents = NULL;
 	gsize len;
@@ -350,7 +350,9 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 	if (inner_error) {
 		if (inner_error->code == POPPLER_ERROR_ENCRYPTED) {
-			metadata = tracker_resource_new (NULL);
+			resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+			metadata = tracker_resource_new (resource_uri);
+			g_free (resource_uri);
 
 			tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
 			tracker_resource_set_boolean (metadata, "nfo:isContentEncrypted", TRUE);
@@ -381,8 +383,10 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
+	g_free (resource_uri);
 
 	g_object_get (document,
 	              "title", &pd.title,

@@ -591,7 +591,7 @@ tracker_extract_module_manager_get_hash (const gchar *mimetype)
 	for (l = list; l; l = l->next) {
 		RuleInfo *r_info = l->data;
 
-		if (r_info->graph)
+		if (r_info->hash)
 			return r_info->hash;
 	}
 

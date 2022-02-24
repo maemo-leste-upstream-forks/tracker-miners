@@ -240,9 +240,12 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		GError *error = NULL;
 		GMarkupParseContext *context;
 		AbwParserData data = { 0 };
+		gchar *resource_uri;
 
 		data.uri = g_file_get_uri (f);
-		data.resource = tracker_resource_new (NULL);
+		resource_uri = tracker_file_get_content_identifier (f, NULL, NULL);
+		data.resource = tracker_resource_new (resource_uri);
+		g_free (resource_uri);
 
 		tracker_resource_add_uri (data.resource, "rdf:type", "nfo:Document");
 

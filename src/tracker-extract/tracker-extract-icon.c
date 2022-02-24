@@ -24,6 +24,7 @@
 
 #define ICON_HEADER_SIZE_16 3
 #define ICON_IMAGE_METADATA_SIZE_8 16
+#define MAX_IMAGES 16
 
 static gboolean
 find_max_width_and_height (const gchar *uri,
@@ -77,7 +78,7 @@ find_max_width_and_height (const gchar *uri,
 	g_debug ("Found '%u' images in the icon file...", n_images);
 
 	/* Loop images looking for the biggest one... */
-	for (i = 0; i < n_images; i++) {
+	for (i = 0; i < MIN (MAX_IMAGES, n_images); i++) {
 		guint8 image_metadata [ICON_IMAGE_METADATA_SIZE_8];
 
 		/* Image metadata chunk consists of:
@@ -132,12 +133,14 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	guint max_width;
 	guint max_height;
 	GFile *file;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 
 	file = tracker_extract_info_get_file (info);
 	uri = g_file_get_uri (file);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	/* The Windows Icon file format may contain the same icon with different
 	 * sizes inside, so there's no clear way of setting single width and

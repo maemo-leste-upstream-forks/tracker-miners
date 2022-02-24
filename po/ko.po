@@ -1,4 +1,4 @@
-# Korean translation of tracker.
+# Korean translation of tracker-miners.
 # Copyright(C) 2007 THE tracker'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the tracker package.
 # Namhyung Kim <namhyung@gmail.com>, 2007.
@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: tracker\n"
+"Project-Id-Version: tracker-miners\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-01-10 11:18+0000\n"
-"PO-Revision-Date: 2021-03-06 10:49+0900\n"
+"POT-Creation-Date: 2021-06-10 12:02+0000\n"
+"PO-Revision-Date: 2021-08-30 17:54+0900\n"
 "Last-Translator: Seong-ho Cho <shcho@gnome.org>\n"
 "Language-Team: Gnome Korea <gnome-kr@googlegroups.com>\n"
 "Language: ko\n"
@@ -343,14 +343,14 @@ msgstr "초 단위 초기 대기시간, 0->1000(기본값=15)"
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr "설정한 모든 위치를 색인 기록하기까지 실행하고 나갑니다"
 
-#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:74
+#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr "설정 내용을 기반으로 수집할 <파일>의 조건이 맞는지 확인합니다"
 
 #: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
-#: src/tracker/tracker-info.c:77 src/tracker/tracker-info.c:78
+#: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
 #: src/tracker/tracker-reset.c:56
 msgid "FILE"
 msgstr "<파일>"
@@ -448,9 +448,9 @@ msgstr "사용할 제목입니다(--add-feed 옵션과 사용해야 합니다)"
 msgid "— start the feeds indexer"
 msgstr "— 피드 인덱서를 시작합니다"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:390
-#: src/tracker/tracker-search.c:1210 src/tracker/tracker-status.c:88
-#: src/tracker/tracker-status.c:201 src/tracker/tracker-tag.c:975
+#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
+#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "트래커로 연결을 수립할 수 없습니다"
 
@@ -459,10 +459,10 @@ msgstr "트래커로 연결을 수립할 수 없습니다"
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:391 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:248
-#: src/tracker/tracker-status.c:277 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
+#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
+#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "발생한 오류가 없습니다"
 
@@ -473,7 +473,7 @@ msgstr "피드를 추가할 수 없습니다"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-control/tracker-main.c:135
+#: src/tracker-control/tracker-main.c:136
 msgid "— start the tracker index proxy"
 msgstr "— 트래커 색인 대행자를 시작합니다"
 
@@ -776,7 +776,7 @@ msgstr "모든 nie:plainTextContent 속성이 생략되었습니다"
 msgid "Common statuses include"
 msgstr "일반적인 상태에는 다음 내용이 있습니다"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:276
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "상태를 가져올 수 없어, 관리자를 만들 수 없습니다. %s"
@@ -831,9 +831,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "인자가 없으면, 데이터 수집기 상태가 나타납니다"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:382 src/tracker/tracker-info.c:582
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1400
-#: src/tracker/tracker-status.c:599 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
+#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "인식할 수 없는 옵션"
 
@@ -861,43 +861,43 @@ msgstr "<파일>을 색인 경로에서 제거합니다"
 msgid "Makes indexing recursive"
 msgstr "재귀적으로 색인을 진행합니다"
 
-#: src/tracker/tracker-index.c:194
+#: src/tracker/tracker-index.c:192
 #, c-format
 msgid "“%s” is not a directory"
 msgstr "“%s”은(는) 디렉터리가 아닙니다"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:275
+#: src/tracker/tracker-index.c:282
 msgid "Either --add or --remove must be provided"
 msgstr "--add 또는 --remove 옵션을 지정해야합니다"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:279
+#: src/tracker/tracker-index.c:286
 msgid "--add and --remove are mutually exclusive"
 msgstr "--add와 --remove는 함께 사용할 수 없습니다"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:289
+#: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
 msgstr "--recursive 옵션은 --add 옵션이 필요합니다"
 
-#: src/tracker/tracker-index.c:344 src/tracker/tracker-status.c:400
+#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
 msgid "Path"
 msgstr "경로"
 
-#: src/tracker/tracker-index.c:345
+#: src/tracker/tracker-index.c:352
 msgid "Recursive"
 msgstr "재귀"
 
-#: src/tracker/tracker-index.c:395
+#: src/tracker/tracker-index.c:402
 msgid "Please specify one or more locations to index."
 msgstr "색인 기록할 하나 이상의 위치를 지정하십시오."
 
-#: src/tracker/tracker-info.c:48
+#: src/tracker/tracker-info.c:57
 msgid "Show full namespaces (i.e. don’t use nie:title, use full URLs)"
 msgstr "전체 이름공간 표시(예: nie:title을 사용하지 않고, 완전한 URL을 사용)"
 
-#: src/tracker/tracker-info.c:52
+#: src/tracker/tracker-info.c:61
 msgid "Show plain text content if available for resources"
 msgstr "자원으로 사용할 수 있을 경우 플레인 텍스트 내용 표시"
 
@@ -907,7 +907,7 @@ msgstr "자원으로 사용할 수 있을 경우 플레인 텍스트 내용 표�
 #. * fully supports international characters. In practice, UTF-8
 #. * is the most popular encoding used for IRI.
 #.
-#: src/tracker/tracker-info.c:62
+#: src/tracker/tracker-info.c:71
 msgid ""
 "Instead of looking up a file name, treat the FILE arguments as actual IRIs "
 "(e.g. <file:///path/to/some/file.txt>)"
@@ -915,43 +915,47 @@ msgstr ""
 "파일 이름을 찾기보다는 실제 IRI로  FILE 인자를 취급합니다(예: <file:///path/"
 "to/some/file.txt> )"
 
-#: src/tracker/tracker-info.c:66
+#: src/tracker/tracker-info.c:75
 msgid "Output results as RDF in Turtle format"
 msgstr "Turtle 형식의 RDF로 결과를 출력합니다"
 
-#: src/tracker/tracker-info.c:70
+#: src/tracker/tracker-info.c:79
 msgid "RDF property to treat as URL (eg. “nie:url”)"
 msgstr "URL로 취급할 RDF 속성(예: “nie:url”)"
 
-#: src/tracker/tracker-info.c:151
+#: src/tracker/tracker-info.c:160
 msgid "Unable to retrieve namespace prefixes"
 msgstr "이름 공간 접두어를 가져올 수 없습니다"
 
-#: src/tracker/tracker-info.c:159
+#: src/tracker/tracker-info.c:168
 msgid "No namespace prefixes were returned"
 msgstr "반환한 이름공간 접두어가 없습니다"
 
-#: src/tracker/tracker-info.c:221 src/tracker/tracker-search.c:1136
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
 msgid "Results"
 msgstr "결과"
 
-#: src/tracker/tracker-info.c:414
+#: src/tracker/tracker-info.c:416
+msgid "Error message"
+msgstr "오류 메시지"
+
+#: src/tracker/tracker-info.c:472
 msgid "Querying information for entity"
 msgstr "엔티티에 대한 질의문 정보"
 
-#: src/tracker/tracker-info.c:438
+#: src/tracker/tracker-info.c:496
 msgid "Unable to retrieve URN for URI"
 msgstr "URI에 대한 URN을 가져올 수 없습니다"
 
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-info.c:481
+#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
 msgid "Unable to retrieve data for URI"
 msgstr "URI에 대한 데이터를 가져올 수 없습니다"
 
-#: src/tracker/tracker-info.c:504
+#: src/tracker/tracker-info.c:563
 msgid "No metadata available for that URI"
 msgstr "URI에 대해 사용할 수 있는 메타데이터가 없습니다"
 
-#: src/tracker/tracker-info.c:509 src/tracker/tracker-info.c:538
+#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
 msgid "Could not get eligible status: "
 msgstr "적절한 상태 정보를 가져올 수 없습니다: "
 
@@ -1073,96 +1077,89 @@ msgstr ""
 msgid "Disable color when printing snippets and results"
 msgstr "내용 부분이나 결과를 출력할 때 색상 비활성화"
 
-#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:57
+#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:58
 msgid "search terms"
 msgstr "검색 단어"
 
-#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:58
+#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:59
 msgid "EXPRESSION"
 msgstr "<표현식>"
 
-#: src/tracker/tracker-search.c:173 src/tracker/tracker-tag.c:101
-msgid ""
-"NOTE: Limit was reached, there are more items in the database not listed here"
-msgstr ""
-"참고: 한계에 도달하여 이곳에 표시할 수 없는 데이터베이스의 더 많은 항목이 있"
-"습니다"
-
-#: src/tracker/tracker-search.c:262 src/tracker/tracker-search.c:576
-#: src/tracker/tracker-search.c:665 src/tracker/tracker-search.c:753
-#: src/tracker/tracker-search.c:837 src/tracker/tracker-search.c:919
-#: src/tracker/tracker-search.c:1123
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
+#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
+#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
+#: src/tracker/tracker-search.c:1171
 msgid "Could not get search results"
 msgstr "검색 결과를 가져올 수 없습니다"
 
-#: src/tracker/tracker-search.c:271
+#: src/tracker/tracker-search.c:254
 msgid "No files were found"
 msgstr "파일을 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:275 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
 msgid "Files"
 msgstr "파일"
 
-#: src/tracker/tracker-search.c:585
+#: src/tracker/tracker-search.c:600
 msgid "No artists were found"
 msgstr "음악가를 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:589
+#: src/tracker/tracker-search.c:604
 msgid "Artists"
 msgstr "음악가"
 
-#: src/tracker/tracker-search.c:674
+#: src/tracker/tracker-search.c:692
 msgid "No music was found"
 msgstr "음악을 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:678
+#: src/tracker/tracker-search.c:696
 msgid "Albums"
 msgstr "앨범"
 
-#: src/tracker/tracker-search.c:762
+#: src/tracker/tracker-search.c:784
 msgid "No feeds were found"
 msgstr "피드를 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:766
+#: src/tracker/tracker-search.c:788
 msgid "Feeds"
 msgstr "피드"
 
-#: src/tracker/tracker-search.c:846
+#: src/tracker/tracker-search.c:871
 msgid "No software was found"
 msgstr "프로그램을 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:850
+#: src/tracker/tracker-search.c:875
 msgid "Software"
 msgstr "프로그램"
 
-#: src/tracker/tracker-search.c:928
+#: src/tracker/tracker-search.c:956
 msgid "No software categories were found"
 msgstr "프로그램 분류를 찾지 못했습니다"
 
-#: src/tracker/tracker-search.c:932
+#: src/tracker/tracker-search.c:960
 msgid "Software Categories"
 msgstr "프로그램 분류"
 
-#: src/tracker/tracker-search.c:1132
+#: src/tracker/tracker-search.c:1180
 msgid "No results were found matching your query"
 msgstr "질의에 일치하는 결과를 찾지 못했습니다"
 
-#: src/tracker/tracker-status.c:52
+#: src/tracker/tracker-status.c:53
 msgid "Show statistics for current index / data set"
 msgstr "현재 인덱스 / 데이터 셋의 통계 표시"
 
-#: src/tracker/tracker-status.c:102
+#: src/tracker/tracker-status.c:103
 msgid "Could not get Tracker statistics"
 msgstr "트래커 통계를 가져올 수 없습니다"
 
-#: src/tracker/tracker-status.c:109
+#: src/tracker/tracker-status.c:110
 msgid "No statistics available"
 msgstr "통계가 없습니다"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:150
+#: src/tracker/tracker-status.c:151
 msgid "Statistics:"
 msgstr "통계:"
 
@@ -1189,60 +1186,60 @@ msgstr "통계:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:153 src/tracker/tracker-tag.c:321
+#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
 #: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "없음"
 
-#: src/tracker/tracker-status.c:222 src/tracker/tracker-status.c:247
+#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
 msgid "Could not get basic status for Tracker"
 msgstr "트래커의 기본 상태 정보를 가져올 수 없습니다"
 
-#: src/tracker/tracker-status.c:401 src/tracker/tracker-status.c:546
+#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
 msgid "Message"
 msgstr "메시지"
 
-#: src/tracker/tracker-status.c:454
+#: src/tracker/tracker-status.c:382
 msgid "Currently indexed"
 msgstr "현재 색인 기록함"
 
-#: src/tracker/tracker-status.c:457 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "파일 %d개"
 
-#: src/tracker/tracker-status.c:463
+#: src/tracker/tracker-status.c:391
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "폴더 %d개"
 
-#: src/tracker/tracker-status.c:477
+#: src/tracker/tracker-status.c:405
 msgid "Remaining space on database partition"
 msgstr "데이터베이스 파티션에 남은 공간"
 
-#: src/tracker/tracker-status.c:489
+#: src/tracker/tracker-status.c:417
 msgid "Data is still being indexed"
 msgstr "현재 데이터를 색인 기록 중입니다"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:418
 #, c-format
 msgid "Estimated %s left"
 msgstr "소요 시간 %s 남음"
 
-#: src/tracker/tracker-status.c:494
+#: src/tracker/tracker-status.c:422
 msgid "All data miners are idle, indexing complete"
 msgstr "모든 데이터 수집기가 대기 상태이며, 색인 기록이 끝났습니다"
 
-#: src/tracker/tracker-status.c:501
+#: src/tracker/tracker-status.c:429
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] "%d건을 실패로 기록했습니다"
 
-#: src/tracker/tracker-status.c:562
+#: src/tracker/tracker-status.c:490
 msgid "No reports found"
 msgstr "보고서를 찾지 못했습니다"
 
@@ -1295,6 +1292,13 @@ msgstr "<파일>…"
 #: src/tracker/tracker-tag.c:85
 msgid "FILE [FILE…]"
 msgstr "<파일> [<파일>…]"
+
+#: src/tracker/tracker-tag.c:101
+msgid ""
+"NOTE: Limit was reached, there are more items in the database not listed here"
+msgstr ""
+"참고: 한계에 도달하여 이곳에 표시할 수 없는 데이터베이스의 더 많은 항목이 있"
+"습니다"
 
 #: src/tracker/tracker-tag.c:247
 msgid "Could not get file URNs"

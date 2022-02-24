@@ -38,7 +38,8 @@ tracker_error_report_init (GFile *cache_dir)
 
 	report_file = g_file_get_child (cache_dir, "errors");
 	report_dir = g_file_get_path (report_file);
-	g_mkdir_with_parents (report_dir, 0700);
+	if (g_mkdir_with_parents (report_dir, 0700) < 0)
+		g_warning ("Failed to create location for error reports: %m");
 	g_object_unref (report_file);
 }
 

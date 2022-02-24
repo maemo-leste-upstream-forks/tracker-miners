@@ -26,34 +26,35 @@
 
 #include <glib-object.h>
 #include <gio/gio.h>
-#include "tracker-indexing-tree.h"
 
 G_BEGIN_DECLS
 
-#define TRACKER_TYPE_MONITOR            (tracker_monitor_get_type ())
-#define TRACKER_MONITOR(object)                 (G_TYPE_CHECK_INSTANCE_CAST ((object), TRACKER_TYPE_MONITOR, TrackerMonitor))
-#define TRACKER_MONITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TRACKER_TYPE_MONITOR, TrackerMonitorClass))
-#define TRACKER_IS_MONITOR(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TRACKER_TYPE_MONITOR))
-#define TRACKER_IS_MONITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TRACKER_TYPE_MONITOR))
-#define TRACKER_MONITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TRACKER_TYPE_MONITOR, TrackerMonitorClass))
+#define TRACKER_TYPE_MONITOR (tracker_monitor_get_type ())
+G_DECLARE_DERIVABLE_TYPE (TrackerMonitor, tracker_monitor,
+                          TRACKER, MONITOR,
+                          GObject)
 
-typedef struct TrackerMonitor         TrackerMonitor;
-typedef struct TrackerMonitorClass    TrackerMonitorClass;
-
-struct TrackerMonitor {
-	GObject         parent;
-};
-
-struct TrackerMonitorClass {
+struct _TrackerMonitorClass {
 	GObjectClass parent;
+
+	gboolean (* add) (TrackerMonitor *monitor,
+	                  GFile          *file);
+	gboolean (* remove) (TrackerMonitor *monitor,
+	                     GFile          *file);
+	gboolean (* remove_recursively) (TrackerMonitor *monitor,
+	                                 GFile          *file,
+	                                 gboolean        only_children);
+	gboolean (* move) (TrackerMonitor *monitor,
+	                   GFile          *src,
+	                   GFile          *dst);
+	gboolean (* is_watched) (TrackerMonitor *monitor,
+	                         GFile          *file);
+	void (* set_enabled) (TrackerMonitor *monitor,
+	                      gboolean        enabled);
+	guint (* get_count) (TrackerMonitor *monitor);
 };
 
 GType           tracker_monitor_get_type             (void);
-TrackerMonitor *tracker_monitor_new                  (void);
-
-TrackerIndexingTree * tracker_monitor_get_indexing_tree (TrackerMonitor *monitor);
-void                  tracker_monitor_set_indexing_tree (TrackerMonitor      *monitor,
-                                                         TrackerIndexingTree *tree);
 
 gboolean        tracker_monitor_get_enabled          (TrackerMonitor *monitor);
 void            tracker_monitor_set_enabled          (TrackerMonitor *monitor,
@@ -74,6 +75,8 @@ gboolean        tracker_monitor_is_watched           (TrackerMonitor *monitor,
 guint           tracker_monitor_get_count            (TrackerMonitor *monitor);
 guint           tracker_monitor_get_ignored          (TrackerMonitor *monitor);
 guint           tracker_monitor_get_limit            (TrackerMonitor *monitor);
+
+TrackerMonitor * tracker_monitor_new (GError **error);
 
 G_END_DECLS
 

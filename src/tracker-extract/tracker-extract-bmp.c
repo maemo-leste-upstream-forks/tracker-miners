@@ -108,7 +108,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 {
 	TrackerResource *image;
 	goffset size;
-	gchar *filename;
+	gchar *filename, *resource_uri;
 	GFile *file;
 	gint64 width = 0, height = 0;
 
@@ -126,9 +126,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	image = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	image = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (image, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (image, "rdf:type", "nmm:Photo");
+	g_free (resource_uri);
 
 	if (get_img_resolution (file, &width, &height)) {
 		if (width > 0) {

@@ -261,7 +261,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerExifData *ed = NULL;
 	MergeData md = { 0 };
 	TiffData td = { 0 };
-	gchar *filename, *uri;
+	gchar *filename, *uri, *resource_uri;
 	gchar *date;
 	glong exif_offset;
 	GPtrArray *keywords;
@@ -304,9 +304,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (metadata, "rdf:type", "nmm:Photo");
+	g_free (resource_uri);
 
 	uri = g_file_get_uri (file);
 

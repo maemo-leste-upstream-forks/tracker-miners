@@ -23,6 +23,7 @@
 #include <libgxps/gxps.h>
 
 #include <libtracker-extract/tracker-extract.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 G_MODULE_EXPORT gboolean
 tracker_extract_get_metadata (TrackerExtractInfo  *info,
@@ -32,7 +33,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	GXPSDocument *document;
 	GXPSFile *xps_file;
 	GFile *file;
-	gchar *filename;
+	gchar *filename, *resource_uri;
 	GError *inner_error = NULL;
 
 	file = tracker_extract_info_get_file (info);
@@ -54,9 +55,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	resource = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	resource = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (resource, "rdf:type", "nfo:PaginatedTextDocument");
 	tracker_resource_set_int64 (resource, "nfo:pageCount", gxps_document_get_n_pages (document));
+	g_free (resource_uri);
 
 	g_object_unref (document);
 	g_free (filename);

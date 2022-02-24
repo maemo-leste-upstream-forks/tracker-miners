@@ -67,13 +67,13 @@ create_temporary_file (GFile      *file,
 
 		uri = g_file_get_uri (file);
 		g_warning ("Could not create temporary file, file is not native: '%s'", uri);
-		g_free (uri);
 
 		g_set_error (in_error,
 		             G_IO_ERROR,
 		             G_IO_ERROR_FAILED,
 		             "Could not create temporary file, file is not native: '%s'",
 		             uri);
+		g_free (uri);
 
 		return NULL;
 	}
@@ -256,15 +256,24 @@ tracker_writeback_file_write_metadata (TrackerWriteback  *writeback,
 	                                                      &n_error);
 
 	if (!retval) {
+		GError *inner_error = NULL;
+
 		/* Delete the temporary file and preserve original */
-		g_file_delete (tmp_file, NULL, NULL);
+		if (!g_file_delete (tmp_file, NULL, &inner_error) &&
+		    !g_error_matches (inner_error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
+			g_warning ("Failed to delete temporary file: %s", inner_error->message);
+		}
+
+		g_clear_error (&inner_error);
 	} else {
 		/* Move back the modified file to the original location. Correct UNIX
 		 * mode has been set for tmp_file in create_temporary_file() already.
 		 */
-		g_file_move (tmp_file, file,
-		             G_FILE_COPY_OVERWRITE,
-		             NULL, NULL, NULL, NULL);
+		if (!g_file_move (tmp_file, file,
+		                  G_FILE_COPY_OVERWRITE,
+		                  NULL, NULL, NULL, &n_error)) {
+			g_warning ("Failed to replace file: %s", n_error->message);
+		}
 	}
 
 	g_object_unref (file_info);

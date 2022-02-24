@@ -102,15 +102,17 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerConfig *config;
 	GFile *file;
 	GSList *text_allowlist_patterns;
-	gchar *content = NULL;
+	gchar *content = NULL, *resource_uri;
 	GError *inner_error = NULL;
 
 	config = tracker_main_get_config ();
 	text_allowlist_patterns = tracker_config_get_text_allowlist_patterns (config);
 	file = tracker_extract_info_get_file (info);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PlainTextDocument");
+	g_free (resource_uri);
 
 	if (allow_file (text_allowlist_patterns, file)) {
 		content = get_file_content (tracker_extract_info_get_file (info),

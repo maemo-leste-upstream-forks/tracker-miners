@@ -95,18 +95,21 @@ date_to_iso8601 (const gchar *date)
 }
 
 static TrackerResource *
-extract_ps_from_inputstream (GInputStream *stream)
+extract_ps_from_inputstream (GInputStream *stream,
+                             GFile        *file)
 {
 	TrackerResource *metadata;
 	g_autoptr(GDataInputStream) data_stream = NULL;
-	gchar *line;
+	gchar *line, *resource_uri;
 	gsize length, accum, max_bytes;
 	gboolean pageno_atend = FALSE;
 	gboolean header_finished = FALSE;
 	g_autoptr(GError) error = NULL;
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
+	g_free (resource_uri);
 
 	data_stream = g_data_input_stream_new (stream);
 
@@ -177,7 +180,7 @@ extract_ps (const gchar *uri)
 		return NULL;
 	}
 
-	return extract_ps_from_inputstream (stream);
+	return extract_ps_from_inputstream (stream, file);
 }
 
 #ifdef USING_UNZIPPSFILES
@@ -203,7 +206,7 @@ extract_ps_gz (const gchar *uri)
 	converter = G_CONVERTER (g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP));
 	cstream = g_converter_input_stream_new (stream, converter);
 
-	return extract_ps_from_inputstream (cstream);
+	return extract_ps_from_inputstream (cstream, file);
 }
 
 #endif /* USING_UNZIPPSFILES */

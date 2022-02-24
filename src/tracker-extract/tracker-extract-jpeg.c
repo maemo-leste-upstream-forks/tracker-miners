@@ -150,7 +150,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	GFile *file;
 	FILE *f;
 	goffset size;
-	gchar *filename, *uri;
+	gchar *filename, *uri, *resource_uri;
 	gchar *comment = NULL;
 	const gchar *dlna_profile, *dlna_mimetype;
 	GPtrArray *keywords;
@@ -183,9 +183,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		goto fail;
 	}
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (metadata, "rdf:type", "nmm:Photo");
+	g_free (resource_uri);
 
 	jpeg_create_decompress (&cinfo);
 
@@ -227,13 +229,13 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			len = marker->data_length;
 
 #ifdef HAVE_LIBEXIF
-			if (strncmp (EXIF_NAMESPACE, str, EXIF_NAMESPACE_LENGTH) == 0) {
+			if (!ed && strncmp (EXIF_NAMESPACE, str, EXIF_NAMESPACE_LENGTH) == 0) {
 				ed = tracker_exif_new ((guchar *) marker->data, len, uri);
 			}
 #endif /* HAVE_LIBEXIF */
 
 #ifdef HAVE_EXEMPI
-			if (strncmp (XMP_NAMESPACE, str, XMP_NAMESPACE_LENGTH) == 0) {
+			if (!xd && strncmp (XMP_NAMESPACE, str, XMP_NAMESPACE_LENGTH) == 0) {
 				xd = tracker_xmp_new (str + XMP_NAMESPACE_LENGTH,
 				                      len - XMP_NAMESPACE_LENGTH,
 				                      uri);

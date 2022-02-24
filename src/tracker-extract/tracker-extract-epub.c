@@ -19,6 +19,7 @@
  */
 
 #include <libtracker-extract/tracker-extract.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #include "tracker-main.h"
 #include "tracker-gsf.h"
@@ -318,7 +319,7 @@ opf_xml_text_handler (GMarkupParseContext   *context,
 				}
 			}
 
-			if (i == len) {
+			if (!fname && i == len) {
 				fname = g_strdup (data->savedstring);
 				g_debug ("Found only one name");
 			} else {
@@ -618,7 +619,8 @@ extract_opf (const gchar          *uri,
 	GMarkupParseContext *context;
 	OPFData *data = NULL;
 	GError *error = NULL;
-	gchar *dirname, *contents;
+	gchar *dirname, *contents, *resource_uri;
+	GFile *file;
 	GMarkupParser opf_parser = {
 		opf_xml_start_element_handler,
 		opf_xml_end_element_handler,
@@ -628,8 +630,12 @@ extract_opf (const gchar          *uri,
 
 	g_debug ("Extracting OPF file contents from EPUB '%s'", uri);
 
-	ebook = tracker_resource_new (NULL);
+	file = g_file_new_for_uri (uri);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	ebook = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (ebook, "rdf:type", "nfo:EBook");
+	g_free (resource_uri);
+	g_object_unref (file);
 
 	data = opf_data_new (uri, ebook);
 

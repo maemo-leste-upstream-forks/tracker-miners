@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-01-10 11:18+0000\n"
-"PO-Revision-Date: 2021-03-07 16:39+0200\n"
+"POT-Creation-Date: 2021-06-10 12:02+0000\n"
+"PO-Revision-Date: 2021-10-25 19:40+0300\n"
 "Last-Translator: Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>\n"
 "Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
 "Language: lv\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 :"
 " 2);\n"
-"X-Generator: Lokalize 19.12.3\n"
+"X-Generator: Lokalize 21.08.1\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -359,14 +359,14 @@ msgstr "Sākotnējais snaudiena laiks sekundēs, 0->1000 (noklusējuma=15)"
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr "Darbojas līdz visas konfigurētās vietas ir indeksētas, pēc tam iziet"
 
-#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:74
+#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr "Pārbauda, vai DATNE kvalificējas rakšanai, balstoties uz konfigurāciju"
 
 #: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
-#: src/tracker/tracker-info.c:77 src/tracker/tracker-info.c:78
+#: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
 #: src/tracker/tracker-reset.c:56
 msgid "FILE"
 msgstr "DATNE"
@@ -465,9 +465,9 @@ msgstr "Izmantojamais nosaukums (jāizmanto ar --add-feed)"
 msgid "— start the feeds indexer"
 msgstr "— palaist plūsmu indeksētāju"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:390
-#: src/tracker/tracker-search.c:1210 src/tracker/tracker-status.c:88
-#: src/tracker/tracker-status.c:201 src/tracker/tracker-tag.c:975
+#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
+#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Nevarēja izveidot savienojumu ar Tracker"
 
@@ -476,10 +476,10 @@ msgstr "Nevarēja izveidot savienojumu ar Tracker"
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:391 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:248
-#: src/tracker/tracker-status.c:277 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
+#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
+#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Nav dota kļūda"
 
@@ -490,7 +490,7 @@ msgstr "Nevarēja pievienot plūsmu"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-control/tracker-main.c:135
+#: src/tracker-control/tracker-main.c:136
 msgid "— start the tracker index proxy"
 msgstr "— palaist tracker indeksa starpnieku"
 
@@ -798,7 +798,7 @@ msgstr "Ir atmestas visas nie:plainTextContent īpašības"
 msgid "Common statuses include"
 msgstr "Parastie statusi satur"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:276
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Nevarēja saņemt statusu, nevarēja izveidot pārvaldnieku, %s"
@@ -856,9 +856,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Ja nav doti parametri, tiek rādīts datu racēju status"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:382 src/tracker/tracker-info.c:582
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1400
-#: src/tracker/tracker-status.c:599 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
+#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Neatpazītas opcijas"
 
@@ -886,44 +886,44 @@ msgstr "Izņem DATNES no indeksētajām vietām"
 msgid "Makes indexing recursive"
 msgstr "Padara indeksēšanu rekursīvu"
 
-#: src/tracker/tracker-index.c:194
+#: src/tracker/tracker-index.c:192
 #, c-format
 msgid "“%s” is not a directory"
 msgstr "“%s” nav direktorija"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:275
+#: src/tracker/tracker-index.c:282
 msgid "Either --add or --remove must be provided"
 msgstr "Ir jānorāda vai nu --add vai --remove"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:279
+#: src/tracker/tracker-index.c:286
 msgid "--add and --remove are mutually exclusive"
 msgstr "--add un --remove ir savstarpēji izslēdzoši"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:289
+#: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
 msgstr "--recursive opcijai vajag --add"
 
-#: src/tracker/tracker-index.c:344 src/tracker/tracker-status.c:400
+#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
 msgid "Path"
 msgstr "Ceļš"
 
-#: src/tracker/tracker-index.c:345
+#: src/tracker/tracker-index.c:352
 msgid "Recursive"
 msgstr "Rekursīvi"
 
-#: src/tracker/tracker-index.c:395
+#: src/tracker/tracker-index.c:402
 msgid "Please specify one or more locations to index."
 msgstr "Lūdzu, norādiet vienu vai vairākas vietas, kuras indeksēt."
 
-#: src/tracker/tracker-info.c:48
+#: src/tracker/tracker-info.c:57
 msgid "Show full namespaces (i.e. don’t use nie:title, use full URLs)"
 msgstr ""
 "Rādīt pilnu vārdtelpu (t.i., neizmantot nie:title, izmantot pilnud URL)"
 
-#: src/tracker/tracker-info.c:52
+#: src/tracker/tracker-info.c:61
 msgid "Show plain text content if available for resources"
 msgstr "Resursiem rādīt vienkāršu teksta saturu, ja pieejams"
 
@@ -933,7 +933,7 @@ msgstr "Resursiem rādīt vienkāršu teksta saturu, ja pieejams"
 #. * fully supports international characters. In practice, UTF-8
 #. * is the most popular encoding used for IRI.
 #.
-#: src/tracker/tracker-info.c:62
+#: src/tracker/tracker-info.c:71
 msgid ""
 "Instead of looking up a file name, treat the FILE arguments as actual IRIs "
 "(e.g. <file:///path/to/some/file.txt>)"
@@ -941,44 +941,48 @@ msgstr ""
 "Tā vietā, lai uzmeklētu datnes nosaukumu, izmantojiet DATNE parametru kā "
 "īstu IRI (piem., <file:///path/to/some/file.txt>)"
 
-#: src/tracker/tracker-info.c:66
+#: src/tracker/tracker-info.c:75
 msgid "Output results as RDF in Turtle format"
 msgstr "Izvadīt rezultātus kā RDF Turtle formātā"
 
-#: src/tracker/tracker-info.c:70
+#: src/tracker/tracker-info.c:79
 msgid "RDF property to treat as URL (eg. “nie:url”)"
 msgstr "RDF īpašība, ko izmantot kā URL (piemēram, “nie:url”)"
 
-#: src/tracker/tracker-info.c:151
+#: src/tracker/tracker-info.c:160
 msgid "Unable to retrieve namespace prefixes"
 msgstr "Nevarēja saņemt vārdtelpas prefiksus"
 
-#: src/tracker/tracker-info.c:159
+#: src/tracker/tracker-info.c:168
 msgid "No namespace prefixes were returned"
 msgstr "Netika atgriezti vārdtelpas prefiksi"
 
-#: src/tracker/tracker-info.c:221 src/tracker/tracker-search.c:1136
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
 msgid "Results"
 msgstr "Rezultāti"
 
-#: src/tracker/tracker-info.c:414
+#: src/tracker/tracker-info.c:416
+#| msgid "Message"
+msgid "Error message"
+msgstr "Kļūdas ziņojums"
+
+#: src/tracker/tracker-info.c:472
 msgid "Querying information for entity"
 msgstr "Vaicāt informāciju par vienumu"
 
-#: src/tracker/tracker-info.c:438
+#: src/tracker/tracker-info.c:496
 msgid "Unable to retrieve URN for URI"
 msgstr "Nevar saņemt URN par URI"
 
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-info.c:481
+#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
 msgid "Unable to retrieve data for URI"
 msgstr "Nevarēja saņemt URI datus"
 
-#: src/tracker/tracker-info.c:504
+#: src/tracker/tracker-info.c:563
 msgid "No metadata available for that URI"
 msgstr "Tam URI nav pieejami metadati"
 
-#: src/tracker/tracker-info.c:509 src/tracker/tracker-info.c:538
-#| msgid "Could not get all tags"
+#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
 msgid "Could not get eligible status: "
 msgstr "Nevarēja saņemt atbilstības statusu: "
 
@@ -1102,95 +1106,89 @@ msgstr "Deaktivēt pilna teksta meklēšanu (FTS). Implicē --disable-snippets"
 msgid "Disable color when printing snippets and results"
 msgstr "Deaktivē krāsu, kad drukā fragmentus un rezultātus"
 
-#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:57
+#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:58
 msgid "search terms"
 msgstr "meklēšanas kritēriji"
 
-#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:58
+#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:59
 msgid "EXPRESSION"
 msgstr "IZTEIKSME"
 
-#: src/tracker/tracker-search.c:173 src/tracker/tracker-tag.c:101
-msgid ""
-"NOTE: Limit was reached, there are more items in the database not listed here"
-msgstr ""
-"PIEZĪME: tika sasniegts limits, datubāzē ir vēl vienumu, kas šeit neparādās"
-
-#: src/tracker/tracker-search.c:262 src/tracker/tracker-search.c:576
-#: src/tracker/tracker-search.c:665 src/tracker/tracker-search.c:753
-#: src/tracker/tracker-search.c:837 src/tracker/tracker-search.c:919
-#: src/tracker/tracker-search.c:1123
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
+#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
+#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
+#: src/tracker/tracker-search.c:1171
 msgid "Could not get search results"
 msgstr "Nevarēja saņemt meklēšanas rezultātus"
 
-#: src/tracker/tracker-search.c:271
+#: src/tracker/tracker-search.c:254
 msgid "No files were found"
 msgstr "Nav atrastu datņu"
 
-#: src/tracker/tracker-search.c:275 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
 msgid "Files"
 msgstr "Datnes"
 
-#: src/tracker/tracker-search.c:585
+#: src/tracker/tracker-search.c:600
 msgid "No artists were found"
 msgstr "Nav atrastu izpildītāju"
 
-#: src/tracker/tracker-search.c:589
+#: src/tracker/tracker-search.c:604
 msgid "Artists"
 msgstr "Izpildītāji"
 
-#: src/tracker/tracker-search.c:674
+#: src/tracker/tracker-search.c:692
 msgid "No music was found"
 msgstr "Nav atrasta mūzika"
 
-#: src/tracker/tracker-search.c:678
+#: src/tracker/tracker-search.c:696
 msgid "Albums"
 msgstr "Albumi"
 
-#: src/tracker/tracker-search.c:762
+#: src/tracker/tracker-search.c:784
 msgid "No feeds were found"
 msgstr "Nav atrastu plūsmu"
 
-#: src/tracker/tracker-search.c:766
+#: src/tracker/tracker-search.c:788
 msgid "Feeds"
 msgstr "Plūsmas"
 
-#: src/tracker/tracker-search.c:846
+#: src/tracker/tracker-search.c:871
 msgid "No software was found"
 msgstr "Nav atrasta programmatūra"
 
-#: src/tracker/tracker-search.c:850
+#: src/tracker/tracker-search.c:875
 msgid "Software"
 msgstr "Programmatūra"
 
-#: src/tracker/tracker-search.c:928
+#: src/tracker/tracker-search.c:956
 msgid "No software categories were found"
 msgstr "Nav atrastu programmatūras kategoriju"
 
-#: src/tracker/tracker-search.c:932
+#: src/tracker/tracker-search.c:960
 msgid "Software Categories"
 msgstr "Programmatūras kategorijas"
 
-#: src/tracker/tracker-search.c:1132
+#: src/tracker/tracker-search.c:1180
 msgid "No results were found matching your query"
 msgstr "Jūsu vaicājumam netika atrasti atbilstoši rezultāti"
 
-#: src/tracker/tracker-status.c:52
+#: src/tracker/tracker-status.c:53
 msgid "Show statistics for current index / data set"
 msgstr "Rādīt statistiku par pašreizējo indeksu / datu kopu"
 
-#: src/tracker/tracker-status.c:102
+#: src/tracker/tracker-status.c:103
 msgid "Could not get Tracker statistics"
 msgstr "Nevarēja saņemt Tracker statistiku"
 
-#: src/tracker/tracker-status.c:109
+#: src/tracker/tracker-status.c:110
 msgid "No statistics available"
 msgstr "Nav pieejama statistika"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:150
+#: src/tracker/tracker-status.c:151
 msgid "Statistics:"
 msgstr "Statistika:"
 
@@ -1217,25 +1215,25 @@ msgstr "Statistika:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:153 src/tracker/tracker-tag.c:321
+#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
 #: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Nekas"
 
-#: src/tracker/tracker-status.c:222 src/tracker/tracker-status.c:247
+#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
 msgid "Could not get basic status for Tracker"
 msgstr "Nevarēja saņemt Tracker pamata statusu"
 
-#: src/tracker/tracker-status.c:401 src/tracker/tracker-status.c:546
+#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
 msgid "Message"
 msgstr "Ziņojums"
 
-#: src/tracker/tracker-status.c:454
+#: src/tracker/tracker-status.c:382
 msgid "Currently indexed"
 msgstr "Pašlaik indeksēts"
 
-#: src/tracker/tracker-status.c:457 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1243,7 +1241,7 @@ msgstr[0] "%d datne"
 msgstr[1] "%d datnes"
 msgstr[2] "%d datnes"
 
-#: src/tracker/tracker-status.c:463
+#: src/tracker/tracker-status.c:391
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1251,24 +1249,24 @@ msgstr[0] "%d mape"
 msgstr[1] "%d mapes"
 msgstr[2] "%d mapju"
 
-#: src/tracker/tracker-status.c:477
+#: src/tracker/tracker-status.c:405
 msgid "Remaining space on database partition"
 msgstr "Atlikusī vieta uz datubāzes nodalījuma"
 
-#: src/tracker/tracker-status.c:489
+#: src/tracker/tracker-status.c:417
 msgid "Data is still being indexed"
 msgstr "Dati vēl tiek indeksēti"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:418
 #, c-format
 msgid "Estimated %s left"
 msgstr "Atlicis aptuveni %s"
 
-#: src/tracker/tracker-status.c:494
+#: src/tracker/tracker-status.c:422
 msgid "All data miners are idle, indexing complete"
 msgstr "Visi racēji ir dīkstāvē, indeksēšana ir pabeigta"
 
-#: src/tracker/tracker-status.c:501
+#: src/tracker/tracker-status.c:429
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
@@ -1276,7 +1274,7 @@ msgstr[0] "%d ierakstīta kļūme"
 msgstr[1] "%d ierakstītas kļūmes"
 msgstr[2] "%d ierakstītu kļūmju"
 
-#: src/tracker/tracker-status.c:562
+#: src/tracker/tracker-status.c:490
 msgid "No reports found"
 msgstr "Nav atrastu ziņojumu"
 
@@ -1329,6 +1327,12 @@ msgstr "DATNE…"
 #: src/tracker/tracker-tag.c:85
 msgid "FILE [FILE…]"
 msgstr "DATNE [DATNE…]"
+
+#: src/tracker/tracker-tag.c:101
+msgid ""
+"NOTE: Limit was reached, there are more items in the database not listed here"
+msgstr ""
+"PIEZĪME: tika sasniegts limits, datubāzē ir vēl vienumu, kas šeit neparādās"
 
 #: src/tracker/tracker-tag.c:247
 msgid "Could not get file URNs"

@@ -25,6 +25,7 @@
 #include <glib.h>
 
 #include <libxml/HTMLparser.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 #include <libtracker-miners-common/tracker-utils.h>
 #include <libtracker-extract/tracker-extract.h>
 
@@ -237,7 +238,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerConfig *config;
 	htmlDocPtr doc;
 	parser_data pd;
-	gchar *filename;
+	gchar *filename, *resource_uri;
 	xmlSAXHandler handler = {
 		NULL, /* internalSubset */
 		NULL, /* isStandalone */
@@ -275,8 +276,10 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 	file = tracker_extract_info_get_file (info);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:HtmlDocument");
+	g_free (resource_uri);
 
 	pd.metadata = metadata;
 	pd.current = -1;
@@ -298,13 +301,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	g_strstrip (pd.plain_text->str);
 	g_strstrip (pd.title->str);
 
-	if (pd.title->str &&
-	    *pd.title->str != '\0') {
+	if (*pd.title->str != '\0') {
 		tracker_resource_set_string (metadata, "nie:title", pd.title->str);
 	}
 
-	if (pd.plain_text->str &&
-	    *pd.plain_text->str != '\0') {
+	if (*pd.plain_text->str != '\0') {
 		tracker_resource_set_string (metadata, "nie:plainTextContent", pd.plain_text->str);
 	}
 

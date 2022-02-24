@@ -1,14 +1,14 @@
 # Kazakh translation for tracker.
 # Copyright (C) 2016 tracker's COPYRIGHT HOLDER
 # This file is distributed under the same license as the tracker package.
-# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2016-2020.
+# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2016-2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2020-09-07 11:17+0000\n"
-"PO-Revision-Date: 2020-09-12 18:51+0500\n"
+"POT-Creation-Date: 2021-06-10 12:02+0000\n"
+"PO-Revision-Date: 2021-08-30 13:41+0500\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
 "Language: kk\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 3.0\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -68,29 +68,31 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:36
 msgid "Ignore numbers"
-msgstr ""
+msgstr "Сандарды елемеу"
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:37
 msgid "If enabled, numbers will not be indexed."
-msgstr ""
+msgstr "Рұқсат етілсе, сандар индекстелмейді."
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:42
 msgid "Ignore stop words"
-msgstr ""
+msgstr "Тоқтау сөздерін елемеу"
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:43
 msgid ""
 "If enabled, the words listed in the stop-words list are ignored. E.g. common "
 "words like “the”, “yes”, “no”, etc."
 msgstr ""
+"Іске қосылған болса, тоқтау сөздері тізімінде тізілген сөздер еленбейді. "
+"Мысалы, \"иә\", \"жоқ\", т.б. сияқты ортақ сөздер."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:23
 msgid "Initial sleep"
-msgstr ""
+msgstr "Бастапқы ұйқы"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:24
 msgid "Initial sleep time, in seconds."
-msgstr ""
+msgstr "Бастапқы ұйқы уақыты, секундпен."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:30
 msgid "Throttle"
@@ -213,7 +215,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:136
 msgid "Ignored files"
-msgstr ""
+msgstr "Еленбеген файлдар"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:137
 msgid "List of file patterns to avoid"
@@ -221,7 +223,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:142
 msgid "Ignored directories"
-msgstr ""
+msgstr "Еленбеген бумалар"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:143
 msgid "List of directories to avoid"
@@ -235,58 +237,54 @@ msgstr ""
 msgid "Avoid any directory containing a file blocklisted here"
 msgstr ""
 
-#: src/libtracker-miners-common/tracker-utils.c:90
-msgid "unknown time"
-msgstr "белгісіз уақыт"
-
-#: src/libtracker-miners-common/tracker-utils.c:104
-#: src/libtracker-miners-common/tracker-utils.c:155
+#: src/libtracker-miners-common/tracker-utils.c:101
+#: src/libtracker-miners-common/tracker-utils.c:152
 msgid "less than one second"
 msgstr "бір секундтан кем"
 
 #. Translators: this is %d days
-#: src/libtracker-miners-common/tracker-utils.c:119
+#: src/libtracker-miners-common/tracker-utils.c:116
 #, c-format
 msgid " %dd"
 msgstr " %dк"
 
 #. Translators: this is %2.2d hours
-#: src/libtracker-miners-common/tracker-utils.c:123
+#: src/libtracker-miners-common/tracker-utils.c:120
 #, c-format
 msgid " %2.2dh"
 msgstr " %2.2dсағ"
 
 #. Translators: this is %2.2d minutes
-#: src/libtracker-miners-common/tracker-utils.c:127
+#: src/libtracker-miners-common/tracker-utils.c:124
 #, c-format
 msgid " %2.2dm"
 msgstr " %2.2dм"
 
 #. Translators: this is %2.2d seconds
-#: src/libtracker-miners-common/tracker-utils.c:131
+#: src/libtracker-miners-common/tracker-utils.c:128
 #, c-format
 msgid " %2.2ds"
 msgstr " %2.2dс"
 
-#: src/libtracker-miners-common/tracker-utils.c:135
+#: src/libtracker-miners-common/tracker-utils.c:132
 #, c-format
 msgid " %d day"
 msgid_plural " %d days"
 msgstr[0] " %d күн"
 
-#: src/libtracker-miners-common/tracker-utils.c:139
+#: src/libtracker-miners-common/tracker-utils.c:136
 #, c-format
 msgid " %2.2d hour"
 msgid_plural " %2.2d hours"
 msgstr[0] " %2.2d сағат"
 
-#: src/libtracker-miners-common/tracker-utils.c:143
+#: src/libtracker-miners-common/tracker-utils.c:140
 #, c-format
 msgid " %2.2d minute"
 msgid_plural " %2.2d minutes"
 msgstr[0] " %2.2d минут"
 
-#: src/libtracker-miners-common/tracker-utils.c:147
+#: src/libtracker-miners-common/tracker-utils.c:144
 #, c-format
 msgid " %2.2d second"
 msgid_plural " %2.2d seconds"
@@ -305,96 +303,96 @@ msgstr ""
 msgid "Pause application and reason match an already existing pause request"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:77
+#: src/miners/fs/tracker-main.c:81
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:82
+#: src/miners/fs/tracker-main.c:86
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:86 src/tracker/tracker-info.c:74
+#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:87 src/tracker-extract/tracker-main.c:83
+#: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
-#: src/tracker/tracker-info.c:77 src/tracker/tracker-info.c:78
+#: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
 #: src/tracker/tracker-reset.c:56
 msgid "FILE"
 msgstr "ФАЙЛ"
 
-#: src/miners/fs/tracker-main.c:90 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:94
+#: src/miners/fs/tracker-main.c:98
 msgid "Avoids changes in the filesystem"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:98 src/tracker-control/tracker-main.c:61
+#: src/miners/fs/tracker-main.c:102 src/tracker-control/tracker-main.c:61
 #: src/tracker-extract/tracker-main.c:101
 #: src/tracker-writeback/tracker-main.c:48
 msgid "Displays version information"
-msgstr ""
+msgstr "Нұсқа ақпаратын көрсетеді"
 
-#: src/miners/fs/tracker-main.c:603
+#: src/miners/fs/tracker-main.c:624
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:604
+#: src/miners/fs/tracker-main.c:625
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:640
+#: src/miners/fs/tracker-main.c:661
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:644
+#: src/miners/fs/tracker-main.c:665
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:647
+#: src/miners/fs/tracker-main.c:668
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:649
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:673
+#: src/miners/fs/tracker-main.c:694
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:679
+#: src/miners/fs/tracker-main.c:700
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:687
+#: src/miners/fs/tracker-main.c:708
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
 "filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:729
 msgid "Directory is eligible to be indexed"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:709
+#: src/miners/fs/tracker-main.c:730
 msgid "File is eligible to be indexed"
 msgstr ""
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:966
+#: src/miners/fs/tracker-main.c:988
 msgid "— start the tracker indexer"
 msgstr ""
 
@@ -418,9 +416,9 @@ msgstr ""
 msgid "— start the feeds indexer"
 msgstr ""
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:361
-#: src/tracker/tracker-search.c:1210 src/tracker/tracker-status.c:88
-#: src/tracker/tracker-status.c:201 src/tracker/tracker-tag.c:975
+#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
+#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr ""
 
@@ -429,10 +427,10 @@ msgstr ""
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:362 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:251
-#: src/tracker/tracker-status.c:280 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
+#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
+#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Қате көрсетілмеген"
 
@@ -443,15 +441,15 @@ msgstr ""
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-control/tracker-main.c:135
+#: src/tracker-control/tracker-main.c:136
 msgid "— start the tracker index proxy"
 msgstr ""
 
-#: src/tracker-extract/tracker-extract.c:680
+#: src/tracker-extract/tracker-extract.c:687
 msgid "Metadata extraction failed"
 msgstr ""
 
-#: src/tracker-extract/tracker-extract.c:742
+#: src/tracker-extract/tracker-extract.c:762
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 
@@ -477,7 +475,7 @@ msgstr "МОДУЛЬ"
 
 #: src/tracker-extract/tracker-main.c:93 src/tracker/tracker-extract.c:39
 msgid "Output results format: “sparql”, “turtle” or “json-ld”"
-msgstr ""
+msgstr "Шығыс нәтижелерінің форматы: \"sparql\", \"turtle\" немесе \"json-ld\""
 
 #: src/tracker-extract/tracker-main.c:94 src/tracker/tracker-extract.c:40
 msgid "FORMAT"
@@ -492,11 +490,11 @@ msgstr ""
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
 #: src/tracker-extract/tracker-main.c:319
 msgid "— Extract file meta data"
-msgstr ""
+msgstr "— Файл мета деректерін шығарып алу"
 
 #: src/tracker-extract/tracker-main.c:334
 msgid "Filename and mime type must be provided together"
-msgstr ""
+msgstr "Файл атауы мен MIME түрі бірге берілуі тиіс"
 
 #: src/tracker/tracker-daemon.c:98
 msgid "Unavailable"
@@ -505,15 +503,15 @@ msgstr "Қолжетерсіз"
 #. generic
 #: src/tracker/tracker-daemon.c:99
 msgid "Initializing"
-msgstr ""
+msgstr "Іске қосылу"
 
 #: src/tracker/tracker-daemon.c:100
 msgid "Processing…"
-msgstr ""
+msgstr "Өңдеу…"
 
 #: src/tracker/tracker-daemon.c:101
 msgid "Fetching…"
-msgstr ""
+msgstr "Алу…"
 
 #. miner/rss
 #: src/tracker/tracker-daemon.c:102
@@ -532,7 +530,7 @@ msgstr "Аялдатылған"
 
 #: src/tracker/tracker-daemon.c:105
 msgid "Idle"
-msgstr ""
+msgstr "Іссіз"
 
 #: src/tracker/tracker-daemon.c:111
 msgid "Follow status changes as they happen"
@@ -602,7 +600,7 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:156 src/tracker/tracker-daemon.c:159
 msgid "APPS"
-msgstr ""
+msgstr "ҚОЛДАНБАЛАР"
 
 #: src/tracker/tracker-daemon.c:158
 msgid "Use SIGTERM to stop all miners"
@@ -625,12 +623,12 @@ msgstr "%s қалды"
 
 #: src/tracker/tracker-daemon.c:278
 msgid "unknown time left"
-msgstr ""
+msgstr "белгісіз уақыт қалды"
 
 #. Work out lengths for output spacing
 #: src/tracker/tracker-daemon.c:291 src/tracker/tracker-daemon.c:769
 msgid "PAUSED"
-msgstr ""
+msgstr "АЯЛДАТЫЛҒАН"
 
 #: src/tracker/tracker-daemon.c:308
 msgid "Not running or is a disabled plugin"
@@ -654,12 +652,12 @@ msgstr ""
 #: src/tracker/tracker-daemon.c:474
 #, c-format
 msgid "Cookie is %d"
-msgstr ""
+msgstr "Cookie — %d"
 
 #: src/tracker/tracker-daemon.c:481 src/tracker/tracker-daemon.c:724
 #: src/tracker/tracker-daemon.c:841
 msgid "Press Ctrl+C to stop"
-msgstr ""
+msgstr "Тоқтау үшін Ctrl+C басыңыз"
 
 #: src/tracker/tracker-daemon.c:508
 #, c-format
@@ -739,7 +737,7 @@ msgstr ""
 msgid "Common statuses include"
 msgstr ""
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:279
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr ""
@@ -794,21 +792,21 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr ""
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:382 src/tracker/tracker-info.c:554
-#: src/tracker/tracker-reset.c:260 src/tracker/tracker-search.c:1400
-#: src/tracker/tracker-status.c:602 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
+#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
-msgstr ""
+msgstr "Танылмаған параметрлер"
 
 #: src/tracker/tracker-dbus.c:44
 msgid "Could not get D-Bus connection"
-msgstr ""
+msgstr "D-Bus байланысын алу мүмкін болмады"
 
 #: src/tracker/tracker-dbus.c:62
 msgid "Could not create D-Bus proxy to tracker-store"
 msgstr ""
 
-#: src/tracker/tracker-extract.c:68 src/tracker/tracker-info.c:506
+#: src/tracker/tracker-extract.c:68
 msgid "Could not run tracker-extract: "
 msgstr ""
 
@@ -822,45 +820,45 @@ msgstr ""
 
 #: src/tracker/tracker-index.c:56
 msgid "Makes indexing recursive"
-msgstr ""
+msgstr "Индекстеуді рекурсивті етеді"
 
-#: src/tracker/tracker-index.c:194
+#: src/tracker/tracker-index.c:192
 #, c-format
 msgid "“%s” is not a directory"
-msgstr ""
+msgstr "\"%s\" бума емес"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:275
+#: src/tracker/tracker-index.c:282
 msgid "Either --add or --remove must be provided"
-msgstr ""
+msgstr "Не --add, не --remove көрсетілуі тиіс"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:279
+#: src/tracker/tracker-index.c:286
 msgid "--add and --remove are mutually exclusive"
-msgstr ""
+msgstr "--add және --remove өзара үйлеспейді"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:289
+#: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
-msgstr ""
+msgstr "--recursive опциясы --add талап етеді"
 
-#: src/tracker/tracker-index.c:344 src/tracker/tracker-status.c:403
+#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
 msgid "Path"
-msgstr ""
+msgstr "Орналасу"
 
-#: src/tracker/tracker-index.c:345
+#: src/tracker/tracker-index.c:352
 msgid "Recursive"
-msgstr ""
+msgstr "Рекурсивті"
 
-#: src/tracker/tracker-index.c:395
+#: src/tracker/tracker-index.c:402
 msgid "Please specify one or more locations to index."
-msgstr ""
+msgstr "Индекстек үшін бір немесе бірнеше орынды көрсетіңіз."
 
-#: src/tracker/tracker-info.c:48
+#: src/tracker/tracker-info.c:57
 msgid "Show full namespaces (i.e. don’t use nie:title, use full URLs)"
 msgstr ""
 
-#: src/tracker/tracker-info.c:52
+#: src/tracker/tracker-info.c:61
 msgid "Show plain text content if available for resources"
 msgstr ""
 
@@ -870,47 +868,55 @@ msgstr ""
 #. * fully supports international characters. In practice, UTF-8
 #. * is the most popular encoding used for IRI.
 #.
-#: src/tracker/tracker-info.c:62
+#: src/tracker/tracker-info.c:71
 msgid ""
 "Instead of looking up a file name, treat the FILE arguments as actual IRIs "
 "(e.g. <file:///path/to/some/file.txt>)"
 msgstr ""
 
-#: src/tracker/tracker-info.c:66
+#: src/tracker/tracker-info.c:75
 msgid "Output results as RDF in Turtle format"
 msgstr ""
 
-#: src/tracker/tracker-info.c:70
+#: src/tracker/tracker-info.c:79
 msgid "RDF property to treat as URL (eg. “nie:url”)"
 msgstr ""
 
-#: src/tracker/tracker-info.c:151
+#: src/tracker/tracker-info.c:160
 msgid "Unable to retrieve namespace prefixes"
 msgstr ""
 
-#: src/tracker/tracker-info.c:159
+#: src/tracker/tracker-info.c:168
 msgid "No namespace prefixes were returned"
 msgstr ""
 
-#: src/tracker/tracker-info.c:386
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
+msgid "Results"
+msgstr "Нәтижелер"
+
+#: src/tracker/tracker-info.c:416
+msgid "Error message"
+msgstr "Қате хабарламасы"
+
+#: src/tracker/tracker-info.c:472
 msgid "Querying information for entity"
 msgstr ""
 
-#: src/tracker/tracker-info.c:410
+#: src/tracker/tracker-info.c:496
 msgid "Unable to retrieve URN for URI"
 msgstr ""
 
-#: src/tracker/tracker-info.c:420 src/tracker/tracker-info.c:454
+#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
 msgid "Unable to retrieve data for URI"
 msgstr ""
 
-#: src/tracker/tracker-info.c:463
+#: src/tracker/tracker-info.c:563
 msgid "No metadata available for that URI"
 msgstr ""
 
-#: src/tracker/tracker-info.c:468 src/tracker/tracker-search.c:1136
-msgid "Results"
-msgstr "Нәтижелер"
+#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+msgid "Could not get eligible status: "
+msgstr ""
 
 #: src/tracker/tracker-process.c:190
 #, c-format
@@ -1025,94 +1031,89 @@ msgstr ""
 msgid "Disable color when printing snippets and results"
 msgstr ""
 
-#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:57
+#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:58
 msgid "search terms"
 msgstr "іздеу ұғымдары"
 
-#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:58
+#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:59
 msgid "EXPRESSION"
 msgstr "ӨРНЕК"
 
-#: src/tracker/tracker-search.c:173 src/tracker/tracker-tag.c:101
-msgid ""
-"NOTE: Limit was reached, there are more items in the database not listed here"
-msgstr ""
-
-#: src/tracker/tracker-search.c:262 src/tracker/tracker-search.c:576
-#: src/tracker/tracker-search.c:665 src/tracker/tracker-search.c:753
-#: src/tracker/tracker-search.c:837 src/tracker/tracker-search.c:919
-#: src/tracker/tracker-search.c:1123
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
+#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
+#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
+#: src/tracker/tracker-search.c:1171
 msgid "Could not get search results"
 msgstr "Іздеу нәтижелерін алу мүмкін емес"
 
-#: src/tracker/tracker-search.c:271
+#: src/tracker/tracker-search.c:254
 msgid "No files were found"
 msgstr "Файлдар табылмады"
 
-#: src/tracker/tracker-search.c:275 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
 msgid "Files"
 msgstr "Файлдар"
 
-#: src/tracker/tracker-search.c:585
+#: src/tracker/tracker-search.c:600
 msgid "No artists were found"
 msgstr "Әртістер табылмады"
 
-#: src/tracker/tracker-search.c:589
+#: src/tracker/tracker-search.c:604
 msgid "Artists"
 msgstr "Әртістер"
 
-#: src/tracker/tracker-search.c:674
+#: src/tracker/tracker-search.c:692
 msgid "No music was found"
 msgstr "Музыка табылмады"
 
-#: src/tracker/tracker-search.c:678
+#: src/tracker/tracker-search.c:696
 msgid "Albums"
 msgstr "Альбомдар"
 
-#: src/tracker/tracker-search.c:762
+#: src/tracker/tracker-search.c:784
 msgid "No feeds were found"
 msgstr "Таспалар табылмады"
 
-#: src/tracker/tracker-search.c:766
+#: src/tracker/tracker-search.c:788
 msgid "Feeds"
 msgstr "Таспалар"
 
-#: src/tracker/tracker-search.c:846
+#: src/tracker/tracker-search.c:871
 msgid "No software was found"
 msgstr "Бағдарламалық қамтама табылмады"
 
-#: src/tracker/tracker-search.c:850
+#: src/tracker/tracker-search.c:875
 msgid "Software"
 msgstr "Бағд. қамтамасы"
 
-#: src/tracker/tracker-search.c:928
+#: src/tracker/tracker-search.c:956
 msgid "No software categories were found"
 msgstr "Бағдарламалық қамтама санаттары табылмады"
 
-#: src/tracker/tracker-search.c:932
+#: src/tracker/tracker-search.c:960
 msgid "Software Categories"
 msgstr "Бағдарламалық қамтама санаттары"
 
-#: src/tracker/tracker-search.c:1132
+#: src/tracker/tracker-search.c:1180
 msgid "No results were found matching your query"
 msgstr ""
 
-#: src/tracker/tracker-status.c:52
+#: src/tracker/tracker-status.c:53
 msgid "Show statistics for current index / data set"
 msgstr ""
 
-#: src/tracker/tracker-status.c:102
+#: src/tracker/tracker-status.c:103
 msgid "Could not get Tracker statistics"
 msgstr ""
 
-#: src/tracker/tracker-status.c:109
+#: src/tracker/tracker-status.c:110
 msgid "No statistics available"
 msgstr "Статистика жоқ"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:150
+#: src/tracker/tracker-status.c:151
 msgid "Statistics:"
 msgstr "Статистика:"
 
@@ -1139,60 +1140,60 @@ msgstr "Статистика:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:153 src/tracker/tracker-tag.c:321
+#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
 #: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Ешнәрсе"
 
-#: src/tracker/tracker-status.c:225 src/tracker/tracker-status.c:250
+#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
 msgid "Could not get basic status for Tracker"
 msgstr ""
 
-#: src/tracker/tracker-status.c:404 src/tracker/tracker-status.c:549
+#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
 msgid "Message"
 msgstr "Хабарлама"
 
-#: src/tracker/tracker-status.c:457
+#: src/tracker/tracker-status.c:382
 msgid "Currently indexed"
 msgstr "Қазіргі уақытта индекстелген"
 
-#: src/tracker/tracker-status.c:460 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d файл"
 
-#: src/tracker/tracker-status.c:466
+#: src/tracker/tracker-status.c:391
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d бума"
 
-#: src/tracker/tracker-status.c:480
+#: src/tracker/tracker-status.c:405
 msgid "Remaining space on database partition"
 msgstr ""
 
-#: src/tracker/tracker-status.c:492
+#: src/tracker/tracker-status.c:417
 msgid "Data is still being indexed"
 msgstr ""
 
-#: src/tracker/tracker-status.c:493
+#: src/tracker/tracker-status.c:418
 #, c-format
 msgid "Estimated %s left"
 msgstr ""
 
-#: src/tracker/tracker-status.c:497
+#: src/tracker/tracker-status.c:422
 msgid "All data miners are idle, indexing complete"
 msgstr ""
 
-#: src/tracker/tracker-status.c:504
+#: src/tracker/tracker-status.c:429
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] ""
 
-#: src/tracker/tracker-status.c:565
+#: src/tracker/tracker-status.c:490
 msgid "No reports found"
 msgstr "Есептер табылмады"
 
@@ -1240,6 +1241,11 @@ msgstr "ФАЙЛ…"
 #: src/tracker/tracker-tag.c:85
 msgid "FILE [FILE…]"
 msgstr "ФАЙЛ [ФАЙЛ…]"
+
+#: src/tracker/tracker-tag.c:101
+msgid ""
+"NOTE: Limit was reached, there are more items in the database not listed here"
+msgstr ""
 
 #: src/tracker/tracker-tag.c:247
 msgid "Could not get file URNs"
@@ -1367,6 +1373,9 @@ msgstr ""
 msgid "— start the tracker writeback service"
 msgstr ""
 
+#~ msgid "unknown time"
+#~ msgstr "белгісіз уақыт"
+
 #~ msgid "Yes"
 #~ msgstr "Иә"
 
@@ -1429,9 +1438,6 @@ msgstr ""
 
 #~ msgid "Data Statistics"
 #~ msgstr "Деректер статистикасы"
-
-#~ msgid "Could not get statistics"
-#~ msgstr "Статистиканы алу мүмкін емес"
 
 #~ msgid "Database is currently empty"
 #~ msgstr "Дерекқор қазіргі уақытта бос"

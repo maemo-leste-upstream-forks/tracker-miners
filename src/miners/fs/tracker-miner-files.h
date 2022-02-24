@@ -24,6 +24,8 @@
 
 #include "tracker-config.h"
 
+#include "tracker-storage.h"
+
 G_BEGIN_DECLS
 
 #define TRACKER_TYPE_MINER_FILES         (tracker_miner_files_get_type())
@@ -76,6 +78,7 @@ void     tracker_miner_files_writeback_file       (TrackerMinerFiles *mf,
 void     tracker_miner_files_writeback_notify     (TrackerMinerFiles *mf,
                                                    GFile             *file,
                                                    const GError      *error);
+TrackerStorage * tracker_miner_files_get_storage (TrackerMinerFiles *mf);
 
 G_END_DECLS
 

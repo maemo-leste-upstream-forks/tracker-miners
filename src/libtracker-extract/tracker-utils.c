@@ -511,7 +511,7 @@ parse_month (const gchar *month)
  * @date_string: the date in a string pointer
  *
  * This function uses a number of methods to try and guess the date
- * held in @date_string. The @date_string must be at least 5
+ * held in @date_string. The @date_string must be at least 4
  * characters in length or longer for any guessing to be attempted.
  * Some of the string formats guessed include:
  *
@@ -555,6 +555,11 @@ tracker_date_guess (const gchar *date_string)
 	 */
 	if (len == 4) {
 		if (is_int (date_string)) {
+			if (atoi (date_string) == 0) {
+				/* Avoid producing an invalid ISO date '0000-01-01T00:00:00Z' */
+				return NULL;
+			}
+
 			buf[0] = date_string[0];
 			buf[1] = date_string[1];
 			buf[2] = date_string[2];

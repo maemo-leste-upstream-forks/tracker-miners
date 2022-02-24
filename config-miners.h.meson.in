@@ -8,6 +8,9 @@
 /* Define the gettext package to be used */
 #mesondefine GETTEXT_PACKAGE
 
+/* Define if we have GLib version 2.70.0 or up */
+#mesondefine GIO_SUPPORTS_CREATION_TIME
+
 /* Define that GStreamer Discoverer should be used */
 #mesondefine GSTREAMER_BACKEND_DISCOVERER
 
@@ -67,6 +70,9 @@
 
 /* Define to 1 if you have the `up_client_get_on_low_battery' function. */
 #mesondefine HAVE_UP_CLIENT_GET_ON_LOW_BATTERY
+
+/* Define if we have fanotify */
+#mesondefine HAVE_FANOTIFY
 
 /* Define to the address where bug reports for this package should be sent. */
 #mesondefine PACKAGE_BUGREPORT
