@@ -13,7 +13,7 @@ Build-Depends: debhelper-compat (= 13),
                libgstreamer1.0-dev (>= 0.10.31),
                libgstreamer-plugins-base1.0-dev (>= 0.10.31),
                libstemmer-dev,
-               libtracker-sparql-3.0-dev (>= 3.1.0),
+               libtracker-sparql-3.0-dev (>= 3.3.0~),
                libpoppler-glib-dev (>= 0.16.0),
                libgsf-1-dev (>= 1.14.24),
                libexif-dev (>= 0.6),
@@ -73,7 +73,7 @@ Package: tracker-miner-fs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         tracker (>= 3.1.1),
+         tracker (>= 3.3.0~),
          tracker-extract (= ${binary:Version}),
          procps
 Breaks: bijiben (<< 40),
