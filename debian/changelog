@@ -1,8 +1,10 @@
-tracker-miners (3.3.0~beta-1) UNRELEASED; urgency=medium
+tracker-miners (3.3.0~beta-1) experimental; urgency=medium
 
   * New upstream release
+  * Drop syscall patches: applied in new release
+  * debian/control.in: Bump minimum tracker to 3.3.0~
 
- -- Jeremy Bicha <jeremy.bicha@canonical.com>  Thu, 24 Feb 2022 12:06:32 -0500
+ -- Jeremy Bicha <jeremy.bicha@canonical.com>  Thu, 24 Feb 2022 14:00:02 -0500
 
 tracker-miners (3.1.3-4) unstable; urgency=medium
 
