@@ -8,13 +8,14 @@ set -e
 
 dbus_services_dir="$1"
 tracker_miner_services_dir="$2"
-have_tracker_miner_fs="$3"
-have_tracker_miner_rss="$4"
+domain_prefix="$3"
+have_tracker_miner_fs="$4"
+have_tracker_miner_rss="$5"
 
 mkdir -p ${DESTDIR}/${tracker_miner_services_dir}
 if ([ "$have_tracker_miner_fs" = "true" ]); then
-  ln -sf "${dbus_services_dir}/org.freedesktop.Tracker3.Miner.Files.service" "${DESTDIR}/${tracker_miner_services_dir}/"
+  ln -sf "${dbus_services_dir}/${domain_prefix}.Tracker3.Miner.Files.service" "${DESTDIR}/${tracker_miner_services_dir}/"
 fi
 if ([ "$have_tracker_miner_rss" = "true" ]); then
-  ln -sf "${dbus_services_dir}/org.freedesktop.Tracker3.Miner.RSS.service" "${DESTDIR}/${tracker_miner_services_dir}/"
+  ln -sf "${dbus_services_dir}/${domain_prefix}.Tracker3.Miner.RSS.service" "${DESTDIR}/${tracker_miner_services_dir}/"
 fi

@@ -749,9 +749,9 @@ check_file (GFile    *file,
 	priv = tracker_miner_manager_get_instance_private (manager);
 
 	key_file = g_key_file_new ();
-	g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, &error);
 
-	if (error) {
+	if (!g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, &error)) {
+		g_assert (error != NULL);
 		g_warning ("Error parsing miner .desktop file: %s", error->message);
 		g_error_free (error);
 		g_key_file_free (key_file);

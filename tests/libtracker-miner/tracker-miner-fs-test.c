@@ -37,8 +37,10 @@ test_miner_process_file (TrackerMinerFS      *miner,
 	TrackerResource *resource;
 	GDateTime *modification_time;
 	TrackerIndexingTree *tree;
-	gchar *uri, *parent_uri, *str;
+	gchar *uri, *parent_uri;
 	GFile *parent;
+	GFile *root;
+	gchar *root_uri;
 
 	((TestMiner *) miner)->n_process_file++;
 
@@ -57,11 +59,16 @@ test_miner_process_file (TrackerMinerFS      *miner,
 	if (info) {
 		modification_time = g_file_info_get_modification_date_time (info);
 		if (modification_time) {
-			str = g_date_time_format_iso8601 (modification_time);
-			tracker_resource_set_string (resource, "nfo:fileLastModified", str);
-			g_free (str);
+			tracker_resource_set_datetime (resource, "nfo:fileLastModified", modification_time);
 			g_date_time_unref (modification_time);
 		}
+#ifdef GIO_SUPPORTS_CREATION_TIME
+		creation_time = g_file_info_get_creation_date_time (info);
+		if (creation_time) {
+			tracker_resource_set_datetime (resource, "nfo:fileCreated", creation_time);
+			g_date_time_unref (creation_time);
+		}
+#endif
 	}
 
 	tracker_resource_set_string (resource, "nie:url", uri);
@@ -71,23 +78,20 @@ test_miner_process_file (TrackerMinerFS      *miner,
 	if (tracker_indexing_tree_file_is_root (tree, file)) {
 		tracker_resource_set_uri (resource, "nie:rootElementOf", uri);
 		tracker_resource_add_uri (resource, "rdf:type", "nie:DataSource");
-	} else {
-		GFile *root;
-		gchar *root_uri;
-
-		root = tracker_indexing_tree_get_root (tree, file, NULL);
-		if (root) {
-			root_uri = g_file_get_uri (root);
-			tracker_resource_set_uri (resource, "nie:dataSource", root_uri);
-			g_free (root_uri);
-		}
-
-		parent = g_file_get_parent (file);
-		parent_uri = g_file_get_uri (file);
-		tracker_resource_set_uri (resource, "nfo:belongsToContainer", parent_uri);
-		g_free (parent_uri);
-		g_object_unref (parent);
 	}
+
+	root = tracker_indexing_tree_get_root (tree, file, NULL);
+	if (root) {
+		root_uri = g_file_get_uri (root);
+		tracker_resource_set_uri (resource, "nie:dataSource", root_uri);
+		g_free (root_uri);
+	}
+
+	parent = g_file_get_parent (file);
+	parent_uri = g_file_get_uri (parent);
+	tracker_resource_set_uri (resource, "nfo:belongsToContainer", parent_uri);
+	g_free (parent_uri);
+	g_object_unref (parent);
 
 	tracker_sparql_buffer_push (buffer, file, "tracker:FileSystem", resource);
 	g_object_unref (resource);
@@ -268,6 +272,15 @@ fixture_setup (TrackerMinerFSTestFixture *fixture,
 	g_assert_no_error (error);
 	g_object_unref (ontology);
 
+	tracker_sparql_connection_update (fixture->connection,
+					  "CREATE SILENT GRAPH tracker:FileSystem; "
+					  "CREATE SILENT GRAPH tracker:Software; "
+					  "CREATE SILENT GRAPH tracker:Documents; "
+					  "CREATE SILENT GRAPH tracker:Pictures; "
+					  "CREATE SILENT GRAPH tracker:Audio; "
+					  "CREATE SILENT GRAPH tracker:Video ",
+					  NULL, NULL);
+
 	fixture->miner = test_miner_new (fixture->connection, &error);
 	g_assert_no_error (error);
 }
@@ -393,6 +406,26 @@ fixture_iterate (TrackerMinerFSTestFixture *fixture)
 {
 	while (!test_miner_is_finished ((TestMiner *) fixture->miner))
 		g_main_context_iteration (NULL, TRUE);
+}
+
+static gboolean
+loop_timeout (GMainLoop *main_loop)
+{
+	g_main_loop_quit (main_loop);
+	return G_SOURCE_REMOVE;
+}
+
+static void
+fixture_iterate_timed (TrackerMinerFSTestFixture *fixture,
+                       int                        seconds)
+{
+	GMainLoop *main_loop;
+
+	main_loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add_seconds (seconds, (GSourceFunc) loop_timeout, main_loop);
+	g_main_loop_run (main_loop);
+
+	g_main_loop_unref (main_loop);
 }
 
 static void
@@ -1481,7 +1514,7 @@ test_event_queue_create_and_update (TrackerMinerFSTestFixture *fixture,
 	g_free (content);
 
 	g_assert_cmpint (((TestMiner *) fixture->miner)->n_process_file, ==, 1);
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1546,7 +1579,7 @@ test_event_queue_create_and_move (TrackerMinerFSTestFixture *fixture,
 	g_assert_cmpstr (content, ==, "recursive");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1591,7 +1624,7 @@ test_event_queue_update_and_update (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 	/* Coalescing desirable, but not mandatory */
 	g_assert_cmpint (((TestMiner *) fixture->miner)->n_process_file, >=, 1);
 
@@ -1635,7 +1668,7 @@ test_event_queue_update_and_delete (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==, "recursive");
@@ -1676,7 +1709,7 @@ test_event_queue_update_and_move (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1718,7 +1751,7 @@ test_event_queue_delete_and_create (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1762,7 +1795,7 @@ test_event_queue_move_and_update (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 	g_assert_cmpint (((TestMiner *) fixture->miner)->n_process_file, ==, 2);
 
 	content = fixture_get_content (fixture);
@@ -1805,7 +1838,7 @@ test_event_queue_move_and_create_origin (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1848,7 +1881,7 @@ test_event_queue_move_and_delete (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1889,7 +1922,7 @@ test_event_queue_move_and_move (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,
@@ -1931,7 +1964,7 @@ test_event_queue_move_and_move_back (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/a");
 	g_free (content);
 
-	fixture_iterate (fixture);
+	fixture_iterate_timed (fixture, 1);
 
 	content = fixture_get_content (fixture);
 	g_assert_cmpstr (content, ==,

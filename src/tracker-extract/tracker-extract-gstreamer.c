@@ -849,10 +849,15 @@ extract_metadata (MetadataExtractor      *extractor,
                   const gchar            *file_url)
 {
 	TrackerResource *resource;
+	gchar *resource_uri;
+	GFile *file;
 
 	g_return_val_if_fail (extractor != NULL, NULL);
 
-	resource = tracker_resource_new (NULL);
+	file = g_file_new_for_uri (file_url);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, "1");
+	resource = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	if (extractor->toc) {
 		gst_tag_list_insert (extractor->tagcache,
@@ -974,10 +979,18 @@ extract_metadata (MetadataExtractor      *extractor,
 					/* Reuse the "root" InformationElement resource for the first track,
 					 * so there's no spare ones.
 					 */
-					if (node == extractor->toc->entry_list)
+					if (node == extractor->toc->entry_list) {
 						track = resource;
-					else
-						track = tracker_resource_new (NULL);
+					} else {
+						gchar *suffix, *resource_uri;
+
+						suffix = g_strdup_printf ("%d", g_list_position (extractor->toc->entry_list,
+						                                                 node) + 1);
+						resource_uri = tracker_file_get_content_identifier (file, NULL, suffix);
+						track = tracker_resource_new (resource_uri);
+						g_free (resource_uri);
+						g_free (suffix);
+					}
 
 					extract_track (track, extractor, node->data, file_url, album_disc);
 					tracker_resource_set_relation (track, "nie:isStoredAs", file_resource);
@@ -1033,6 +1046,8 @@ extract_metadata (MetadataExtractor      *extractor,
 /* #warning TODO: handle encrypted content with the Discoverer/GUPnP-DLNA backends */
 
 	common_extract_stream_metadata (extractor, file_url, resource);
+
+	g_object_unref (file);
 
 	return resource;
 }
@@ -1413,16 +1428,7 @@ tracker_extract_module_init (GError **error)
 		"fluiddec",
 		"vaapi",
 		"video4linux2",
-		"nvmpegvideodec",
-		"nvmpeg2videodec",
-		"nvmpeg4videodec",
-		"nvh264sldec",
-		"nvh264dec",
-		"nvjpegdec",
-		"nvh265sldec",
-		"nvh265dec",
-		"nvvp8dec",
-		"nvvp9dec",
+		"nvcodec",
 	};
 	GstRegistry *registry;
 	guint i;
@@ -1434,8 +1440,11 @@ tracker_extract_module_init (GError **error)
 		GstPlugin *plugin =
 			gst_registry_find_plugin (registry,
 						  blocklisted[i]);
-		if (plugin)
+		if (plugin) {
+			g_debug ("Removing GStreamer plugin '%s' from registry",
+			         blocklisted[i]);
 			gst_registry_remove_plugin (registry, plugin);
+		}
 	}
 
 	return TRUE;

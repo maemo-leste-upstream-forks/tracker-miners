@@ -551,7 +551,7 @@ append_graph_patterns (TrackerDecorator *decorator,
 			g_string_append (query, "UNION ");
 
 		g_string_append_printf (query,
-		                        "{ GRAPH %s { ?urn a nfo:FileDataObject } } ",
+		                        "{ GRAPH %s { ?urn a nfo:FileDataObject ; nfo:fileName [] } } ",
 		                        graphs[i]);
 		first = FALSE;
 	}

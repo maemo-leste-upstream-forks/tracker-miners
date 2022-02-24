@@ -175,7 +175,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 	ODTMetadataParseInfo info = { 0 };
 	ODTFileType file_type;
 	GFile *file;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 	const gchar *mime_used;
 	GMarkupParseContext *context;
 	GMarkupParser parser = {
@@ -190,10 +190,13 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 		maximum_size_error_quark = g_quark_from_static_string ("maximum_size_error");
 	}
 
-	metadata = tracker_resource_new (NULL);
-	mime_used = tracker_extract_info_get_mimetype (extract_info);
-
 	file = tracker_extract_info_get_file (extract_info);
+
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	mime_used = tracker_extract_info_get_mimetype (extract_info);
+	g_free (resource_uri);
+
 	uri = g_file_get_uri (file);
 
 	/* Setup conf */

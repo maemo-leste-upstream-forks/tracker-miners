@@ -32,8 +32,17 @@
 
 #include <libtracker-sparql/tracker-sparql.h>
 
+#include "tracker-cli-utils.h"
+#include "tracker-color.h"
+
 #define INFO_OPTIONS_ENABLED() \
 	(filenames && g_strv_length (filenames) > 0);
+
+#define GROUP "Report"
+#define KEY_URI "Uri"
+#define KEY_MESSAGE "Message"
+#define KEY_SPARQL "Sparql"
+#define ERROR_MESSAGE "Extraction failed for this file. Some metadata will be missing."
 
 static gchar **filenames;
 static gboolean full_namespaces;
@@ -299,22 +308,16 @@ print_turtle (gchar               *urn,
               GHashTable          *prefixes,
               gboolean             full_namespaces)
 {
-	gchar *subject;
 	gchar *predicate;
 	gchar *object;
 	gboolean has_output = FALSE;
 
-	if (G_UNLIKELY (full_namespaces)) {
-		subject = g_strdup (urn);
-	} else {
-		/* truncate subject */
-		subject = tracker_sparql_get_shorthand (prefixes, urn);
-	}
-
 	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
 		const gchar *key = tracker_sparql_cursor_get_string (cursor, 0, NULL);
 		const gchar *value = tracker_sparql_cursor_get_string (cursor, 1, NULL);
-		const gchar *is_resource = tracker_sparql_cursor_get_string (cursor, 2, NULL);
+		const gchar *subject_value = tracker_sparql_cursor_get_string (cursor, 2, NULL);
+		const gchar *is_resource = tracker_sparql_cursor_get_string (cursor, 3, NULL);
+		gchar *subject_shorthand = NULL;
 
 		if (!key || !value || !is_resource) {
 			continue;
@@ -341,13 +344,21 @@ print_turtle (gchar               *urn,
 		}
 
 		/* Print final statement */
-		g_print ("<%s> %s %s .\n", subject, predicate, object);
+		if (G_LIKELY (!full_namespaces)) {
+			/* truncate subject */
+			subject_shorthand = tracker_sparql_get_shorthand (prefixes, subject_value);
+		}
 
+		if (subject_shorthand && g_strcmp0 (subject_value, subject_shorthand) != 0) {
+			g_print ("%s %s %s .\n", subject_shorthand, predicate, object);
+		} else {
+			g_print ("<%s> %s %s .\n", subject_value, predicate, object);
+		}
+
+		g_free (subject_shorthand);
 		g_free (predicate);
 		g_free (object);
 	}
-
-	g_free (subject);
 
 	return has_output;
 }
@@ -373,6 +384,51 @@ output_eligible_status_for_file (gchar   *path,
 		return g_spawn_sync (NULL, argv, NULL, G_SPAWN_DEFAULT, NULL, NULL, NULL, NULL, NULL, error);
 	}
 }
+
+static void
+print_errors (GList *keyfiles,
+	      gchar *file_uri)
+{
+	GList *l;
+	GKeyFile *keyfile;
+	GFile *file;
+
+	file = g_file_new_for_uri (file_uri);
+
+
+	for (l = keyfiles; l; l = l->next) {
+		gchar *uri;
+		GFile *error_file;
+
+		keyfile = l->data;
+		uri = g_key_file_get_string (keyfile, GROUP, KEY_URI, NULL);
+		error_file = g_file_new_for_uri (uri);
+
+		if (g_file_equal (file, error_file)) {
+			gchar *message = g_key_file_get_string (keyfile, GROUP, KEY_MESSAGE, NULL);
+			gchar *sparql = g_key_file_get_string (keyfile, GROUP, KEY_SPARQL, NULL);
+
+			if (message)
+				g_print (CRIT_BEGIN "%s\n%s: %s" CRIT_END "\n",
+					 ERROR_MESSAGE,
+					 _("Error message"),
+					 message);
+			if (sparql)
+				g_print ("SPARQL: %s\n", sparql);
+			g_print ("\n");
+
+			g_free (message);
+			g_free (sparql);
+		}
+
+		g_free (uri);
+		g_object_unref (error_file);
+	}
+
+	g_object_unref (file);
+
+}
+
 
 static int
 info_run (void)
@@ -409,6 +465,7 @@ info_run (void)
 		gchar *uri = NULL;
 		gchar *query;
 		gchar *urn = NULL;
+		GList *keyfiles;
 
 		if (!turtle && !resource_is_iri) {
 			g_print ("%s: '%s'\n", _("Querying information for entity"), *p);
@@ -465,12 +522,13 @@ info_run (void)
 			g_object_unref (cursor);
 		}
 
-		query = g_strdup_printf ("SELECT ?predicate ?object"
+		query = g_strdup_printf ("SELECT DISTINCT ?predicate ?object ?x"
 		                         "  ( EXISTS { ?predicate rdfs:range [ rdfs:subClassOf rdfs:Resource ] } )"
 		                         "WHERE {"
-		                         "  <%s> ?predicate ?object "
-		                         "}",
-		                         urn);
+		                         "  <%s> nie:interpretedAs? ?x . "
+					 "  ?x ?predicate ?object . "
+		                         "} ORDER BY ?x",
+					 urn);
 
 		cursor = tracker_sparql_connection_query (connection, query, NULL, &error);
 
@@ -511,6 +569,11 @@ info_run (void)
 				g_clear_error (&error);
 			}
 		}
+
+		keyfiles = tracker_cli_get_error_keyfiles ();
+
+		if (keyfiles && !turtle)
+			print_errors (keyfiles, uri);
 
 		g_print ("\n");
 

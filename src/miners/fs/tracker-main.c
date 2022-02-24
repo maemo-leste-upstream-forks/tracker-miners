@@ -629,6 +629,8 @@ check_eligible (void)
 
 	domain_ontology = tracker_domain_ontology_new (domain_ontology_name, NULL, &error);
 	ontology = tracker_domain_ontology_get_ontology (domain_ontology);
+	tracker_domain_ontology_unref (domain_ontology);
+
 	sparql_conn = tracker_sparql_connection_new (0,
 	                                              NULL,
 	                                              ontology,
@@ -736,11 +738,9 @@ check_eligible (void)
 	}
 
 	g_free (path);
-	g_object_unref (config);
 	g_object_unref (file);
 	g_object_unref (miner_files);
 	g_object_unref (info);
-	tracker_domain_ontology_unref (domain_ontology);
 
 	return (indexable && parents_indexable) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

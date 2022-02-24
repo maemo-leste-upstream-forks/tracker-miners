@@ -516,14 +516,15 @@ generate_gst_sample_from_image (const GValue *val)
 	const gchar *image_url = g_value_get_string (val);
 
 	filename = g_filename_from_uri (image_url, NULL, &err);
-	if (err != NULL) {
+	if (!filename) {
+		g_assert (err != NULL);
 		g_warning ("could not get filename for url (%s): %s", image_url, err->message);
 		g_clear_error (&err);
 		return img_sample;
 	}
 
 	mapped_file = g_mapped_file_new (filename, TRUE, &err);
-	if (err != NULL) {
+	if (!mapped_file && err != NULL) {
 		g_warning ("encountered error reading image file (%s): %s", filename, err->message);
 		g_error_free (err);
 	} else {
@@ -531,10 +532,12 @@ generate_gst_sample_from_image (const GValue *val)
 		byte_arr = g_bytes_unref_to_array (bytes);
 		img_sample = gst_tag_image_data_to_image_sample (byte_arr->data,
 		                                                 byte_arr->len, GST_TAG_IMAGE_TYPE_NONE);
+		g_byte_array_unref (byte_arr);
+		g_mapped_file_unref (mapped_file);
 	}
 
-	g_byte_array_unref (byte_arr);
-	g_mapped_file_unref (mapped_file);
+	g_free (filename);
+
 	return img_sample;
 }
 
@@ -682,6 +685,8 @@ writeback_gstreamer_write_file_metadata (TrackerWritebackFile  *writeback,
 		}
 	}
 
+	gst_tag_register_musicbrainz_tags ();
+
 	properties = tracker_resource_get_properties (resource);
 
 	for (l = properties; l; l = l->next) {
@@ -698,23 +703,23 @@ writeback_gstreamer_write_file_metadata (TrackerWritebackFile  *writeback,
 			g_value_unset (&val);
 		}
 
-		if (g_strcmp0 (prop, "nmm:performer") == 0) {
-			TrackerResource *performer;
+		if (g_strcmp0 (prop, "nmm:artist") == 0) {
+			TrackerResource *artist;
 			const gchar *name = NULL;
 			const gchar *mb_tags[] = {
 				"https://musicbrainz.org/doc/Artist",
 				NULL,
 			};
 
-			performer = tracker_resource_get_first_relation (resource, prop);
+			artist = tracker_resource_get_first_relation (resource, prop);
 
-			if (performer) {
-				name = tracker_resource_get_first_string (performer,
+			if (artist) {
+				name = tracker_resource_get_first_string (artist,
 				                                          "nmm:artistName");
 
-				handle_musicbrainz_tags (performer,
-							 "tracker:hasExternalReference",
-							 element, mb_tags);
+				handle_musicbrainz_tags (artist,
+				                         "tracker:hasExternalReference",
+				                         element, mb_tags);
 			}
 
 			if (name) {
@@ -732,6 +737,16 @@ writeback_gstreamer_write_file_metadata (TrackerWritebackFile  *writeback,
 			album = tracker_resource_get_first_relation (resource, prop);
 
 			if (album) {
+				const gchar *mb_tags[] = {
+					"https://musicbrainz.org/doc/Release",
+					"https://musicbrainz.org/doc/Release_Group",
+					NULL,
+				};
+
+				handle_musicbrainz_tags (album,
+				                         "tracker:hasExternalReference",
+				                         element, mb_tags);
+
 				album_name = tracker_resource_get_first_string (album, "nie:title");
 				artist = tracker_resource_get_first_relation (album, "nmm:albumArtist");
 			}
@@ -859,22 +874,12 @@ writeback_gstreamer_write_file_metadata (TrackerWritebackFile  *writeback,
 			disc = tracker_resource_get_first_relation (resource, prop);
 
 			if (disc) {
-				const gchar *mb_tags[] = {
-					"https://musicbrainz.org/doc/Release",
-					"https://musicbrainz.org/doc/Release_Group",
-					NULL,
-				};
-
 				number = tracker_resource_get_first_int (disc,
 				                                         "nmm:setNumber");
 				g_value_init (&val, G_TYPE_INT);
 				g_value_set_int (&val, number);
 				writeback_gstreamer_set (element, GST_TAG_ALBUM_VOLUME_NUMBER, &val);
 				g_value_unset (&val);
-
-				handle_musicbrainz_tags (disc,
-							 "tracker:hasExternalReference",
-							 element, mb_tags);
 			}
 		}
 
@@ -957,9 +962,9 @@ writeback_gstreamer_write_file_metadata (TrackerWritebackFile  *writeback,
 
 			if (hash) {
 				algorithm = tracker_resource_get_first_string (hash,
-									       "nfo:hashAlgorithm");
+				                                               "nfo:hashAlgorithm");
 				value = tracker_resource_get_first_string (hash,
-									   "nfo:hashValue");
+				                                           "nfo:hashValue");
 			}
 
 			if (value && algorithm && g_strcmp0 (algorithm, "chromaprint") == 0) {

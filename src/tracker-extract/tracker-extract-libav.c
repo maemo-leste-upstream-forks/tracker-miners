@@ -48,7 +48,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerResource *metadata;
 	gchar *absolute_file_path;
 	gchar *content_created = NULL;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 	AVFormatContext *format = NULL;
 	AVStream *audio_stream = NULL;
 	AVStream *video_stream = NULL;
@@ -56,8 +56,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	int video_stream_index;
 	AVDictionaryEntry *tag = NULL;
 	const char *title = NULL;
-
-	av_register_all ();
 
 	file = tracker_extract_info_get_file (info);
 
@@ -89,23 +87,25 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	if (audio_stream) {
-		if (audio_stream->codec->sample_rate > 0) {
-			tracker_resource_set_int64 (metadata, "nfo:sampleRate", audio_stream->codec->sample_rate);
+		if (audio_stream->codecpar->sample_rate > 0) {
+			tracker_resource_set_int64 (metadata, "nfo:sampleRate", audio_stream->codecpar->sample_rate);
 		}
-		if (audio_stream->codec->channels > 0) {
-			tracker_resource_set_int64 (metadata, "nfo:channels", audio_stream->codec->channels);
+		if (audio_stream->codecpar->channels > 0) {
+			tracker_resource_set_int64 (metadata, "nfo:channels", audio_stream->codecpar->channels);
 		}
 	}
 
 	if (video_stream && !(video_stream->disposition & AV_DISPOSITION_ATTACHED_PIC)) {
 		tracker_resource_add_uri(metadata, "rdf:type", "nmm:Video");
 
-		if (video_stream->codec->width > 0 && video_stream->codec->height > 0) {
-			tracker_resource_set_int64 (metadata, "nfo:width", video_stream->codec->width);
-			tracker_resource_set_int64 (metadata, "nfo:height", video_stream->codec->height);
+		if (video_stream->codecpar->width > 0 && video_stream->codecpar->height > 0) {
+			tracker_resource_set_int64 (metadata, "nfo:width", video_stream->codecpar->width);
+			tracker_resource_set_int64 (metadata, "nfo:height", video_stream->codecpar->height);
 		}
 
 		if (video_stream->avg_frame_rate.num > 0) {

@@ -35,6 +35,7 @@
 #include "tracker-term-utils.h"
 #include "tracker-miner-manager.h"
 #include "tracker-color.h"
+#include "tracker-cli-utils.h"
 
 #define GROUP "Report"
 #define KEY_URI "Uri"
@@ -314,79 +315,6 @@ are_miners_finished (gint *max_remaining_time)
 }
 
 static gint
-sort_by_date (gconstpointer a,
-              gconstpointer b)
-{
-	GFileInfo *info_a = (GFileInfo *) a, *info_b = (GFileInfo *) b;
-	gint64 time_a, time_b;
-
-	time_a = g_file_info_get_attribute_uint64 (info_a, G_FILE_ATTRIBUTE_TIME_CREATED);
-	time_b = g_file_info_get_attribute_uint64 (info_b, G_FILE_ATTRIBUTE_TIME_CREATED);
-
-	if (time_a < time_b)
-		return -1;
-	else if (time_a > time_b)
-		return 1;
-	return 0;
-}
-
-static GList *
-get_error_keyfiles (void)
-{
-	GFile *file;
-	GFileEnumerator *enumerator;
-	GList *infos = NULL, *keyfiles = NULL, *l;
-	gchar *path;
-
-	path = g_build_filename (g_get_user_cache_dir (),
-	                         "tracker3",
-	                         "files",
-	                         "errors",
-	                         NULL);
-	file = g_file_new_for_path (path);
-	g_free (path);
-
-	enumerator = g_file_enumerate_children (file,
-	                                        G_FILE_ATTRIBUTE_STANDARD_NAME ","
-	                                        G_FILE_ATTRIBUTE_TIME_CHANGED,
-	                                        G_FILE_QUERY_INFO_NONE,
-	                                        NULL,
-	                                        NULL);
-	while (TRUE) {
-		GFileInfo *info;
-
-		if (!g_file_enumerator_iterate (enumerator, &info, NULL, NULL, NULL))
-			break;
-		if (!info)
-			break;
-
-		infos = g_list_prepend (infos, g_object_ref (info));
-	}
-
-	infos = g_list_sort (infos, sort_by_date);
-
-	for (l = infos; l; l = l->next) {
-		GKeyFile *keyfile;
-		GFile *child;
-
-		child = g_file_get_child (file, g_file_info_get_name (l->data));
-		path = g_file_get_path (child);
-		keyfile = g_key_file_new ();
-		g_key_file_load_from_file (keyfile,
-		                           path, 0,
-		                           NULL);
-
-		keyfiles = g_list_prepend (keyfiles, keyfile);
-		g_object_unref (child);
-	}
-
-	g_object_unref (enumerator);
-	g_list_free_full (infos, g_object_unref);
-
-	return keyfiles;
-}
-
-static gint
 print_errors (GList *keyfiles)
 {
 	gint cols, col_len[2];
@@ -494,7 +422,7 @@ get_no_args (void)
 		g_print ("%s\n", _("All data miners are idle, indexing complete"));
 	}
 
-	keyfiles = get_error_keyfiles ();
+	keyfiles = tracker_cli_get_error_keyfiles ();
 
 	if (keyfiles) {
 		g_print (g_dngettext (NULL,
@@ -523,7 +451,7 @@ show_errors (gchar **terms)
 
 	tracker_term_pipe_to_pager ();
 
-	keyfiles = get_error_keyfiles ();
+	keyfiles = tracker_cli_get_error_keyfiles ();
 
 	for (i = 0; terms[i] != NULL; i++) {
 		for (l = keyfiles; l; l = l->next) {

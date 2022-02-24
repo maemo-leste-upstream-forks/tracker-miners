@@ -1,9 +1,12 @@
+files_extract = files('tracker-miner-files-methods.c')
+
 sources = [
     'tracker-config.c',
     'tracker-extract-watchdog.c',
     'tracker-main.c',
     'tracker-miner-files.c',
     'tracker-storage.c',
+    files_extract,
 ]
 
 tracker_miner_fs_deps = [

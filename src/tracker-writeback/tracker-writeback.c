@@ -420,6 +420,7 @@ handle_method_call_writeback (TrackerController     *controller,
 		                                       G_DBUS_ERROR,
 		                                       G_DBUS_ERROR_INVALID_ARGS,
 		                                       "GVariant does not serialize to a resource");
+		tracker_dbus_request_end (request, NULL);
 		return;
 	}
 
@@ -429,6 +430,7 @@ handle_method_call_writeback (TrackerController     *controller,
 		                                       G_DBUS_ERROR,
 		                                       G_DBUS_ERROR_INVALID_ARGS,
 		                                       "Resource does not define rdf:type");
+		tracker_dbus_request_end (request, NULL);
 		return;
 	}
 
@@ -472,6 +474,7 @@ handle_method_call_writeback (TrackerController     *controller,
 		                                       TRACKER_DBUS_ERROR,
 		                                       TRACKER_DBUS_ERROR_UNSUPPORTED,
 		                                       "Resource description does not match any writeback modules");
+		tracker_dbus_request_end (request, NULL);
 	}
 
 	g_object_unref (resource);

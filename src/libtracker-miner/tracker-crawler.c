@@ -26,6 +26,7 @@
 #include "tracker-utils.h"
 
 #define FILE_ATTRIBUTES	  \
+	G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT "," \
 	G_FILE_ATTRIBUTE_STANDARD_NAME "," \
 	G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
 	G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN
@@ -518,9 +519,8 @@ process_next (DirectoryRootInfo *info)
 		} else {
 			/* No (more) children, or directory ignored. stop processing. */
 			g_queue_pop_head (info->directory_processing_queue);
-			directory_processing_data_free (dir_data);
-
 			g_task_return_boolean (task, !dir_data->ignored_by_content);
+			directory_processing_data_free (dir_data);
 			g_object_unref (task);
 		}
 	} else {

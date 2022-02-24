@@ -73,6 +73,7 @@ find_command (pid_t pid)
 
 	proc_path = g_strdup_printf ("/proc/%d/exe", pid);
 	len = readlink (proc_path, path, PATH_MAX);
+	g_free (proc_path);
 
 	if (len < 0)
 		return NULL;

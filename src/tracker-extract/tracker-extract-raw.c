@@ -332,7 +332,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	const gchar *time_content_created;
 	gchar *filename = NULL;
 	gchar *nfo_orientation = NULL;
-	gchar *uri = NULL;
+	gchar *uri = NULL, *resource_uri;
 	gint height;
 	gint width;
 
@@ -345,9 +345,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		goto out;
 	}
 
-	resource = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	resource = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (resource, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (resource, "rdf:type", "nmm:Photo");
+	g_free (resource_uri);
 
 	width = gexiv2_metadata_get_pixel_width (metadata);
 	tracker_resource_set_int (resource, "nfo:width", width);

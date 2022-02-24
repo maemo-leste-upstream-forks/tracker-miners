@@ -144,6 +144,8 @@ fill_data (TrackerResource *resource,
 
 	for (i = 0; rdf_types[i] != NULL; i++)
 		tracker_resource_add_uri (resource, "rdf:type", rdf_types[i]);
+
+	g_strfreev (rdf_types);
 }
 
 static void

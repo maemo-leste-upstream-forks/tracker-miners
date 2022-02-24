@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.1.3',
+        version: '3.3.0.beta',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -15,7 +15,7 @@ libdir = join_paths(get_option('prefix'), get_option('libdir'))
 datadir = join_paths(get_option('prefix'), get_option('datadir'))
 
 glib_required = '2.62.0'
-tracker_required = '3.1.0'
+tracker_required = '3.2.0'
 
 if get_option('tracker_core') == 'system'
   tracker_sparql = dependency('tracker-sparql-3.0', version: '>=' + tracker_required, required: false)
@@ -47,6 +47,8 @@ else
   tracker_uninstalled_stop_words_dir = tracker_subproject.get_variable('tracker_uninstalled_stop_words_dir')
   tracker_uninstalled_testutils_dir = tracker_subproject.get_variable('tracker_uninstalled_testutils_dir')
   tracker_ontologies_dir = tracker_subproject.get_variable('tracker_ontologies_dir')
+
+  tracker_sparql_uninstalled_dir = tracker_subproject.get_variable('tracker_sparql_uninstalled_dir')
 endif
 
 avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
@@ -82,6 +84,7 @@ libxml2 = dependency('libxml-2.0', version: '>= 2.6', required: get_option('xml'
 poppler = dependency('poppler-glib', version: '>= 0.16.0', required: get_option('pdf'))
 totem_plparser = dependency('totem-plparser', required: get_option('playlist'))
 upower = dependency('upower-glib', version: '>= 0.9.0', required: false)
+blkid = dependency('blkid', required: true)
 
 libgif = cc.find_library('gif', required: get_option('gif'))
 libmath = cc.find_library('m', required: false)
@@ -172,6 +175,27 @@ if battery_detection_library_name == ''
   else
     battery_detection_library_name = '(none)'
   endif
+endif
+
+##########################################
+# Check for Fanotify support
+##########################################
+
+result = cc.run('''
+    #include <sys/fanotify.h>
+    #include <fcntl.h>
+
+    int main (int argc, char *argv[]) {
+      int fd = fanotify_init (FAN_CLOEXEC|FAN_CLASS_NOTIF|FAN_REPORT_DFID_NAME, O_RDONLY);
+      return fd < 0 ? 1 : 0;
+    }
+  ''',
+  name: 'fanotify works without additional capabilities')
+
+if result.compiled() and result.returncode() == 0
+  have_fanotify = true
+else
+  have_fanotify = false
 endif
 
 ####################################################################
@@ -340,6 +364,7 @@ have_malloc_trim = meson.get_compiler('c').has_function('malloc_trim')
 # Config that goes in config.h
 conf.set('GUARANTEE_METADATA', get_option('guarantee_metadata') == true)
 conf.set('USING_UNZIPPSFILES', get_option('unzip_ps_gz_files') == true)
+conf.set('GIO_SUPPORTS_CREATION_TIME', glib.version().version_compare('>=2.70.0'))
 
 conf.set('HAVE_ENCA', charset_library_name == 'enca')
 conf.set('HAVE_EXEMPI', exempi.found())
@@ -355,6 +380,7 @@ conf.set('HAVE_LIBSECCOMP', seccomp_required and libseccomp.found())
 conf.set('HAVE_MALLOC_TRIM', have_malloc_trim)
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 conf.set('HAVE_NETWORK_MANAGER', have_network_manager)
+conf.set('HAVE_FANOTIFY', have_fanotify)
 conf.set('DOMAIN_PREFIX', get_option('domain_prefix'))
 if get_option('domain_prefix') != 'org.freedesktop'
   rule_file = get_option('domain_prefix') + '.domain.rule'
@@ -487,9 +513,11 @@ summary = [
   '    Optimization:                           ' + get_option('optimization'),
   '    Domain prefix:                          ' + get_option('domain_prefix'),
   '\nFeature Support:',
+  '    File monitoring:                        @0@glib'.format(have_fanotify ? 'fanotify ' : ''),
   '    Battery/mains power detection:          ' + battery_detection_library_name,
   '    Support for network status detection:   ' + have_network_manager.to_string(),
   '    Releasing heap memory with malloc_trim: ' + have_malloc_trim.to_string(),
+  '    Store creation time:                    ' + glib.version().version_compare('>=2.70.0').to_string(),
   '\nData Miners / Writebacks:',
   '    FS (File System):                       ' + have_tracker_miner_fs.to_string(),
   '    RSS:                                    ' + have_tracker_miner_rss.to_string(),

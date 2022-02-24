@@ -31,6 +31,7 @@
 
 #include <libtracker-extract/tracker-extract.h>
 #include <libtracker-extract/tracker-guarantee.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #define PLAYLIST_PROPERTY_NO_TRACKS "entryCounter"
 #define PLAYLIST_PROPERTY_DURATION  "listDuration"
@@ -122,13 +123,15 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerResource *metadata;
 	PlaylistMetadata data;
 	GFile *file;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 
 	pl = totem_pl_parser_new ();
 	file = tracker_extract_info_get_file (info);
 	uri = g_file_get_uri (file);
 
-	metadata = data.metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = data.metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	data.track_counter = PLAYLIST_DEFAULT_NO_TRACKS;
 	data.total_time =  PLAYLIST_DEFAULT_DURATION;

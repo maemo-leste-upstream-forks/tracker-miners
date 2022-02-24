@@ -297,8 +297,14 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
                               GError             **error)
 {
 	TrackerResource *metadata;
+	gchar *resource_uri;
+	GFile *file;
 
-	metadata = tracker_resource_new (NULL);
+	file = tracker_extract_info_get_file (info);
+
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	if (!process_desktop_file (metadata, tracker_extract_info_get_file (info), error)) {
 		g_object_unref (metadata);

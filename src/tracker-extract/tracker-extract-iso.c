@@ -29,6 +29,7 @@
 #include <gio/gio.h>
 
 #include <libtracker-extract/tracker-extract.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 #include <libtracker-sparql/tracker-sparql.h>
 
 G_MODULE_EXPORT gboolean
@@ -43,7 +44,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info_,
 	/* File information */
 	GFile *file;
 	GError *inner_error = NULL;
-	gchar *filename;
+	gchar *filename, *resource_uri;
 	OsinfoLoader *loader = NULL;
 	OsinfoMedia *media;
 	OsinfoDb *db;
@@ -60,7 +61,9 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info_,
 	file = tracker_extract_info_get_file (info_);
 	filename = g_file_get_path (file);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
+	g_free (resource_uri);
 
 	media = osinfo_media_create_from_location (filename, NULL, &inner_error);
 	if (inner_error != NULL) {

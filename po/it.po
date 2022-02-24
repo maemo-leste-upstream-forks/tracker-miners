@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-01-10 11:18+0000\n"
-"PO-Revision-Date: 2021-03-15 09:01+0100\n"
+"POT-Creation-Date: 2021-10-30 17:19+0000\n"
+"PO-Revision-Date: 2021-08-18 13:01+0200\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -362,7 +362,7 @@ msgstr ""
 "Resta in esecuzione finché tutte le posizioni configurate non sono "
 "indicizzate, poi esce"
 
-#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:74
+#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Verifica che sia possibile estrarre dati da FILE in base alla configurazione"
@@ -370,7 +370,7 @@ msgstr ""
 #: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
-#: src/tracker/tracker-info.c:77 src/tracker/tracker-info.c:78
+#: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
 #: src/tracker/tracker-reset.c:56
 msgid "FILE"
 msgstr "FILE"
@@ -400,35 +400,35 @@ msgstr "L'oggetto dati «%s» esiste già"
 msgid "Data object “%s” currently does not exist"
 msgstr "L'oggetto dati «%s» non esiste"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:663
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Non è possibile indicizzare la directory (in base ai filtri)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:667
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Non è possibile indicizzare il file (in base ai filtri)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Non è possibile indicizzare il file (file nascosto)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Non è possibile indicizzare il file (cartella non indicizzata)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:696
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 "Non è possibile indicizzare la directory superiore «%s» (in base ai filtri)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:702
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr ""
 "Non è possibile indicizzare la directory superiore «%s» (file nascosto)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:710
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
@@ -437,11 +437,11 @@ msgstr ""
 "Non è possibile indicizzare la directory superiore «%s» (in base ai filtri "
 "sui contenuti)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:731
 msgid "Directory is eligible to be indexed"
 msgstr "È possibile indicizzare la directory"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:732
 msgid "File is eligible to be indexed"
 msgstr "È possibile analizzare il file"
 
@@ -472,9 +472,9 @@ msgstr "Titolo da usare (deve essere usato con --add-feed)"
 msgid "— start the feeds indexer"
 msgstr "— Avvia il motore di indicizzazione dei feed"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:390
-#: src/tracker/tracker-search.c:1210 src/tracker/tracker-status.c:88
-#: src/tracker/tracker-status.c:201 src/tracker/tracker-tag.c:975
+#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
+#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:976
 msgid "Could not establish a connection to Tracker"
 msgstr "Impossibile stabilere una connessione con Tracker"
 
@@ -483,10 +483,10 @@ msgstr "Impossibile stabilere una connessione con Tracker"
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:391 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1211 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-status.c:248
-#: src/tracker/tracker-status.c:277 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:194
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
+#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
+#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:977
 msgid "No error given"
 msgstr "Nessun errore fornito"
 
@@ -497,15 +497,15 @@ msgstr "Impossibile aggiungere il feed"
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-control/tracker-main.c:135
+#: src/tracker-control/tracker-main.c:136
 msgid "— start the tracker index proxy"
 msgstr "— Avvia il proxy di indicizzazione Tracker"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Estrazione dei metadati non riuscita"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Non è stato trovato alcun modulo per metadati o di estrazione per gestire "
@@ -815,7 +815,7 @@ msgstr "Tutte le proprietà nie:plainTextContent sono omesse"
 msgid "Common statuses include"
 msgstr "Gli stati comuni comprendono"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:276
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Impossibile ottenere lo stato, il gestore non può essere creato, %s"
@@ -846,7 +846,7 @@ msgstr ""
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Non è possibile usare insieme gli argomenti --kill e --terminate"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:172
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -877,9 +877,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Senza alcun argomento, viene mostrato lo stato degli estrattori"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:382 src/tracker/tracker-info.c:582
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1400
-#: src/tracker/tracker-status.c:599 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
+#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1085
 msgid "Unrecognized options"
 msgstr "Opzioni non riconosciute"
 
@@ -907,43 +907,43 @@ msgstr "Rimuove FILE dalle posizioni indicizzate"
 msgid "Makes indexing recursive"
 msgstr "Rende l'indicizzazione ricorsiva"
 
-#: src/tracker/tracker-index.c:194
+#: src/tracker/tracker-index.c:192
 #, c-format
 msgid "“%s” is not a directory"
 msgstr "«%s» non è una directory"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:275
+#: src/tracker/tracker-index.c:282
 msgid "Either --add or --remove must be provided"
 msgstr "Deve essere fornito --add o --remove"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:279
+#: src/tracker/tracker-index.c:286
 msgid "--add and --remove are mutually exclusive"
 msgstr "--add e --remove non possono essere utilizzate assieme"
 
 #. TRANSLATORS: These are commandline options
-#: src/tracker/tracker-index.c:289
+#: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
 msgstr "--recursive richiede --add"
 
-#: src/tracker/tracker-index.c:344 src/tracker/tracker-status.c:400
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:328
 msgid "Path"
 msgstr "Percorso"
 
-#: src/tracker/tracker-index.c:345
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Ricorsivamente"
 
-#: src/tracker/tracker-index.c:395
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Specificare una o più posizioni da indicizzare."
 
-#: src/tracker/tracker-info.c:48
+#: src/tracker/tracker-info.c:57
 msgid "Show full namespaces (i.e. don’t use nie:title, use full URLs)"
 msgstr "Mostra il namespace completo (non usa nie:title, ma URL completi)"
 
-#: src/tracker/tracker-info.c:52
+#: src/tracker/tracker-info.c:61
 msgid "Show plain text content if available for resources"
 msgstr "Mostra, se disponibili, i contenuti in testo semplice"
 
@@ -953,7 +953,7 @@ msgstr "Mostra, se disponibili, i contenuti in testo semplice"
 #. * fully supports international characters. In practice, UTF-8
 #. * is the most popular encoding used for IRI.
 #.
-#: src/tracker/tracker-info.c:62
+#: src/tracker/tracker-info.c:71
 msgid ""
 "Instead of looking up a file name, treat the FILE arguments as actual IRIs "
 "(e.g. <file:///path/to/some/file.txt>)"
@@ -961,52 +961,56 @@ msgstr ""
 "Invece di cercare un nome di file, considera gli argomenti FILE come degli "
 "IRI (per esempio: <file:///percorso/al/file.txt>)"
 
-#: src/tracker/tracker-info.c:66
+#: src/tracker/tracker-info.c:75
 msgid "Output results as RDF in Turtle format"
 msgstr "Fornisce i risultati nel formato RDF Turtle"
 
-#: src/tracker/tracker-info.c:70
+#: src/tracker/tracker-info.c:79
 msgid "RDF property to treat as URL (eg. “nie:url”)"
 msgstr "Proprietà RDF da utilizzare come URL (per esempio «nie:url»)"
 
-#: src/tracker/tracker-info.c:151
+#: src/tracker/tracker-info.c:160
 msgid "Unable to retrieve namespace prefixes"
 msgstr "Impossibile recuperare i prefissi di namespace"
 
-#: src/tracker/tracker-info.c:159
+#: src/tracker/tracker-info.c:168
 msgid "No namespace prefixes were returned"
 msgstr "Nessun prefisso di namespace trovato"
 
-#: src/tracker/tracker-info.c:221 src/tracker/tracker-search.c:1136
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
 msgid "Results"
 msgstr "Risultati"
 
 #: src/tracker/tracker-info.c:414
+msgid "Error message"
+msgstr "Messaggio d'errore"
+
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Richiesta informazione per l'entità"
 
-#: src/tracker/tracker-info.c:438
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Impossibile recuperare l'URN per l'URI"
 
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-info.c:481
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Impossibile recuperare dati per l'URI"
 
-#: src/tracker/tracker-info.c:504
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Nessun meta-dato disponibile per quell'URI"
 
-#: src/tracker/tracker-info.c:509 src/tracker/tracker-info.c:538
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Impossibile ottenere lo stato idoneo: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:191
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Impossibile uccidere il processo %d — «%s»"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:197
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "Processo %d ucciso — «%s»"
@@ -1127,96 +1131,89 @@ msgstr ""
 msgid "Disable color when printing snippets and results"
 msgstr "Disabilita i colori nel visualizzare i frammenti e i risultati"
 
-#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:57
+#: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:58
 msgid "search terms"
 msgstr "termini da cercare"
 
-#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:58
+#: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:59
 msgid "EXPRESSION"
 msgstr "ESPRESSIONE"
 
-#: src/tracker/tracker-search.c:173 src/tracker/tracker-tag.c:101
-msgid ""
-"NOTE: Limit was reached, there are more items in the database not listed here"
-msgstr ""
-"NOTA: è stato raggiunto il limite, ci sono altre voci nel database non "
-"elencate qui"
-
-#: src/tracker/tracker-search.c:262 src/tracker/tracker-search.c:576
-#: src/tracker/tracker-search.c:665 src/tracker/tracker-search.c:753
-#: src/tracker/tracker-search.c:837 src/tracker/tracker-search.c:919
-#: src/tracker/tracker-search.c:1123
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
+#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
+#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
+#: src/tracker/tracker-search.c:1171
 msgid "Could not get search results"
 msgstr "Impossibile ottenere i risultati di ricerca"
 
-#: src/tracker/tracker-search.c:271
+#: src/tracker/tracker-search.c:254
 msgid "No files were found"
 msgstr "Non è stato trovato alcun file"
 
-#: src/tracker/tracker-search.c:275 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
 msgid "Files"
 msgstr "File"
 
-#: src/tracker/tracker-search.c:585
+#: src/tracker/tracker-search.c:600
 msgid "No artists were found"
 msgstr "Non è stato trovato alcun artista"
 
-#: src/tracker/tracker-search.c:589
+#: src/tracker/tracker-search.c:604
 msgid "Artists"
 msgstr "Artisti"
 
-#: src/tracker/tracker-search.c:674
+#: src/tracker/tracker-search.c:692
 msgid "No music was found"
 msgstr "Non è stato trovato alcun brano musicale"
 
-#: src/tracker/tracker-search.c:678
+#: src/tracker/tracker-search.c:696
 msgid "Albums"
 msgstr "Album"
 
-#: src/tracker/tracker-search.c:762
+#: src/tracker/tracker-search.c:784
 msgid "No feeds were found"
 msgstr "Non è stato trovato alcun feed"
 
-#: src/tracker/tracker-search.c:766
+#: src/tracker/tracker-search.c:788
 msgid "Feeds"
 msgstr "Feed"
 
-#: src/tracker/tracker-search.c:846
+#: src/tracker/tracker-search.c:871
 msgid "No software was found"
 msgstr "Nessun software trovato"
 
-#: src/tracker/tracker-search.c:850
+#: src/tracker/tracker-search.c:875
 msgid "Software"
 msgstr "Software"
 
-#: src/tracker/tracker-search.c:928
+#: src/tracker/tracker-search.c:956
 msgid "No software categories were found"
 msgstr "Non è stata trovata alcuna categoria software"
 
-#: src/tracker/tracker-search.c:932
+#: src/tracker/tracker-search.c:960
 msgid "Software Categories"
 msgstr "Categorie software"
 
-#: src/tracker/tracker-search.c:1132
+#: src/tracker/tracker-search.c:1180
 msgid "No results were found matching your query"
 msgstr "Nessun risultato trovato che corrisponda all'interrogazione"
 
-#: src/tracker/tracker-status.c:52
+#: src/tracker/tracker-status.c:53
 msgid "Show statistics for current index / data set"
 msgstr "Mostra statistiche sui dati/indice attuali"
 
-#: src/tracker/tracker-status.c:102
+#: src/tracker/tracker-status.c:103
 msgid "Could not get Tracker statistics"
 msgstr "Impossibile ottenere le statistiche di Tracker"
 
-#: src/tracker/tracker-status.c:109
+#: src/tracker/tracker-status.c:110
 msgid "No statistics available"
 msgstr "Nessuna statistica disponibile"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:150
+#: src/tracker/tracker-status.c:151
 msgid "Statistics:"
 msgstr "Statistiche:"
 
@@ -1243,63 +1240,63 @@ msgstr "Statistiche:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:153 src/tracker/tracker-tag.c:321
+#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
 #: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
-#: src/tracker/tracker-tag.c:953
+#: src/tracker/tracker-tag.c:954
 msgid "None"
 msgstr "Nessuno"
 
-#: src/tracker/tracker-status.c:222 src/tracker/tracker-status.c:247
+#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
 msgid "Could not get basic status for Tracker"
 msgstr "Impossibile ottenere lo stato di Tracker"
 
-#: src/tracker/tracker-status.c:401 src/tracker/tracker-status.c:546
+#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
 msgid "Message"
 msgstr "Messaggio"
 
-#: src/tracker/tracker-status.c:454
+#: src/tracker/tracker-status.c:382
 msgid "Currently indexed"
 msgstr "Già indicizzato"
 
-#: src/tracker/tracker-status.c:457 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d file"
 msgstr[1] "%d file"
 
-#: src/tracker/tracker-status.c:463
+#: src/tracker/tracker-status.c:391
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d cartella"
 msgstr[1] "%d cartelle"
 
-#: src/tracker/tracker-status.c:477
+#: src/tracker/tracker-status.c:405
 msgid "Remaining space on database partition"
 msgstr "Spazio residuo sulla partizione del database"
 
-#: src/tracker/tracker-status.c:489
+#: src/tracker/tracker-status.c:417
 msgid "Data is still being indexed"
 msgstr "Indicizzazione dati non completata"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:418
 #, c-format
 msgid "Estimated %s left"
 msgstr "Mancano %s"
 
-#: src/tracker/tracker-status.c:494
+#: src/tracker/tracker-status.c:422
 msgid "All data miners are idle, indexing complete"
 msgstr "Tutti gli estrattori sono inattivi, indicizzazione completata"
 
-#: src/tracker/tracker-status.c:501
+#: src/tracker/tracker-status.c:429
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] "%d errore registrato"
 msgstr[1] "%d errori registrati"
 
-#: src/tracker/tracker-status.c:562
+#: src/tracker/tracker-status.c:490
 msgid "No reports found"
 msgstr "Nessun resoconto trovato"
 
@@ -1353,6 +1350,13 @@ msgstr "FILE…"
 msgid "FILE [FILE…]"
 msgstr "FILE [FILE…]"
 
+#: src/tracker/tracker-tag.c:101
+msgid ""
+"NOTE: Limit was reached, there are more items in the database not listed here"
+msgstr ""
+"NOTA: è stato raggiunto il limite, ci sono altre voci nel database non "
+"elencate qui"
+
 #: src/tracker/tracker-tag.c:247
 msgid "Could not get file URNs"
 msgstr "Impossibile ottenere gli URN del file"
@@ -1378,11 +1382,11 @@ msgstr "Impossibile ottenere i file corrispondenti all'etichetta"
 msgid "No files were found matching ALL of those tags"
 msgstr "Nessun file trovato che corrisponda a tutte le etichette"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:928
 msgid "Could not get all tags"
 msgstr "Impossibile ottenere tutte le etichette"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:937
 msgid "No tags were found"
 msgstr "Non è stata trovata alcuna etichetta"
 
@@ -1436,34 +1440,34 @@ msgstr "Nessuno dei file aveva impostata questa etichetta"
 msgid "Could not remove tag"
 msgstr "Impossibile rimuovere l'etichetta"
 
-#: src/tracker/tracker-tag.c:890
+#: src/tracker/tracker-tag.c:891
 msgid "Tag was removed successfully"
 msgstr "Rimozione dell'etichetta riuscita"
 
-#: src/tracker/tracker-tag.c:894
+#: src/tracker/tracker-tag.c:895
 msgid "Untagged"
 msgstr "De-etichettato"
 
-#: src/tracker/tracker-tag.c:895
+#: src/tracker/tracker-tag.c:896
 msgid "File not indexed or already untagged"
 msgstr "File non indicizzato o etichetta già rimossa"
 
-#: src/tracker/tracker-tag.c:1093
+#: src/tracker/tracker-tag.c:1094
 msgid "The --list option is required for --show-files"
 msgstr "È richiesa l'opzione --list per --show-files"
 
-#: src/tracker/tracker-tag.c:1095
+#: src/tracker/tracker-tag.c:1096
 msgid ""
 "The --and-operator option can only be used with --list and tag label "
 "arguments"
 msgstr ""
 "L'opzione --and-operator può essere usata solo con --list e nomi di etichette"
 
-#: src/tracker/tracker-tag.c:1097
+#: src/tracker/tracker-tag.c:1098
 msgid "Add and delete actions can not be used together"
 msgstr "Le azioni «aggiungi» ed «elimina» non possono essere usate assieme"
 
-#: src/tracker/tracker-tag.c:1099
+#: src/tracker/tracker-tag.c:1100
 msgid "The --description option can only be used with --add"
 msgstr "L'opzione --description può essere usata solo con --add"
 

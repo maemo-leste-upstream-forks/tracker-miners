@@ -1621,7 +1621,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerResource *metadata;
 	TrackerConfig *config;
 	GsfInfile *infile = NULL;
-	gchar *content = NULL, *uri;
+	gchar *content = NULL, *uri, *resource_uri;
 	gboolean is_encrypted = FALSE;
 	const gchar *mime_used;
 	gsize max_bytes;
@@ -1661,9 +1661,11 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:PaginatedTextDocument");
+	g_free (resource_uri);
 
 	/* Extracting summary */
 	extract_summary (metadata, infile, uri);

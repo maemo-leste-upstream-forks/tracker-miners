@@ -88,6 +88,9 @@ gboolean      tracker_file_notifier_start        (TrackerFileNotifier     *notif
 void          tracker_file_notifier_stop         (TrackerFileNotifier     *notifier);
 gboolean      tracker_file_notifier_is_active    (TrackerFileNotifier     *notifier);
 
+void          tracker_file_notifier_set_high_water (TrackerFileNotifier *notifier,
+                                                    gboolean             high_water);
+
 G_END_DECLS
 
 #endif /* __TRACKER_FILE_NOTIFIER_H__ */

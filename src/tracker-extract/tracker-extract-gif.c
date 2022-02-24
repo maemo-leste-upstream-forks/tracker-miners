@@ -119,7 +119,7 @@ read_metadata (GifFileType          *gifFile,
 	MergeData md = { 0 };
 	GifData   gd = { 0 };
 	TrackerXmpData *xd = NULL;
-	gchar *sidecar = NULL;
+	gchar *sidecar = NULL, *resource_uri;
 
 	do {
 		GifByteType *ExtData;
@@ -253,9 +253,11 @@ read_metadata (GifFileType          *gifFile,
 	md.date = tracker_coalesce_strip (2, xd->date, xd->time_original);
 	md.artist = tracker_coalesce_strip (2, xd->artist, xd->contributor);
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (file, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:Image");
 	tracker_resource_add_uri (metadata, "rdf:type", "nmm:Photo");
+	g_free (resource_uri);
 
 	if (sidecar) {
 		TrackerResource *sidecar_resource;

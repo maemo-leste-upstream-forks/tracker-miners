@@ -13,6 +13,7 @@ common_sources = [
     'tracker-miner-manager.c',
     'tracker-dbus.c',
     'tracker-process.c',
+    'tracker-cli-utils.c',
 ]
 
 foreach m: modules

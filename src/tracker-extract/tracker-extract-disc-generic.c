@@ -104,11 +104,13 @@ build_basic_resource (GFile *cue,
                       GFile *image)
 {
 	TrackerResource *metadata, *child;
-	gchar *uri;
+	gchar *uri, *resource_uri;
 
-	metadata = tracker_resource_new (NULL);
+	resource_uri = tracker_file_get_content_identifier (cue, NULL, NULL);
+	metadata = tracker_resource_new (resource_uri);
 	tracker_resource_add_uri (metadata, "rdf:type", "nfo:GameImage");
 	tracker_resource_set_string (metadata, "nie:mimeType", "application/x-cue");
+	g_free (resource_uri);
 
 	uri = g_file_get_uri (cue);
 	tracker_resource_add_uri (metadata, "nie:isStoredAs", uri);
@@ -154,7 +156,8 @@ ps_disc_read_directory (const guchar *data,
                         PsDiscTime   *time /* out */)
 {
 	guint8 *buf;
-	gsize extent, offset;
+	gint extent;
+	gsize offset;
 
 	extent = PS_DISC_TIME_TO_EXTENT (time);
 	if (extent < 0)
@@ -234,7 +237,7 @@ ps_disc_lookup_executable_filename (const gchar *content,
 		ptr++;
 
 	strncpy (exe_buffer, ptr, buffer_len);
-	exe_buffer[buffer_len] = '\0';
+	exe_buffer[buffer_len - 1] = '\0';
 
 	/* Keep only the first line. */
 	for (i = 0; i < buffer_len; i++) {
@@ -257,6 +260,7 @@ check_is_playstation_image (const guchar *data,
 	guint8 *buf;
 	gchar *ptr;
 	PsDiscMode1Frame frame;
+	gboolean is_ps = FALSE;
 
 	if (!ps_disc_read_frame (data, length, &time, &frame))
 		return FALSE;
@@ -274,16 +278,18 @@ check_is_playstation_image (const guchar *data,
 		g_debug ("SYSTEM.CNF found, looking for executable");
 
 		if (!ps_disc_read_frame (data, length, &time, &frame))
-			return FALSE;
+			goto out;
 
 		/* Look of "BOOT = cdrom:"  */
 		if (ps_disc_lookup_executable_filename ((gchar *) frame.content,
 		                                        "BOOT = cdrom:",
 		                                        G_N_ELEMENTS (exe_buffer),
 		                                        exe_buffer)) {
-			g_debug ("Executable '%s' found", exe_buffer);
-			if (ps_disc_get_file (buf, 4096, exe_buffer, NULL))
-				return TRUE;
+			if (ps_disc_get_file (buf, 4096, exe_buffer, NULL)) {
+				g_debug ("Executable '%s' found", exe_buffer);
+				is_ps = TRUE;
+				goto out;
+			}
 		}
 
 		/* Look of "cdrom:" */
@@ -293,22 +299,30 @@ check_is_playstation_image (const guchar *data,
 		                                        "cdrom:",
 		                                        G_N_ELEMENTS (exe_buffer),
 		                                        exe_buffer)) {
-			g_debug ("Executable '%s' found", exe_buffer);
-			if (ps_disc_get_file (buf, 4096, exe_buffer, NULL))
-				return TRUE;
+			if (ps_disc_get_file (buf, 4096, exe_buffer, NULL)) {
+				g_debug ("Executable '%s' found", exe_buffer);
+				is_ps = TRUE;
+				goto out;
+			}
 		}
 
-		return FALSE;
+		goto out;
 	}
 
 	/* Look for the default PSX.EXE executable. */
 	if (ps_disc_get_file (buf, 4096, "PSX.EXE;1", NULL)) {
 		g_debug ("PSX.EXE found");
-		return TRUE;
+		is_ps = TRUE;
+		goto out;
 	}
 
 	/* SYSTEM.CNF and PSX.EXE not found. */
-	return FALSE;
+	is_ps = FALSE;
+
+ out:
+	g_free (buf);
+
+	return is_ps;
 }
 
 static GMappedFile *
