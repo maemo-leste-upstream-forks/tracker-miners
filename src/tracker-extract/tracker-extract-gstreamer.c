@@ -1244,7 +1244,12 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 	extractor->duration = gst_discoverer_info_get_duration (info) / GST_SECOND;
 
 	/* Retrieve global tags */
+#if defined(HAVE_GSTREAMER_1_20)
+	GstDiscovererStreamInfo *sinfo = gst_discoverer_info_get_stream_info (info);
+	discoverer_tags = gst_discoverer_container_info_get_tags ((GstDiscovererContainerInfo *)sinfo);
+#else
 	discoverer_tags = gst_discoverer_info_get_tags (info);
+#endif
 
 	if (discoverer_tags) {
 		gst_tag_list_insert (extractor->tagcache,
@@ -1256,7 +1261,6 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 	extractor->streams = gst_discoverer_info_get_stream_list (info);
 	for (l = extractor->streams; l; l = g_list_next (l)) {
 		GstDiscovererStreamInfo *stream = l->data;
-		const GstTagList *stream_tags;
 
 		if (G_TYPE_CHECK_INSTANCE_TYPE (stream, GST_TYPE_DISCOVERER_AUDIO_INFO)) {
 			GstDiscovererAudioInfo *audio = (GstDiscovererAudioInfo*)stream;
@@ -1285,17 +1289,30 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 		} else {
 			/* Unknown type - do nothing */
 		}
+	}
 
-		stream_tags = gst_discoverer_stream_info_get_tags (stream);
+	for (l = extractor->streams; l; l = g_list_next (l)) {
+		GstDiscovererStreamInfo *stream = l->data;
+		GstTagList *stream_tags;
+
+		stream_tags = gst_tag_list_copy (gst_discoverer_stream_info_get_tags (stream));
+		if (extractor->has_video &&
+		    gst_tag_list_get_tag_size (extractor->tagcache, "title") > 0)
+			gst_tag_list_remove_tag (stream_tags, "title");
 
 		if (stream_tags) {
 			gst_tag_list_insert (extractor->tagcache,
 					     stream_tags,
 					     GST_TAG_MERGE_APPEND);
 		}
+
+		gst_tag_list_unref (stream_tags);
 	}
 
 	gst_discoverer_info_unref (info);
+#if defined(HAVE_GSTREAMER_1_20)
+	gst_discoverer_stream_info_unref (sinfo);
+#endif
 
 	return TRUE;
 }

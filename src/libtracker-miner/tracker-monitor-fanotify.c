@@ -222,6 +222,8 @@ cache_event (TrackerMonitorFanotify *monitor,
 			return;
 		if (evtype == EVENT_UPDATE && prev_event->type == EVENT_UPDATE)
 			return;
+		if (evtype == EVENT_DELETE && prev_event->type == EVENT_DELETE)
+			return;
 
 		/* Otherwise flush the event */
 		flush_event (monitor, file);
@@ -266,7 +268,9 @@ handle_monitor_events (TrackerMonitorFanotify *monitor,
 	}
 
 	if (mask & (FAN_DELETE | FAN_DELETE_SELF)) {
-		emit_event (monitor, EVENT_DELETE, file, NULL, is_directory);
+		cache_event (monitor, EVENT_DELETE, file, is_directory);
+		if (mask & FAN_DELETE)
+			flush_event (monitor, file);
 	}
 
 	if (mask & FAN_CLOSE_WRITE) {

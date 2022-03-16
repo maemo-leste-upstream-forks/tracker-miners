@@ -1,5 +1,7 @@
 python = find_program('python3')
 
+subdir('mockvolumemonitor')
+
 # Configure functional tests to run completely from source tree.
 testconf = configuration_data()
 
@@ -7,6 +9,7 @@ config_json_full_path = meson.current_build_dir() / 'configuration.json'
 dconf_profile_full_path = meson.current_source_dir() / 'trackertest'
 tracker_extractors_dir = meson.current_build_dir() / '..' / '..' / 'src' / 'tracker-extract'
 
+testconf.set('MOCK_VOLUME_MONITOR_DIR', meson.current_build_dir() / 'mockvolumemonitor')
 testconf.set('TEST_CLI_DIR', tracker_uninstalled_cli_dir)
 testconf.set('TEST_CLI_SUBCOMMANDS_DIR', tracker_uninstalled_cli_subcommands_dir)
 testconf.set('TEST_DBUS_DAEMON_CONFIG_FILE', build_root / 'tests' / 'test-bus.conf')
@@ -117,6 +120,7 @@ endif
 
 functional_tests = [
   'miner-basic',
+  'miner-removable-media',
   'miner-resource-removal',
   'fts-basic',
   'fts-file-operations',
@@ -143,6 +147,9 @@ detect_h264_codec = join_paths(meson.current_source_dir(), 'detect-h264-codec.sh
 detect_h264_codec_result = run_command(detect_h264_codec)
 
 if detect_h264_codec_result.returncode() == 0
+  if gstreamer.version() >= '1.20.0'
+    extractor_tests += 'video/mkv-basic'
+  endif
   extractor_tests += [
     'video/mov-basic',
     'video/mp4-basic',

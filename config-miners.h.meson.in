@@ -32,6 +32,9 @@
 /* Define if we have GStreamer */
 #mesondefine HAVE_GSTREAMER
 
+/* Define if we have Gstreamer version 1.20.0 or up */
+#mesondefine HAVE_GSTREAMER_1_20
+
 /* Define if we have HAL */
 #mesondefine HAVE_HAL
 
