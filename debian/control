@@ -33,7 +33,7 @@ Build-Depends: debhelper-compat (= 13),
                libupower-glib-dev (>= 0.9.0),
                libicu-dev (>= 4.8.1.1),
                libiptcdata0-dev,
-               tracker (>= 2.2.0),
+               tracker (>= 3.2.0),
                libgif-dev,
                libgxps-dev,
                libosinfo-1.0-dev (>= 0.2.9),
@@ -63,7 +63,7 @@ Package: tracker-extract
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         tracker (>= 3.1.1)
+         tracker (>= 3.2.0)
 Breaks: tracker (<< 1.99.2)
 Replaces: tracker (<< 1.99.2)
 Description: metadata database, indexer and search tool - metadata extractors
