@@ -1,3 +1,12 @@
+NEW in 3.3.0.rc - 2022-03-06
+============================
+  * Ignore subtrack titles for videos
+  * OpenBSD improvements to `tracker3 reset/daemon` CLI commands
+  * Improved test infrastructure around removable device support
+  * Fixed FANotify monitor to handle separate FAN_DELETE[_SELF]
+    events
+  * Fixed generation of man pages with newer asciidoc
+
 NEW in 3.3.0.beta - 2022-02-14
 ==============================
   * Changed to skip mountpoints found during recursive indexing.

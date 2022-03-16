@@ -103,9 +103,13 @@ class TrackerMinerTest(ut.TestCase):
         }
         return settings
 
-    def setUp(self):
+    def environment(self):
         extra_env = cfg.test_environment(self.workdir)
         extra_env['LANG'] = 'en_GB.utf8'
+        return extra_env
+
+    def setUp(self):
+        extra_env = self.environment()
 
         self.sandbox = trackertestutils.helpers.TrackerDBusSandbox(
             session_bus_config_file=cfg.TEST_DBUS_DAEMON_CONFIG_FILE, extra_env=extra_env)
@@ -150,7 +154,10 @@ class TrackerMinerTest(ut.TestCase):
             self.fail("Resource <%s> should not exist" % urn)
 
     def await_document_inserted(self, path, content=None):
-        """Wraps await_insert() context manager."""
+        """Wraps await_insert() context manager.
+
+        Use this if you are triggering insertion inside the context manager"""
+
         if isinstance(path, pathlib.Path):
             url = path.as_uri()
         else:
@@ -166,6 +173,27 @@ class TrackerMinerTest(ut.TestCase):
             expected += [f'nie:plainTextContent "{content_escaped}"']
 
         return self.tracker.await_insert(DOCUMENTS_GRAPH, '; '.join(expected), timeout=cfg.AWAIT_TIMEOUT)
+
+    def ensure_document_inserted(self, path, content=None):
+        """Block until document is inserted.
+
+        Use this if insertion may already have happened."""
+
+        if isinstance(path, pathlib.Path):
+            url = path.as_uri()
+        else:
+            url = self.uri(path)
+
+        expected = [
+            'a nfo:Document',
+            f'nie:isStoredAs <{url}>',
+        ]
+
+        if content:
+            content_escaped = Tracker.sparql_escape_string(content)
+            expected += [f'nie:plainTextContent "{content_escaped}"']
+
+        return self.tracker.ensure_resource(DOCUMENTS_GRAPH, ';'.join(expected), timeout=cfg.AWAIT_TIMEOUT)
 
     def await_insert_dir(self, path):
         if isinstance(path, pathlib.Path):
@@ -263,6 +291,62 @@ class TrackerMinerFTSTest (TrackerMinerTest):
         result = self.tracker.query(query)
         assert len(result) == 1
         return int(result[0][0])
+
+
+class TrackerMinerRemovableMediaTest(TrackerMinerTest):
+    """
+    Fixture to test removable device handling in tracker-miner-fs.
+    """
+
+    MOCK_VOLUME_MONITOR_DBUS_NAME = 'org.freedesktop.Tracker3.MockVolumeMonitor'
+    MOCK_VOLUME_MONITOR_OBJECT_PATH = '/org/freedesktop/Tracker3/MockVolumeMonitor'
+    MOCK_VOLUME_MONITOR_IFACE = 'org.freedesktop.Tracker3.MockVolumeMonitor'
+
+    def config(self):
+        settings = super(TrackerMinerRemovableMediaTest, self).config()
+        settings['org.freedesktop.Tracker3.Miner.Files']['index-removable-devices'] = GLib.Variant.new_boolean(True)
+        return settings
+
+    def environment(self):
+        extra_env = super(TrackerMinerRemovableMediaTest, self).environment()
+        extra_env['GIO_USE_VOLUME_MONITOR'] = 'mockvolumemonitor'
+        return extra_env
+
+    def add_removable_device(self, path):
+        conn = self.sandbox.get_session_bus_connection()
+        timeout = cfg.AWAIT_TIMEOUT * 1000
+        cancellable = None
+        conn.call_sync(self.MOCK_VOLUME_MONITOR_DBUS_NAME,
+                       self.MOCK_VOLUME_MONITOR_OBJECT_PATH,
+                       self.MOCK_VOLUME_MONITOR_IFACE,
+                       'AddMount',
+                       GLib.Variant('(s)', [self.uri(path)]),
+                       None, Gio.DBusCallFlags.NONE,
+                       timeout, cancellable)
+
+    def remove_removable_device(self, path):
+        conn = self.sandbox.get_session_bus_connection()
+        timeout = cfg.AWAIT_TIMEOUT * 1000
+        cancellable = None
+        conn.call_sync(self.MOCK_VOLUME_MONITOR_DBUS_NAME,
+                       self.MOCK_VOLUME_MONITOR_OBJECT_PATH,
+                       self.MOCK_VOLUME_MONITOR_IFACE,
+                       'RemoveMount',
+                       GLib.Variant('(s)', [self.uri(path)]),
+                       None, Gio.DBusCallFlags.NONE,
+                       timeout, cancellable)
+
+    def await_device_removed(self, device_uri):
+        result = self.tracker.query("""
+            SELECT tracker:id(?u) {
+                <%s> a nfo:FileDataObject ;
+                    nie:interpretedAs/nie:rootElementOf ?u .
+            }""" % device_uri)
+        resource_id = int(result[0][0])
+        return self.tracker.await_property_update(
+            FILESYSTEM_GRAPH, resource_id,
+            "tracker:available true",
+            "tracker:available false")
 
 
 def get_tracker_extract_output(extra_env, filename, output_format='json-ld', mime_type=None):

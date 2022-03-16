@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.3.0.beta',
+        version: '3.3.0.rc',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -106,8 +106,7 @@ if have_tracker_miner_rss
 endif
 
 if get_option('man')
-  asciidoc = find_program('asciidoc')
-  xsltproc = find_program('xsltproc')
+  a2x = find_program('a2x')
 endif
 
 sha256sum = find_program('sha256sum')
@@ -369,6 +368,7 @@ conf.set('GIO_SUPPORTS_CREATION_TIME', glib.version().version_compare('>=2.70.0'
 conf.set('HAVE_ENCA', charset_library_name == 'enca')
 conf.set('HAVE_EXEMPI', exempi.found())
 conf.set('HAVE_GSTREAMER', generic_media_handler_name == 'gstreamer')
+conf.set('HAVE_GSTREAMER_1_20', gstreamer.version() >= '1.20.0')
 conf.set('GSTREAMER_BACKEND_DISCOVERER', gstreamer_backend_name == 'Discoverer')
 conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DLNA')
 conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
