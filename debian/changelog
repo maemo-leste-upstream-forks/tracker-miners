@@ -1,8 +1,11 @@
-tracker-miners (3.3.0~rc-1) UNRELEASED; urgency=medium
+tracker-miners (3.3.0~rc-1) experimental; urgency=medium
 
   * New upstream release
+  * debian/control.in: Build-Depend on asciidoc-base instead of asciidoc
+  * debian/control.in: Bump minimum gstreamer to 1.20.0
+  * Cherry-pick patch to fix sandbox crash issue (LP: #1962585)
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 16 Mar 2022 11:42:57 -0400
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 16 Mar 2022 11:58:22 -0400
 
 tracker-miners (3.3.0~beta-1) experimental; urgency=medium
 
