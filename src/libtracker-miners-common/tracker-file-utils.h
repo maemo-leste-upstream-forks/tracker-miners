@@ -44,6 +44,8 @@ gboolean tracker_file_is_locked                             (GFile       *file);
 gboolean tracker_file_is_hidden                             (GFile       *file);
 gint     tracker_file_cmp                                   (GFile       *file_a,
                                                              GFile       *file_b);
+
+void     tracker_content_identifier_cache_init              (void);
 gchar *  tracker_file_get_content_identifier                (GFile       *file,
                                                              GFileInfo   *info,
                                                              const gchar *suffix);

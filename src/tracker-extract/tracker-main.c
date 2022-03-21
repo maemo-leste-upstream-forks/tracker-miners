@@ -368,6 +368,8 @@ main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	tracker_content_identifier_cache_init ();
+
 	cache_dir = get_cache_dir (domain_ontology);
 	tracker_error_report_init (cache_dir);
 	g_object_unref (cache_dir);

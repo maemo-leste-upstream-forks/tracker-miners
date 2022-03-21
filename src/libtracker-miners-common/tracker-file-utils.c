@@ -852,6 +852,15 @@ tracker_unix_mount_cache_lookup_filesystem_id (GFile *file)
 	return id;
 }
 
+void
+tracker_content_identifier_cache_init (void)
+{
+	TrackerUnixMountCache *cache;
+
+	cache = tracker_unix_mount_cache_get ();
+	g_assert (cache != NULL);
+}
+
 gchar *
 tracker_file_get_content_identifier (GFile       *file,
                                      GFileInfo   *info,
