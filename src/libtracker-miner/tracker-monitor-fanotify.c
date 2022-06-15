@@ -107,6 +107,7 @@ enum {
 static GInitableIface *initable_parent_iface = NULL;
 
 static void tracker_monitor_fanotify_initable_iface_init (GInitableIface *iface);
+static void monitored_file_free (MonitoredFile *data);
 
 G_DEFINE_TYPE_WITH_CODE (TrackerMonitorFanotify, tracker_monitor_fanotify,
                          TRACKER_TYPE_MONITOR_GLIB,
@@ -559,7 +560,7 @@ tracker_monitor_fanotify_get_property (GObject      *object,
 	}
 }
 
-static void
+static gboolean
 add_mark (TrackerMonitorFanotify *monitor,
           GFile                  *file)
 {
@@ -573,9 +574,11 @@ add_mark (TrackerMonitorFanotify *monitor,
 	                   AT_FDCWD,
 	                   path) < 0) {
 		g_warning ("Could not add mark for path '%s': %m", path);
+		return FALSE;
 	}
 
 	g_free (path);
+	return TRUE;
 }
 
 static void
@@ -606,6 +609,7 @@ monitored_file_new (TrackerMonitorFanotify *monitor,
 	gchar *path;
 	struct statfs buf;
 	int mntid;
+	gboolean mark_added = FALSE;
 
 	path = g_file_get_path (file);
 
@@ -647,8 +651,15 @@ retry:
 	data->file = g_object_ref (file);
 	data->monitor = monitor;
 	memcpy (&data->handle.fsid, &buf.f_fsid, sizeof(fsid_t));
-	add_mark (monitor, file);
+	mark_added = add_mark (monitor, file);
 	g_free (path);
+
+	if (!mark_added) {
+		g_object_unref (data->file);
+		g_slice_free1 (sizeof (MonitoredFile) +
+			       data->handle.handle.handle_bytes, data);
+		return NULL;
+	}
 
 	data->handle_bytes = create_bytes_for_handle (&data->handle);
 
