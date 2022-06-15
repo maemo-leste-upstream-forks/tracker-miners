@@ -131,7 +131,6 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 	TrackerResource *resource = NULL, *folder_resource = NULL, *graph_file = NULL;
 	const gchar *mime_type, *graph;
 	const gchar *parent_urn;
-	gchar *delete_properties_sparql = NULL;
 	GFile *parent;
 	gchar *uri;
 	gboolean is_directory;
@@ -153,29 +152,6 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 	modified = g_file_info_get_modification_date_time (file_info);
 	if (!modified)
 		modified = g_date_time_new_from_unix_utc (0);
-
-	if (!create && !is_directory) {
-		/* In case of update: delete all information elements for the given data object
-		 * and delete extractorHash, so we ensure the file is extracted again.
-		 */
-		delete_properties_sparql =
-			g_strdup_printf ("DELETE {"
-			                 "  GRAPH ?g {"
-			                 "    <%s> nie:interpretedAs ?ie . "
-			                 "    ?ie a rdfs:Resource . "
-			                 "  }"
-			                 "} WHERE {"
-			                 "  GRAPH ?g {"
-			                 "    <%s> nie:interpretedAs ?ie ."
-			                 "  }"
-			                 "}; "
-					 "DELETE WHERE {"
-					 "  GRAPH " DEFAULT_GRAPH " {"
-					 "    <%s> tracker:extractorHash ?h ."
-					 "  }"
-					 "}",
-			                 uri, uri, uri);
-	}
 
 	resource = tracker_resource_new (uri);
 
@@ -268,8 +244,29 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 		miner_files_add_to_datasource (TRACKER_MINER_FILES (fs), file, graph_file, NULL);
 	}
 
-	if (delete_properties_sparql)
+	if (graph && !is_directory) {
+		gchar *delete_properties_sparql = NULL;
+
+		/* In case of update: delete all information elements for the given data object
+		 * and delete extractorHash, so we ensure the file is extracted again.
+		 */
+		delete_properties_sparql =
+			g_strdup_printf ("DELETE WHERE {"
+			                 "  GRAPH ?g {"
+			                 "    <%s> nie:interpretedAs ?ie . "
+			                 "    ?ie a rdfs:Resource . "
+			                 "  }"
+			                 "}; "
+					 "DELETE WHERE {"
+					 "  GRAPH " DEFAULT_GRAPH " {"
+					 "    <%s> tracker:extractorHash ?h ."
+					 "  }"
+					 "}",
+			                 uri, uri);
+
 		tracker_sparql_buffer_push_sparql (buffer, file, delete_properties_sparql);
+		g_free (delete_properties_sparql);
+	}
 
 	tracker_sparql_buffer_push (buffer, file, DEFAULT_GRAPH, resource);
 
@@ -282,7 +279,6 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 	g_object_unref (resource);
 	g_clear_object (&folder_resource);
 	g_clear_object (&graph_file);
-	g_free (delete_properties_sparql);
 	g_free (uri);
 }
 

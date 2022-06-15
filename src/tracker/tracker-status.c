@@ -60,6 +60,9 @@ static GOptionEntry entries[] = {
 	{ NULL }
 };
 
+static int show_errors (gchar    **terms,
+                        gboolean   piped);
+
 static TrackerSparqlCursor *
 statistics_query (TrackerSparqlConnection  *connection,
 		  GError                  **error)
@@ -337,13 +340,19 @@ print_errors (GList *keyfiles)
 	for (l = keyfiles; l; l = l->next) {
 		GKeyFile *keyfile = l->data;
 		gchar *uri, *message, *path, *str1, *str2;
-		GFile *file;
+		g_autoptr(GFile) file = NULL;
 
 		uri = g_key_file_get_string (keyfile, GROUP, KEY_URI, NULL);
 		file = g_file_new_for_uri (uri);
 		path = g_file_get_path (file);
+		g_free (uri);
+
+		if (!g_file_query_exists (file, NULL)) {
+			tracker_error_report_delete (file);
+			continue;
+		}
+
 		message = g_key_file_get_string (keyfile, GROUP, KEY_MESSAGE, NULL);
-		g_object_unref (file);
 
 		str1 = tracker_term_ellipsize (path, col_len[0], TRACKER_ELLIPSIZE_START);
 		str2 = tracker_term_ellipsize (message, col_len[1], TRACKER_ELLIPSIZE_END);
@@ -351,7 +360,6 @@ print_errors (GList *keyfiles)
 		g_print ("%-*s %-*s\n",
 		         col_len[0], str1,
 		         col_len[1], str2);
-		g_free (uri);
 		g_free (path);
 		g_free (message);
 		g_free (str1);
@@ -371,8 +379,9 @@ get_no_args (void)
 	gint remaining_time;
 	gint files, folders;
 	GList *keyfiles;
+	gboolean use_pager;
 
-	tracker_term_pipe_to_pager ();
+	use_pager = tracker_term_pipe_to_pager ();
 
 	/* How many files / folders do we have? */
 	if (get_file_and_folder_count (&files, &folders) != 0) {
@@ -432,7 +441,14 @@ get_no_args (void)
 		         g_list_length (keyfiles));
 
 		g_print ("\n\n");
-		print_errors (keyfiles);
+
+		if (use_pager) {
+			print_errors (keyfiles);
+		} else {
+			gchar *all[2] = { "", NULL };
+			show_errors ((GStrv) all, TRUE);
+		}
+
 		g_list_free_full (keyfiles, (GDestroyNotify) g_key_file_unref);
 	}
 
@@ -442,20 +458,19 @@ get_no_args (void)
 }
 
 static int
-show_errors (gchar **terms)
+show_errors (gchar    **terms,
+             gboolean   piped)
 {
 	GList *keyfiles, *l;
 	GKeyFile *keyfile;
 	guint i;
 	gboolean found = FALSE;
 
-	tracker_term_pipe_to_pager ();
-
 	keyfiles = tracker_cli_get_error_keyfiles ();
 
 	for (i = 0; terms[i] != NULL; i++) {
 		for (l = keyfiles; l; l = l->next) {
-			GFile *file;
+			g_autoptr(GFile) file = NULL;
 			gchar *uri, *path;
 
 			keyfile = l->data;
@@ -463,33 +478,51 @@ show_errors (gchar **terms)
 			file = g_file_new_for_uri (uri);
 			path = g_file_get_path (file);
 
+			if (!g_file_query_exists (file, NULL)) {
+				tracker_error_report_delete (file);
+				continue;
+			}
+
 			if (strstr (path, terms[i])) {
 				gchar *sparql = g_key_file_get_string (keyfile, GROUP, KEY_SPARQL, NULL);
 				gchar *message = g_key_file_get_string (keyfile, GROUP, KEY_MESSAGE, NULL);
 
 				found = TRUE;
-				g_print (BOLD_BEGIN "URI:" BOLD_END " %s\n", uri);
+				g_print (!piped ?
+				         BOLD_BEGIN "URI:" BOLD_END " %s\n" :
+				         "URI: %s\n", uri);
 
-				if (message)
-					g_print (BOLD_BEGIN "%s:" BOLD_END " %s\n", _("Message"), message);
-				if (sparql)
-					g_print (BOLD_BEGIN "SPARQL:" BOLD_END " %s\n", sparql);
+				if (message) {
+					g_print (!piped ?
+					         BOLD_BEGIN "%s:" BOLD_END " %s\n" :
+					         "%s: %s\n",
+					         _("Message"), message);
+				}
+
+				if (sparql) {
+					g_print (!piped ?
+					         BOLD_BEGIN "SPARQL:" BOLD_END " %s\n" :
+					         "SPARQL: %s\n",
+					         sparql);
+				}
+
 				g_print ("\n");
 
 				g_free (sparql);
 				g_free (message);
 			}
 
-			g_object_unref (file);
 			g_free (uri);
 			g_free (path);
 		}
 	}
 
-	if (!found)
-		g_print (BOLD_BEGIN "%s" BOLD_END "\n", _("No reports found"));
-
-	tracker_term_pager_close ();
+	if (!found) {
+		g_print (!piped ?
+		         BOLD_BEGIN "%s" BOLD_END "\n" :
+		         "%s\n",
+		         _("No reports found"));
+	}
 
 	return EXIT_SUCCESS;
 }
@@ -536,8 +569,15 @@ main (int argc, const char **argv)
 		return status_run ();
 	}
 
-	if (terms)
-		return show_errors (terms);
+	if (terms) {
+		gint result;
+
+		tracker_term_pipe_to_pager ();
+		result = show_errors (terms, FALSE);
+		tracker_term_pager_close ();
+
+		return result;
+	}
 
 	return status_run_default ();
 }

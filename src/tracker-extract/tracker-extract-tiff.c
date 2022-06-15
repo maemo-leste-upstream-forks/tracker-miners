@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include <glib/gstdio.h>
 
@@ -313,15 +314,28 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	uri = g_file_get_uri (file);
 
 #ifdef HAVE_LIBIPTCDATA
-	if (TIFFGetField (image, 
-	                  TIFFTAG_RICHTIFFIPTC, 
-	                  &iptc_size, 
+	if (TIFFGetField (image,
+	                  TIFFTAG_RICHTIFFIPTC,
+	                  &iptc_size,
 	                  &iptc_offset)) {
-		if (TIFFIsByteSwapped(image) != 0) {
-			TIFFSwabArrayOfLong((uint32*) iptc_offset, 
-			                    (unsigned long) iptc_size);
+		const TIFFField *field;
+		TIFFDataType field_type;
+
+		field = TIFFFieldWithTag (image, TIFFTAG_RICHTIFFIPTC);
+		field_type = TIFFFieldDataType (field);
+
+		if (field_type == TIFF_LONG || field_type == TIFF_UNDEFINED) {
+			if (field_type == TIFF_LONG) {
+				if (TIFFIsByteSwapped (image) != 0) {
+					TIFFSwabArrayOfLong ((uint32_t *) iptc_offset,
+					                     (unsigned long) iptc_size);
+				}
+
+				iptc_size = 4 * iptc_size;
+			}
+
+			id = tracker_iptc_new (iptc_offset, iptc_size, uri);
 		}
-		id = tracker_iptc_new (iptc_offset, 4 * iptc_size, uri);
 	}
 #endif /* HAVE_LIBIPTCDATA */
 
