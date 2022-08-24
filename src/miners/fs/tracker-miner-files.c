@@ -2141,6 +2141,36 @@ miner_files_move_file (TrackerMinerFS      *fs,
 		}
 	}
 
+#define FS_PROPERTIES \
+	"  nfo:fileSize ?fileSize ;" \
+	"  nfo:fileLastModified ?fileLastModified ;" \
+	"  nfo:fileLastAccessed ?fileLastAccessed ;" \
+	"  nfo:fileCreated ?fileCreated ;" \
+	"  nie:dataSource ?dataSource ;" \
+	"  nie:interpretedAs ?interpretedAs ;" \
+	"  tracker:extractorHash ?extractorHash ."
+#define FS_WHERE \
+	"  ?f a nfo:FileDataObject ;" \
+	"    nfo:fileSize ?fileSize ;" \
+	"    nfo:fileLastModified ?fileLastModified ;" \
+	"    nfo:fileLastAccessed ?fileLastAccessed ." \
+	"  OPTIONAL { ?f nfo:fileCreated ?fileCreated } ." \
+	"  OPTIONAL { ?f nie:dataSource ?dataSource } ." \
+	"  OPTIONAL { ?f nie:interpretedAs ?interpretedAs } ." \
+	"  OPTIONAL { ?f tracker:extractorHash ?extractorHash } ."
+
+#define GRAPH_PROPERTIES \
+	"  nfo:fileSize ?fileSize ;" \
+	"  nfo:fileLastModified ?fileLastModified ;" \
+	"  nie:dataSource ?dataSource ;" \
+	"  nie:interpretedAs ?interpretedAs ."
+#define GRAPH_WHERE \
+	"  ?f a nfo:FileDataObject ; " \
+	"    nfo:fileSize ?fileSize ;" \
+	"    nfo:fileLastModified ?fileLastModified ;" \
+	"  OPTIONAL { ?f nie:dataSource ?dataSource } ." \
+	"  OPTIONAL { ?f nie:interpretedAs ?interpretedAs } ."
+
 	/* Update nie:isStoredAs in the nie:InformationElement */
 	g_string_append_printf (sparql,
 	                        "DELETE { "
@@ -2167,10 +2197,10 @@ miner_files_move_file (TrackerMinerFS      *fs,
 	                        "       nfo:fileName \"%s\" ; "
 	                        "       nie:url \"%s\" "
 	                        "       %s ; "
-	                        "       ?p ?o . "
+	                        FS_PROPERTIES
 	                        "} WHERE { "
-	                        "  <%s> ?p ?o ; "
-	                        "  FILTER (?p != nfo:fileName && ?p != nie:url && ?p != nfo:belongsToContainer) . "
+	                        "  BIND (<%s> AS ?f) ."
+	                        FS_WHERE
 	                        "} ",
 	                        source_uri,
 	                        uri, display_name, uri, container_clause,
@@ -2184,14 +2214,14 @@ miner_files_move_file (TrackerMinerFS      *fs,
 	                        "} INSERT {"
 	                        "  GRAPH ?g {"
 	                        "    <%s> a nfo:FileDataObject ; "
-	                        "         nfo:fileName \"%s\" ; "
-	                        "         ?p ?o "
+	                        "      nfo:fileName \"%s\" ; "
+	                        GRAPH_PROPERTIES
 	                        "  }"
 	                        "} WHERE {"
 	                        "  GRAPH ?g {"
-	                        "    <%s> ?p ?o "
+	                        "    BIND (<%s> AS ?f) ."
+	                        GRAPH_WHERE
 	                        "  }"
-	                        "  FILTER (?p != nfo:fileName) . "
 	                        "}",
 	                        source_uri, uri, display_name, source_uri);
 	g_free (container_clause);
@@ -2224,13 +2254,15 @@ miner_files_move_file (TrackerMinerFS      *fs,
 		                        "} INSERT { "
 		                        "  ?new_url a nfo:FileDataObject ; "
 		                        "       nie:url ?new_url ; "
-		                        "       ?p ?o . "
+					"       nfo:belongsToContainer ?belongsToContainer ;"
+					"       nfo:fileName ?fileName ;"
+		                        FS_PROPERTIES
 		                        "} WHERE { "
-		                        "  ?f a nfo:FileDataObject ;"
-		                        "     ?p ?o . "
+		                        FS_WHERE
+					"  ?f nfo:fileName ?fileName ;"
+					"  OPTIONAL { ?f nfo:belongsToContainer ?belongsToContainer } ."
 		                        "  BIND (CONCAT (\"%s/\", SUBSTR (STR (?f), STRLEN (\"%s/\") + 1)) AS ?new_url) ."
 		                        "  FILTER (STRSTARTS (STR (?f), \"%s/\")) . "
-		                        "  FILTER (?p != nie:url) . "
 		                        "} ",
 		                        uri, source_uri, source_uri);
 		/* Update nfo:FileDataObject in data graphs */
@@ -2242,18 +2274,24 @@ miner_files_move_file (TrackerMinerFS      *fs,
 		                        "} INSERT {"
 		                        "  GRAPH ?g {"
 		                        "    ?new_url a nfo:FileDataObject ; "
-		                        "             ?p ?o ."
+					"      nfo:fileName ?fileName ;"
+		                        GRAPH_PROPERTIES
 		                        "  }"
 		                        "} WHERE {"
 		                        "  GRAPH ?g {"
-		                        "    ?f a nfo:FileDataObject ;"
-		                        "       ?p ?o ."
+		                        GRAPH_WHERE
+					"    ?f nfo:fileName ?fileName ."
 		                        "    BIND (CONCAT (\"%s/\", SUBSTR (STR (?f), STRLEN (\"%s/\") + 1)) AS ?new_url) ."
 		                        "    FILTER (STRSTARTS (STR (?f), \"%s/\")) . "
 		                        "  }"
 		                        "}",
 		                        uri, source_uri, source_uri);
 	}
+
+#undef FS_PROPERTIES
+#undef FS_WHERE
+#undef GRAPH_PROPERTIES
+#undef GRAPH_WHERE
 
 	tracker_sparql_buffer_push_sparql (buffer, file, sparql->str);
 

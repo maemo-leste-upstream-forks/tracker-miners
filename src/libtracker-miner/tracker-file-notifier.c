@@ -505,10 +505,9 @@ crawler_get_cb (TrackerCrawler *crawler,
 			           uri, error->message);
 			g_free (uri);
 		}
-		tracker_monitor_remove (priv->monitor, directory);
 
-		if (interrupted || !crawl_directory_in_current_root (notifier))
-			finish_current_directory (notifier, interrupted);
+		if (!interrupted && !crawl_directory_in_current_root (notifier))
+			finish_current_directory (notifier, FALSE);
 
 		g_clear_error (&error);
 		return;
@@ -675,10 +674,8 @@ file_notifier_current_root_check_remove_directory (TrackerFileNotifier *notifier
 	    root_data_remove_directory (priv->current_index_root, file)) {
 		g_cancellable_cancel (priv->cancellable);
 
-		if (!crawl_directory_in_current_root (notifier)) {
-			g_clear_pointer (&priv->current_index_root, root_data_free);
-			notifier_check_next_root (notifier);
-		}
+		if (!crawl_directory_in_current_root (notifier))
+			finish_current_directory (notifier, FALSE);
 	}
 }
 
@@ -1360,10 +1357,7 @@ indexing_tree_directory_removed (TrackerIndexingTree *indexing_tree,
 	    g_file_equal (directory, priv->current_index_root->root)) {
 		/* Directory being currently processed */
 		g_cancellable_cancel (priv->cancellable);
-
-		/* If the crawler was already stopped (eg. we're at the querying
-		 * phase), the current index root won't be cleared.
-		 */
+		finish_current_directory (notifier, TRUE);
 		g_clear_pointer (&priv->current_index_root, root_data_free);
 		notifier_check_next_root (notifier);
 	}
@@ -1792,7 +1786,6 @@ tracker_file_notifier_stop (TrackerFileNotifier *notifier)
 	priv = tracker_file_notifier_get_instance_private (notifier);
 
 	if (!priv->stopped) {
-		g_clear_pointer (&priv->current_index_root, root_data_free);
 		g_cancellable_cancel (priv->cancellable);
 		priv->stopped = TRUE;
 	}

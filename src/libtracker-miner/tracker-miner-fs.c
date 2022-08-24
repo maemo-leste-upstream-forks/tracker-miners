@@ -160,8 +160,7 @@ struct _TrackerMinerFSPrivate {
 	guint total_files_ignored;
 
 	/* How many we indexed and how many had errors indexing. */
-	guint total_files_processed;
-	guint total_files_notified;
+	guint changes_processed;
 	guint total_files_notified_error;
 };
 
@@ -370,6 +369,7 @@ tracker_miner_fs_class_init (TrackerMinerFSClass *klass)
 	 * @directories_ignored: number of ignored directories
 	 * @files_found: number of files found
 	 * @files_ignored: number of ignored files
+	 * @changes: number of changes processed
 	 *
 	 * The ::finished signal is emitted when @miner_fs has finished
 	 * all pending processing.
@@ -384,8 +384,9 @@ tracker_miner_fs_class_init (TrackerMinerFSClass *klass)
 		              NULL, NULL,
 		              NULL,
 		              G_TYPE_NONE,
-		              5,
+		              6,
 		              G_TYPE_DOUBLE,
+		              G_TYPE_UINT,
 		              G_TYPE_UINT,
 		              G_TYPE_UINT,
 		              G_TYPE_UINT,
@@ -926,9 +927,8 @@ log_stats (TrackerMinerFS *fs)
 			g_info ("Total files       : %d (%d ignored)",
 			        fs->priv->total_files_found,
 			        fs->priv->total_files_ignored);
-			g_info ("Total processed   : %d (%d notified, %d with error)",
-			        fs->priv->total_files_processed,
-			        fs->priv->total_files_notified,
+			g_info ("Changes processed : %d (%d errors)",
+			        fs->priv->changes_processed,
 			        fs->priv->total_files_notified_error);
 			g_info ("--------------------------------------------------\n");
 		}
@@ -965,12 +965,15 @@ process_stop (TrackerMinerFS *fs)
 	               fs->priv->total_directories_found,
 	               fs->priv->total_directories_ignored,
 	               fs->priv->total_files_found,
-	               fs->priv->total_files_ignored);
+	               fs->priv->total_files_ignored,
+	               fs->priv->changes_processed);
 
 	fs->priv->total_directories_found = 0;
 	fs->priv->total_directories_ignored = 0;
 	fs->priv->total_files_found = 0;
 	fs->priv->total_files_ignored = 0;
+	fs->priv->changes_processed = 0;
+	fs->priv->total_files_notified_error = 0;
 
 	fs->priv->been_crawled = TRUE;
 }
@@ -1075,8 +1078,6 @@ item_add_or_update (TrackerMinerFS *fs,
 		TRACKER_MINER_FS_GET_CLASS (fs)->process_file_attributes (fs, file, info,
 		                                                          fs->priv->sparql_buffer);
 	}
-
-	fs->priv->total_files_processed++;
 
 	g_free (uri);
 	g_object_unref (info);
@@ -1270,6 +1271,11 @@ miner_handle_next_item (TrackerMinerFS *fs)
 	item_queue_get_next_file (fs, &file, &source_file, &info, &type,
 	                          &attributes_update, &is_dir);
 
+	if (fs->priv->timer_stopped) {
+		g_timer_start (fs->priv->timer);
+		fs->priv->timer_stopped = FALSE;
+	}
+
 	if (file == NULL && !fs->priv->extraction_timer_stopped) {
 		g_timer_stop (fs->priv->extraction_timer);
 		fs->priv->extraction_timer_stopped = TRUE;
@@ -1375,6 +1381,8 @@ miner_handle_next_item (TrackerMinerFS *fs)
 		/* No more files left to process */
 		return FALSE;
 	}
+
+	fs->priv->changes_processed++;
 
 	/* Handle queues */
 	switch (type) {
@@ -1678,11 +1686,6 @@ file_notifier_directory_started (TrackerFileNotifier *notifier,
         } else {
                 str = g_strdup_printf ("Crawling single directory '%s'", uri);
         }
-
-	if (fs->priv->timer_stopped) {
-		g_timer_start (fs->priv->timer);
-		fs->priv->timer_stopped = FALSE;
-	}
 
 	/* Always set the progress here to at least 1%, and the remaining time
          * to -1 as we cannot guess during crawling (we don't know how many directories
