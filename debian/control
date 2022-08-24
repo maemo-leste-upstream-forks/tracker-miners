@@ -6,7 +6,7 @@ Source: tracker-miners
 Section: utils
 Priority: optional
 Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
-Uploaders: Iain Lane <laney@debian.org>, Jeremy Bicha <jeremy.bicha@canonical.com>, Laurent Bigonville <bigon@debian.org>
+Uploaders: Iain Lane <laney@debian.org>, Jeremy Bicha <jbicha@ubuntu.com>, Laurent Bigonville <bigon@debian.org>
 Build-Depends: debhelper-compat (= 13),
                dh-sequence-gnome,
                gir1.2-glib-2.0 <!nocheck>,
