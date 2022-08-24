@@ -492,10 +492,12 @@ miner_finished_cb (TrackerMinerFS *fs,
                    guint           total_directories_ignored,
                    guint           total_files_found,
                    guint           total_files_ignored,
+                   guint           changes,
                    gpointer        user_data)
 {
-	g_info ("Finished mining in seconds:%f, total directories:%d, total files:%d",
+	g_info ("Finished mining in %f seconds. Changes processed: %d, inspected directories:%d, inspected files:%d",
 	        seconds_elapsed,
+	        changes,
 	        total_directories_found,
 	        total_files_found);
 

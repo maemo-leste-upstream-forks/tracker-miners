@@ -33,6 +33,8 @@
 #define DBUS_PATH "/org/freedesktop/Tracker3/Miner/RSS"
 
 static gchar *add_feed;
+static gchar *list_feeds;
+static gchar *delete_feed;
 static gchar *title;
 static gchar *domain_ontology_name = NULL;
 
@@ -46,6 +48,16 @@ static GOptionEntry entries[] = {
 	  G_OPTION_ARG_STRING, &title,
 	  N_("Title to use (must be used with --add-feed)"),
 	  NULL },
+	{ "list-feeds", 'l', 0,
+	  G_OPTION_ARG_NONE, &list_feeds,
+	  /* Translators: this is a "feed" as in RSS */
+	  N_("List feeds"),
+	  NULL },
+	{ "delete-feed", 'x', 0,
+	  G_OPTION_ARG_STRING, &delete_feed,
+	  /* Translators: this is a "feed" as in RSS */
+	  N_("Delete feed"),
+	  N_("URL") },
 	{ "domain-ontology", 'd', 0,
 	  G_OPTION_ARG_STRING, &domain_ontology_name,
 	  N_("Runs for a specific domain ontology"),
@@ -119,34 +131,11 @@ setup_connection_and_endpoint (TrackerDomainOntology    *domain,
 }
 
 int
-main (int argc, char **argv)
+handle_add_feed_option(GOptionContext *context)
 {
-	GMainLoop *loop;
-	GOptionContext *context;
-	TrackerMinerRSS *miner;
 	GError *error = NULL;
-	GDBusConnection *connection;
-	TrackerSparqlConnection *sparql_conn;
-	TrackerEndpointDBus *endpoint;
-	TrackerMinerProxy *proxy;
-	TrackerDomainOntology *domain_ontology;
-	gchar *domain_name, *dbus_name;
 
-	setlocale (LC_ALL, "");
-
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
-	tzset ();
-
-	/* Translators: this messagge will apper immediately after the
-	 * usage string - Usage: COMMAND <THIS_MESSAGE>
-	 */
-	context = g_option_context_new (_("— start the feeds indexer"));
-	g_option_context_add_main_entries (context, entries, NULL);
-	g_option_context_parse (context, &argc, &argv, NULL);
-
-	if (title && !add_feed) {
+	if (!add_feed) {
 		gchar *help;
 
 		help = g_option_context_get_help (context, TRUE, NULL);
@@ -157,63 +146,175 @@ main (int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	g_option_context_free (context);
-
 	/* Command line stuff doesn't use logging, so we're using g_print*() */
-	if (add_feed) {
-		TrackerSparqlConnection *connection;
-		GString *query;
+	TrackerSparqlConnection *connection;
+	GString *query;
 
-		g_print ("Adding feed:\n"
-		         "  title:'%s'\n"
-		         "  url:'%s'\n",
-		         title,
-		         add_feed);
+	g_print ("Adding feed:\n"
+	         "  title:'%s'\n"
+	         "  url:'%s'\n",
+	         title,
+	         add_feed);
 
-		connection = tracker_sparql_connection_bus_new ("org.freedesktop.Tracker3.Miner.RSS",
-		                                                NULL, NULL, &error);
+	connection = tracker_sparql_connection_bus_new ("org.freedesktop.Tracker3.Miner.RSS",
+	                                                NULL, NULL, &error);
 
-		if (!connection) {
-			g_printerr ("%s: %s\n",
-			            _("Could not establish a connection to Tracker"),
-			            error ? error->message : _("No error given"));
-			g_clear_error (&error);
-			return EXIT_FAILURE;
-		}
-
-		/* FIXME: Make interval configurable */
-		query = g_string_new ("INSERT {"
-		                      "  _:FeedSettings a mfo:FeedSettings ;"
-		                      "                   mfo:updateInterval 20 ."
-		                      "  _:Feed a nie:DataObject, mfo:FeedChannel ;"
-		                      "           mfo:feedSettings _:FeedSettings ;");
-
-		if (title) {
-			g_string_append_printf (query, "nie:title \"%s\";", title);
-		}
-
-		g_string_append_printf (query, " nie:url \"%s\" }", add_feed);
-
-		tracker_sparql_connection_update (connection,
-		                                  query->str,
-		                                  NULL,
-		                                  &error);
-		g_string_free (query, TRUE);
-
-		if (error) {
-			g_printerr ("%s, %s\n",
-			            _("Could not add feed"),
-			            error->message);
-			g_error_free (error);
-			g_object_unref (connection);
-
-			return EXIT_FAILURE;
-		}
-
-		g_print ("Done\n");
-
-		return EXIT_SUCCESS;
+	if (!connection) {
+		g_printerr ("%s: %s\n",
+		            _("Could not establish a connection to Tracker"),
+		            error ? error->message : _("No error given"));
+		g_clear_error (&error);
+		return EXIT_FAILURE;
 	}
+
+	/* FIXME: Make interval configurable */
+	query = g_string_new ("INSERT {"
+	                      "  _:FeedSettings a mfo:FeedSettings ;"
+	                      "                   mfo:updateInterval 20 ."
+	                      "  _:Feed a nie:DataObject, mfo:FeedChannel ;"
+	                      "           mfo:feedSettings _:FeedSettings ;");
+
+	if (title)
+		g_string_append_printf (query, "nie:title \"%s\";", title);
+
+	g_string_append_printf (query, " nie:url \"%s\" }", add_feed);
+
+	tracker_sparql_connection_update (connection,
+	                                  query->str,
+	                                  NULL,
+	                                  &error);
+	g_string_free (query, TRUE);
+
+	if (error) {
+		g_printerr ("%s, %s\n",
+		            _("Could not add feed"),
+		            error->message);
+		g_error_free (error);
+		g_object_unref (connection);
+
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+int
+handle_remove_feed_option(GOptionContext *context)
+{
+	TrackerSparqlConnection *connection;
+	GError *error = NULL;
+	gchar* query = g_strdup_printf("DELETE WHERE { "
+	                               "    ?feed a mfo:FeedChannel ."
+	                               "    ?feed nie:url \"%s\""
+	                               "}",
+	                               delete_feed);
+
+	connection = tracker_sparql_connection_bus_new ("org.freedesktop.Tracker3.Miner.RSS",
+	                                                NULL, NULL, &error);
+	if (!connection) {
+		g_printerr ("%s: %s\n",
+		            _("Could not establish a connection to Tracker"),
+		            error ? error->message : _("No error given"));
+		g_clear_error (&error);
+		return EXIT_FAILURE;
+	}
+
+	tracker_sparql_connection_update (connection,
+	                                  query,
+	                                  NULL,
+	                                  &error);
+	if (error) {
+		g_printerr ("%s, %s\n",
+		            _("Could not remove feed"),
+		            error->message);
+		g_error_free (error);
+		g_object_unref (connection);
+
+		return EXIT_FAILURE;
+	}
+
+	g_print ("Done\n");
+	return EXIT_SUCCESS;
+}
+
+int
+handle_list_feeds_option(GOptionContext *context)
+{
+	GError *error = NULL;
+	TrackerSparqlConnection *connection;
+	const char *query;
+	g_autoptr (TrackerSparqlCursor) cursor = NULL;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
+
+	connection = tracker_sparql_connection_bus_new ("org.freedesktop.Tracker3.Miner.RSS",
+	                                                NULL, NULL, &error);
+	if (!connection) {
+		g_printerr ("%s: %s\n",
+		            _("Could not establish a connection to Tracker"),
+		            error ? error->message : _("No error given"));
+		g_clear_error (&error);
+		return EXIT_FAILURE;
+	}
+
+	query = "SELECT ?url ?title {"
+	        "    ?feed a mfo:FeedChannel . "
+	        "    ?feed nie:url ?url "
+	        "    OPTIONAL { ?feed nie:title ?title }"
+	        "}";
+
+	stmt = tracker_sparql_connection_query_statement (connection,
+	                                                  query,
+	                                                  NULL,
+	                                                  &error);
+	if (!stmt) {
+		g_printerr ("Couldn't create a prepared statement: '%s'",
+		            error->message);
+		return EXIT_FAILURE;
+	}
+
+	cursor = tracker_sparql_statement_execute (stmt, NULL, &error);
+	if (!cursor) {
+		g_printerr ("Couldn't execute query: '%s'",
+		            error->message);
+		return EXIT_FAILURE;
+	}
+
+	while (tracker_sparql_cursor_next (cursor, NULL, &error)) {
+		if (tracker_sparql_cursor_get_string (cursor, 1, NULL)) {
+			g_print ("%s - %s\n",
+			         tracker_sparql_cursor_get_string (cursor, 0, NULL),
+			         tracker_sparql_cursor_get_string (cursor, 1, NULL));
+		}
+		else {
+			g_print ("%s\n",
+			        tracker_sparql_cursor_get_string (cursor, 0, NULL));
+		}
+	}
+
+	if (error) {
+		g_printerr ("%s, %s\n",
+		            _("Could not list feeds"),
+		            error->message);
+		g_error_free (error);
+		g_object_unref (connection);
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+int
+handle_default()
+{
+	GMainLoop *loop;
+	TrackerMinerRSS *miner;
+	GError *error = NULL;
+	GDBusConnection *connection;
+	TrackerSparqlConnection *sparql_conn;
+	TrackerEndpointDBus *endpoint;
+	TrackerMinerProxy *proxy;
+	TrackerDomainOntology *domain_ontology;
+	gchar *domain_name, *dbus_name;
 
 	domain_ontology = tracker_domain_ontology_new (domain_ontology_name, NULL, &error);
 	if (error) {
@@ -299,4 +400,41 @@ main (int argc, char **argv)
 	g_clear_pointer (&domain_ontology, tracker_domain_ontology_unref);
 
 	return EXIT_SUCCESS;
+}
+
+void
+setup_locale() {
+	setlocale (LC_ALL, "");
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+	tzset ();
+}
+
+int
+main (int argc, char **argv)
+{
+	GOptionContext *context;
+
+	setup_locale();
+
+	/* Translators: this messagge will apper immediately after the
+	 * usage string - Usage: COMMAND <THIS_MESSAGE>
+	 */
+	context = g_option_context_new (_("— start the feeds indexer"));
+	g_option_context_add_main_entries (context, entries, NULL);
+	g_option_context_parse (context, &argc, &argv, NULL);
+
+	g_option_context_free (context);
+
+	if (add_feed)
+		return handle_add_feed_option(context);
+
+	if (list_feeds)
+		return handle_list_feeds_option(context);
+
+	if (delete_feed)
+		return handle_remove_feed_option(context);
+
+	return handle_default();
 }

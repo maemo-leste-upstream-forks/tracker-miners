@@ -251,10 +251,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		tracker_resource_set_string (metadata, "nfo:genre", tag->value);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "language", NULL, 0))) {
-		tracker_resource_set_string (metadata, "nfo:language", tag->value);
-	}
-
 	if ((tag = av_dict_get (format->metadata, "title", NULL, 0))) {
 		title = tag->value;
 	}

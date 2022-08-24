@@ -157,7 +157,7 @@ tracker_term_pipe_to_pager (void)
 	if (!tracker_term_is_tty ())
 		return FALSE;
 
-	if (pipe2 (fds, O_CLOEXEC) < 0)
+	if (g_unix_open_pipe (fds, FD_CLOEXEC, NULL) < 0)
 		return FALSE;
 
 	pager_command = best_pager ();
@@ -178,7 +178,7 @@ tracker_term_pipe_to_pager (void)
 	close (fds[0]);
 
 	if (dup2(fds[1], STDOUT_FILENO) < 0)
-	        return FALSE;
+		return FALSE;
 
 	close (fds[1]);
 	signal_handler_id = g_unix_signal_add (SIGINT, ignore_signal_cb, NULL);
