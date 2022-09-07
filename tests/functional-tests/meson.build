@@ -144,7 +144,7 @@ if generic_media_handler_name != 'none'
 endif
 
 detect_h264_codec = join_paths(meson.current_source_dir(), 'detect-h264-codec.sh')
-detect_h264_codec_result = run_command(detect_h264_codec)
+detect_h264_codec_result = run_command(detect_h264_codec, check: false)
 
 if detect_h264_codec_result.returncode() == 0
   if gstreamer.version() >= '1.20.0'

@@ -11,18 +11,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-28 10:49+0000\n"
-"PO-Revision-Date: 2021-07-02 14:49+0200\n"
+"POT-Creation-Date: 2022-08-31 16:23+0000\n"
+"PO-Revision-Date: 2022-08-31 20:47+0200\n"
 "Last-Translator: Matej Urbančič <mateju@src.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
-"%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -376,7 +376,7 @@ msgstr ""
 msgid "FILE"
 msgstr "DATOTEKA"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Naloži zgodovino določene domene"
@@ -391,105 +391,125 @@ msgstr "Izogni se spremembam datotečnega sistema"
 msgid "Displays version information"
 msgstr "Pokaže podrobnosti različice"
 
-#: src/miners/fs/tracker-main.c:624
+#: src/miners/fs/tracker-main.c:626
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Podatkovni predmet »%s« trenutno obstaja"
 
-#: src/miners/fs/tracker-main.c:625
+#: src/miners/fs/tracker-main.c:627
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Podatkovni predmet »%s« trenutno ne obstaja"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:665
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Mapa »%s« NI primerna za vpis v kazalo (na podlagi pravil)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:669
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Datoteka NI primerna za vpis v kazalo (na podlagi pravil)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Datoteka NI primerna za vpis v kazalo (skrita datoteka)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:674
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Datoteka NI primerna za vnos v kazalo (mapa ni v naboru poti)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:698
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr "Glavna mapa »%s« NI primerna za vpis v kazalo (na podlagi pravil)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:704
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "Glavna mapa »%s« NI primerna za vpis v kazalo (skrita datoteka)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:712
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
 "filters)"
 msgstr "Glavna mapa »%s« NI primerna za vpis v kazalo"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:733
 msgid "Directory is eligible to be indexed"
 msgstr "Mapa je primerna za vnos v kazalo"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:734
 msgid "File is eligible to be indexed"
 msgstr "Datoteka je primerna za vnos v kazalo"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:988
+#: src/miners/fs/tracker-main.c:990
 msgid "— start the tracker indexer"
 msgstr "– začne pripravljalnik kazala tracker"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Dodaj vir"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URL"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
 msgstr "Naslov za uporabo (mora se uporabljati z --add-feed)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "– začne pripravljalnik kazala virov"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Izpiši vire"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:448
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Izbriši vir"
+
+#: src/miners/rss/tracker-main.c:164 src/miners/rss/tracker-main.c:216
+#: src/miners/rss/tracker-main.c:253 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1371 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Povezave s Trackerjem ni mogoče vzpostaviti"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:165 src/miners/rss/tracker-main.c:217
+#: src/miners/rss/tracker-main.c:254 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:449 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1372 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Ni dane napake"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:190
 msgid "Could not add feed"
 msgstr "Ni mogoče dodati vira"
+
+#: src/miners/rss/tracker-main.c:228
+msgid "Could not remove feed"
+msgstr "Ni mogoče odstraniti vira"
+
+#: src/miners/rss/tracker-main.c:296
+msgid "Could not list feeds"
+msgstr "Ni mogoče izpisati virov"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:424
+msgid "— start the feeds indexer"
+msgstr "– začne pripravljalnik kazala virov"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -498,11 +518,11 @@ msgstr "Ni mogoče dodati vira"
 msgid "— start the tracker index proxy"
 msgstr "– zažene ozadnji program tracker"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Preučevanje metapodatkov je spodletelo"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Ni najdenih modulov proučevanja in metapodatkov za razreševanje datoteke"
@@ -811,7 +831,7 @@ msgstr "Vse ne: izpuščene so lastnosti besedilnih podatkov"
 msgid "Common statuses include"
 msgstr "Pogosta stanja vključujejo"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Ni mogoče dobiti stanja, upravljalnika ni mogoče ustvariti, %s"
@@ -841,7 +861,7 @@ msgstr ""
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Argumentov --kill in --terminate ni mogoče uporabiti skupaj"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -875,9 +895,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Če ni podanega argumenta, se prikaže stanje rudarjev podatkov"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:647
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1547
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Nepoznane možnosti"
 
@@ -926,7 +946,7 @@ msgstr ""
 msgid "--recursive requires --add"
 msgstr "Zastavica --recursive zahteva zastavico --add"
 
-#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Pot"
 
@@ -978,40 +998,40 @@ msgstr "Ni mogoče pridobiti predpon imenskega prostora"
 msgid "No namespace prefixes were returned"
 msgstr "Predpone imenskega prostora niso bile vrnjene"
 
-#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1301
 msgid "Results"
 msgstr "Rezultati"
 
-#: src/tracker/tracker-info.c:416
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Sporočilo o napaki"
 
-#: src/tracker/tracker-info.c:473
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Poizvedba podatkov za entiteto"
 
-#: src/tracker/tracker-info.c:497
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Ni mogoče pridobiti URN za URI"
 
-#: src/tracker/tracker-info.c:507 src/tracker/tracker-info.c:541
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Podatkov za URI ni mogoče pridobiti"
 
-#: src/tracker/tracker-info.c:564
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Za URI ni razpoložljivih metapodakov"
 
-#: src/tracker/tracker-info.c:569 src/tracker/tracker-info.c:603
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Ni mogoče pridobiti stanja: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Opravila %d ni mogoče uničiti – »%s«"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "Uničeno opravilo %d – »%s«"
@@ -1134,10 +1154,10 @@ msgstr "pogoji iskanja"
 msgid "EXPRESSION"
 msgstr "IZRAZ"
 
-#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
-#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
-#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
-#: src/tracker/tracker-search.c:1171
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:635
+#: src/tracker/tracker-search.c:731 src/tracker/tracker-search.c:823
+#: src/tracker/tracker-search.c:912 src/tracker/tracker-search.c:1001
+#: src/tracker/tracker-search.c:1288
 msgid "Could not get search results"
 msgstr "Rezultatov iskanja ni mogoče dobiti"
 
@@ -1145,51 +1165,51 @@ msgstr "Rezultatov iskanja ni mogoče dobiti"
 msgid "No files were found"
 msgstr "Datotek ni bilo mogoče najti"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
 msgid "Files"
 msgstr "Datoteke"
 
-#: src/tracker/tracker-search.c:600
+#: src/tracker/tracker-search.c:644
 msgid "No artists were found"
 msgstr "Izvajalcev ni bilo mogoče najti"
 
-#: src/tracker/tracker-search.c:604
+#: src/tracker/tracker-search.c:648
 msgid "Artists"
 msgstr "Umetniki"
 
-#: src/tracker/tracker-search.c:692
+#: src/tracker/tracker-search.c:740
 msgid "No music was found"
 msgstr "Glasbe ni bilo mogoče najti"
 
-#: src/tracker/tracker-search.c:696
+#: src/tracker/tracker-search.c:744
 msgid "Albums"
 msgstr "Albumi"
 
-#: src/tracker/tracker-search.c:784
+#: src/tracker/tracker-search.c:832
 msgid "No feeds were found"
 msgstr "Ni najdenih virov"
 
-#: src/tracker/tracker-search.c:788
+#: src/tracker/tracker-search.c:836
 msgid "Feeds"
 msgstr "Viri"
 
-#: src/tracker/tracker-search.c:871
+#: src/tracker/tracker-search.c:921
 msgid "No software was found"
 msgstr "Programske opreme ni bilo mogoče najti"
 
-#: src/tracker/tracker-search.c:875
+#: src/tracker/tracker-search.c:925
 msgid "Software"
 msgstr "Programi"
 
-#: src/tracker/tracker-search.c:956
+#: src/tracker/tracker-search.c:1010
 msgid "No software categories were found"
 msgstr "Kategorij programske opreme ni bilo mogoče najti"
 
-#: src/tracker/tracker-search.c:960
+#: src/tracker/tracker-search.c:1014
 msgid "Software Categories"
 msgstr "Kategorije programske opreme"
 
-#: src/tracker/tracker-search.c:1180
+#: src/tracker/tracker-search.c:1297
 msgid "No results were found matching your query"
 msgstr "Ni zadetkov, ki bi se skladali s poizvedbo"
 
@@ -1197,18 +1217,18 @@ msgstr "Ni zadetkov, ki bi se skladali s poizvedbo"
 msgid "Show statistics for current index / data set"
 msgstr "Pokaži statistiko za trenutno kazalo/nabor podatkov"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "Ni mogoče dobiti statistike Trackerja"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Statistika ni na voljo"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "Statistika:"
 
@@ -1235,25 +1255,25 @@ msgstr "Statistika:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
+#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Brez"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Ni mogoče dobiti temeljnega stanja podatkovnega rudarjenja"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "Sporočilo"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Trenutno vpisano v kazalo"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1262,7 +1282,7 @@ msgstr[1] "%d datoteka"
 msgstr[2] "%d datoteki"
 msgstr[3] "%d datoteke"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1271,25 +1291,25 @@ msgstr[1] "%d mapa"
 msgstr[2] "%d mapi"
 msgstr[3] "%d mape"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Preostali prostor na razdelku podatkovne zbirke"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Podatki se še vpisujejo v kazala"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "Ocenjeni preostanek: %s"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr ""
 "Vsi pogoni podatkovnega rudarjenja mirujejo, indeksiranje je zaključeno"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
@@ -1298,7 +1318,7 @@ msgstr[1] "Zabeleženo je %d spodletelo opravilo"
 msgstr[2] "Zabeleženi sta %d spodleteli opravili"
 msgstr[3] "Zabeležena so %d spodletela opravila"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Ni najdenih poročil"
 
@@ -1364,79 +1384,79 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr "Ni mogoče dobiti URN-jev datotek"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:311
 msgid "Could not get files related to tag"
 msgstr "Datotek povezanih z oznako ni mogoče dobiti"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:378
 msgid "Could not get all tags in the database"
 msgstr "Ni mogoče pridobiti vseh oznak v podatkovni zbirki"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:388
 msgid "No files have been tagged"
 msgstr "Nobena datoteka ni bila označena"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:423
 msgid "Could not get files for matching tags"
 msgstr "Ni mogoče pridobiti datotek za skladne oznake"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:432
 msgid "No files were found matching ALL of those tags"
 msgstr "Ni zadetkov, ki bi se skladali z vsemi zahtevami poizvedbe"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
 msgid "Could not get all tags"
 msgstr "Ni mogoče idobiti vseh oznak"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
 msgid "No tags were found"
 msgstr "Oznak ni bilo mogoče najti"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:524
 msgid "Tags (shown by name)"
 msgstr "Oznake (prikazane po imenu)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:598
 msgid "No files were modified"
 msgstr "Nobena datoteka ni bila spremenjena"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
 msgid "Files do not exist or aren’t indexed"
 msgstr "Datoteke ne obstajajo, ali pa niso zabeležene"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:706
 msgid "Could not add tag"
 msgstr "Ni mogoče dodati oznake"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:722
 msgid "Tag was added successfully"
 msgstr "Oznaka je bila uspešno dodana"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:751
 msgid "Could not add tag to files"
 msgstr "Oznake ni mogoče dodati datotekam"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:761
 msgid "Tagged"
 msgstr "Označena"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:762
 msgid "Not tagged, file is not indexed"
 msgstr "Ni označena, datoteka ne bo uporabljena za pripravo kazala"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:808
 msgid "Could not get tag by label"
 msgstr "Ni mogoče najti oznake z imenom"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:819
 msgid "No tags were found by that name"
 msgstr "Ni mogoče najti oznak s tem imenom"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:836
 msgid "None of the files had this tag set"
 msgstr "Nobena od datotek ni imela te oznake"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:882
 msgid "Could not remove tag"
 msgstr "Ni mogoče odstraniti oznake"
 
@@ -2686,9 +2706,6 @@ msgstr "– zažene program s podporo zamika zapisovanja"
 #~ msgid "Could not create tree: class properties query failed"
 #~ msgstr ""
 #~ "Ni mogoče ustvariti drevesa: poizvedba razreda lastnosti je spodletela"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Razredov ni mogoče izpisati"
 
 #~ msgid "No classes were found"
 #~ msgstr "Razredov ni mogoče najti"

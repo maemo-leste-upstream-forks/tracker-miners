@@ -1,5 +1,5 @@
 # Brazilian Portuguese translation of Tracker.
-# Copyright (C) 2021 Free Software Foundation, Inc.
+# Copyright (C) 2022 Free Software Foundation, Inc.
 # This file is distributed under the same license as the tracker package.
 # Luiz Armesto <luiz.armesto@gmail.com>, 2007, 2008.
 # Leonardo Ferreira Fontenelle <leo.fontenelle@gmail.com>, 2008.
@@ -11,14 +11,15 @@
 # Enrico Nicoletto <liverig@gmail.com>, 2013, 2014, 2015.
 # Felipe Braga <fbobraga@gmail.com>, 2015.
 # Rafael Fontenelle <rafaelff@gnome.org>, 2013-2021.
+# Leônidas Araújo <leorusvellt@hotmail.com>, 2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-10 12:02+0000\n"
-"PO-Revision-Date: 2021-07-10 17:44-0300\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"POT-Creation-Date: 2022-08-31 10:55+0000\n"
+"PO-Revision-Date: 2022-08-31 12:18-0300\n"
+"Last-Translator: Leônidas Araújo <leorusvellt@hotmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -27,6 +28,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "X-Generator: Gtranslator 40.0\n"
 "X-Project-Style: gnome\n"
+"X-DL-Team: pt_BR\n"
+"X-DL-Module: tracker-miners\n"
+"X-DL-Branch: master\n"
+"X-DL-Domain: po\n"
+"X-DL-State: Translating\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -382,7 +388,7 @@ msgstr ""
 msgid "FILE"
 msgstr "ARQUIVO"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Executa para uma ontologia de domínio específica"
@@ -397,43 +403,43 @@ msgstr "Evita alterações no sistema de arquivos"
 msgid "Displays version information"
 msgstr "Exibe informações de versão"
 
-#: src/miners/fs/tracker-main.c:624
+#: src/miners/fs/tracker-main.c:626
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "O objeto de dados “%s” não existe"
 
-#: src/miners/fs/tracker-main.c:625
+#: src/miners/fs/tracker-main.c:627
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "O objeto de dados “%s” atualmente não existe"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:665
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Diretório NÃO elegível para ser indexado (baseado em filtros)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:669
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Arquivo NÃO elegível para ser indexado (baseado em filtros)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Arquivo NÃO elegível para ser indexado (arquivo oculto)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:674
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Arquivo NÃO elegível para ser indexado (não é uma pasta indexada)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:698
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr "Diretório pai “%s” NÃO elegível para ser indexado (baseado em filtros)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:704
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "Diretório pai “%s” NÃO elegível para ser indexado (arquivo oculto)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:712
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
@@ -442,62 +448,82 @@ msgstr ""
 "Diretório pai “%s” NÃO elegível para ser indexado (baseado em filtros de "
 "conteúdo)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:733
 msgid "Directory is eligible to be indexed"
 msgstr "Diretório elegível para ser indexado"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:734
 msgid "File is eligible to be indexed"
 msgstr "Arquivo elegível para ser indexado"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:988
+#: src/miners/fs/tracker-main.c:990
 msgid "— start the tracker indexer"
 msgstr "— inicia o indexador do Tracker"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Adicionar fonte"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URL"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
 msgstr "Título a usar (deve ser usado com --add-feed)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "— inicia o indexador de feeds"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Listar feeds"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Excluir feeds"
+
+#: src/miners/rss/tracker-main.c:164 src/miners/rss/tracker-main.c:216
+#: src/miners/rss/tracker-main.c:253 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1371 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Não foi possível estabelecer uma conexão com o Tracker"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:165 src/miners/rss/tracker-main.c:217
+#: src/miners/rss/tracker-main.c:254 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1372 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Nenhum erro informado"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:190
 msgid "Could not add feed"
 msgstr "Não foi possível adicionar o feed"
+
+#: src/miners/rss/tracker-main.c:228
+msgid "Could not remove feed"
+msgstr "Não foi possível remover o feed"
+
+#: src/miners/rss/tracker-main.c:296
+msgid "Could not list feeds"
+msgstr "Não foi possível listar os feeds"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:424
+msgid "— start the feeds indexer"
+msgstr "— inicia o indexador de feeds"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -506,11 +532,11 @@ msgstr "Não foi possível adicionar o feed"
 msgid "— start the tracker index proxy"
 msgstr "— inicia o proxy de indexação do tracker"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Extrator de metadados falhou"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Não foram encontrados módulos de metadados ou extratores para lidar com este "
@@ -815,7 +841,7 @@ msgstr "Todas as propriedades nie:plainTextContent estão omitidas"
 msgid "Common statuses include"
 msgstr "Incluir status comuns"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Não foi possível obter o status, o gerenciador não pôde ser criado, %s"
@@ -841,7 +867,7 @@ msgstr "Você deve dar uma pausa ou comando de retomar para o minerador"
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Você não pode usar os argumentos --kill e --terminate juntos"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -875,9 +901,9 @@ msgstr ""
 "mostrado"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1547
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Opções desconhecidas"
 
@@ -925,15 +951,15 @@ msgstr "--add e --remove são mutuamente exclusivos"
 msgid "--recursive requires --add"
 msgstr "--recursive requer --add"
 
-#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Caminho"
 
-#: src/tracker/tracker-index.c:352
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Recursivo"
 
-#: src/tracker/tracker-index.c:402
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Por favor, especifique uma ou mais localizações para indexar."
 
@@ -976,41 +1002,40 @@ msgstr "Não foi possível recuperar o prefixos de espaço de nomes"
 msgid "No namespace prefixes were returned"
 msgstr "Nenhum prefixo de espaço de nomes foi retornado"
 
-#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1301
 msgid "Results"
 msgstr "Resultados"
 
-#: src/tracker/tracker-info.c:416
-#| msgid "Message"
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Mensagem de erro"
 
-#: src/tracker/tracker-info.c:472
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Requisitando informações para entidade"
 
-#: src/tracker/tracker-info.c:496
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Não foi possível recuperar URN para URI"
 
-#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Não foi possível recuperar dados para URI"
 
-#: src/tracker/tracker-info.c:563
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Não há metadados disponíveis para essa URI"
 
-#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Não foi possível obter status de elegibilidade: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Não foi possível matar o processo %d — “%s”"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "Processo %d morto — “%s”"
@@ -1137,10 +1162,10 @@ msgstr "termos para a pesquisa"
 msgid "EXPRESSION"
 msgstr "EXPRESSÃO"
 
-#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
-#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
-#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
-#: src/tracker/tracker-search.c:1171
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:635
+#: src/tracker/tracker-search.c:731 src/tracker/tracker-search.c:823
+#: src/tracker/tracker-search.c:912 src/tracker/tracker-search.c:1001
+#: src/tracker/tracker-search.c:1288
 msgid "Could not get search results"
 msgstr "Não foi possível obter resultados da pesquisa"
 
@@ -1148,51 +1173,51 @@ msgstr "Não foi possível obter resultados da pesquisa"
 msgid "No files were found"
 msgstr "Nenhum arquivo foi encontrado"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
 msgid "Files"
 msgstr "Arquivos"
 
-#: src/tracker/tracker-search.c:600
+#: src/tracker/tracker-search.c:644
 msgid "No artists were found"
 msgstr "Nenhum artista encontrado"
 
-#: src/tracker/tracker-search.c:604
+#: src/tracker/tracker-search.c:648
 msgid "Artists"
 msgstr "Artistas"
 
-#: src/tracker/tracker-search.c:692
+#: src/tracker/tracker-search.c:740
 msgid "No music was found"
 msgstr "Nenhuma música encontrada"
 
-#: src/tracker/tracker-search.c:696
+#: src/tracker/tracker-search.c:744
 msgid "Albums"
 msgstr "Álbuns"
 
-#: src/tracker/tracker-search.c:784
+#: src/tracker/tracker-search.c:832
 msgid "No feeds were found"
 msgstr "Nenhum feed foi encontrado"
 
-#: src/tracker/tracker-search.c:788
+#: src/tracker/tracker-search.c:836
 msgid "Feeds"
 msgstr "Feeds"
 
-#: src/tracker/tracker-search.c:871
+#: src/tracker/tracker-search.c:921
 msgid "No software was found"
 msgstr "Nenhum software foi encontrado"
 
-#: src/tracker/tracker-search.c:875
+#: src/tracker/tracker-search.c:925
 msgid "Software"
 msgstr "Software"
 
-#: src/tracker/tracker-search.c:956
+#: src/tracker/tracker-search.c:1010
 msgid "No software categories were found"
 msgstr "Não categoria de software foi encontrada"
 
-#: src/tracker/tracker-search.c:960
+#: src/tracker/tracker-search.c:1014
 msgid "Software Categories"
 msgstr "Categorias de software"
 
-#: src/tracker/tracker-search.c:1180
+#: src/tracker/tracker-search.c:1297
 msgid "No results were found matching your query"
 msgstr "Nenhum resultado correspondente à sua pesquisa encontrado"
 
@@ -1200,18 +1225,18 @@ msgstr "Nenhum resultado correspondente à sua pesquisa encontrado"
 msgid "Show statistics for current index / data set"
 msgstr "Mostra estatísticas para o índice / conjunto de dados atual"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "Não foi possível obter estatísticas do Tracker"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Nenhuma estatística disponível"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "Estatísticas:"
 
@@ -1238,63 +1263,63 @@ msgstr "Estatísticas:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
+#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Nenhum(a)"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Não foi possível obter o status básico do Tracker"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "Mensagem"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Atualmente indexado"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d arquivo"
 msgstr[1] "%d arquivos"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d pasta"
 msgstr[1] "%d pastas"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Espaço restante na partição do banco de dados"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Os dados ainda estão sendo indexados"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "Restam aproximadamente %s"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr "Todos os mineradores de dados estão ociosos, indexação concluída"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] "%d falha registrada"
 msgstr[1] "%d falhas registradas"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Nenhum relatório encontrado"
 
@@ -1361,79 +1386,79 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr "Não foi possível obter arquivo URNs"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:311
 msgid "Could not get files related to tag"
 msgstr "Não foi possível obter arquivos relacionados com a etiqueta"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:378
 msgid "Could not get all tags in the database"
 msgstr "Não foi possível obter todas as etiquetas no banco de dados"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:388
 msgid "No files have been tagged"
 msgstr "Nenhum arquivo foi etiquetado"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:423
 msgid "Could not get files for matching tags"
 msgstr "Não foi possível obter arquivos relacionados às etiquetas"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:432
 msgid "No files were found matching ALL of those tags"
 msgstr "Nenhum arquivo que satisfaça TODAS estas etiquetas foi encontrado"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
 msgid "Could not get all tags"
 msgstr "Não foi possível obter todas as etiquetas"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
 msgid "No tags were found"
 msgstr "Nenhuma etiqueta localizada"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:524
 msgid "Tags (shown by name)"
 msgstr "Etiquetas (exibidas por nome)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:598
 msgid "No files were modified"
 msgstr "Nenhum arquivo foi modificado"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
 msgid "Files do not exist or aren’t indexed"
 msgstr "Os arquivos não existem ou não estão indexados"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:706
 msgid "Could not add tag"
 msgstr "Não foi possível adicionar etiqueta"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:722
 msgid "Tag was added successfully"
 msgstr "A etiqueta foi adicionada com sucesso"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:751
 msgid "Could not add tag to files"
 msgstr "Não foi possível adicionar etiqueta para arquivos"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:761
 msgid "Tagged"
 msgstr "Etiquetado"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:762
 msgid "Not tagged, file is not indexed"
 msgstr "Não etiquetado, o arquivo não está indexado"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:808
 msgid "Could not get tag by label"
 msgstr "Não foi possível obter a etiqueta pelo rótulo"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:819
 msgid "No tags were found by that name"
 msgstr "Nenhuma etiqueta foi encontrada por este nome"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:836
 msgid "None of the files had this tag set"
 msgstr "Nenhum dos arquivos possui esta definição de etiqueta"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:882
 msgid "Could not remove tag"
 msgstr "Não foi possível remover etiquetas"
 
@@ -2684,9 +2709,6 @@ msgstr "— inicia o serviço de writeback do Tracker"
 #~ msgid "Could not create tree: class properties query failed"
 #~ msgstr ""
 #~ "Não foi possível criar árvore: consulta de propriedades de classe falhou"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Não foi possível listar classes"
 
 #~ msgid "No classes were found"
 #~ msgstr "Nenhuma classe foi encontrada"

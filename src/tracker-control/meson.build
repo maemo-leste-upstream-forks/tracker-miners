@@ -5,6 +5,7 @@ sources = [
 ]
 
 tracker_index_deps = [
+     tracker_miner.partial_dependency(sources: true),
      tracker_miners_common_dep,
      tracker_extract_dep
 ]

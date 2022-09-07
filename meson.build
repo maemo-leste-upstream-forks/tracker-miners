@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.4.0.beta',
+        version: '3.4.0.rc',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -15,7 +15,7 @@ libdir = join_paths(get_option('prefix'), get_option('libdir'))
 datadir = join_paths(get_option('prefix'), get_option('datadir'))
 
 glib_required = '2.62.0'
-tracker_required = '3.2.0'
+tracker_required = '3.4.0'
 
 if get_option('tracker_core') == 'system'
   tracker_sparql = dependency('tracker-sparql-3.0', version: '>=' + tracker_required, required: false)
@@ -30,13 +30,13 @@ if get_option('tracker_core') == 'system'
   # If we are building against an installed version of tracker core rather than
   # having it as a subproject, these 'uninstalled' locations point to the actual
   # installed locations.
-  tracker_uninstalled_cli_dir = join_paths (tracker_sparql.get_pkgconfig_variable('exec_prefix'), 'bin')
-  tracker_uninstalled_nepomuk_ontologies_dir = join_paths(tracker_sparql.get_pkgconfig_variable('ontologies_dir'), 'nepomuk')
-  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_pkgconfig_variable('tracker_datadir'), 'stop-words')
-  tracker_uninstalled_testutils_dir = tracker_testutils.get_pkgconfig_variable('python_path')
-  tracker_ontologies_dir = tracker_sparql.get_pkgconfig_variable('ontologies_dir')
+  tracker_uninstalled_cli_dir = join_paths (tracker_sparql.get_variable(pkgconfig: 'exec_prefix'), 'bin')
+  tracker_uninstalled_nepomuk_ontologies_dir = join_paths(tracker_sparql.get_variable(pkgconfig: 'ontologies_dir'), 'nepomuk')
+  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_variable(pkgconfig: 'tracker_datadir'), 'stop-words')
+  tracker_uninstalled_testutils_dir = tracker_testutils.get_variable(pkgconfig: 'python_path')
+  tracker_ontologies_dir = tracker_sparql.get_variable(pkgconfig: 'ontologies_dir')
 
-  tracker_sparql_uninstalled_dir = tracker_sparql.get_pkgconfig_variable('libdir')
+  tracker_sparql_uninstalled_dir = tracker_sparql.get_variable(pkgconfig: 'libdir')
 else
   tracker_subproject = subproject('tracker')
 
@@ -331,8 +331,8 @@ endif
 
 dbus_services_dir = get_option('dbus_services_dir')
 if dbus_services_dir == ''
-  dbus_services_dir = dbus.get_pkgconfig_variable('session_bus_services_dir',
-                                                  define_variable: [ 'datadir', datadir ])
+  dbus_services_dir = dbus.get_variable(pkgconfig: 'session_bus_services_dir',
+                                        pkgconfig_define: [ 'datadir', datadir ])
 endif
 
 ####################################################################
@@ -345,8 +345,8 @@ if get_option('systemd_user_services')
   if systemd_user_services_dir == ''
     systemd = dependency('systemd', version: '>= 242', required: false)
     if systemd.found()
-      systemd_user_services_dir = systemd.get_pkgconfig_variable('systemduserunitdir',
-                                                                 define_variable: ['prefix', get_option('prefix')])
+      systemd_user_services_dir = systemd.get_variable(pkgconfig: 'systemduserunitdir',
+                                                       pkgconfig_define: ['prefix', get_option('prefix')])
     else
       error('systemd user services were enabled, but systemd was not found. ' +
             'Please set the systemd_user_services_dir option if you want to ' +

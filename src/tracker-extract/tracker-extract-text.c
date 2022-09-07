@@ -50,7 +50,12 @@ allow_file (GSList      *text_allowlist_patterns,
 	basename = g_file_get_basename (file);
 
 	for (l = text_allowlist_patterns; l; l = l->next) {
-		if (g_pattern_match_string (l->data, basename)) {
+#if GLIB_CHECK_VERSION (2, 70, 0)
+		if (g_pattern_spec_match_string (l->data, basename))
+#else
+		if (g_pattern_match_string (l->data, basename))
+#endif
+		{
 			return TRUE;
 		}
 	}
