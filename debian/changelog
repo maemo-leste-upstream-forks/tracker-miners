@@ -1,8 +1,9 @@
-tracker-miners (3.4.0~rc-1) UNRELEASED; urgency=medium
+tracker-miners (3.4.0~rc-1) unstable; urgency=medium
 
   * New upstream release
+  * debian/control.in: Bump minimum tracker to 3.4.0~
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 07 Sep 2022 08:39:31 -0400
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 07 Sep 2022 08:46:43 -0400
 
 tracker-miners (3.4.0~beta-2) unstable; urgency=medium
 
