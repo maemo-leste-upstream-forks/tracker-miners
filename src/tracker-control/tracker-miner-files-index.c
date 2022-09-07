@@ -88,12 +88,12 @@ G_STATIC_ASSERT (G_N_ELEMENTS (tracker_miner_index_error_entries) == TRACKER_MIN
 GQuark
 tracker_miner_index_error_quark (void)
 {
-	static volatile gsize quark_volatile = 0;
+	static gsize quark = 0;
 	g_dbus_error_register_error_domain ("tracker-miner-index-error-quark",
-	                                    &quark_volatile,
+	                                    &quark,
 	                                    tracker_miner_index_error_entries,
 	                                    G_N_ELEMENTS (tracker_miner_index_error_entries));
-	return (GQuark) quark_volatile;
+	return (GQuark) quark;
 }
 
 static void

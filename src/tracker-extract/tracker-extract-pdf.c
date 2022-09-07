@@ -292,6 +292,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	TrackerXmpData *xd = NULL;
 	PDFData pd = { 0 }; /* actual data */
 	PDFData md = { 0 }; /* for merging */
+	G_GNUC_UNUSED GBytes *bytes;
 	PopplerDocument *document;
 	gchar *xml = NULL;
 	gchar *content, *uri;
@@ -346,7 +347,13 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	g_free (filename);
 	uri = g_file_get_uri (file);
 
+#if POPPLER_CHECK_VERSION (0, 82, 0)
+	bytes = g_bytes_new (contents, len);
+	document = poppler_document_new_from_bytes (bytes, NULL, &inner_error);
+	g_bytes_unref (bytes);
+#else
 	document = poppler_document_new_from_data (contents, len, NULL, &inner_error);
+#endif
 
 	if (inner_error) {
 		if (inner_error->code == POPPLER_ERROR_ENCRYPTED) {

@@ -265,14 +265,24 @@ lookup_rules (const gchar *mimetype)
 		info = &g_array_index (rules, RuleInfo, i);
 
 		for (l = info->allow_patterns; l; l = l->next) {
-			if (g_pattern_match (l->data, len, mimetype, reversed)) {
+#if GLIB_CHECK_VERSION (2, 70, 0)
+			if (g_pattern_spec_match (l->data, len, mimetype, reversed))
+#else
+			if (g_pattern_match (l->data, len, mimetype, reversed))
+#endif
+			{
 				matched_allow_pattern = TRUE;
 				break;
 			}
 		}
 
 		for (l = info->block_patterns; l; l = l->next) {
-			if (g_pattern_match (l->data, len, mimetype, reversed)) {
+#if GLIB_CHECK_VERSION (2, 70, 0)
+			if (g_pattern_spec_match (l->data, len, mimetype, reversed))
+#else
+			if (g_pattern_match (l->data, len, mimetype, reversed))
+#endif
+			{
 				matched_block_pattern = TRUE;
 				break;
 			}

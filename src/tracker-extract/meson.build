@@ -116,7 +116,7 @@ foreach module : modules
     install: true,
     install_dir: tracker_extract_modules_dir)
 
-  hash = run_command('calculate-hash.sh', [sources] + files_extract)
+  hash = run_command('calculate-hash.sh', [sources] + files_extract, check: true)
 
   foreach rule : rules
     configure_file(input: rule,
@@ -193,7 +193,7 @@ endif
 # Populate a directory inside the build tree with the extract rules that are
 # enabled in this build configuration.
 setup_extract_rules = join_paths(meson.current_source_dir(), 'setup-extract-rules.sh')
-result = run_command(setup_extract_rules, meson.current_source_dir(), tracker_uninstalled_extract_rules_dir, enabled_rule_files)
+result = run_command(setup_extract_rules, meson.current_source_dir(), tracker_uninstalled_extract_rules_dir, enabled_rule_files, check: true)
 if result.returncode() != 0
     output = result.stdout().strip()
     errortxt = result.stderr().strip()

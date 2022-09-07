@@ -736,6 +736,7 @@ tracker_extract_get_metadata_by_cmdline (TrackerExtract             *object,
 
 			g_free (text);
 		} else if (output_format == TRACKER_SERIALIZATION_FORMAT_TURTLE) {
+			TrackerNamespaceManager *namespaces;
 			char *turtle;
 
 			/* If this was going into the tracker-store we'd generate a unique ID
@@ -743,7 +744,10 @@ tracker_extract_get_metadata_by_cmdline (TrackerExtract             *object,
 			 */
 			tracker_resource_set_identifier (resource, uri);
 
-			turtle = tracker_resource_print_turtle (resource, NULL);
+			G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+			namespaces = tracker_namespace_manager_get_default ();
+			G_GNUC_END_IGNORE_DEPRECATIONS
+			turtle = tracker_resource_print_rdf (resource, namespaces, TRACKER_RDF_FORMAT_TURTLE, NULL);
 
 			if (turtle) {
 				g_print ("%s\n", turtle);

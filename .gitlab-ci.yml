@@ -93,10 +93,10 @@ check-merge-request:
       apt-get -yq update && apt-get -yq upgrade &&
       apt-get -yq build-dep tracker tracker-miners
 
-.tracker-miners.fedora:34@x86_64:
+.tracker-miners.fedora:36@x86_64:
   extends: .tracker-miners.fedora@common
   variables:
-    FDO_DISTRIBUTION_VERSION: 34
+    FDO_DISTRIBUTION_VERSION: 36
     FDO_DISTRIBUTION_TAG: "x86_64-${BASE_TAG}"
 
 .tracker-miners.fedora:rawhide@x86_64:
@@ -105,10 +105,10 @@ check-merge-request:
     FDO_DISTRIBUTION_VERSION: rawhide
     FDO_DISTRIBUTION_TAG: "x86_64-${BASE_TAG}"
 
-.tracker-miners.fedora:34@aarch64:
+.tracker-miners.fedora:36@aarch64:
   extends: .tracker-miners.fedora@common
   variables:
-    FDO_DISTRIBUTION_VERSION: 34
+    FDO_DISTRIBUTION_VERSION: 36
     FDO_DISTRIBUTION_TAG: "aarch64-${BASE_TAG}"
   tags:
     - aarch64
@@ -122,7 +122,7 @@ check-merge-request:
 build-fedora-container@x86_64:
   extends:
     - .fdo.container-build@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   stage: prepare
   variables:
     GIT_STRATEGY: none
@@ -145,7 +145,7 @@ build-fedora-rawhide-container@x86_64:
 build-fedora-container@aarch64:
   extends:
     - .fdo.container-build@fedora
-    - .tracker-miners.fedora:34@aarch64
+    - .tracker-miners.fedora:36@aarch64
   stage: prepare
   variables:
     GIT_STRATEGY: none
@@ -167,7 +167,7 @@ build-ubuntu-container@x86_64:
 check-code-style:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   needs:
     - build-fedora-container@x86_64
   stage: code-review
@@ -186,7 +186,7 @@ check-code-style:
     - echo "Building tracker.git commit $(git -C ./subprojects/tracker rev-parse HEAD)"
     - mkdir build
     - cd build
-    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dtests_tap_protocol=true -Dtracker:docs=false
+    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dtests_tap_protocol=true -Dtracker:docs=false --auto-features=enabled
     - ninja
   artifacts:
     expire_in: 1 day
@@ -196,7 +196,7 @@ check-code-style:
 build-fedora@x86_64:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   needs:
     - build-fedora-container@x86_64
   <<: *build
@@ -213,7 +213,7 @@ build-fedora-rawhide@x86_64:
 build-fedora@aarch64:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@aarch64
+    - .tracker-miners.fedora:36@aarch64
   needs:
     - build-fedora-container@aarch64
   allow_failure: true
@@ -267,7 +267,7 @@ build-ubuntu-rolling@x86_64:
 test-fedora@x86_64:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   needs:
     - build-fedora@x86_64
   <<: *test
@@ -284,7 +284,7 @@ test-fedora-rawhide@x86_64:
 test-fedora@aarch64:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@aarch64
+    - .tracker-miners.fedora:36@aarch64
   needs:
     - build-fedora@aarch64
   allow_failure: true
@@ -301,14 +301,14 @@ test-ubuntu@x86_64:
 coverage-analysis:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   stage: analysis
   allow_failure: true
   script:
     - .gitlab-ci/checkout-tracker.sh
     - mkdir -p coverage-build/coveragereport
     - cd coverage-build
-    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dseccomp=false -Dtracker:docs=false
+    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dseccomp=false -Dtracker:docs=false --auto-features=enabled
     - ninja
     - env LANG=C.UTF-8 LC_ALL=C.UTF-8 dbus-run-session eatmydata meson test --print-errorlogs ${MESON_TEST_EXTRA_ARGS}
     - gcovr --html-details --print-summary --root=.. --exclude=subprojects --exclude=../subprojects --exclude=../tests --output coveragereport/index.html
@@ -323,7 +323,7 @@ coverage-analysis:
 coverity:
   extends:
     - .fdo.distribution-image@fedora
-    - .tracker-miners.fedora:34@x86_64
+    - .tracker-miners.fedora:36@x86_64
   stage: analysis
   allow_failure: true
   script:

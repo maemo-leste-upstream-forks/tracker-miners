@@ -22,7 +22,7 @@
 #include <glib.h>
 
 #include <libtracker-sparql/tracker-ontologies.h>
-#include <libtracker-miners-common/tracker-utils.h>
+#include <libtracker-miners-common/tracker-file-utils.h>
 
 #include <libtracker-extract/tracker-extract.h>
 
@@ -30,11 +30,18 @@
 #include <libavformat/avformat.h>
 #include <libavutil/mathematics.h>
 
-static AVDictionaryEntry *find_tag (AVFormatContext *format, AVStream *stream, const gchar *name)
+static AVDictionaryEntry *
+find_tag (AVFormatContext *format,
+          AVStream        *stream1,
+          AVStream        *stream2,
+          const gchar     *name)
 {
-	AVDictionaryEntry *tag = av_dict_get(format->metadata, name, NULL, 0);
-	if (!tag) {
-		tag = av_dict_get(stream->metadata, name, NULL, 0);
+	AVDictionaryEntry *tag = av_dict_get (format->metadata, name, NULL, 0);
+	if (!tag && stream1) {
+		tag = av_dict_get (stream1->metadata, name, NULL, 0);
+	}
+	if (!tag && stream2) {
+		tag = av_dict_get (stream2->metadata, name, NULL, 0);
 	}
 
 	return tag;
@@ -130,19 +137,19 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			tracker_resource_set_int64 (metadata, "nfo:frameCount", video_stream->nb_frames);
 		}
 
-		if ((tag = av_dict_get (format->metadata, "synopsis", NULL, 0))) {
+		if ((tag = find_tag (format, video_stream, NULL, "synopsis"))) {
 			tracker_resource_set_string (metadata, "nmm:synopsis", tag->value);
 		}
 
-		if ((tag = av_dict_get (format->metadata, "episode_sort", NULL, 0))) {
-			tracker_resource_set_int64 (metadata, "nmm:episodeNumber", atoi(tag->value));
+		if ((tag = find_tag (format, video_stream, NULL, "episode_sort"))) {
+			tracker_resource_set_int64 (metadata, "nmm:episodeNumber", atoi (tag->value));
 		}
 
-		if ((tag = av_dict_get (format->metadata, "season_number", NULL, 0))) {
-			tracker_resource_set_int64 (metadata, "nmm:season", atoi(tag->value));
+		if ((tag = find_tag (format, video_stream, NULL, "season_number"))) {
+			tracker_resource_set_int64 (metadata, "nmm:season", atoi (tag->value));
 		}
 
-		if ((tag = av_dict_get (format->metadata, "creation_time", NULL, 0))) {
+		if ((tag = find_tag (format, video_stream, NULL, "creation_time"))) {
 			content_created = tracker_date_guess (tag->value);
 			if (content_created) {
 				tracker_resource_set_string (metadata, "nie:contentCreated", content_created);
@@ -163,31 +170,31 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			tracker_resource_set_int64 (metadata, "nfo:duration", duration);
 		}
 
-		if ((tag = find_tag (format, audio_stream, "track"))) {
-			int track = atoi(tag->value);
+		if ((tag = find_tag (format, audio_stream, NULL, "track"))) {
+			int track = atoi (tag->value);
 			if (track > 0) {
 				tracker_resource_set_int64 (metadata, "nmm:trackNumber", track);
 			}
 		}
 
-		if ((tag = find_tag (format, audio_stream, "album"))) {
+		if ((tag = find_tag (format, audio_stream, NULL, "album"))) {
 			album_title = tag->value;
 		}
 
-		if (album_title && (tag = find_tag (format, audio_stream, "album_artist"))) {
+		if (album_title && (tag = find_tag (format, audio_stream, NULL, "album_artist"))) {
 			album_artist_name = tag->value;
 			album_artist = tracker_extract_new_artist (album_artist_name);
 		}
 
-		if ((tag = find_tag (format, audio_stream, "artist"))) {
+		if ((tag = find_tag (format, audio_stream, NULL, "artist"))) {
 			artist = tracker_extract_new_artist (tag->value);
 		}
 
-		if ((tag = find_tag (format, audio_stream, "performer"))) {
+		if ((tag = find_tag (format, audio_stream, NULL, "performer"))) {
 			performer = tracker_extract_new_artist (tag->value);
 		}
 
-		if ((tag = av_dict_get (format->metadata, "date", NULL, 0))) {
+		if ((tag = find_tag (format, audio_stream, NULL, "date"))) {
 			content_created = tracker_date_guess (tag->value);
 			if (content_created) {
 				tracker_resource_set_string (metadata, "nie:contentCreated", content_created);
@@ -202,7 +209,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			tracker_resource_set_relation (metadata, "nmm:performer", performer);
 		}
 
-		if ((tag = find_tag (format, audio_stream, "composer"))) {
+		if ((tag = find_tag (format, audio_stream, NULL, "composer"))) {
 			TrackerResource *composer = tracker_extract_new_artist (tag->value);
 			tracker_resource_set_relation (metadata, "nmm:composer", composer);
 			g_object_unref (composer);
@@ -212,7 +219,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 			int disc_number = 1;
 			TrackerResource *album_disc;
 
-			if ((tag = find_tag (format, audio_stream, "disc"))) {
+			if ((tag = find_tag (format, audio_stream, NULL, "disc"))) {
 				disc_number = atoi (tag->value);
 			}
 
@@ -235,23 +242,23 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		tracker_resource_set_int64 (metadata, "nfo:averageBitrate", format->bit_rate);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "comment", NULL, 0))) {
+	if ((tag = find_tag (format, audio_stream, video_stream, "comment"))) {
 		tracker_resource_set_string (metadata, "nie:comment", tag->value);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "copyright", NULL, 0))) {
+	if ((tag = find_tag (format, audio_stream, video_stream, "copyright"))) {
 		tracker_resource_set_string (metadata, "nie:copyright", tag->value);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "description", NULL, 0))) {
+	if ((tag = find_tag (format, audio_stream, video_stream, "description"))) {
 		tracker_resource_set_string (metadata, "nie:description", tag->value);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "genre", NULL, 0))) {
+	if ((tag = find_tag (format, audio_stream, video_stream, "genre"))) {
 		tracker_resource_set_string (metadata, "nfo:genre", tag->value);
 	}
 
-	if ((tag = av_dict_get (format->metadata, "title", NULL, 0))) {
+	if ((tag = find_tag (format, audio_stream, video_stream, "title"))) {
 		title = tag->value;
 	}
 

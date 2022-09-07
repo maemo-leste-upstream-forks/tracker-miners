@@ -128,7 +128,11 @@ link_named_pad (GstPad      *srcpad,
 
 	sinkpad = gst_element_get_static_pad (element, sinkpadname);
 	if (sinkpad == NULL) {
+#if defined(HAVE_GSTREAMER_1_20)
+		sinkpad = gst_element_request_pad_simple (element, sinkpadname);
+#else
 		sinkpad = gst_element_get_request_pad (element, sinkpadname);
+#endif
 	}
 	result = gst_pad_link (srcpad, sinkpad);
 	gst_object_unref (sinkpad);

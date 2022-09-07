@@ -12,17 +12,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-10 12:02+0000\n"
-"PO-Revision-Date: 2021-06-28 10:19+0300\n"
-"Last-Translator: Alexey Rubtsov <rushills@gmail.com>\n"
+"POT-Creation-Date: 2022-08-07 13:15+0000\n"
+"PO-Revision-Date: 2022-08-07 17:02+0300\n"
+"Last-Translator: Aleksandr Melman <Alexmelman88@gmail.com>\n"
 "Language-Team: Русский <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 3.1\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
@@ -381,7 +381,7 @@ msgstr "Проверяет, может ли индексироваться ФА�
 msgid "FILE"
 msgstr "ФАЙЛ"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Выполняется для конкретной онтологии домена"
@@ -406,34 +406,34 @@ msgstr "Объект данных «%s» уже существует"
 msgid "Data object “%s” currently does not exist"
 msgstr "Объект данных «%s» не существует"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:663
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Каталог НЕ подлежит индексации (на основе фильтров)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:667
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Файл НЕ подлежит индексированию (на основе фильтров)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Файл НЕ подлежит индексированию (скрытый файл)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Файл НЕ подлежит индексированию (не является индексируемой папкой)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:696
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 "Родительский каталог «%s» НЕ подлежит индексированию (на основе фильтров)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:702
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "Родительский каталог «%s» НЕ подлежит индексированию (скрытый файл)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:710
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
@@ -442,11 +442,11 @@ msgstr ""
 "Родительский каталог «%s» НЕ подлежит индексированию (на основе фильтров "
 "содержимого)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:731
 msgid "Directory is eligible to be indexed"
 msgstr "Каталог разрешённый для индексации"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:732
 msgid "File is eligible to be indexed"
 msgstr "Файл может быть проиндексирован"
 
@@ -458,46 +458,66 @@ msgid "— start the tracker indexer"
 msgstr "— запустить индексатор"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Добавить канал"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URL"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
-msgstr "Title to use (must be used with --add-feed)"
+msgstr "Заголовок для использования (должен использоваться с --add-feed)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "— запустить индексатор лент"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Список каналов"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Удалить канал"
+
+#: src/miners/rss/tracker-main.c:164 src/miners/rss/tracker-main.c:216
+#: src/miners/rss/tracker-main.c:253 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Не удалось установить соединение с Tracker"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:165 src/miners/rss/tracker-main.c:217
+#: src/miners/rss/tracker-main.c:254 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Сообщение об ошибке не указано"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:190
 msgid "Could not add feed"
-msgstr "Не удалось добавить ленту"
+msgstr "Не удалось добавить канал"
+
+#: src/miners/rss/tracker-main.c:228
+msgid "Could not remove feed"
+msgstr "Не удалось удалить канал"
+
+#: src/miners/rss/tracker-main.c:296
+msgid "Could not list feeds"
+msgstr "Не удалось показать список каналов"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:424
+msgid "— start the feeds indexer"
+msgstr "— запустить индексатор каналов"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -506,11 +526,11 @@ msgstr "Не удалось добавить ленту"
 msgid "— start the tracker index proxy"
 msgstr "- запустить индексный прокси-сервер трекера"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Не удалось извлечь метаданные"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Для этого файла не удалось найти подходящий модуль метаданных или модуль "
@@ -817,7 +837,7 @@ msgstr "Все свойства nie:plainTextContent опущены"
 msgid "Common statuses include"
 msgstr "Общие статусы"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr ""
@@ -847,7 +867,7 @@ msgstr ""
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Нельзя одновременно использовать аргументы --kill и --terminate"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -878,9 +898,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Если аргументы не указаны, отображается статус индексаторов данных"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
 #: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Неизвестный параметр"
 
@@ -928,15 +948,15 @@ msgstr "--add и --remove исключают друг друга"
 msgid "--recursive requires --add"
 msgstr "--recursive requires --add"
 
-#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Путь"
 
-#: src/tracker/tracker-index.c:352
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Рекурсивно"
 
-#: src/tracker/tracker-index.c:402
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Укажите одно или несколько мест для индексации."
 
@@ -985,36 +1005,36 @@ msgstr "Не получено ни одного префикса простра�
 msgid "Results"
 msgstr "Результаты"
 
-#: src/tracker/tracker-info.c:416
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Сообщение об ошибке"
 
-#: src/tracker/tracker-info.c:472
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Запрос информации для объекта"
 
-#: src/tracker/tracker-info.c:496
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Не удалось получить URN для URI"
 
-#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Не удалось получить данные для URI"
 
-#: src/tracker/tracker-info.c:563
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Для этого URI нет доступных метаданных"
 
-#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
-msgstr "Не удалось получить статус, дающий право на участие в программе"
+msgstr "Не удалось получить статус, дающий право на участие в программе: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Не удалось убить процесс %d — «%s»"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "Убитый процесс %d — «%s»"
@@ -1088,7 +1108,7 @@ msgstr "Поиск категорий приложений (--all не оказ�
 
 #: src/tracker/tracker-search.c:113
 msgid "Search for feeds (--all has no effect on this)"
-msgstr "Поиск лент (--all не оказывает влияния)"
+msgstr "Поиск каналов (--all не влияет на это)"
 
 #: src/tracker/tracker-search.c:119 src/tracker/tracker-tag.c:71
 msgid "Limit the number of results shown"
@@ -1122,7 +1142,7 @@ msgid ""
 "categories, e.g. Documents, Music…"
 msgstr ""
 "Отключить показ сниппетов с результатами. Это отображается только для "
-"некоторых категорий, например, Документы, Музыка.."
+"некоторых категорий, например, Документы, Музыка…"
 
 #: src/tracker/tracker-search.c:143
 msgid "Disable Full Text Search (FTS). Implies --disable-snippets"
@@ -1151,7 +1171,7 @@ msgstr "Не удалось получить результаты поиска"
 msgid "No files were found"
 msgstr "Файлы не найдены"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
 msgid "Files"
 msgstr "Файлы"
 
@@ -1173,11 +1193,11 @@ msgstr "Альбомы"
 
 #: src/tracker/tracker-search.c:784
 msgid "No feeds were found"
-msgstr "Ленты не найдены"
+msgstr "Каналы не найдены"
 
 #: src/tracker/tracker-search.c:788
 msgid "Feeds"
-msgstr "Ленты"
+msgstr "Каналы"
 
 #: src/tracker/tracker-search.c:871
 msgid "No software was found"
@@ -1203,18 +1223,18 @@ msgstr "По запросу ничего не найдено"
 msgid "Show statistics for current index / data set"
 msgstr "Показать статистику о хранящихся индексах / наборах данных"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "Не удалось получить статистику Tracker"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Статистика недоступна"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "Статистика:"
 
@@ -1241,25 +1261,25 @@ msgstr "Статистика:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
+#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Нет"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Не удалось получить основную информацию о состоянии Tracker"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "Сообщение"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Проиндексировано"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1267,7 +1287,7 @@ msgstr[0] "%d файл"
 msgstr[1] "%d файла"
 msgstr[2] "%d файлов"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1275,24 +1295,24 @@ msgstr[0] "%d папка"
 msgstr[1] "%d папки"
 msgstr[2] "%d папок"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Свободное место на разделе с базой данных"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Данные ещё индексируются"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "Расчётное время %s"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr "Все службы поиска данных в режиме ожидания, индексация завершена"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
@@ -1300,7 +1320,7 @@ msgstr[0] "зафиксирован %d отказ"
 msgstr[1] "зафиксировано %d отказа"
 msgstr[2] "зафиксировано %d отказов"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Отчеты не найдены"
 
@@ -1366,79 +1386,79 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr "Не удалось получить URN файлов"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:311
 msgid "Could not get files related to tag"
 msgstr "Не удалось получить файлы, связанные с меткой"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:378
 msgid "Could not get all tags in the database"
 msgstr "Не удалось получить все метки в базе данных"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:388
 msgid "No files have been tagged"
 msgstr "Ни один файл не был помечен"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:423
 msgid "Could not get files for matching tags"
 msgstr "Не удалось получить файлы, совпадающие с меткой"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:432
 msgid "No files were found matching ALL of those tags"
 msgstr "Не найдено ни одного файла, совпадающего со ВСЕМИ этими метками"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
 msgid "Could not get all tags"
 msgstr "Не удалось получить все метки"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
 msgid "No tags were found"
 msgstr "Метки не найдены"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:524
 msgid "Tags (shown by name)"
 msgstr "Метки (показаны по имени)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:598
 msgid "No files were modified"
 msgstr "Нет изменённых файлов"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
 msgid "Files do not exist or aren’t indexed"
 msgstr "Файлы не существуют или не проиндексированы"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:706
 msgid "Could not add tag"
 msgstr "Не удалось добавить метку"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:722
 msgid "Tag was added successfully"
 msgstr "Метка успешно добавлена"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:751
 msgid "Could not add tag to files"
 msgstr "Не удалось добавить метку к файлам"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:761
 msgid "Tagged"
 msgstr "Имеет метки"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:762
 msgid "Not tagged, file is not indexed"
 msgstr "Без меток, файл не индексировался"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:808
 msgid "Could not get tag by label"
 msgstr "Не удалось получить метку по названию"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:819
 msgid "No tags were found by that name"
 msgstr "Не найдено меток с таким именем"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:836
 msgid "None of the files had this tag set"
 msgstr "Ни один файл не имеет такой метки"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:882
 msgid "Could not remove tag"
 msgstr "Не удалось удалить метку"
 
@@ -2649,9 +2669,6 @@ msgstr "— запустить службу обратной записи"
 
 #~ msgid "Could not create tree: class properties query failed"
 #~ msgstr "Не удалось создать дерево: ошибка запроса свойств класса"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Не удалось показать список классов"
 
 #~ msgid "No classes were found"
 #~ msgstr "Классы не найдены"

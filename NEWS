@@ -1,3 +1,13 @@
+NEW in 3.4.0.rc - 2022-09-04
+============================
+  * Fixes to libav/ffmpeg extractor
+  * Remove text/plain files from ignored-files, there are more
+    specific setting to control indexed text content
+  * Fix build on MacOS
+  * Fix compiler/build warnings
+
+Translations: ab, ca, cs, de, eu, gl, he, hr, hu, id, ko, lt, pl, pt_BR, ru, sl, tr, zh_CN
+
 NEW in 3.4.0.beta - 2022-08-08
 ==============================
   * Add --list and --delete options to RSS miner

@@ -4,13 +4,13 @@
 #
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2014, 2015, 2016, 2017.
 # Edurne Labaka <elabaka@uzei.com>, 2015.
-# Asier Sarasua Garmendia  <asiersarasua@ni.eus>, 2019, 2020, 2021.
+# Asier Sarasua Garmendia  <asiersarasua@ni.eus>, 2019, 2020, 2021, 2022.
 #
 msgid ""
 msgstr "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-10 12:02+0000\n"
-"PO-Revision-Date: 2021-07-18 10:00+0100\n"
+"POT-Creation-Date: 2022-08-07 13:15+0000\n"
+"PO-Revision-Date: 2022-08-16 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -326,7 +326,7 @@ msgstr "FITXATEGIA indexatzeko hautagaia den egiaztatzen du konfigurazioaren ara
 msgid "FILE"
 msgstr "FITXATEGIA"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Domeinu zehatzaren ontologia batentzako exekutatzen du"
@@ -351,44 +351,44 @@ msgstr "“%s” objektuaren datuak badaude"
 msgid "Data object “%s” currently does not exist"
 msgstr "“%s” objektuaren datuak ez daude"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:663
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Direktorioa EZ da hautagaia indexatua izateko (iragazkietan oinarrituta)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:667
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Fitxategia EZ da hautagaia indexatua izateko (iragazkietan oinarrituta)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Fitxategia EZ da hautagaia indexatua izateko (ezkutuko fitxategia)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Fitxategia EZ da hautagaia indexatua izateko (ez da indexatutako karpeta)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:696
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr "“%s” direktorio gurasoa EZ da hautagaia indexatua izateko (iragazkietan oinarrituta)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:702
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "“%s” direktorio gurasoa EZ da hautagaia indexatua izateko (ezkutuko fitxategia)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:710
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
 "filters)"
 msgstr "“%s” direktorio gurasoa EZ da hautagaia indexatua izateko (eduki-iragazkietan oinarrituta)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:731
 msgid "Directory is eligible to be indexed"
 msgstr "Direktoria indexatua izateko hautagaia da"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:732
 msgid "File is eligible to be indexed"
 msgstr "Fitxategia indexatua izateko hautagaia da"
 
@@ -400,46 +400,66 @@ msgid "— start the tracker indexer"
 msgstr "— abiarazi tracker-en indexatzailea"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Gehitu jarioa"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URLa"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
 msgstr "Titulua (--add-feed aukerarekin erabili)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "— abiarazi jarioen indexatzailea"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Zerrendatu jarioak"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Ezabatu jarioa"
+
+#: src/miners/rss/tracker-main.c:164 src/miners/rss/tracker-main.c:216
+#: src/miners/rss/tracker-main.c:253 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Ezin izan da Tracker-ekin konektatu"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:165 src/miners/rss/tracker-main.c:217
+#: src/miners/rss/tracker-main.c:254 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Ez da errorerik eman"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:190
 msgid "Could not add feed"
 msgstr "Ezin izan da jarioa gehitu"
+
+#: src/miners/rss/tracker-main.c:228
+msgid "Could not remove feed"
+msgstr "Ezin izan da jarioa kendu"
+
+#: src/miners/rss/tracker-main.c:296
+msgid "Could not list feeds"
+msgstr "Ezin izan dira jarioak zerrendatu"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:424
+msgid "— start the feeds indexer"
+msgstr "— abiarazi jarioen indexatzailea"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -448,11 +468,11 @@ msgstr "Ezin izan da jarioa gehitu"
 msgid "— start the tracker index proxy"
 msgstr "— abiarazi aztarnariaren indize-proxya"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Huts egin du metadatuak erauztean"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr "Ez da metadatuen edo erauzlearen modulurik aurkitu fitxategi hau kudeatzeko"
 
@@ -742,7 +762,7 @@ msgstr "All nie:plainTextContent propietateei ez ikusi egiten zaie"
 msgid "Common statuses include"
 msgstr "Egoera arruntak hauek dira"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Ezin izan da egoera lortu. Ezin izan da kudeatzailea sortu: %s"
@@ -768,7 +788,7 @@ msgstr "Pausatzeko edo jarraitzeko komandoa eman behar duzu biltzailearentzako"
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Ezin dituzu --kill eta --terminate argumentuak batera erabili"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -798,9 +818,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Ez bada argumenturik ematen, datuen biltzaileen egoera erakutsiko da."
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
 #: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Aukera ezezagunak"
 
@@ -848,15 +868,15 @@ msgstr "--add eta --remove ezin dira elkarrekin erabili"
 msgid "--recursive requires --add"
 msgstr "--recursive aukerak --add behar du"
 
-#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Bide-izena"
 
-#: src/tracker/tracker-index.c:352
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Errekurtsiboa"
 
-#: src/tracker/tracker-index.c:402
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Zehaztu indexatuko den kokaleku bat edo gehiago."
 
@@ -900,36 +920,36 @@ msgstr "Ez da izen-espazioaren aurrizkirik itzuli"
 msgid "Results"
 msgstr "Emaitzak"
 
-#: src/tracker/tracker-info.c:416
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Errore-mezua"
 
-#: src/tracker/tracker-info.c:472
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Entitatearen informazioa kontsultatzen"
 
-#: src/tracker/tracker-info.c:496
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Ezin da URIaren URNa eskuratu"
 
-#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Ezin da URIaren daturik eskuratu"
 
-#: src/tracker/tracker-info.c:563
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Ez dago URIaren meta-daturik eskuragarri"
 
-#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Ezin izan da eskuratu hautagaitasun-egoera: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Ezin izan da %d — “%s” prozesua hil"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "%d — “%s” prozesua hilda"
@@ -1056,7 +1076,7 @@ msgstr "Ezin izan dira bilaketaren emaitzak eskuratu"
 msgid "No files were found"
 msgstr "Ez da fitxategirik aurkitu"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
 msgid "Files"
 msgstr "Fitxategiak"
 
@@ -1108,18 +1128,18 @@ msgstr "Ez da zure kontsultarekin bat datorren emaitzarik aurkitu"
 msgid "Show statistics for current index / data set"
 msgstr "Erakutsi uneko indizearen/bildutako datuen estatistikak"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "Ezin izan da Tracker-en estatistikarik eskuratu"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Ez dago estatistikarik eskuragarri"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "Estatistikak:"
 
@@ -1146,63 +1166,63 @@ msgstr "Estatistikak:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
+#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Bat ere ez"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Ezin izan da Tracker-en egoera lortu: %s"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "Mezua"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Unean indexatutakoa"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "Fitxategi %d"
 msgstr[1] "%d fitxategi"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "Karpeta %d"
 msgstr[1] "%d karpeta"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Datu-basearen partizioan geratzen den lekua"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Datuak oraindik indexatzen ari dira"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "Gutxi gorabehera %s falta da"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr "Datuen biltzaile guztiak inaktibo daude, indexatzea amaituta"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] "Erregistratutako hutsegite %d"
 msgstr[1] "Erregistratutako %d hutsegite"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Ez da txostenik aurkitu"
 
@@ -1260,79 +1280,79 @@ msgstr "OHARRA: mugara iritsi da, hemen zerrendatu ez diren elementu gehiago dau
 msgid "Could not get file URNs"
 msgstr "Ezin izan da fitxategiaren URNrik eskuratu"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:311
 msgid "Could not get files related to tag"
 msgstr "Ezin izan dira etiketarekin zerikusia duten fitxategirik eskuratu"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:378
 msgid "Could not get all tags in the database"
 msgstr "Ezin izan dira datu-baseko etiketa guztiak eskuratu"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:388
 msgid "No files have been tagged"
 msgstr "Ez da fitxategirik etiketatu"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:423
 msgid "Could not get files for matching tags"
 msgstr "Ezin izan da etiketekin bat datozen fitxategirik eskuratu"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:432
 msgid "No files were found matching ALL of those tags"
 msgstr "Ez da etiketa horiekin guztiekin bat datorren fitxategirik aurkitu"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
 msgid "Could not get all tags"
 msgstr "Ezin izan dira etiketa guztiak eskuratu"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
 msgid "No tags were found"
 msgstr "Ez da etiketarik aurkitu"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:524
 msgid "Tags (shown by name)"
 msgstr "Etiketak (izenaren arabera erakutsita)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:598
 msgid "No files were modified"
 msgstr "Ez da fitxategirik aldatu"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
 msgid "Files do not exist or aren’t indexed"
 msgstr "Fitxategiak ez dira existitzen, edo ez daude indexatuta"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:706
 msgid "Could not add tag"
 msgstr "Ezin izan da etiketa gehitu"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:722
 msgid "Tag was added successfully"
 msgstr "Etiketa ongi gehitu da"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:751
 msgid "Could not add tag to files"
 msgstr "Ezin izan da etiketa fitxategiei gehitu"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:761
 msgid "Tagged"
 msgstr "Etiketatuta"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:762
 msgid "Not tagged, file is not indexed"
 msgstr "Ez da etiketatu, fitxategia ez dago indexatuta"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:808
 msgid "Could not get tag by label"
 msgstr "Ezin izan da etiketarik eskuratu"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:819
 msgid "No tags were found by that name"
 msgstr "Ez da etiketarik aurkitu izen horren arabera"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:836
 msgid "None of the files had this tag set"
 msgstr "Ez dago etiketa hau duen fitxategirik"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:882
 msgid "Could not remove tag"
 msgstr "Ezin izan da etiketa kendu"
 
@@ -2597,9 +2617,6 @@ msgstr "— abiarazi atzerapeneko idazketa zerbitzua"
 #~ msgstr ""
 #~ "Ezin izan da zuhaitza sortu: klasearen propietateen kontsultak huts egin "
 #~ "du"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Ezin izan da klaserik zerrendatu"
 
 #~ msgid "No classes were found"
 #~ msgstr "Ez da klaserik aurkitu"

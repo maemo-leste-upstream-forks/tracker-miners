@@ -778,7 +778,13 @@ tracker_indexing_tree_file_matches_filter (TrackerIndexingTree *tree,
 			break;
 		}
 
-		if (g_pattern_match (data->pattern, len, str, reverse)) {
+#if GLIB_CHECK_VERSION (2, 70, 0)
+		if (g_pattern_spec_match (data->pattern, len, str, reverse))
+#else
+		if (g_pattern_match (data->pattern, len, str, reverse))
+#endif
+
+		{
 			match = TRUE;
 			break;
 		}

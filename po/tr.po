@@ -12,16 +12,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-10 12:02+0000\n"
-"PO-Revision-Date: 2021-08-06 23:32+0300\n"
-"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
+"POT-Creation-Date: 2022-08-07 13:15+0000\n"
+"PO-Revision-Date: 2022-08-21 13:20+0300\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Türkçe <gnome-turk@gnome.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-POOTLE-MTIME: 1436541455.000000\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
@@ -363,7 +363,7 @@ msgstr "FILE değişkeninin yapılandırmaya uygun yaranmışlığını denetler
 msgid "FILE"
 msgstr "DOSYA"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Belirli bir etki alanı ontolojisi için çalışır"
@@ -388,44 +388,44 @@ msgstr "“%s” veri nesnesi, şu anda var"
 msgid "Data object “%s” currently does not exist"
 msgstr "“%s” veri nesnesi, şu anda yok"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:663
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Dizin, dizinlenmeye uygun DEĞİL (süzgeçlere göre)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:667
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Dosya, dizinlenmeye uygun DEĞİL (süzgeçlere göre)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:670
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Dosya, dizinlenmeye uygun DEĞİL (gizli dosya)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:672
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr "Dosya, dizinlenmeye uygun DEĞİL (dizinlenmiş klasör değil)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:696
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr "“%s” üst dizini, dizinlenmeye uygun DEĞİL (süzgeçlere göre)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:702
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr "“%s” üst dizini, dizinlenmeye uygun DEĞİL (gizli dosya)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:710
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
 "filters)"
 msgstr "“%s” üst dizini, dizinlenmeye uygun DEĞİL (içerik süzgeçlerine göre)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:731
 msgid "Directory is eligible to be indexed"
 msgstr "Dizin, dizinlenmeye uygun"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:732
 msgid "File is eligible to be indexed"
 msgstr "Dosya dizinlenmeye uygun"
 
@@ -437,46 +437,66 @@ msgid "— start the tracker indexer"
 msgstr "— tracker dizinleyicisini çalıştır"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Haber kaynağı ekle"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URL"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
 msgstr "Kullanılacak başlık (--add-feed ile birlikte kullanılmalıdır)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "— besleme dizinleyicisini çalıştır"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Beslemeleri listele"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Beslemeyi sil"
+
+#: src/miners/rss/tracker-main.c:164 src/miners/rss/tracker-main.c:216
+#: src/miners/rss/tracker-main.c:253 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
 msgid "Could not establish a connection to Tracker"
 msgstr "Tracker uygulamasına bağlantı kurulamıyor"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:165 src/miners/rss/tracker-main.c:217
+#: src/miners/rss/tracker-main.c:254 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
 msgid "No error given"
 msgstr "Hata belirtilmedi"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:190
 msgid "Could not add feed"
 msgstr "Beseleme eklenemedi"
+
+#: src/miners/rss/tracker-main.c:228
+msgid "Could not remove feed"
+msgstr "Besleme kaldırılamadı"
+
+#: src/miners/rss/tracker-main.c:296
+msgid "Could not list feeds"
+msgstr "Bestelemeler listelenemedi"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:424
+msgid "— start the feeds indexer"
+msgstr "— besleme dizinleyicisini çalıştır"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -485,11 +505,11 @@ msgstr "Beseleme eklenemedi"
 msgid "— start the tracker index proxy"
 msgstr "— tracker dizin vekilini çalıştır"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:695
 msgid "Metadata extraction failed"
 msgstr "Üst veri ayıklama başarısız"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:770
 msgid "No metadata or extractor modules found to handle this file"
 msgstr "Bu dosyayı işleyecek üst veri veya ayıklayıcı modül bulunamadı"
 
@@ -783,7 +803,7 @@ msgstr "Tüm nie:plainTextContent özellikleri es geçiliyor"
 msgid "Common statuses include"
 msgstr "İçerilen ortak durumlar"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr "Durum alınamadı, yönetici oluşturulamadı, %s"
@@ -810,7 +830,7 @@ msgstr "Madenci için bir duraklatma ya da devam ettirme komutu sağlamalısın�
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "--kill ve --terminate parametrelerini birlikte kullanamazsınız"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -839,9 +859,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Verilmiş bir değişken yoksa, veri madencilerinin durumu gözükür"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
 #: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
 msgid "Unrecognized options"
 msgstr "Tanınmayan seçenekler"
 
@@ -889,15 +909,15 @@ msgstr "--add ve --remove birbirini dışlayandır"
 msgid "--recursive requires --add"
 msgstr "--recursive seçeneği --add gerektirir"
 
-#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Yol"
 
-#: src/tracker/tracker-index.c:352
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Özyinele"
 
-#: src/tracker/tracker-index.c:402
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Lütfen dizinlenecek bir veya daha çok konum belirtin."
 
@@ -943,36 +963,36 @@ msgstr "Dönen bir alan adı ön eki yok"
 msgid "Results"
 msgstr "Sonuçlar"
 
-#: src/tracker/tracker-info.c:416
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Hata iletisi"
 
-#: src/tracker/tracker-info.c:472
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Birim için sorgulama bilgisi"
 
-#: src/tracker/tracker-info.c:496
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "URI için olan URN alınamadı"
 
-#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "URI için veri alınamadı"
 
-#: src/tracker/tracker-info.c:563
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Bu URI için bir üst veri kullanılabilir değil"
 
-#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Uygun durum alınamadı: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "%d — “%s” süreci öldürülemedi"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "Öldürülmüş süreç %d — “%s”"
@@ -1104,7 +1124,7 @@ msgstr "Arama sonuçları alınamadı"
 msgid "No files were found"
 msgstr "Hiçbir dosya bulunamadı"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
 msgid "Files"
 msgstr "Dosyalar"
 
@@ -1156,18 +1176,18 @@ msgstr "Sorgunuzla eşleşen hiçbir sonuç bulunamadı"
 msgid "Show statistics for current index / data set"
 msgstr "Var olan dizinleme / veri kümesi için istatistikleri göster"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "İzleyici istatistikleri alınamadı"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Kullanılabilir istatistik yok"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "İstatistikler:"
 
@@ -1194,60 +1214,60 @@ msgstr "İstatistikler:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
+#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
 #: src/tracker/tracker-tag.c:953
 msgid "None"
 msgstr "Hiçbiri"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Tracker için temel durum alınamadı"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "İleti"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Şu anda dizinlenen"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d dosya"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d klasör"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Veritabanı bölümünde kalan alan"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Veri henüz dizinleniyor"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "%s kaldığı öngörülüyor"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr "Tüm veri madencileri boşta, dizinleme tamamlandı"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
 msgstr[0] "%d kayıtlı başarısızlık"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Herhangi bir rapor bulunamadı"
 
@@ -1314,79 +1334,79 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr "Dosya URNleri alınamadı"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:311
 msgid "Could not get files related to tag"
 msgstr "Etiketle ilgili dosyalar alınamadı"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:378
 msgid "Could not get all tags in the database"
 msgstr "Veritabanındaki tüm etiketler alınamadı"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:388
 msgid "No files have been tagged"
 msgstr "Hiçbir dosya etiketlenmedi"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:423
 msgid "Could not get files for matching tags"
 msgstr "Eşleşen etiketler için dosyalar alınamadı"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:432
 msgid "No files were found matching ALL of those tags"
 msgstr "TÜM bu etiketlerle eşleşen hiçbir dosya bulunamadı"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
 msgid "Could not get all tags"
 msgstr "Tüm etiketler alınamadı"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
 msgid "No tags were found"
 msgstr "Hiçbir etiket bulunamadı"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:524
 msgid "Tags (shown by name)"
 msgstr "Etiketler (ada göre gösteriliyor)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:598
 msgid "No files were modified"
 msgstr "Hiçbir dosya değiştirilmedi"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
 msgid "Files do not exist or aren’t indexed"
 msgstr "Dosyalar yok ya da dizinlenmemiş"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:706
 msgid "Could not add tag"
 msgstr "Etiket eklenemedi"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:722
 msgid "Tag was added successfully"
 msgstr "Etiket başarıyla eklendi"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:751
 msgid "Could not add tag to files"
 msgstr "Etiket dosyalara eklenemedi"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:761
 msgid "Tagged"
 msgstr "Etiketlendi"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:762
 msgid "Not tagged, file is not indexed"
 msgstr "Etiketlenmedi, dosya dizinlenmemiş"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:808
 msgid "Could not get tag by label"
 msgstr "Başlığa göre etiket alınamadı"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:819
 msgid "No tags were found by that name"
 msgstr "Bu adda herhangi bir etiket bulunamadı"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:836
 msgid "None of the files had this tag set"
 msgstr "Hiçbir dosyada bu etiket ayarlanmamış"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:882
 msgid "Could not remove tag"
 msgstr "Etiket kaldırılamadı"
 
@@ -2646,9 +2666,6 @@ msgstr "— tracker geri yazma servisini başlat"
 
 #~ msgid "Could not create tree: class properties query failed"
 #~ msgstr "Ağaç oluşturulamadı: sınıf özellikleri sorgusu başarısız oldu"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Sınıflar listelenemedi"
 
 #~ msgid "No classes were found"
 #~ msgstr "Hiçbir sınıf bulunamadı"

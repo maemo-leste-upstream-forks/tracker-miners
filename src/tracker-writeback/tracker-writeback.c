@@ -372,7 +372,9 @@ module_matches_resource (TrackerWritebackModule *module,
 	GList *l;
 
 	module_types = tracker_writeback_module_get_rdf_types (module);
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	namespaces = tracker_namespace_manager_get_default ();
+	G_GNUC_END_IGNORE_DEPRECATIONS
 
 	for (l = types; l; l = l->next) {
 		GValue *value = l->data;
