@@ -1,8 +1,9 @@
-tracker-miners (3.4.0-1) UNRELEASED; urgency=medium
+tracker-miners (3.4.0-1) unstable; urgency=medium
 
   * New upstream release
+  * debian/control.in: Bump Standards-Version to 4.6.1
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 19 Sep 2022 10:30:52 -0400
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 19 Sep 2022 10:31:15 -0400
 
 tracker-miners (3.4.0~rc-1) unstable; urgency=medium
 
