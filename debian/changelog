@@ -1,3 +1,9 @@
+tracker-miners (3.4.0-2) UNRELEASED; urgency=medium
+
+  * d/p/allow-get-set-mempolicy.patch: Fixes build.
+
+ -- Nathan Pratta Teodosio <nathan.teodosio@canonical.com>  Mon, 26 Sep 2022 14:50:01 -0300
+
 tracker-miners (3.4.0-1) unstable; urgency=medium
 
   * New upstream release
