@@ -1,3 +1,9 @@
+tracker-miners (3.4.0-3) unstable; urgency=medium
+
+  * Use correct version of allow-get-set-mempolicy.patch
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Sat, 08 Oct 2022 08:59:52 -0400
+
 tracker-miners (3.4.0-2) unstable; urgency=medium
 
   [ Nathan Pratta Teodosio ]
