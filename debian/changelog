@@ -1,3 +1,10 @@
+tracker-miners (3.4.0-4) unstable; urgency=medium
+
+  * Cherry-pick patch to add epoll_create1 to the sandbox whitelist
+    to fix crash with glib 2.74+ (LP: #1990630)
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 17 Oct 2022 07:34:45 -0400
+
 tracker-miners (3.4.0-3) unstable; urgency=medium
 
   * Use correct version of allow-get-set-mempolicy.patch
