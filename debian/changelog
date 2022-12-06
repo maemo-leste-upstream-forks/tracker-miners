@@ -1,3 +1,9 @@
+tracker-miners (3.4.2-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Tue, 06 Dec 2022 17:22:54 -0500
+
 tracker-miners (3.4.0-4) unstable; urgency=medium
 
   * Cherry-pick patch to add epoll_create1 to the sandbox whitelist
