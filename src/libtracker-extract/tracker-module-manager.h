@@ -56,6 +56,8 @@ GList * tracker_extract_module_manager_get_matching_rules (const gchar *mimetype
 
 void tracker_module_manager_load_modules (void);
 
+void tracker_module_manager_shutdown_modules (void);
+
 G_END_DECLS
 
 #endif /* __TRACKER_EXTRACT_MODULE_MANAGER_H__ */

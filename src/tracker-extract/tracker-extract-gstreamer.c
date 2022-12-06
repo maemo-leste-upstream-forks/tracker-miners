@@ -54,6 +54,7 @@
 #include <libtracker-extract/tracker-extract.h>
 
 #include "tracker-cue-sheet.h"
+#include "tracker-main.h"
 
 typedef enum {
 	EXTRACT_MIME_AUDIO,
@@ -103,6 +104,8 @@ typedef struct {
 	gfloat          video_fps;
 #endif
 } MetadataExtractor;
+
+static TrackerSparqlConnection *local_conn = NULL;
 
 static void common_extract_stream_metadata (MetadataExtractor    *extractor,
                                             const gchar          *uri,
@@ -1246,7 +1249,13 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 	/* Retrieve global tags */
 #if defined(HAVE_GSTREAMER_1_20)
 	GstDiscovererStreamInfo *sinfo = gst_discoverer_info_get_stream_info (info);
-	discoverer_tags = gst_discoverer_container_info_get_tags ((GstDiscovererContainerInfo *)sinfo);
+
+	if (GST_IS_DISCOVERER_CONTAINER_INFO (sinfo))
+		discoverer_tags = gst_discoverer_container_info_get_tags (GST_DISCOVERER_CONTAINER_INFO (sinfo));
+	else if (GST_IS_DISCOVERER_STREAM_INFO (sinfo))
+		discoverer_tags = gst_discoverer_stream_info_get_tags (sinfo);
+	else
+		discoverer_tags = NULL;
 #else
 	discoverer_tags = gst_discoverer_info_get_tags (info);
 #endif
@@ -1293,20 +1302,26 @@ discoverer_init_and_run (MetadataExtractor *extractor,
 
 	for (l = extractor->streams; l; l = g_list_next (l)) {
 		GstDiscovererStreamInfo *stream = l->data;
-		GstTagList *stream_tags;
+		const GstTagList *stream_tags;
+		GstTagList *copy = NULL;
 
-		stream_tags = gst_tag_list_copy (gst_discoverer_stream_info_get_tags (stream));
+		stream_tags = gst_discoverer_stream_info_get_tags (stream);
+
+		if (stream_tags)
+			copy = gst_tag_list_copy (stream_tags);
+
 		if (extractor->has_video &&
+		    copy &&
 		    gst_tag_list_get_tag_size (extractor->tagcache, "title") > 0)
-			gst_tag_list_remove_tag (stream_tags, "title");
+			gst_tag_list_remove_tag (copy, "title");
 
-		if (stream_tags) {
+		if (copy) {
 			gst_tag_list_insert (extractor->tagcache,
-					     stream_tags,
+					     copy,
 					     GST_TAG_MERGE_APPEND);
 		}
 
-		gst_tag_list_unref (stream_tags);
+		g_clear_pointer (&copy, gst_tag_list_unref);
 	}
 
 	gst_discoverer_info_unref (info);
@@ -1351,7 +1366,10 @@ tracker_extract_gstreamer (const gchar          *uri,
 		}
 
 		if (extractor->toc == NULL) {
-			extractor->toc = tracker_cue_sheet_guess_from_uri (uri);
+			if (!local_conn)
+				local_conn = tracker_main_get_readonly_connection (NULL);
+
+			extractor->toc = tracker_cue_sheet_guess_from_uri (local_conn, uri);
 		}
 
 		if (extractor->toc == NULL &&
@@ -1446,6 +1464,7 @@ tracker_extract_module_init (GError **error)
 		"vaapi",
 		"video4linux2",
 		"nvcodec",
+		"ges",
 	};
 	GstRegistry *registry;
 	guint i;
@@ -1464,5 +1483,12 @@ tracker_extract_module_init (GError **error)
 		}
 	}
 
+	return TRUE;
+}
+
+G_MODULE_EXPORT gboolean
+tracker_extract_module_shutdown (void)
+{
+	g_clear_object (&local_conn);
 	return TRUE;
 }

@@ -700,6 +700,7 @@ fs_finalize (GObject *object)
 	}
 
 	g_hash_table_unref (priv->roots_to_notify);
+	g_free (priv->file_attributes);
 
 	G_OBJECT_CLASS (tracker_miner_fs_parent_class)->finalize (object);
 }

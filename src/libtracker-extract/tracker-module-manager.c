@@ -607,3 +607,22 @@ tracker_extract_module_manager_get_hash (const gchar *mimetype)
 
 	return NULL;
 }
+
+void
+tracker_module_manager_shutdown_modules (void)
+{
+	GHashTableIter iter;
+	ModuleInfo *module_info;
+
+	g_return_if_fail (initialized == TRUE);
+
+	if (!modules)
+		return;
+
+	g_hash_table_iter_init (&iter, modules);
+
+	while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &module_info)) {
+		if (module_info->shutdown_func)
+			module_info->shutdown_func ();
+	}
+}

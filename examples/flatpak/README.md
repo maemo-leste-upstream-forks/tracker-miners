@@ -24,4 +24,4 @@ manifest to use a stable version of the GNOME SDK.
 
 You can then run the app:
 
-    $ flatpak org.example.TrackerSearchApp TEST
+    $ flatpak run org.example.TrackerSearchApp TEST

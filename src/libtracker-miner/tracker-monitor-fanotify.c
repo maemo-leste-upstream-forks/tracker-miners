@@ -573,7 +573,11 @@ add_mark (TrackerMonitorFanotify *monitor,
 	                   FANOTIFY_EVENTS,
 	                   AT_FDCWD,
 	                   path) < 0) {
-		g_warning ("Could not add mark for path '%s': %m", path);
+		if (errno == EXDEV)
+			g_info ("Could not set up cross-device mark for '%s': %m", path);
+		else
+			g_warning ("Could not add mark for path '%s': %m", path);
+
 		return FALSE;
 	}
 
@@ -644,6 +648,8 @@ retry:
 			g_warning ("Could not get file handle for '%s': %m", path);
 		}
 
+		g_slice_free1 (sizeof (MonitoredFile) +
+			       monitor->file_handle_payload, data);
 		g_free (path);
 		return NULL;
 	}

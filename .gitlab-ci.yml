@@ -21,6 +21,7 @@ stages:
   - code-review
   - build
   - test
+  - seccomp
   - analysis
 
 .check-template: &check
@@ -70,23 +71,13 @@ check-merge-request:
       dnf clean all &&
       pip3 install beautifulsoup4 mkdocs mkdocs-cinder tap.py meson &&
       dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm &&
-      dnf install -y --setopt=install_weak_deps=False gstreamer1-libav &&
-      curl --get 'https://www.flamingspork.com/projects/libeatmydata/libeatmydata-105.tar.gz' --output libeatmydata-105.tar.gz &&
-      tar -x -f ./libeatmydata-105.tar.gz &&
-      cd libeatmydata-105 &&
-      ./configure --prefix=/usr &&
-      make install &&
-      sed -e '/dpkg-architecture/ d' -i /usr/bin/eatmydata &&
-      sed -e 's@shlib="/usr/lib/$DEB_BUILD_MULTIARCH/eatmydata.sh@shlib="/usr/libexec/eatmydata.sh@' -i /usr/bin/eatmydata &&
-      cd .. &&
-      rm ./libeatmydata-105.tar.gz &&
-      rm -Rf ./libeatmydata-105
+      dnf install -y --setopt=install_weak_deps=False gstreamer1-libav
 
 .tracker-miners.ubuntu@common:
   variables:
     BASE_TAG: '2021-08-04.0'
     FDO_UPSTREAM_REPO: GNOME/tracker
-    FDO_DISTRIBUTION_PACKAGES: 'python3-tap umockdev libumockdev-dev upower asciidoc-base git libgrss-dev eatmydata'
+    FDO_DISTRIBUTION_PACKAGES: 'python3-tap umockdev libumockdev-dev upower asciidoc-base git libgrss-dev'
     FDO_DISTRIBUTION_EXEC: |
       export DEBIAN_FRONTEND=noninteractive &&
       sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list &&
@@ -186,7 +177,7 @@ check-code-style:
     - echo "Building tracker.git commit $(git -C ./subprojects/tracker rev-parse HEAD)"
     - mkdir build
     - cd build
-    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dtests_tap_protocol=true -Dtracker:docs=false --auto-features=enabled
+    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Dtests_tap_protocol=true -Dtracker:docs=false --auto-features=enabled
     - ninja
   artifacts:
     expire_in: 1 day
@@ -233,16 +224,22 @@ build-ubuntu-rolling@x86_64:
   script:
     - .gitlab-ci/checkout-tracker.sh
     - cd build
+    - ninja clean
+    - meson configure -Db_coverage=true -Dseccomp=false
     - ninja
     - |
       # Remove the many "CI_" variables from the environment. Meson dumps the
       # whole environment for every failed test, and that gives a whole
       # screenful of junk each time unless we strip these.
       unset $(env|grep -o '^CI_[^=]*')
-
-      dbus-run-session -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 eatmydata meson test --suite tracker-miners --print-errorlogs
+      dbus-run-session -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 meson test --suite tracker-miners --print-errorlogs ${MESON_TEST_EXTRA_ARGS}
 
   after_script:
+    - pushd build
+    - gcovr --root=.. --exclude=../build --exclude=./build
+        --exclude=../tests --exclude=./subprojects --exclude=../subprojects
+        --json --print-summary --output=../coverage-${CI_JOB_NAME}.json
+    - popd
     - |
       echo "Distribution: "
       echo
@@ -261,6 +258,7 @@ build-ubuntu-rolling@x86_64:
     when: always
     paths:
     - build/meson-logs/*.txt
+    - coverage-*.json
     reports:
       junit: "build/meson-logs/testlog.junit.xml"
 
@@ -298,27 +296,91 @@ test-ubuntu@x86_64:
     - build-ubuntu-rolling@x86_64
   <<: *test
 
-coverage-analysis:
+.seccomp_template: &seccomp
+  stage: seccomp
+
+  script:
+    - .gitlab-ci/checkout-tracker.sh
+    - cd build
+    - |
+      # Remove the many "CI_" variables from the environment. Meson dumps the
+      # whole environment for every failed test, and that gives a whole
+      # screenful of junk each time unless we strip these.
+      unset $(env|grep -o '^CI_[^=]*')
+      dbus-run-session -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 meson test --suite tracker-miners --print-errorlogs ${MESON_TEST_EXTRA_ARGS}
+
+  artifacts:
+    expire_in: 1 day
+    when: always
+    paths:
+    - build/meson-logs/*.txt
+    reports:
+      junit: "build/meson-logs/testlog.junit.xml"
+
+seccomp-fedora@x86_64:
+  extends:
+    - .fdo.distribution-image@fedora
+    - .tracker-miners.fedora:36@x86_64
+  needs:
+    - build-fedora@x86_64
+  <<: *seccomp
+
+seccomp-fedora-rawhide@x86_64:
+  extends:
+    - .fdo.distribution-image@fedora
+    - .tracker-miners.fedora:rawhide@x86_64
+  needs:
+    - build-fedora-rawhide@x86_64
+  allow_failure: true
+  <<: *seccomp
+
+seccomp-fedora@aarch64:
+  extends:
+    - .fdo.distribution-image@fedora
+    - .tracker-miners.fedora:36@aarch64
+  needs:
+    - build-fedora@aarch64
+  allow_failure: true
+  <<: *seccomp
+
+seccomp-ubuntu@x86_64:
+  extends:
+    - .fdo.distribution-image@ubuntu
+    - .tracker-miners.ubuntu:rolling@x86_64
+  needs:
+    - build-ubuntu-rolling@x86_64
+  <<: *seccomp
+
+coverage:
   extends:
     - .fdo.distribution-image@fedora
     - .tracker-miners.fedora:36@x86_64
   stage: analysis
   allow_failure: true
   script:
-    - .gitlab-ci/checkout-tracker.sh
-    - mkdir -p coverage-build/coveragereport
-    - cd coverage-build
-    - meson .. --prefix=/usr -Dtracker_core=subproject -Db_lto=true -Db_coverage=true -Dseccomp=false -Dtracker:docs=false --auto-features=enabled
-    - ninja
-    - env LANG=C.UTF-8 LC_ALL=C.UTF-8 dbus-run-session eatmydata meson test --print-errorlogs ${MESON_TEST_EXTRA_ARGS}
-    - gcovr --html-details --print-summary --root=.. --exclude=subprojects --exclude=../subprojects --exclude=../tests --output coveragereport/index.html
+    - mkdir coveragereport
+    - gcovr --add-tracefile 'coverage-*.json'
+        --exclude=build
+        --html-details --print-summary --output coveragereport/index.html
+    - gcovr --add-tracefile 'coverage-*.json'
+        --exclude=build
+        --xml --output coveragereport/coverage.xml
   coverage: '/^lines: (\d+\.\d+\%)/'
   artifacts:
+    expose_as: 'Coverage'
     when: always
     paths:
-    - coverage-build/coveragereport
+    - coveragereport
+    - coveragereport/index.html
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coveragereport/coverage.xml
   needs:
     - test-fedora@x86_64
+    - test-fedora-rawhide@x86_64
+    - test-fedora@aarch64
+    - test-ubuntu@x86_64
 
 coverity:
   extends:
@@ -347,3 +409,37 @@ coverity:
       --form description="gitlab CI build"
   only:
     - master
+
+# Triggered from a scheduled job
+
+.container_rebuild_template: &container_rebuild
+  only:
+    variables:
+      - $CI_PIPELINE_SOURCE == "schedule" && $CRON_TASK == "REBUILD_CI_CONTAINERS"
+  variables:
+    GIT_STRATEGY: none # no need to pull the whole tree for rebuilding the image
+    FDO_FORCE_REBUILD: 1 # Force rebuilding the image
+
+rebuild-fedora-container@x86_64:
+  extends:
+    - .fdo.container-build@fedora
+    - .tracker-miners.fedora:36@x86_64
+  <<: *container_rebuild
+
+rebuild-fedora-rawhide-container@x86_64:
+  extends:
+    - .fdo.container-build@fedora
+    - .tracker-miners.fedora:rawhide@x86_64
+  <<: *container_rebuild
+
+rebuild-fedora-container@aarch64:
+  extends:
+    - .fdo.container-build@fedora
+    - .tracker-miners.fedora:36@aarch64
+  <<: *container_rebuild
+
+rebuild-ubuntu-container@x86_64:
+  extends:
+    - .fdo.container-build@ubuntu
+    - .tracker-miners.ubuntu:rolling@x86_64
+  <<: *container_rebuild

@@ -144,7 +144,7 @@ tracker_extract_finalize (GObject *object)
 
 	priv = TRACKER_EXTRACT_GET_PRIVATE (object);
 
-	/* FIXME: Shutdown modules? */
+	tracker_module_manager_shutdown_modules ();
 
 	g_hash_table_destroy (priv->single_thread_extractors);
 
