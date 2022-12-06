@@ -102,6 +102,8 @@ tracker_seccomp_init (void)
 
 	/* Memory management */
 	ALLOW_RULE (brk);
+	ALLOW_RULE (get_mempolicy);
+	ALLOW_RULE (set_mempolicy);
 	ALLOW_RULE (mmap);
 	ALLOW_RULE (mmap2);
 	ALLOW_RULE (munmap);
@@ -153,6 +155,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (time);
 	ALLOW_RULE (fsync);
 	ALLOW_RULE (umask);
+	ERROR_RULE (fchown, EPERM);
 	/* Processes and threads */
 	ALLOW_RULE (clone);
 	ALLOW_RULE (clone3);
@@ -182,6 +185,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (pipe);
 	ALLOW_RULE (pipe2);
 	ALLOW_RULE (epoll_create);
+	ALLOW_RULE (epoll_create1);
 	ALLOW_RULE (epoll_ctl);
 	/* System */
 	ALLOW_RULE (uname);

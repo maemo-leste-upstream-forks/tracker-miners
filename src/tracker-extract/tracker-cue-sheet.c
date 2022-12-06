@@ -291,68 +291,76 @@ tracker_cue_sheet_parse (const gchar *cue_sheet)
 }
 
 static GList *
-find_local_cue_sheets (GFile *audio_file)
+find_local_cue_sheets (TrackerSparqlConnection *conn,
+                       GFile                   *audio_file)
 {
-	GFile *container;
-	GFile *cue_sheet;
-	GFileEnumerator *e;
-	GFileInfo *file_info;
-	gchar *container_path;
-	const gchar *file_name;
-	const gchar *file_content_type;
-	gchar *file_path;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
+	g_autoptr (TrackerSparqlCursor) cursor = NULL;
+	g_autoptr (GFile) parent = NULL;
+	g_autofree gchar *parent_uri = NULL;
 	GList *result = NULL;
-	GError *error = NULL;
 
-	container = g_file_get_parent (audio_file);
-	container_path = g_file_get_path (container);
-
-	e = g_file_enumerate_children (container,
-	                               "standard::*",
-	                               G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-	                               NULL,
-	                               &error);
-
-	if (error != NULL) {
-		g_debug ("Unable to enumerate directory: %s", error->message);
-		g_object_unref (container);
-		g_error_free (error);
+	stmt = tracker_sparql_connection_query_statement (conn,
+	                                                  "SELECT ?u {"
+	                                                  "  GRAPH tracker:FileSystem {"
+	                                                  "    ?u a nfo:FileDataObject ;"
+	                                                  "      nfo:fileName ?fn ;"
+	                                                  "      nfo:belongsToContainer/nie:isStoredAs ?c ."
+	                                                  "    FILTER (?c = ~parent) ."
+	                                                  "    FILTER (STRENDS (?fn, \".cue\")) ."
+	                                                  "  }"
+	                                                  "}",
+	                                                  NULL, NULL);
+	if (!stmt)
 		return NULL;
+
+	parent = g_file_get_parent (audio_file);
+	parent_uri = g_file_get_uri (parent);
+	tracker_sparql_statement_bind_string (stmt, "parent", parent_uri);
+	cursor = tracker_sparql_statement_execute (stmt, NULL, NULL);
+
+	if (!cursor)
+		return NULL;
+
+	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
+		const gchar *str;
+
+		str = tracker_sparql_cursor_get_string (cursor, 0, NULL);
+		result = g_list_prepend (result, g_file_new_for_uri (str));
 	}
-
-	while ((file_info = g_file_enumerator_next_file (e, NULL, NULL))) {
-		file_name = g_file_info_get_attribute_byte_string (file_info,
-		                                                   G_FILE_ATTRIBUTE_STANDARD_NAME);
-
-		file_content_type = g_file_info_get_content_type (file_info);
-
-		if (file_name == NULL || file_content_type == NULL) {
-			g_debug ("Unable to get info for file %s/%s",
-			         container_path,
-			         g_file_info_get_display_name (file_info));
-		} else if (strcmp (file_content_type, "application/x-cue") == 0) {
-			file_path = g_build_filename (container_path, file_name, NULL);
-			cue_sheet = g_file_new_for_path (file_path);
-			result = g_list_prepend (result, cue_sheet);
-			g_free (file_path);
-		}
-
-		g_object_unref (file_info);
-	}
-
-	g_object_unref (e);
-	g_object_unref (container);
-	g_free (container_path);
 
 	return result;
 }
 
+static GFile *
+find_matching_cue_file (GFile *audio_file)
+{
+	const gchar *dot;
+	g_autofree gchar *uri = NULL, *cue_uri = NULL;
+	g_autoptr (GFile) file = NULL;
+
+	uri = g_file_get_uri (audio_file);
+	dot = strrchr (uri, '.');
+	if (!dot)
+		return NULL;
+
+	cue_uri = g_strdup_printf ("%.*s.cue", (int) (dot - uri), uri);
+	file = g_file_new_for_uri (cue_uri);
+
+	if (g_file_query_exists (file, NULL))
+		return g_steal_pointer (&file);
+
+	return NULL;
+}
+
 TrackerToc *
-tracker_cue_sheet_guess_from_uri (const gchar *uri)
+tracker_cue_sheet_guess_from_uri (TrackerSparqlConnection *conn,
+                                  const gchar             *uri)
 {
 	GFile *audio_file;
+	GFile *cue_sheet_file;
 	gchar *audio_file_name;
-	GList *cue_sheet_list;
+	GList *cue_sheet_list = NULL;
 	TrackerToc *toc;
 	GError *error = NULL;
 	GList *n;
@@ -360,12 +368,16 @@ tracker_cue_sheet_guess_from_uri (const gchar *uri)
 	audio_file = g_file_new_for_uri (uri);
 	audio_file_name = g_file_get_basename (audio_file);
 
-	cue_sheet_list = find_local_cue_sheets (audio_file);
+	cue_sheet_file = find_matching_cue_file (audio_file);
+
+	if (cue_sheet_file)
+		cue_sheet_list = g_list_prepend (cue_sheet_list, cue_sheet_file);
+	else if (conn)
+		cue_sheet_list = find_local_cue_sheets (conn, audio_file);
 
 	toc = NULL;
 
 	for (n = cue_sheet_list; n != NULL; n = n->next) {
-		GFile *cue_sheet_file;
 		gchar *buffer;
 
 		cue_sheet_file = n->data;
@@ -409,7 +421,8 @@ tracker_cue_sheet_parse (const gchar *cue_sheet)
 }
 
 TrackerToc *
-tracker_cue_sheet_guess_from_uri (const gchar *uri)
+tracker_cue_sheet_guess_from_uri (TrackerSparqlConnection *conn,
+                                  const gchar             *uri)
 {
 	return NULL;
 }

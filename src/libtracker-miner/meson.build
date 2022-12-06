@@ -53,7 +53,7 @@ libtracker_miner = library(
     # This doesn't depend on tracker_common_dep because of
     # https://github.com/mesonbuild/meson/issues/671
     include_directories: [commoninc, configinc, srcinc],
-    dependencies: [tracker_sparql] + tracker_miner_dependencies,
+    dependencies: [tracker_sparql] + tracker_miner_dependencies + tracker_miners_common_dep,
     link_with: [libtracker_miner_private],
 )
 

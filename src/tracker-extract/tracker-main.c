@@ -291,6 +291,29 @@ get_cache_dir (TrackerDomainOntology *domain_ontology)
 	return g_file_get_child (cache, "files");
 }
 
+TrackerSparqlConnection *
+tracker_main_get_readonly_connection (GError **error)
+{
+	TrackerDomainOntology *domain_ontology = NULL;
+	g_autoptr (GFile) store = NULL;
+
+	domain_ontology = tracker_domain_ontology_new (domain_ontology_name, NULL, error);
+	if (!domain_ontology)
+		return NULL;
+
+	store = get_cache_dir (domain_ontology);
+	tracker_domain_ontology_unref (domain_ontology);
+
+	if (!g_file_query_exists (store, NULL))
+		return NULL;
+
+	return tracker_sparql_connection_new (TRACKER_SPARQL_CONNECTION_FLAGS_READONLY,
+	                                      store,
+	                                      NULL,
+	                                      NULL,
+	                                      error);
+}
+
 int
 main (int argc, char *argv[])
 {

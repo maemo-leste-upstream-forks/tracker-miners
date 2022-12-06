@@ -24,6 +24,8 @@
 
 #include <glib/gi18n.h>
 
+#include <glib-unix.h>
+
 #include "tracker-writeback.h"
 
 #define ABOUT	  \
@@ -61,6 +63,12 @@ static GOptionEntry  entries[] = {
 	{ NULL }
 };
 
+static gboolean
+on_sigterm (gpointer user_data)
+{
+	g_main_loop_quit (user_data);
+	return G_SOURCE_REMOVE;
+}
 
 int
 main (int   argc,
@@ -110,6 +118,7 @@ main (int   argc,
 	g_message ("Main thread is: %p", g_thread_self ());
 
 	loop = g_main_loop_new (NULL, FALSE);
+	g_unix_signal_add (SIGTERM, on_sigterm, loop);
 	g_main_loop_run (loop);
 
 	g_object_unref (controller);
