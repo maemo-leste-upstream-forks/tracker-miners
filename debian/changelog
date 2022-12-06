@@ -1,8 +1,9 @@
-tracker-miners (3.4.2-1) UNRELEASED; urgency=medium
+tracker-miners (3.4.2-1) unstable; urgency=medium
 
   * New upstream release
+  * Drop 2 sandbox whitelist patches: applied in new release
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Tue, 06 Dec 2022 17:22:54 -0500
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Tue, 06 Dec 2022 17:25:49 -0500
 
 tracker-miners (3.4.0-4) unstable; urgency=medium
 
