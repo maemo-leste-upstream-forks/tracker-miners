@@ -658,8 +658,9 @@ root_data_remove_directory (RootData *data,
 		l = next;
 	}
 
-	return (g_file_equal (data->current_dir, directory) ||
-		g_file_has_prefix (data->current_dir, directory));
+	return (data->current_dir &&
+		(g_file_equal (data->current_dir, directory) ||
+		 g_file_has_prefix (data->current_dir, directory)));
 }
 
 static void

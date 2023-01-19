@@ -113,8 +113,8 @@ miner_files_create_folder_information_element (TrackerMinerFiles *miner,
 	g_free (uri);
 
 	/* Laying the link between the IE and the DO */
-	tracker_resource_add_take_relation (resource, "nie:isStoredAs", file_resource);
-	tracker_resource_add_uri (file_resource, "nie:interpretedAs",
+	tracker_resource_set_take_relation (resource, "nie:isStoredAs", file_resource);
+	tracker_resource_set_uri (file_resource, "nie:interpretedAs",
 				  tracker_resource_get_identifier (resource));
 
 	return resource;

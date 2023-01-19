@@ -1460,7 +1460,7 @@ tracker_extract_module_init (GError **error)
 	/* Lifted from totem-video-thumbnailer */
 	const gchar *blocklisted[] = {
 		"bcmdec",
-		"fluiddec",
+		"fluidsynthmidi",
 		"vaapi",
 		"video4linux2",
 		"nvcodec",
