@@ -1,8 +1,9 @@
-tracker-miners (3.4.3-1) UNRELEASED; urgency=medium
+tracker-miners (3.4.3-1) unstable; urgency=medium
 
   * New upstream release
+  * Update standards version to 4.6.2, no changes needed
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Thu, 19 Jan 2023 13:30:02 -0500
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Thu, 19 Jan 2023 13:34:32 -0500
 
 tracker-miners (3.4.2-1) unstable; urgency=medium
 
