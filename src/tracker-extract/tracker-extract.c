@@ -88,7 +88,8 @@ typedef struct {
 	TrackerExtractMetadataFunc func;
 	GModule *module;
 
-	guint timeout_id;
+	GSource *deadline;
+
 	guint success : 1;
 } TrackerExtractTask;
 
@@ -379,12 +380,11 @@ extract_task_new (TrackerExtract *extract,
 	task->extract = extract;
 
 	if (task->res) {
-		GSource *source;
-
-		source = g_timeout_source_new_seconds (DEADLINE_SECONDS);
-		g_source_set_callback (source, task_deadline_cb, task, NULL);
-		task->timeout_id =
-			g_source_attach (source, g_task_get_context (G_TASK (task->res)));
+		task->deadline =
+			g_timeout_source_new_seconds (DEADLINE_SECONDS);
+		g_source_set_callback (task->deadline, task_deadline_cb, task, NULL);
+		g_source_attach (task->deadline,
+		                 g_task_get_context (G_TASK (task->res)));
 	}
 
 	return task;
@@ -395,8 +395,10 @@ extract_task_free (TrackerExtractTask *task)
 {
 	notify_task_finish (task, task->success);
 
-	if (task->timeout_id)
-		g_source_remove (task->timeout_id);
+	if (task->deadline) {
+		g_source_destroy (task->deadline);
+		g_source_unref (task->deadline);
+	}
 
 	if (task->res) {
 		g_object_unref (task->res);

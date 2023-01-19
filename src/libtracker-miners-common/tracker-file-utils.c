@@ -756,6 +756,27 @@ clear_mount_info (gpointer user_data)
 	g_free (info->id);
 }
 
+static gchar *
+find_btrfs_subvolume (GUnixMountEntry *entry)
+{
+	const gchar *options, *subvol, *end;
+
+	options = g_unix_mount_get_options (entry);
+	if (!options)
+		return NULL;
+
+	subvol = strstr (options, ",subvol=");
+	if (!subvol)
+		return NULL;
+
+	subvol += strlen (",subvol=");
+	end = strchr (subvol, ',');
+	if (end)
+		return g_strndup (subvol, end - subvol);
+	else
+		return g_strdup (subvol);
+}
+
 static void
 update_mounts (TrackerUnixMountCache *cache)
 {
@@ -771,20 +792,25 @@ update_mounts (TrackerUnixMountCache *cache)
 	for (l = mounts; l; l = l->next) {
 		GUnixMountEntry *entry = l->data;
 		const gchar *devname;
-		gchar *id;
+		g_autofree gchar *id = NULL, *subvol = NULL;
 		UnixMountInfo mount;
 
 		devname = g_unix_mount_get_device_path (entry);
 		id = blkid_get_tag_value (cache->id_cache, "UUID", devname);
-		if (!id && strchr (devname, G_DIR_SEPARATOR) != NULL)
-			id = g_strdup (devname);
+		if (!id && strchr (devname, G_DIR_SEPARATOR) != NULL) {
+			subvol = find_btrfs_subvolume (entry);
+			if (subvol)
+				id = g_strconcat (devname, ":", subvol, NULL);
+			else
+				id = g_strdup (devname);
+		}
 
 		if (!id)
 			continue;
 
 		mount.mount_point = g_strdup (g_unix_mount_get_mount_path (entry));
 		mount.file = g_file_new_for_path (mount.mount_point);
-		mount.id = id;
+		mount.id = g_steal_pointer (&id);
 		g_array_append_val (cache->mounts, mount);
 	}
 
@@ -841,7 +867,8 @@ tracker_unix_mount_cache_lookup_filesystem_id (GFile *file)
 	for (i = (gint) cache->mounts->len - 1; i >= 0; i--) {
 		UnixMountInfo *info = &g_array_index (cache->mounts, UnixMountInfo, i);
 
-		if (g_file_has_prefix (file, info->file)) {
+		if (g_file_equal (file, info->file) ||
+		    g_file_has_prefix (file, info->file)) {
 			id = info->id;
 			break;
 		}
