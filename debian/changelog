@@ -1,3 +1,9 @@
+tracker-miners (3.5.0~beta-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 15 Feb 2023 10:19:47 -0500
+
 tracker-miners (3.4.3-1) unstable; urgency=medium
 
   * New upstream release
