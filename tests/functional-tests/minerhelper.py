@@ -19,7 +19,8 @@
 
 
 import gi
-gi.require_version('Tracker', '3.0')
+
+gi.require_version("Tracker", "3.0")
 from gi.repository import Gio, GLib
 from gi.repository import Tracker
 
@@ -40,7 +41,7 @@ class WakeupCycleTimeoutException(RuntimeError):
 DEFAULT_TIMEOUT = 10
 
 
-class MinerFsHelper ():
+class MinerFsHelper:
 
     MINERFS_BUSNAME = "org.freedesktop.Tracker3.Miner.Files"
     MINERFS_OBJ_PATH = "/org/freedesktop/Tracker3/Miner/Files"
@@ -57,12 +58,22 @@ class MinerFsHelper ():
         self.loop = trackertestutils.mainloop.MainLoop()
 
         self.miner_fs = Gio.DBusProxy.new_sync(
-            self.bus, Gio.DBusProxyFlags.DO_NOT_AUTO_START_AT_CONSTRUCTION, None,
-            self.MINERFS_BUSNAME, self.MINERFS_OBJ_PATH, self.MINER_IFACE)
+            self.bus,
+            Gio.DBusProxyFlags.DO_NOT_AUTO_START_AT_CONSTRUCTION,
+            None,
+            self.MINERFS_BUSNAME,
+            self.MINERFS_OBJ_PATH,
+            self.MINER_IFACE,
+        )
 
         self.index = Gio.DBusProxy.new_sync(
-            self.bus, Gio.DBusProxyFlags.DO_NOT_AUTO_START_AT_CONSTRUCTION, None,
-            self.MINERFS_CONTROL_BUSNAME, self.MINERFS_INDEX_OBJ_PATH, self.MINER_INDEX_IFACE)
+            self.bus,
+            Gio.DBusProxyFlags.DO_NOT_AUTO_START_AT_CONSTRUCTION,
+            None,
+            self.MINERFS_CONTROL_BUSNAME,
+            self.MINERFS_INDEX_OBJ_PATH,
+            self.MINER_INDEX_IFACE,
+        )
 
     def start(self):
         self.miner_fs.Start()
@@ -72,7 +83,8 @@ class MinerFsHelper ():
 
     def get_sparql_connection(self):
         return Tracker.SparqlConnection.bus_new(
-            'org.freedesktop.Tracker3.Miner.Files', None, self.bus)
+            "org.freedesktop.Tracker3.Miner.Files", None, self.bus
+        )
 
     def start_watching_progress(self):
         self._previous_status = None
@@ -80,10 +92,10 @@ class MinerFsHelper ():
         self._wakeup_count = 0
 
         def signal_handler(proxy, sender_name, signal_name, parameters):
-            if signal_name == 'Progress':
+            if signal_name == "Progress":
                 self._progress_cb(*parameters.unpack())
 
-        self._progress_handler_id = self.miner_fs.connect('g-signal', signal_handler)
+        self._progress_handler_id = self.miner_fs.connect("g-signal", signal_handler)
 
     def stop_watching_progress(self):
         if self._progress_handler_id != 0:
@@ -92,10 +104,13 @@ class MinerFsHelper ():
     def _progress_cb(self, status, progress, remaining_time):
         if self._previous_status is None:
             self._previous_status = status
-        if self._previous_status != 'Idle' and status == 'Idle':
+        if self._previous_status != "Idle" and status == "Idle":
             self._wakeup_count += 1
 
-        if self._target_wakeup_count is not None and self._wakeup_count >= self._target_wakeup_count:
+        if (
+            self._target_wakeup_count is not None
+            and self._wakeup_count >= self._target_wakeup_count
+        ):
             self.loop.quit()
 
     def wakeup_count(self):
@@ -126,13 +141,23 @@ class MinerFsHelper ():
         assert self._target_wakeup_count is None
 
         if self._wakeup_count >= target_wakeup_count:
-            log.debug("miner-fs wakeup count is at %s (target is %s). No need to wait", self._wakeup_count, target_wakeup_count)
+            log.debug(
+                "miner-fs wakeup count is at %s (target is %s). No need to wait",
+                self._wakeup_count,
+                target_wakeup_count,
+            )
         else:
+
             def _timeout_cb():
                 raise WakeupCycleTimeoutException()
+
             timeout_id = GLib.timeout_add_seconds(timeout, _timeout_cb)
 
-            log.debug("Waiting for miner-fs wakeup count of %s (currently %s)", target_wakeup_count, self._wakeup_count)
+            log.debug(
+                "Waiting for miner-fs wakeup count of %s (currently %s)",
+                target_wakeup_count,
+                self._wakeup_count,
+            )
             self._target_wakeup_count = target_wakeup_count
             self.loop.run_checked()
 
@@ -140,4 +165,4 @@ class MinerFsHelper ():
             GLib.source_remove(timeout_id)
 
     def index_location(self, uri, graphs=None, flags=None):
-        return self.index.IndexLocation('(sasas)', uri, graphs or [], flags or [])
+        return self.index.IndexLocation("(sasas)", uri, graphs or [], flags or [])

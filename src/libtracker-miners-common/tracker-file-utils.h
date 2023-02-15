@@ -40,7 +40,6 @@ goffset  tracker_file_get_size                              (const gchar *path);
 guint64  tracker_file_get_mtime                             (const gchar *path);
 guint64  tracker_file_get_mtime_uri                         (const gchar *uri);
 gchar *  tracker_file_get_mime_type                         (GFile       *file);
-gboolean tracker_file_is_locked                             (GFile       *file);
 gboolean tracker_file_is_hidden                             (GFile       *file);
 gint     tracker_file_cmp                                   (GFile       *file_a,
                                                              GFile       *file_b);
@@ -57,7 +56,6 @@ GSList * tracker_path_list_filter_duplicates                (GSList      *roots,
                                                              const gchar *basename_exception_prefix,
                                                              gboolean     is_recursive);
 gchar *  tracker_path_evaluate_name                         (const gchar *uri);
-gboolean tracker_path_has_write_access_or_was_created       (const gchar *path);
 gboolean tracker_filename_casecmp_without_extension         (const gchar *a,
                                                              const gchar *b);
 

@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.4.3',
+        version: '3.5.0.beta',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -15,7 +15,7 @@ libdir = join_paths(get_option('prefix'), get_option('libdir'))
 datadir = join_paths(get_option('prefix'), get_option('datadir'))
 
 glib_required = '2.62.0'
-tracker_required = '3.4.0'
+tracker_required = '3.5.0'
 
 if get_option('tracker_core') == 'system'
   tracker_sparql = dependency('tracker-sparql-3.0', version: '>=' + tracker_required, required: false)
@@ -51,9 +51,6 @@ else
   tracker_sparql_uninstalled_dir = tracker_subproject.get_variable('tracker_sparql_uninstalled_dir')
 endif
 
-avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
-avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
-avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
 dbus = dependency('dbus-1', version: '>= 1.3.1')
 exempi = dependency('exempi-2.0', version: '>= 2.1.0', required: get_option('xmp'))
 gexiv2 = dependency('gexiv2', required: get_option('raw'))
@@ -64,12 +61,9 @@ gmodule = dependency('gmodule-2.0', version: '>=' + glib_required)
 gobject = dependency('gobject-2.0', version: '>=' + glib_required)
 gstreamer = dependency('gstreamer-1.0', required: false)
 gstreamer_audio = dependency('gstreamer-audio-1.0', required: false)
-gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
 gstreamer_tag = dependency('gstreamer-tag-1.0', required: false)
 gupnp_dlna = dependency('gupnp-dlna-2.0', version: '>= 0.9.4', required: false)
 gupnp_dlna_gst = dependency('gupnp-dlna-gst-2.0', version: '>= 0.9.4', required: false)
-icu_i18n = dependency('icu-i18n', version: '>= 4.8.1.1', required: false)
-icu_uc = dependency('icu-uc', version: '>= 4.8.1.1', required: false)
 libcue = dependency('libcue', version: '>= 2.0.0', required: get_option('cue'))
 libexif = dependency('libexif', version: '>= 0.6', required: get_option('exif'))
 libgsf = dependency('libgsf-1', version: '>= 1.14.24', required: get_option('gsf'))
@@ -83,7 +77,6 @@ libtiff = dependency('libtiff-4', required: get_option('tiff'))
 libxml2 = dependency('libxml-2.0', version: '>= 2.6', required: get_option('xml'))
 poppler = dependency('poppler-glib', version: '>= 0.16.0', required: get_option('pdf'))
 totem_plparser = dependency('totem-plparser', required: get_option('playlist'))
-upower = dependency('upower-glib', version: '>= 0.9.0', required: false)
 blkid = dependency('blkid', required: true)
 
 libgif = cc.find_library('gif', required: get_option('gif'))
@@ -145,35 +138,22 @@ add_project_arguments(debug_cflags, language: 'c')
 
 ##################################################################
 # Check for libtracker-common: battery/mains power detection
-#
-# By default, AUTO with this order of preference:
-#  1)  upower
-#  2)  hal
 ##################################################################
 
-have_hal = false
-battery_detection_library_name = ''
+battery_detection_help = 'You can use the "battery_detection" config option to select a different backend or set `-Dbattery_detection=none` to disable this feature.'
+battery_detection_library_name = get_option('battery_detection')
+if battery_detection_library_name == 'upower'
+  upower = dependency('upower-glib',
+    version: '>= 0.9.0',
+    not_found_message: battery_detection_help)
 
-if upower.found()
-  if get_option('battery_detection') == 'auto' or get_option('battery_detection') == 'upower'
-    battery_detection_library = upower
-    battery_detection_library_name = 'upower'
-  endif
-elif get_option('battery_detection') == 'upower'
-  error('upower explicitly requested, but upower library was not found')
-endif
+  battery_detection_library = upower
+elif battery_detection_library_name == 'hal'
+  hal = dependency('hal',
+    version: '>= 0.5',
+    not_found_message: battery_detection_help)
 
-if battery_detection_library_name == ''
-  hal = dependency('hal', version: '>= 0.5', required: false)
-
-  if hal.found()
-    battery_detection_library = hal
-    battery_detection_library_name = 'hal'
-  elif get_option('battery_detection') == 'hal'
-    error('HAL explicitly requested, but not found')
-  else
-    battery_detection_library_name = '(none)'
-  endif
+  battery_detection_library = hal
 endif
 
 ##########################################
@@ -203,75 +183,56 @@ endif
 
 ##########################################################################
 # Check for tracker-extract: icu or enca for detecting Cyrillic in MP3s
-#
-# By default, AUTO with this order of preference:
-#  1)  icu
-#  2)  enca
 ##########################################################################
 
-charset_library_name = 'none'
-have_libicu = false
+charset_library_help = 'You can use the "charset_detection" config option to select a different backend or set `-Dcharset_detection=none` to disable this feature.'
+charset_library_name = get_option('charset_detection')
 
-if icu_i18n.found() and icu_uc.found()
-  have_libicu = true
-endif
+if charset_library_name == 'icu'
+  icu_i18n = dependency('icu-i18n',
+    version: '>= 4.8.1.1',
+    not_found_message: charset_library_help)
+  icu_uc = dependency('icu-uc',
+    version: '>= 4.8.1.1',
+    not_found_message: charset_library_help)
 
-if have_libicu
-  if get_option('charset_detection') == 'auto' or get_option('charset_detection') == 'icu'
-    charset_library = declare_dependency(
-       dependencies: [icu_uc, icu_i18n]
-    )
-    charset_library_name = 'icu'
-  endif
-else
-  if get_option('charset_detection') == 'icu'
-    error('libicu requested for character set detection, but it was not found')
-  endif
-endif
+  charset_library = declare_dependency(
+     dependencies: [icu_uc, icu_i18n]
+  )
+elif charset_library_name == 'enca'
+  enca = dependency('enca',
+    version: '>= 1.9',
+    not_found_message: charset_library_help)
 
-if charset_library_name == 'none' and get_option('charset_detection') != 'none'
-  enca = dependency('enca', version: '>= 1.9', required: false)
-
-  if enca.found()
-    charset_library = enca
-    charset_library_name = 'enca'
-  elif get_option('enca') == 'yes'
-    error('enca support explicitly requested, but enca couldn\'t be found')
-  endif
+  charset_library = enca
 endif
 
 ####################################################################
 # Check for tracker-extract: gstreamer/etc
 ####################################################################
 
-generic_media_handler = []
-generic_media_handler_name = 'none'
+generic_media_handler_name = get_option('generic_media_extractor')
 
-if get_option('generic_media_extractor') == 'auto'
-  if gstreamer.found() and gstreamer_tag.found()
-    generic_media_handler = [gstreamer, gstreamer_tag]
-    generic_media_handler_name = 'gstreamer'
-  elif avcodec.found() and avformat.found() and avutil.found()
-    generic_media_handler = [avcodec, avformat, avutil]
-    generic_media_handler_name = 'libav'
-  else
-    generic_media_handler_name = 'none'
-    generic_media_handler = []
-  endif
-elif get_option('generic_media_extractor') == 'gstreamer'
-  if gstreamer.found() and gstreamer_tag.found()
-    generic_media_handler = [gstreamer, gstreamer_tag]
-    generic_media_handler_name = 'gstreamer'
+if generic_media_handler_name  == 'gstreamer'
+  gstreamer_pbutils = dependency('gstreamer-pbutils-1.0', required: false)
+
+  if gstreamer.found() and gstreamer_pbutils.found()
+    generic_media_handler = [gstreamer, gstreamer_pbutils]
   else
     error('GStreamer media handler was enabled but required GStreamer libraries were not found')
   endif
-elif get_option('generic_media_extractor') == 'libav'
+elif generic_media_handler_name == 'libav'
+  avcodec = dependency('libavcodec', version: '>= 0.8.4', required: false)
+  avformat = dependency('libavformat', version: '>= 0.8.4', required: false)
+  avutil = dependency('libavutil', version: '>= 0.8.4', required: false)
+
   if avcodec.found() and avformat.found() and avutil.found()
     generic_media_handler = [avcodec, avformat, avutil]
-    generic_media_handler_name = 'libav'
   else
     error('libav media handler was enabled but required libav libraries were not found')
   endif
+else
+  generic_media_handler = []
 endif
 
 ###########################################################################
@@ -485,7 +446,7 @@ run_uninstalled_conf = configuration_data()
 run_uninstalled_conf.set('tracker_sparql_uninstalled_dir', tracker_sparql_uninstalled_dir)
 run_uninstalled_conf.set('tracker_uninstalled_cli_dir', tracker_uninstalled_cli_dir)
 run_uninstalled_conf.set('tracker_uninstalled_cli_subcommands_dir', tracker_uninstalled_cli_subcommands_dir)
-run_uninstalled_conf.set('tracker_uninstalled_domain_rule', meson.current_build_dir() / 'tests' / 'functional-tests' / 'test-domain.rule')
+run_uninstalled_conf.set('tracker_uninstalled_domain_rule', meson.current_build_dir() / 'tests' / 'functional-tests' / 'config' / 'test-domain.rule')
 run_uninstalled_conf.set('tracker_uninstalled_extract_rules_dir', tracker_uninstalled_extract_rules_dir)
 run_uninstalled_conf.set('tracker_uninstalled_extractors_dir', meson.current_build_dir() / 'src' / 'tracker-extract')
 run_uninstalled_conf.set('tracker_uninstalled_miner_services_dir', tracker_uninstalled_miner_services_dir)

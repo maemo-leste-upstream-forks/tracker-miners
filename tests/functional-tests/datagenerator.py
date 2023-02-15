@@ -21,7 +21,8 @@ import math
 import shlex
 
 import gi
-gi.require_version('Gst', '1.0')
+
+gi.require_version("Gst", "1.0")
 from gi.repository import Gst
 
 
@@ -45,24 +46,27 @@ def create_test_flac(path, duration, timeout=10, tags=None):
 
     num_buffers = math.ceil(duration * 44100 / 1024.0)
 
-    pipeline_src = ' ! '.join([
-        'audiotestsrc num-buffers=%s samplesperbuffer=1024' % num_buffers,
-        'capsfilter caps="audio/x-raw,rate=44100"',
-        'flacenc name=flacenc',
-        'filesink location="%s"' % str(path),
-    ])
+    pipeline_src = " ! ".join(
+        [
+            "audiotestsrc num-buffers=%s samplesperbuffer=1024" % num_buffers,
+            'capsfilter caps="audio/x-raw,rate=44100"',
+            "flacenc name=flacenc",
+            'filesink location="%s"' % str(path),
+        ]
+    )
 
     log.debug("Running pipeline: %s", pipeline_src)
     pipeline = Gst.parse_launch(pipeline_src)
 
     if tags:
-        flacenc = pipeline.get_child_by_name('flacenc')
+        flacenc = pipeline.get_child_by_name("flacenc")
         flacenc.merge_tags(tags, Gst.TagMergeMode.REPLACE_ALL)
 
     pipeline.set_state(Gst.State.PLAYING)
 
-    msg = pipeline.get_bus().poll(Gst.MessageType.ERROR | Gst.MessageType.EOS,
-                                timeout * Gst.SECOND)
+    msg = pipeline.get_bus().poll(
+        Gst.MessageType.ERROR | Gst.MessageType.EOS, timeout * Gst.SECOND
+    )
     if msg and msg.type == Gst.MessageType.EOS:
         pass
     elif msg and msg.type == Gst.MessageType.ERROR:
@@ -70,6 +74,8 @@ def create_test_flac(path, duration, timeout=10, tags=None):
     elif msg:
         raise RuntimeError("Got unexpected GStreamer message %s" % msg.type)
     else:
-        raise RuntimeError("Timeout generating test audio file after %i seconds" % timeout)
+        raise RuntimeError(
+            "Timeout generating test audio file after %i seconds" % timeout
+        )
 
     pipeline.set_state(Gst.State.NULL)

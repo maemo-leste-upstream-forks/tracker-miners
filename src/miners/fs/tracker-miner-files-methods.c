@@ -128,24 +128,25 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
                                   gboolean             create)
 {
 	TrackerIndexingTree *indexing_tree;
-	TrackerResource *resource = NULL, *folder_resource = NULL, *graph_file = NULL;
+	g_autoptr (TrackerResource) resource = NULL, folder_resource = NULL, graph_file = NULL;
 	const gchar *mime_type, *graph;
 	const gchar *parent_urn;
-	GFile *parent;
-	gchar *uri;
-	gboolean is_directory;
-	GDateTime *modified;
+	g_autoptr (GFile) parent = NULL;
+	g_autofree gchar *uri = NULL;
+	gboolean is_directory, is_root;
+	g_autoptr (GDateTime) modified = NULL;
 #ifdef GIO_SUPPORTS_CREATION_TIME
-	GDateTime *accessed, *created;
+	g_autoptr (GDateTime) accessed = NULL, created = NULL;
 #else
 	time_t time_;
-	gchar *time_str;
+	g_autofree gchar *time_str = NULL;
 #endif
 
 	uri = g_file_get_uri (file);
 	indexing_tree = tracker_miner_fs_get_indexing_tree (fs);
 	mime_type = g_file_info_get_content_type (file_info);
 
+	is_root = tracker_indexing_tree_file_is_root (indexing_tree, file);
 	is_directory = (g_file_info_get_file_type (file_info) == G_FILE_TYPE_DIRECTORY ?
 	                TRUE : FALSE);
 
@@ -159,7 +160,6 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 
 	parent = g_file_get_parent (file);
 	parent_urn = tracker_miner_fs_get_identifier (fs, parent);
-	g_object_unref (parent);
 
 	if (parent_urn) {
 		tracker_resource_set_uri (resource, "nfo:belongsToContainer", parent_urn);
@@ -178,44 +178,25 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 		accessed = g_date_time_new_from_unix_utc (0);
 
 	tracker_resource_set_datetime (resource, "nfo:fileLastAccessed", accessed);
-	g_date_time_unref (accessed);
 
 	created = g_file_info_get_creation_date_time (file_info);
-	if (created) {
+	if (created)
 		tracker_resource_set_datetime (resource, "nfo:fileCreated", created);
-		g_date_time_unref (created);
-	}
 #else
 	time_ = (time_t) g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_ACCESS);
 	time_str = tracker_date_to_string (time_);
 	tracker_resource_set_string (resource, "nfo:fileLastAccessed", time_str);
-	g_free (time_str);
 #endif
 
 	/* The URL of the DataObject (because IE = DO, this is correct) */
 	tracker_resource_set_string (resource, "nie:url", uri);
 
-	if (is_directory || tracker_indexing_tree_file_is_root (indexing_tree, file)) {
+	if (is_directory) {
 		folder_resource =
 			miner_files_create_folder_information_element (TRACKER_MINER_FILES (fs),
 								       file,
 								       mime_type,
 								       create);
-		/* Add indexing roots also to content specific graphs to provide the availability information */
-		if (tracker_indexing_tree_file_is_root (indexing_tree, file)) {
-			const gchar *special_graphs[] = {
-				"tracker:Audio",
-				"tracker:Documents",
-				"tracker:Pictures",
-				"tracker:Software",
-				"tracker:Video"
-			};
-			gint i;
-
-			for (i = 0; i < G_N_ELEMENTS (special_graphs); i++) {
-				tracker_sparql_buffer_push (buffer, file, special_graphs[i], folder_resource);
-			}
-		}
 
 		/* Always use inode/directory here, we don't really care if it's a symlink */
 		tracker_resource_set_string (resource, "tracker:extractorHash",
@@ -244,42 +225,16 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 		miner_files_add_to_datasource (TRACKER_MINER_FILES (fs), file, graph_file, NULL);
 	}
 
-	if (graph && !is_directory) {
-		gchar *delete_properties_sparql = NULL;
-
-		/* In case of update: delete all information elements for the given data object
-		 * and delete extractorHash, so we ensure the file is extracted again.
-		 */
-		delete_properties_sparql =
-			g_strdup_printf ("DELETE WHERE {"
-			                 "  GRAPH ?g {"
-			                 "    <%s> nie:interpretedAs ?ie . "
-			                 "    ?ie a rdfs:Resource . "
-			                 "  }"
-			                 "}; "
-					 "DELETE WHERE {"
-					 "  GRAPH " DEFAULT_GRAPH " {"
-					 "    <%s> tracker:extractorHash ?h ."
-					 "  }"
-					 "}",
-			                 uri, uri);
-
-		tracker_sparql_buffer_push_sparql (buffer, file, delete_properties_sparql);
-		g_free (delete_properties_sparql);
+	if (is_directory) {
+		tracker_sparql_buffer_log_folder (buffer, file,
+		                                  is_root,
+		                                  resource, folder_resource);
+	} else {
+		tracker_sparql_buffer_log_file (buffer, file,
+		                                graph,
+		                                resource,
+		                                graph_file);
 	}
-
-	tracker_sparql_buffer_push (buffer, file, DEFAULT_GRAPH, resource);
-
-	if (graph_file)
-		tracker_sparql_buffer_push (buffer, file, graph, graph_file);
-	if (folder_resource)
-		tracker_sparql_buffer_push (buffer, file, DEFAULT_GRAPH, folder_resource);
-
-	g_date_time_unref (modified);
-	g_object_unref (resource);
-	g_clear_object (&folder_resource);
-	g_clear_object (&graph_file);
-	g_free (uri);
 }
 
 void
@@ -288,14 +243,14 @@ tracker_miner_files_process_file_attributes (TrackerMinerFS      *fs,
                                              GFileInfo           *info,
                                              TrackerSparqlBuffer *buffer)
 {
-	TrackerResource *resource, *graph_file;
-	gchar *uri;
+	g_autoptr (TrackerResource) resource = NULL, graph_file = NULL;
+	g_autofree gchar *uri = NULL;
 	const gchar *mime_type, *graph;
-	GDateTime *modified;
+	g_autoptr (GDateTime) modified = NULL;
 #ifdef GIO_SUPPORTS_CREATION_TIME
-	GDateTime *accessed, *created;
+	g_autoptr (GDateTime) accessed = NULL, created = NULL;
 #else
-	gchar *time_str;
+	g_autofree gchar *time_str = NULL;
 	time_t time_;
 #endif
 
@@ -307,7 +262,7 @@ tracker_miner_files_process_file_attributes (TrackerMinerFS      *fs,
 		info = g_file_query_info (file,
 		                          G_FILE_ATTRIBUTE_TIME_MODIFIED ","
 		                          G_FILE_ATTRIBUTE_TIME_ACCESS ","
-					  G_FILE_ATTRIBUTE_TIME_CREATED,
+		                          G_FILE_ATTRIBUTE_TIME_CREATED,
 		                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
 		                          NULL, NULL);
 	}
@@ -325,33 +280,27 @@ tracker_miner_files_process_file_attributes (TrackerMinerFS      *fs,
 		graph_file = tracker_resource_new (uri);
 		tracker_resource_add_uri (graph_file, "rdf:type", "nfo:FileDataObject");
 		tracker_resource_set_datetime (graph_file, "nfo:fileLastModified", modified);
-		tracker_sparql_buffer_push (buffer, file, graph, graph_file);
-		g_clear_object (&graph_file);
 	}
-	g_date_time_unref (modified);
 
 #ifdef GIO_SUPPORTS_CREATION_TIME
 	/* Update nfo:fileLastAccessed */
 	accessed = g_file_info_get_access_date_time (info);
 	tracker_resource_set_datetime (resource, "nfo:fileLastAccessed", accessed);
-	g_date_time_unref (accessed);
 
 	/* Update nfo:fileCreated */
 	created = g_file_info_get_creation_date_time (info);
 
-	if (created) {
+	if (created)
 		tracker_resource_set_datetime (resource, "nfo:fileCreated", created);
-		g_date_time_unref (created);
-	}
 #else
 	time_ = (time_t) g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_ACCESS);
 	time_str = tracker_date_to_string (time_);
 	tracker_resource_set_string (resource, "nfo:fileLastAccessed", time_str);
-	g_free (time_str);
 #endif
 
-	g_free (uri);
-
-	tracker_sparql_buffer_push (buffer, file, DEFAULT_GRAPH, resource);
-	g_object_unref (resource);
+	tracker_sparql_buffer_log_attributes_update (buffer,
+	                                             file,
+	                                             graph,
+	                                             resource,
+	                                             graph_file);
 }

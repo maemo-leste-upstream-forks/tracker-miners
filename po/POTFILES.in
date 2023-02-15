@@ -4,9 +4,9 @@ data/org.freedesktop.Tracker.Extract.gschema.xml
 data/org.freedesktop.Tracker.FTS.gschema.xml
 data/org.freedesktop.Tracker.Miner.Files.gschema.xml
 src/libtracker-miners-common/tracker-dbus.c
+src/libtracker-miners-common/tracker-miner-proxy.c
 src/libtracker-miners-common/tracker-utils.c
-src/libtracker-miner/tracker-data-provider.c
-src/libtracker-miner/tracker-miner-proxy.c
+src/miners/fs/tracker-data-provider.c
 src/miners/fs/tracker-main.c
 src/miners/fs/tracker-miner-files.c
 src/miners/rss/tracker-main.c

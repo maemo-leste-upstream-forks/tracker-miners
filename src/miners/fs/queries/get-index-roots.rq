@@ -1,0 +1,11 @@
+# Output: file
+SELECT
+  ?file
+{
+  ?vol a tracker:IndexedFolder ;
+     tracker:isRemovable true;
+     tracker:available true .
+
+  ?file a nfo:FileDataObject ;
+     nie:interpretedAs / nie:rootElementOf ?vol .
+}

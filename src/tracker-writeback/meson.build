@@ -7,11 +7,11 @@
 modules = []
 
 if gstreamer.found() and gstreamer_tag.found() and gstreamer_audio.found()
-  modules += [['writeback-gstreamer', 'tracker-writeback-gstreamer.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, gstreamer, gstreamer_tag]]]
+  modules += [['writeback-gstreamer', 'tracker-writeback-gstreamer.c', [tracker_sparql, tracker_miners_common_dep, gstreamer, gstreamer_tag]]]
 endif
 
 if exempi.found()
-  modules += [['writeback-xmp', 'tracker-writeback-xmp.c', [tracker_miner, tracker_sparql, tracker_miners_common_dep, exempi]]]
+  modules += [['writeback-xmp', 'tracker-writeback-xmp.c', [tracker_sparql, tracker_miners_common_dep, exempi]]]
 endif
 
 foreach module : modules
@@ -42,7 +42,7 @@ executable('tracker-writeback-@0@'.format(tracker_api_major),
   c_args: tracker_c_args + [
     '-DWRITEBACK_MODULES_DIR="@0@"'.format(tracker_writeback_modules_dir),
   ],
-  dependencies: [gmodule, tracker_miner, tracker_sparql, tracker_miners_common_dep],
+  dependencies: [gmodule, tracker_sparql, tracker_miners_common_dep],
   install: true,
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
   install_rpath: tracker_internal_libs_dir)

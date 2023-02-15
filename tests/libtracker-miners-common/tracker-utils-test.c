@@ -110,29 +110,6 @@ test_seconds_estimate (void)
         g_assert_cmpint (tracker_seconds_estimate (1, 1, 0), ==, 0);
 }
 
-static void
-test_strhex (void)
-{
-        gchar *result;
-
-        result = tracker_strhex ((const guint8 *)"a", 1, '|');
-        g_assert_cmpstr (result, ==, "61");
-        g_free (result);
-
-        result = tracker_strhex ((const guint8 *)"ab", 2, '@');
-        g_assert_cmpstr (result, ==, "61@62");
-        g_free (result);
-
-        result = tracker_strhex ((const guint8 *)"a b", 3, '@');
-        g_assert_cmpstr (result, ==, "61@20@62");
-        g_free (result);
-
-        result = tracker_strhex ((const guint8 *)"abc", 1, '@');
-        g_assert_cmpstr (result, ==, "61");
-        g_free (result);
-
-}
-
 int
 main (int argc, char **argv)
 {
@@ -143,22 +120,19 @@ main (int argc, char **argv)
 	setlocale (LC_ALL, "");
 
 	g_test_add_func ("/libtracker-common/tracker-utils/seconds_to_string",
-	                 test_seconds_to_string);
+			 test_seconds_to_string);
 
 	g_test_add_func ("/libtracker-common/tracker-utils/seconds_estimate_to_string",
-	                 test_seconds_estimate_to_string);
-        
-        g_test_add_func ("/libtracker-common/tracker-utils/seconds_estimate",
-                         test_seconds_estimate);
+			 test_seconds_estimate_to_string);
 
-        g_test_add_func ("/libtracker-common/tracker-utils/empty_string",
-                         test_is_empty_string);
+	g_test_add_func ("/libtracker-common/tracker-utils/seconds_estimate",
+			 test_seconds_estimate);
 
-        g_test_add_func ("/libtracker-common/tracker-utils/blank_string",
-                         test_is_blank_string);
+	g_test_add_func ("/libtracker-common/tracker-utils/empty_string",
+			 test_is_empty_string);
 
-        g_test_add_func ("/libtracker-common/tracker-utils/strhex",
-                         test_strhex);
+	g_test_add_func ("/libtracker-common/tracker-utils/blank_string",
+			 test_is_blank_string);
 
 	ret = g_test_run ();
 
