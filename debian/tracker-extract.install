@@ -10,7 +10,6 @@ usr/libexec/tracker3/search
 usr/libexec/tracker3/status
 usr/libexec/tracker3/tag
 
-usr/lib/*/tracker-miners-3.0/libtracker-miner-3.0.so
 usr/lib/*/tracker-miners-3.0/libtracker-extract.so
 usr/lib/*/tracker-miners-3.0/extract-modules/*.so
 
