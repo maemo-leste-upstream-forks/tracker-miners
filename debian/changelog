@@ -1,8 +1,11 @@
-tracker-miners (3.5.0~beta-1) UNRELEASED; urgency=medium
+tracker-miners (3.5.0~beta-1) experimental; urgency=medium
 
   * New upstream release
+  * debian/control.in: Bump minimum tracker to 3.5.0~
+  * debian/tracker-extract.install: Update
+  * Refresh patches
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 15 Feb 2023 10:19:47 -0500
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 15 Feb 2023 10:46:22 -0500
 
 tracker-miners (3.4.3-1) unstable; urgency=medium
 
