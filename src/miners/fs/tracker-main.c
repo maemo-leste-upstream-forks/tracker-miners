@@ -37,7 +37,6 @@
 
 #include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-sparql/tracker-sparql.h>
-#include <libtracker-miner/tracker-miner.h>
 
 #include "tracker-config.h"
 #include "tracker-miner-files.h"
@@ -103,6 +102,19 @@ static GOptionEntry entries[] = {
 	  NULL },
 	{ NULL }
 };
+
+typedef struct {
+	TrackerSparqlConnection *sparql_conn;
+	GDBusConnection *dbus_conn;
+	GMainLoop *main_loop;
+	GMutex mutex;
+	GCond cond;
+	GThread *thread;
+	gboolean initialized;
+	GError *error;
+} EndpointThreadData;
+
+static EndpointThreadData *endpoint_thread_data = NULL;
 
 static void
 log_option_values (TrackerConfig *config)
@@ -808,37 +820,109 @@ get_fts_connection_flags (void)
 	return flags;
 }
 
-static gboolean
-setup_connection_and_endpoint (TrackerDomainOntology    *domain,
-                               GDBusConnection          *connection,
-                               TrackerSparqlConnection **sparql_conn,
-                               TrackerEndpointDBus     **endpoint,
-                               GError                  **error)
+gpointer
+endpoint_thread_func (gpointer user_data)
 {
+	EndpointThreadData *data = user_data;
+	TrackerEndpointDBus *endpoint;
+	GMainContext *main_context;
+
+	main_context = g_main_context_new ();
+	g_main_context_push_thread_default (main_context);
+
+	endpoint = tracker_endpoint_dbus_new (data->sparql_conn,
+	                                      data->dbus_conn,
+	                                      NULL,
+	                                      NULL,
+	                                      &data->error);
+
+	data->main_loop = g_main_loop_new (main_context, FALSE);
+	data->initialized = TRUE;
+
+	g_mutex_lock (&data->mutex);
+	g_cond_signal (&data->cond);
+	g_mutex_unlock (&data->mutex);
+
+	if (!data->error)
+		g_main_loop_run (data->main_loop);
+
+	g_main_context_pop_thread_default (main_context);
+	g_main_loop_unref (data->main_loop);
+	g_main_context_unref (main_context);
+	g_clear_object (&endpoint);
+
+	return NULL;
+}
+
+gboolean
+start_endpoint_thread (TrackerSparqlConnection  *conn,
+                       GDBusConnection          *dbus_conn,
+                       GError                  **error)
+{
+	g_assert (endpoint_thread_data == NULL);
+
+	endpoint_thread_data = g_new0 (EndpointThreadData, 1);
+	g_mutex_init (&endpoint_thread_data->mutex);
+	g_cond_init (&endpoint_thread_data->cond);
+	endpoint_thread_data->sparql_conn = conn;
+	endpoint_thread_data->dbus_conn = dbus_conn;
+
+	g_mutex_lock (&endpoint_thread_data->mutex);
+
+	endpoint_thread_data->thread =
+		g_thread_try_new ("SPARQL endpoint",
+		                  endpoint_thread_func,
+		                  endpoint_thread_data,
+		                  error);
+
+	if (!endpoint_thread_data->thread)
+		return FALSE;
+
+	while (!endpoint_thread_data->initialized) {
+		g_cond_wait (&endpoint_thread_data->cond,
+		             &endpoint_thread_data->mutex);
+	}
+
+	if (endpoint_thread_data->error) {
+		g_propagate_error (error, endpoint_thread_data->error);
+		g_thread_join (endpoint_thread_data->thread);
+		g_clear_pointer (&endpoint_thread_data, g_free);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+void
+finish_endpoint_thread (void)
+{
+	g_assert (endpoint_thread_data != NULL);
+
+	g_main_loop_quit (endpoint_thread_data->main_loop);
+
+	g_thread_join (endpoint_thread_data->thread);
+
+	g_clear_pointer (&endpoint_thread_data, g_free);
+}
+
+static TrackerSparqlConnection *
+setup_connection (TrackerDomainOntology  *domain,
+                  GError                **error)
+{
+	TrackerSparqlConnection *sparql_conn;
 	GFile *store = NULL, *ontology;
 
 	if (!dry_run)
 		store = get_cache_dir (domain);
 	ontology = tracker_domain_ontology_get_ontology (domain);
-	*sparql_conn = tracker_sparql_connection_new (get_fts_connection_flags (),
-	                                              store,
-	                                              ontology,
-	                                              NULL,
-	                                              error);
+	sparql_conn = tracker_sparql_connection_new (get_fts_connection_flags (),
+	                                             store,
+	                                             ontology,
+	                                             NULL,
+	                                             error);
 	g_clear_object (&store);
 
-	if (!*sparql_conn)
-		return FALSE;
-
-	*endpoint = tracker_endpoint_dbus_new (*sparql_conn,
-	                                       connection,
-	                                       NULL,
-	                                       NULL,
-	                                       error);
-	if (!*endpoint)
-		return FALSE;
-
-	return TRUE;
+	return sparql_conn;
 }
 
 static void
@@ -962,7 +1046,6 @@ main (gint argc, gchar *argv[])
 	TrackerMinerProxy *proxy;
 	GDBusConnection *connection;
 	TrackerSparqlConnection *sparql_conn;
-	TrackerEndpointDBus *endpoint;
 	TrackerDomainOntology *domain_ontology;
 	GCancellable *cancellable;
 #if GLIB_CHECK_VERSION (2, 64, 0)
@@ -1059,13 +1142,18 @@ main (gint argc, gchar *argv[])
 		g_object_unref (store);
 	}
 
-	if (!setup_connection_and_endpoint (domain_ontology,
-	                                    connection,
-	                                    &sparql_conn,
-	                                    &endpoint,
-	                                    &error)) {
+	sparql_conn = setup_connection (domain_ontology, &error);
+	if (!sparql_conn) {
 
-		g_critical ("Could not create store/endpoint: %s",
+		g_critical ("Could not create store: %s",
+		            error->message);
+		g_error_free (error);
+
+		return EXIT_FAILURE;
+	}
+
+	if (!start_endpoint_thread (sparql_conn, connection, &error)) {
+		g_critical ("Could not set up SPARQL endpoint: %s",
 		            error->message);
 		g_error_free (error);
 
@@ -1189,6 +1277,8 @@ main (gint argc, gchar *argv[])
 		tracker_miner_files_set_need_mtime_check (TRACKER_MINER_FILES (miner_files), FALSE);
 		save_current_locale (domain_ontology);
 	}
+
+	finish_endpoint_thread ();
 
 	g_main_loop_unref (main_loop);
 	g_object_unref (config);

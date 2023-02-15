@@ -257,35 +257,24 @@ static GStrv
 result_to_strv (TrackerSparqlCursor *cursor,
                 gint                 n_col)
 {
-	GStrv strv;
-	gint count, i;
+	GPtrArray *results;
 
 	if (!cursor) {
 		return NULL;
 	}
 
-	i = 0;
-	count = 0;
-
-	/* Really no other option here, but we iterate the cursor
-	 * first to get the length.
-	 */
-	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
-		count++;
-	}
-
-	strv = g_new0 (gchar *, count + 1);
-
-	tracker_sparql_cursor_rewind (cursor);
+	results = g_ptr_array_new ();
 
 	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
 		const gchar *str;
 
 		str = tracker_sparql_cursor_get_string (cursor, n_col, NULL);
-		strv[i++] = g_strdup (str);
+		g_ptr_array_add (results, g_strdup (str));
 	}
 
-	return strv;
+	g_ptr_array_add (results, NULL);
+
+	return (GStrv) g_ptr_array_free (results, FALSE);
 }
 
 static void
@@ -297,9 +286,10 @@ get_all_tags_show_tag_id (TrackerSparqlConnection *connection,
 	gchar *query;
 
 	/* Get resources associated */
-	query = g_strdup_printf ("SELECT (COALESCE (nie:isStoredAs(?urn), ?urn) AS ?uri) WHERE {"
-	                         "  ?urn a rdfs:Resource; "
-	                         "  nao:hasTag \"%s\" . "
+	query = g_strdup_printf ("SELECT ?uri WHERE {"
+	                         "  ?urn nao:hasTag \"%s\" . "
+	                         "  BIND (nie:isStoredAs(?urn) AS ?sa). "
+	                         "  BIND (COALESCE (?sa, ?urn) AS ?uri). "
 	                         "}",
 	                         id);
 
@@ -383,7 +373,7 @@ get_all_resources_with_tags (TrackerSparqlConnection *connection,
 	}
 
 	tag_urns = result_to_strv (cursor, 0);
-	if (!tag_urns) {
+	if (!tag_urns || !*tag_urns) {
 		g_print ("%s\n",
 		         _("No files have been tagged"));
 
@@ -587,38 +577,33 @@ get_all_tags (TrackerSparqlConnection *connection,
 }
 
 static void
-print_file_report (TrackerSparqlCursor *cursor,
-                   GStrv                uris,
-                   const gchar         *found_msg,
-                   const gchar         *not_found_msg)
+print_file_report (TrackerSparqlConnection *connection,
+                   GStrv                    uris,
+                   const gchar             *urn,
+                   const gchar             *found_msg,
+                   const gchar             *not_found_msg)
 {
 	gint i;
 
-	if (!cursor || !uris) {
+	if (!uris) {
 		g_print ("  %s\n", _("No files were modified"));
 		return;
 	}
 
 	for (i = 0; uris[i]; i++) {
+		g_autoptr (TrackerSparqlCursor) cursor = NULL;
 		gboolean found = FALSE;
+		gchar *arr[2] = { uris[i], NULL };
 
-		tracker_sparql_cursor_rewind (cursor);
-
-		while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
-			const gchar *str;
-
-			str = tracker_sparql_cursor_get_string (cursor, 1, NULL);
-
-			if (g_strcmp0 (str, uris[i]) == 0) {
-				found = TRUE;
-				break;
-			}
-		}
-
+		cursor = get_file_urns (connection, arr, urn);
+		found = cursor && tracker_sparql_cursor_next (cursor, NULL, NULL);
 		g_print ("  %s: %s\n",
 		         found ? found_msg : not_found_msg,
 		         uris[i]);
 	}
+
+
+
 }
 
 static gboolean
@@ -627,7 +612,7 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
                   const gchar             *tag,
                   const gchar             *description)
 {
-	TrackerSparqlCursor *cursor = NULL;
+	g_autoptr (TrackerSparqlCursor) cursor = NULL;
 	GError *error = NULL;
 	GStrv  uris = NULL, urns_strv = NULL;
 	gchar *tag_escaped;
@@ -654,7 +639,6 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
 
 		if (!urns_strv || g_strv_length (urns_strv) < 1) {
 			g_printerr ("%s\n", _("Files do not exist or aren’t indexed"));
-			g_object_unref (cursor);
 			g_strfreev (uris);
 			return FALSE;
 		}
@@ -666,36 +650,28 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
 		description_escaped = get_escaped_sparql_string (description);
 
 		query = g_strdup_printf ("INSERT { "
-					 "  _:tag a nao:Tag;"
-					 "  nao:prefLabel %s ;"
-					 "  nao:description %s ."
-					 "} "
-					 "WHERE {"
-					 "  OPTIONAL {"
-					 "     ?tag a nao:Tag ;"
-					 "     nao:prefLabel %s ."
-					 "  } ."
-					 "  FILTER (!bound(?tag)) "
-					 "}",
-					 tag_escaped,
-					 description_escaped,
-					 tag_escaped);
+		                         "  _:tag a nao:Tag;"
+		                         "  nao:prefLabel %s ;"
+		                         "  nao:description %s ."
+		                         "} "
+		                         "WHERE {"
+		                         "  FILTER (!EXISTS { ?u nao:prefLabel %s }) "
+		                         "}",
+		                         tag_escaped,
+		                         description_escaped,
+		                         tag_escaped);
 
 		g_free (description_escaped);
 	} else {
 		query = g_strdup_printf ("INSERT { "
-					 "  _:tag a nao:Tag;"
-					 "  nao:prefLabel %s ."
-					 "} "
-					 "WHERE {"
-					 "  OPTIONAL {"
-					 "     ?tag a nao:Tag ;"
-					 "     nao:prefLabel %s ."
-					 "  } ."
-					 "  FILTER (!bound(?tag)) "
-					 "}",
-					 tag_escaped,
-					 tag_escaped);
+		                         "  _:tag a nao:Tag;"
+		                         "  nao:prefLabel %s ."
+		                         "} "
+		                         "WHERE {"
+		                         "  FILTER (!EXISTS { ?u nao:prefLabel %s }) "
+		                         "}",
+		                         tag_escaped,
+		                         tag_escaped);
 	}
 
 	tracker_sparql_connection_update (connection, query, NULL, &error);
@@ -705,10 +681,6 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
 		g_printerr ("%s, %s\n",
 		            _("Could not add tag"),
 		            error->message);
-
-		if (cursor) {
-			g_object_unref (cursor);
-		}
 
 		g_error_free (error);
 		g_free (tag_escaped);
@@ -731,7 +703,8 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
 
 		/* Add tag to specific urns */
 		query = g_strdup_printf ("INSERT { "
-		                         "  ?urn nao:hasTag ?id "
+		                         "  ?urn a rdfs:Resource ;"
+		                         "    nao:hasTag ?id "
 		                         "} "
 		                         "WHERE {"
 		                         "  ?urn nie:url ?f ."
@@ -758,16 +731,13 @@ add_tag_for_urns (TrackerSparqlConnection *connection,
 			return FALSE;
 		}
 
-		print_file_report (cursor, uris, _("Tagged"),
+		print_file_report (connection,
+		                   uris, NULL, _("Tagged"),
 		                   _("Not tagged, file is not indexed"));
 	}
 
 	g_strfreev (uris);
 	g_free (tag_escaped);
-
-	if (cursor) {
-		g_object_unref (cursor);
-	}
 
 	return TRUE;
 }
@@ -777,19 +747,19 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
                      GStrv                    resources,
                      const gchar             *tag)
 {
-	TrackerSparqlCursor *urns_cursor = NULL;
 	GError *error = NULL;
 	gchar *tag_escaped;
 	gchar *query;
+	g_autofree gchar *urn = NULL;
 	GStrv uris;
 
 	tag_escaped = get_escaped_sparql_string (tag);
 	uris = get_uris (resources);
 
 	if (uris && *uris) {
+		TrackerSparqlCursor *urns_cursor;
 		TrackerSparqlCursor *tag_cursor;
 		gchar *filter;
-		const gchar *urn;
 		GStrv urns_strv;
 
 		/* Get all tags urns */
@@ -828,10 +798,11 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
 			return TRUE;
 		}
 
-		urn = tracker_sparql_cursor_get_string (tag_cursor, 0, NULL);
+		urn = g_strdup (tracker_sparql_cursor_get_string (tag_cursor, 0, NULL));
 		urns_cursor = get_file_urns (connection, uris, urn);
+		urns_strv = result_to_strv (urns_cursor, 0);
 
-		if (!urns_cursor || !tracker_sparql_cursor_next (urns_cursor, NULL, NULL)) {
+		if (!urns_strv || !*urns_strv) {
 			g_print ("%s\n",
 			         _("None of the files had this tag set"));
 
@@ -846,7 +817,6 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
 			return TRUE;
 		}
 
-		urns_strv = result_to_strv (urns_cursor, 0);
 		filter = get_filter_string (urns_strv, "?urn", TRUE, urn);
 		g_strfreev (urns_strv);
 
@@ -864,10 +834,12 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
 	} else {
 		/* Remove tag completely */
 		query = g_strdup_printf ("DELETE { "
-		                         "  ?tag a nao:Tag "
+		                         "  ?tag a rdfs:Resource . "
+		                         "  ?r nao:hasTag ?tag . "
 		                         "} "
 		                         "WHERE {"
-		                         "  ?tag nao:prefLabel %s "
+		                         "  ?tag nao:prefLabel %s . "
+		                         "  OPTIONAL { ?r nao:hasTag ?tag } . "
 		                         "}",
 		                         tag_escaped);
 	}
@@ -889,11 +861,10 @@ remove_tag_for_urns (TrackerSparqlConnection *connection,
 
 	g_print ("%s\n", _("Tag was removed successfully"));
 
-	if (urns_cursor) {
-		print_file_report (urns_cursor, uris,
+	if (uris && *uris) {
+		print_file_report (connection, uris, urn,
 		                   _("Untagged"),
 		                   _("File not indexed or already untagged"));
-		g_object_unref (urns_cursor);
 	}
 
 	g_strfreev (uris);

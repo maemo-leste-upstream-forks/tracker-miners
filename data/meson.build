@@ -73,3 +73,7 @@ if get_option('domain_prefix') != 'org.freedesktop'
                  configuration: conf,
                  install_dir: join_paths(get_option('datadir'), 'tracker@0@'.format(tracker_api_major), 'domain-ontologies'))
 endif
+
+install_data(
+    'org.freedesktop.Tracker3.Miner.xml',
+    install_dir: join_paths(get_option('prefix'), get_option('datadir'), 'dbus-1', 'interfaces'))

@@ -29,52 +29,53 @@ import shutil
 import tempfile
 
 
-if 'TRACKER_FUNCTIONAL_TEST_CONFIG' not in os.environ:
-    raise RuntimeError("The TRACKER_FUNCTIONAL_TEST_CONFIG environment "
-                       "variable must be set to point to the location of "
-                       "the generated configuration.json file.")
+if "TRACKER_FUNCTIONAL_TEST_CONFIG" not in os.environ:
+    raise RuntimeError(
+        "The TRACKER_FUNCTIONAL_TEST_CONFIG environment "
+        "variable must be set to point to the location of "
+        "the generated configuration.json file."
+    )
 
-with open(os.environ['TRACKER_FUNCTIONAL_TEST_CONFIG']) as f:
+with open(os.environ["TRACKER_FUNCTIONAL_TEST_CONFIG"]) as f:
     config = json.load(f)
 
 
-TEST_DBUS_DAEMON_CONFIG_FILE = config['TEST_DBUS_DAEMON_CONFIG_FILE']
-TRACKER_EXTRACT_PATH = config['TRACKER_EXTRACT_PATH']
+TEST_DBUS_DAEMON_CONFIG_FILE = config["TEST_DBUS_DAEMON_CONFIG_FILE"]
+TRACKER_EXTRACT_PATH = config["TRACKER_EXTRACT_PATH"]
 
 
 def test_environment(tmpdir):
     return {
-        'DCONF_PROFILE': config['TEST_DCONF_PROFILE'],
-        'GIO_MODULE_DIR': config['MOCK_VOLUME_MONITOR_DIR'],
-        'TRACKER_TEST_DOMAIN_ONTOLOGY_RULE': config['TEST_DOMAIN_ONTOLOGY_RULE'],
-        'TRACKER_EXTRACTOR_RULES_DIR': config['TEST_EXTRACTOR_RULES_DIR'],
-        'TRACKER_EXTRACTORS_DIR': config['TEST_EXTRACTORS_DIR'],
-        'GSETTINGS_SCHEMA_DIR': config['TEST_GSETTINGS_SCHEMA_DIR'],
-        'TRACKER_LANGUAGE_STOP_WORDS_DIR': config['TEST_LANGUAGE_STOP_WORDS_DIR'],
-        'TRACKER_WRITEBACK_MODULES_DIR': config['TEST_WRITEBACK_MODULES_DIR'],
-        'XDG_CACHE_HOME': os.path.join(tmpdir, 'cache'),
-        'XDG_CONFIG_HOME': os.path.join(tmpdir, 'config'),
-        'XDG_DATA_HOME': os.path.join(tmpdir, 'data'),
-        'XDG_RUNTIME_DIR': os.path.join(tmpdir, 'run'),
+        "GIO_MODULE_DIR": config["MOCK_VOLUME_MONITOR_DIR"],
+        "TRACKER_TEST_DOMAIN_ONTOLOGY_RULE": config["TEST_DOMAIN_ONTOLOGY_RULE"],
+        "TRACKER_EXTRACTOR_RULES_DIR": config["TEST_EXTRACTOR_RULES_DIR"],
+        "TRACKER_EXTRACTORS_DIR": config["TEST_EXTRACTORS_DIR"],
+        "GSETTINGS_SCHEMA_DIR": config["TEST_GSETTINGS_SCHEMA_DIR"],
+        "TRACKER_LANGUAGE_STOP_WORDS_DIR": config["TEST_LANGUAGE_STOP_WORDS_DIR"],
+        "TRACKER_WRITEBACK_MODULES_DIR": config["TEST_WRITEBACK_MODULES_DIR"],
+        "XDG_CACHE_HOME": os.path.join(tmpdir, "cache"),
+        "XDG_CONFIG_HOME": os.path.join(tmpdir, "config"),
+        "XDG_DATA_HOME": os.path.join(tmpdir, "data"),
+        "XDG_RUNTIME_DIR": os.path.join(tmpdir, "run"),
     }
 
 
 def cli_dir():
-    return config['TEST_CLI_DIR']
+    return config["TEST_CLI_DIR"]
 
 
 def cli_subcommands_dir():
-    return config['TEST_CLI_SUBCOMMANDS_DIR']
+    return config["TEST_CLI_SUBCOMMANDS_DIR"]
 
 
 def tap_protocol_enabled():
-    return config['TEST_TAP_ENABLED']
+    return config["TEST_TAP_ENABLED"]
 
 
 def nepomuk_path():
     parser = configparser.ConfigParser()
-    parser.read(config['TEST_DOMAIN_ONTOLOGY_RULE'])
-    return parser.get('DomainOntology', 'OntologyLocation')
+    parser.read(config["TEST_DOMAIN_ONTOLOGY_RULE"])
+    return parser.get("DomainOntology", "OntologyLocation")
 
 
 # This path is used for test data for tests which expect filesystem monitoring
@@ -84,17 +85,19 @@ def nepomuk_path():
 # 'filter-hidden' property of TrackerIndexingTree is hardwired to be True at
 # present :/
 _TEST_MONITORED_TMP_DIR = os.path.join(os.environ["HOME"], "tracker-tests")
-if _TEST_MONITORED_TMP_DIR.startswith('/tmp'):
-    if 'REAL_HOME' in os.environ:
+if _TEST_MONITORED_TMP_DIR.startswith("/tmp"):
+    if "REAL_HOME" in os.environ:
         _TEST_MONITORED_TMP_DIR = os.path.join(os.environ["REAL_HOME"], "tracker-tests")
     else:
-        print ("HOME is in the /tmp prefix - this will cause tests that rely "
-                + "on filesystem monitoring to fail as changes in that prefix are "
-                + "ignored.")
+        print(
+            "HOME is in the /tmp prefix - this will cause tests that rely "
+            + "on filesystem monitoring to fail as changes in that prefix are "
+            + "ignored."
+        )
 
 
 def create_monitored_test_dir():
-    '''Returns a unique tmpdir which supports filesystem monitor events.'''
+    """Returns a unique tmpdir which supports filesystem monitor events."""
     os.makedirs(_TEST_MONITORED_TMP_DIR, exist_ok=True)
     return tempfile.mkdtemp(dir=_TEST_MONITORED_TMP_DIR)
 
@@ -125,27 +128,29 @@ def get_environment_int(variable, default=0):
 # Timeout when awaiting resources. For developers, we want a short default
 # so they don't spend a long time waiting for tests to fail. For CI we want
 # to set a longer timeout so we don't see failures on slow CI runners.
-AWAIT_TIMEOUT = get_environment_int('TRACKER_TESTS_AWAIT_TIMEOUT', default=10)
+AWAIT_TIMEOUT = get_environment_int("TRACKER_TESTS_AWAIT_TIMEOUT", default=10)
 
 
 DEBUG_TESTS = 1
 DEBUG_TESTS_NO_CLEANUP = 2
 
 _debug_flags = None
+
+
 def get_debug_flags():
     """Parse the TRACKER_DEBUG environment variable and return flags."""
     global _debug_flags
     if _debug_flags is None:
         flag_tests = GLib.DebugKey()
-        flag_tests.key = 'tests'
+        flag_tests.key = "tests"
         flag_tests.value = DEBUG_TESTS
 
         flag_tests_no_cleanup = GLib.DebugKey()
-        flag_tests_no_cleanup.key = 'tests-no-cleanup'
+        flag_tests_no_cleanup.key = "tests-no-cleanup"
         flag_tests_no_cleanup.value = DEBUG_TESTS_NO_CLEANUP
 
         flags = [flag_tests, flag_tests_no_cleanup]
-        flags_str = os.environ.get('TRACKER_DEBUG', '')
+        flags_str = os.environ.get("TRACKER_DEBUG", "")
 
         _debug_flags = GLib.parse_debug_string(flags_str, flags)
     return _debug_flags
@@ -153,9 +158,9 @@ def get_debug_flags():
 
 def tests_verbose():
     """True if TRACKER_DEBUG=tests"""
-    return (get_debug_flags() & DEBUG_TESTS)
+    return get_debug_flags() & DEBUG_TESTS
 
 
 def tests_no_cleanup():
     """True if TRACKER_DEBUG=tests-no-cleanup"""
-    return (get_debug_flags() & DEBUG_TESTS_NO_CLEANUP)
+    return get_debug_flags() & DEBUG_TESTS_NO_CLEANUP

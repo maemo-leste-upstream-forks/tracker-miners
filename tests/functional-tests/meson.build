@@ -5,16 +5,14 @@ subdir('mockvolumemonitor')
 # Configure functional tests to run completely from source tree.
 testconf = configuration_data()
 
-config_json_full_path = meson.current_build_dir() / 'configuration.json'
-dconf_profile_full_path = meson.current_source_dir() / 'trackertest'
+config_json_full_path = meson.current_build_dir() / 'config' / 'configuration.json'
 tracker_extractors_dir = meson.current_build_dir() / '..' / '..' / 'src' / 'tracker-extract'
 
 testconf.set('MOCK_VOLUME_MONITOR_DIR', meson.current_build_dir() / 'mockvolumemonitor')
 testconf.set('TEST_CLI_DIR', tracker_uninstalled_cli_dir)
 testconf.set('TEST_CLI_SUBCOMMANDS_DIR', tracker_uninstalled_cli_subcommands_dir)
 testconf.set('TEST_DBUS_DAEMON_CONFIG_FILE', build_root / 'tests' / 'test-bus.conf')
-testconf.set('TEST_DCONF_PROFILE', dconf_profile_full_path)
-testconf.set('TEST_DOMAIN_ONTOLOGY_RULE', meson.current_build_dir() / 'test-domain.rule')
+testconf.set('TEST_DOMAIN_ONTOLOGY_RULE', meson.current_build_dir() / 'config' / 'test-domain.rule')
 testconf.set('TEST_EXTRACTOR_RULES_DIR', tracker_uninstalled_extract_rules_dir)
 testconf.set('TEST_EXTRACTORS_DIR', tracker_extractors_dir)
 testconf.set('TEST_GSETTINGS_SCHEMA_DIR', tracker_miners_uninstalled_gsettings_schema_dir)
@@ -24,25 +22,25 @@ testconf.set('TEST_WRITEBACK_MODULES_DIR', tracker_uninstalled_writeback_modules
 testconf.set('TEST_TAP_ENABLED', get_option('tests_tap_protocol').to_string())
 testconf.set('TRACKER_EXTRACT_PATH', uninstalled_tracker_extract_path)
 
-test_domain_rule = configure_file(
-  input: 'test-domain.rule.in',
-  output: 'test-domain.rule',
-  configuration: testconf
-)
-
-config_json = configure_file(
-  input: 'configuration.json.in',
-  output: 'configuration.json',
-  configuration: testconf
-)
+subdir('config')
 
 extractor_tests = [
   'audio/mp3-id3v2.4-1',
   'audio/mp3-id3v2.3-empty-artist-album',
   'audio/mp3-id3v2.4-2',
   'desktop/application',
-  'desktop/link-wikipedia-tracker'
+  'desktop/link-wikipedia-tracker',
+  'images/bmp-basic-1',
+  'images/bmp-corrupt-1',
+  'images/bmp-corrupt-2',
+  'images/bmp-corrupt-3',
+  'images/bmp-corrupt-4',
+  'images/ico-basic-1',
 ]
+
+if get_option('abiword')
+  extractor_tests += 'office/abw-1'
+endif
 
 # Gstreamer 1.17/1.18 introduced support for some additional
 # MusicBrainz tags
@@ -103,14 +101,27 @@ if libcue.found()
   extractor_tests += 'disc-images/psx-game-image-1'
 endif
 
+if libosinfo.found()
+  extractor_tests += [
+    'disc-images/bootable-1',
+    'disc-images/bootable-2',
+    'disc-images/non-bootable-1',
+  ]
+endif
+
 if libgsf.found()
   extractor_tests += [
+    'office/epub-doc-1',
     'office/oasis-doc',
     'office/office-doc',
+    'office/office-xml-doc-1',
     'office/powerpoint',
     'office/pdf-doc',
+    'office/pdf-encrypted',
     'office/ps-doc',
     'office/ps-doc-atend',
+    'office/pptx-presentation-1',
+    'office/xlsx-spreadsheet-1',
   ]
 endif
 
@@ -118,29 +129,37 @@ if get_option('unzip_ps_gz_files')
   extractor_tests += 'office/psgz-doc'
 endif
 
+if libxml2.found()
+  extractor_tests += 'office/html-1'
+endif
+
+if libgxps.found()
+   extractor_tests += 'office/xps-doc-1'
+endif
+
 functional_tests = [
-  'miner-basic',
-  'miner-removable-media',
-  'miner-resource-removal',
-  'fts-basic',
-  'fts-file-operations',
-  'fts-stopwords',
-  'extractor-decorator',
-  'cli',
+  'test_cli',
+  'test_extractor_decorator',
+  'test_fts_basic',
+  'test_fts_file_operations',
+  'test_fts_stopwords',
+  'test_miner_basic',
+  'test_miner_removable_media',
+  'test_miner_resource_removal',
 ]
 
 if libcue.found()
-  functional_tests += 'extractor-flac-cuesheet'
+  functional_tests += 'test_extractor_flac_cuesheet'
 endif
 
 if libjpeg.found() and libgif.found() and libpng.found() and libtiff.found() and exempi.found() and libexif.found()
   functional_tests += [
-    'writeback-images',
+    'test_writeback_images',
   ]
 endif
 
 if generic_media_handler_name != 'none'
-  functional_tests += 'writeback-audio'
+  functional_tests += 'test_writeback_audio'
 endif
 
 detect_h264_codec = join_paths(meson.current_source_dir(), 'detect-h264-codec.sh')
@@ -174,7 +193,7 @@ test_env.set('TRACKER_FUNCTIONAL_TEST_CONFIG', config_json_full_path)
 test_env.set('TRACKER_LANGUAGE_STOP_WORDS_DIR', tracker_uninstalled_stop_words_dir)
 
 foreach t: extractor_tests
-  data = join_paths('test-extraction-data', t) + '.expected.json'
+  data = join_paths('data/extractor-content', t) + '.expected.json'
   test_name = t
   test_parts = t.split('/')
   test_suite = []
@@ -183,7 +202,7 @@ foreach t: extractor_tests
     test_suite = [test_parts[0]]
   endif
   test(test_name, python,
-    args: ['extractor-generic.py', data],
+    args: ['test_extractor_generic.py', data],
     env: test_env,
     protocol: test_protocol,
     suite: ['extractor'] + test_suite,

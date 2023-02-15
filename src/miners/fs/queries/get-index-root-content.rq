@@ -1,0 +1,29 @@
+# Inputs: root
+# Outputs: uri, folderUrn, lastModified, hash, mimeType
+SELECT
+  ?uri
+  ?folderUrn
+  ?lastModified
+  ?hash
+  (nie:mimeType(?ie) AS ?mimeType)
+{
+  GRAPH tracker:FileSystem {
+    ?uri a nfo:FileDataObject ;
+         nfo:fileLastModified ?lastModified ;
+         nie:dataSource ?s .
+
+    ~root nie:interpretedAs / nie:rootElementOf ?s .
+
+    OPTIONAL {
+      ?uri nie:interpretedAs ?folderUrn .
+      ?folderUrn a nfo:Folder
+    }
+    OPTIONAL {
+      ?uri tracker:extractorHash ?hash
+    }
+  }
+  OPTIONAL {
+    ?uri nie:interpretedAs ?ie
+  }
+}
+ORDER BY ?uri

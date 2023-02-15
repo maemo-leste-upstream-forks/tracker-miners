@@ -23,7 +23,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include <libtracker-miner/tracker-miner.h>
 #include <libtracker-sparql/tracker-sparql.h>
 
 G_BEGIN_DECLS

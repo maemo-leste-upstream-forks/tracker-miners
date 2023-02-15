@@ -37,7 +37,6 @@
 #include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-sparql/tracker-ontologies.h>
 #include <libtracker-extract/tracker-extract.h>
-#include <libtracker-miner/tracker-miner.h>
 
 #include "tracker-power.h"
 #include "tracker-miner-files.h"
@@ -45,6 +44,7 @@
 #include "tracker-config.h"
 #include "tracker-storage.h"
 #include "tracker-extract-watchdog.h"
+#include "tracker-utils.h"
 
 #define DISK_SPACE_CHECK_FREQUENCY 10
 #define SECONDS_PER_DAY 86400
@@ -799,15 +799,14 @@ set_up_mount_point_cb (GObject      *source,
                        GAsyncResult *result,
                        gpointer      user_data)
 {
-	TrackerSparqlConnection *connection = TRACKER_SPARQL_CONNECTION (source);
-	GError *error = NULL;
+	g_autofree GError *error = NULL;
 
-	tracker_sparql_connection_update_finish (connection, result, &error);
+	tracker_sparql_statement_update_finish (TRACKER_SPARQL_STATEMENT (source),
+	                                        result, &error);
 
 	if (error) {
 		g_critical ("Could not set mount point in database, %s",
 		            error->message);
-		g_error_free (error);
 	}
 }
 
@@ -815,72 +814,37 @@ static void
 set_up_mount_point (TrackerMinerFiles *miner,
                     GFile             *mount_point,
                     gboolean           mounted,
-                    GString           *accumulator)
+                    TrackerBatch      *batch)
 {
-	GString *queries;
-	gchar *uri;
+	TrackerSparqlConnection *conn;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
+	g_autofree gchar *now = NULL, *uri = NULL;
 
-	queries = g_string_new ("WITH " DEFAULT_GRAPH " ");
 	uri = g_file_get_uri (mount_point);
+	now = tracker_date_to_string (time (NULL));
 
-	if (mounted) {
-		g_debug ("Mount point state (MOUNTED) being set in DB for mount_point '%s'",
-		         uri);
+	g_debug ("Mount point state (%s) being set in DB for mount_point '%s'",
+	         mounted ? "MOUNTED" : "UNMOUNTED",
+	         uri);
 
-		g_string_append (queries,
-				 "DELETE { ?u tracker:unmountDate ?date ;"
-				 "            tracker:available ?avail } "
-				 "INSERT { ?u tracker:available true } ");
+	conn = tracker_miner_get_connection (TRACKER_MINER (miner));
+	stmt = tracker_load_statement (conn, "update-mountpoint.rq", NULL);
+
+	if (batch) {
+		tracker_batch_add_statement (batch, stmt,
+		                             "mountPoint", G_TYPE_STRING, uri,
+		                             "mounted", G_TYPE_BOOLEAN, mounted,
+		                             "currentDate", G_TYPE_STRING, now,
+		                             NULL);
 	} else {
-		gchar *now;
-
-		g_debug ("Mount point state (UNMOUNTED) being set in DB for URI '%s'",
-		         uri);
-
-		now = tracker_date_to_string (time (NULL));
-
-		g_string_append_printf (queries,
-		                        "DELETE { ?u tracker:unmountDate ?date ;"
-		                        "            tracker:available ?avail } "
-		                        "INSERT { ?u tracker:unmountDate \"%s\" ; "
-					"            tracker:available false } ",
-		                        now);
-
-		g_free (now);
+		tracker_sparql_statement_bind_string (stmt, "mountPoint", uri);
+		tracker_sparql_statement_bind_boolean (stmt, "mounted", mounted);
+		tracker_sparql_statement_bind_string (stmt, "currentDate", now);
+		tracker_sparql_statement_update_async (stmt,
+		                                       NULL,
+		                                       set_up_mount_point_cb,
+		                                       NULL);
 	}
-
-	g_string_append_printf (queries,
-				"WHERE { <%s> a nfo:FileDataObject ; "
-				"             nie:interpretedAs/"
-				"             nie:rootElementOf ?u . "
-				"        ?u tracker:available ?avail . "
-				"        OPTIONAL { ?u tracker:unmountDate ?date } "
-				"}",
-				uri);
-	/* Update plain tracker:available state on content specific graphs */
-	g_string_append_printf (queries,
-	                        "DELETE { GRAPH ?g { ?uri tracker:available %s } } "
-	                        "INSERT { GRAPH ?g { ?uri tracker:available %s } } "
-	                        "WHERE { GRAPH ?g { ?uri a tracker:IndexedFolder ; "
-	                        "                        nie:isStoredAs <%s> . } "
-	                        "        FILTER (?g != tracker:FileSystem) "
-	                        "}",
-	                        mounted ? "false" : "true",
-	                        mounted ? "true" : "false",
-	                        uri);
-	g_free (uri);
-
-	if (accumulator) {
-		g_string_append_printf (accumulator, "%s ", queries->str);
-	} else {
-		tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (miner)),
-		                                        queries->str,
-		                                        NULL,
-		                                        set_up_mount_point_cb,
-		                                        NULL);
-	}
-
-	g_string_free (queries, TRUE);
 }
 
 static void
@@ -888,16 +852,13 @@ init_mount_points_cb (GObject      *source,
                       GAsyncResult *result,
                       gpointer      user_data)
 {
-	GError *error = NULL;
+	g_autofree GError *error = NULL;
 
-	tracker_sparql_connection_update_finish (TRACKER_SPARQL_CONNECTION (source),
-	                                         result,
-	                                         &error);
+	tracker_batch_execute_finish (TRACKER_BATCH (source), result, &error);
 
 	if (error) {
 		g_critical ("Could not initialize currently active mount points: %s",
 		            error->message);
-		g_error_free (error);
 	} else {
 		/* Mount points correctly initialized */
 		(TRACKER_MINER_FILES (user_data))->private->mount_points_initialized = TRUE;
@@ -913,28 +874,28 @@ static void
 init_mount_points (TrackerMinerFiles *miner_files)
 {
 	TrackerMiner *miner = TRACKER_MINER (miner_files);
+	TrackerSparqlConnection *conn;
+	TrackerSparqlStatement *stmt;
 	TrackerMinerFilesPrivate *priv;
 	GHashTable *volumes;
 	GHashTableIter iter;
 	gpointer key, value;
-	GString *accumulator;
+	g_autoptr (TrackerBatch) batch = NULL;
 	GError *error = NULL;
-	TrackerSparqlCursor *cursor;
+	TrackerSparqlCursor *cursor = NULL;
 	GSList *mounts, *l;
 	GFile *file;
 
 	g_debug ("Initializing mount points...");
 
-	/* First, get all mounted volumes, according to tracker-store (SYNC!) */
-	cursor = tracker_sparql_connection_query (tracker_miner_get_connection (miner),
-	                                          "SELECT ?f WHERE { "
-	                                          "  ?v a tracker:IndexedFolder ; "
-	                                          "     tracker:isRemovable true; "
-	                                          "     tracker:available true . "
-	                                          "  ?f a nfo:FileDataObject ; "
-	                                          "     nie:interpretedAs/nie:rootElementOf ?v . "
-	                                          "}",
-	                                          NULL, &error);
+	conn = tracker_miner_get_connection (miner);
+	stmt = tracker_load_statement (conn, "get-index-roots.rq", &error);
+
+	if (stmt) {
+		/* First, get all mounted volumes, according to tracker-store (SYNC!) */
+		cursor = tracker_sparql_statement_execute (stmt, NULL, &error);
+	}
+
 	if (error) {
 		g_critical ("Could not obtain the mounted volumes: %s", error->message);
 		g_error_free (error);
@@ -1002,7 +963,7 @@ init_mount_points (TrackerMinerFiles *miner_files)
 		g_slist_free (mounts);
 	}
 
-	accumulator = g_string_new (NULL);
+	batch = tracker_sparql_connection_create_batch (conn);
 	g_hash_table_iter_init (&iter, volumes);
 
 	/* Finally, set up volumes based on the composed info */
@@ -1021,7 +982,7 @@ init_mount_points (TrackerMinerFiles *miner_files)
 			set_up_mount_point (TRACKER_MINER_FILES (miner),
 			                    file,
 			                    TRUE,
-			                    accumulator);
+			                    batch);
 
 			if (mount_point) {
 				TrackerIndexingTree *indexing_tree;
@@ -1051,7 +1012,7 @@ init_mount_points (TrackerMinerFiles *miner_files)
 			set_up_mount_point (TRACKER_MINER_FILES (miner),
 			                    file,
 			                    FALSE,
-			                    accumulator);
+			                    batch);
 			/* There's no need to force mtime check in these inconsistent
 			 * mount points, as they are not mounted right now. */
 		}
@@ -1059,19 +1020,11 @@ init_mount_points (TrackerMinerFiles *miner_files)
 		g_free (mount_point);
 	}
 
-	if (accumulator->str[0] != '\0') {
-		tracker_sparql_connection_update_async (tracker_miner_get_connection (miner),
-		                                        accumulator->str,
-		                                        NULL,
-		                                        init_mount_points_cb,
-		                                        miner);
-	} else {
-		/* Note. Not initializing stale volume removal timeout because
-		 * we do not have the configuration setup yet */
-		(TRACKER_MINER_FILES (miner))->private->mount_points_initialized = TRUE;
-	}
+	tracker_batch_execute_async (batch,
+	                             NULL,
+	                             init_mount_points_cb,
+	                             miner);
 
-	g_string_free (accumulator, TRUE);
 	g_hash_table_unref (volumes);
 }
 
@@ -2008,93 +1961,11 @@ miner_files_finished (TrackerMinerFS *fs,
 }
 
 static void
-add_delete_sparql (GFile               *file,
-                   TrackerSparqlBuffer *buffer,
-                   gboolean             delete_self,
-                   gboolean             delete_children)
-{
-	GString *sparql;
-	gchar *uri;
-
-	g_return_if_fail (delete_self || delete_children);
-
-	uri = g_file_get_uri (file);
-
-	if (delete_children) {
-		sparql = g_string_new ("DELETE { "
-				       "  GRAPH " DEFAULT_GRAPH " {"
-				       "    ?f a rdfs:Resource . "
-				       "  }"
-				       "  GRAPH ?g {"
-				       "    ?f a rdfs:Resource . "
-				       "    ?ie a rdfs:Resource . "
-				       "  }"
-				       "} WHERE {"
-				       "  GRAPH " DEFAULT_GRAPH " {"
-				       "    ?f a rdfs:Resource ; "
-				       "       nie:url ?u . "
-				       "  }"
-				       "  GRAPH ?g {"
-				       "    ?f a rdfs:Resource . "
-				       "    OPTIONAL { ?ie nie:isStoredAs ?f } . "
-				       "  }"
-				       "  FILTER (");
-
-		g_string_append_printf (sparql, "STRSTARTS (?u, \"%s/\")", uri);
-
-		g_string_append (sparql, ")}");
-	} else {
-		sparql = g_string_new (NULL);
-	}
-
-	if (delete_self) {
-		const gchar *data_graphs[] = {
-			"tracker:Audio",
-			"tracker:Documents",
-			"tracker:Pictures",
-			"tracker:Software",
-			"tracker:Video",
-			"tracker:FileSystem",
-		};
-		gint i;
-
-		for (i = 0; i < G_N_ELEMENTS (data_graphs); i++) {
-			g_string_append_printf (sparql,
-						"DELETE { "
-						"  GRAPH %s {"
-						"    <%s> a rdfs:Resource . "
-						"    ?ie a rdfs:Resource . "
-						"  }"
-						"} WHERE {"
-						"  GRAPH " DEFAULT_GRAPH " {"
-						"    <%s> a rdfs:Resource . "
-						"    OPTIONAL { "
-						"      GRAPH %s {"
-						"        ?ie nie:isStoredAs <%s> "
-						"      }"
-						"    }"
-						"  }"
-						"} ",
-						data_graphs[i],
-						uri,
-						uri,
-						data_graphs[i],
-						uri);
-		}
-	}
-
-	g_free (uri);
-
-	tracker_sparql_buffer_push_sparql (buffer, file, sparql->str);
-	g_string_free (sparql, TRUE);
-}
-
-static void
 miner_files_remove_children (TrackerMinerFS      *fs,
                              GFile               *file,
                              TrackerSparqlBuffer *buffer)
 {
-	add_delete_sparql (file, buffer, FALSE, TRUE);
+	tracker_sparql_buffer_log_delete_content (buffer, file);
 }
 
 static void
@@ -2103,7 +1974,10 @@ miner_files_remove_file (TrackerMinerFS      *fs,
                          TrackerSparqlBuffer *buffer,
                          gboolean             is_dir)
 {
-	add_delete_sparql (file, buffer, TRUE, is_dir);
+	if (is_dir)
+		tracker_sparql_buffer_log_delete_content (buffer, file);
+
+	tracker_sparql_buffer_log_delete (buffer, file);
 }
 
 static void
@@ -2113,193 +1987,10 @@ miner_files_move_file (TrackerMinerFS      *fs,
                        TrackerSparqlBuffer *buffer,
                        gboolean             recursive)
 {
-	GString *sparql = g_string_new (NULL);
-	gchar *uri, *source_uri, *display_name, *container_clause = NULL;
-	gchar *path, *basename;
-	GFile *new_parent;
+	tracker_sparql_buffer_log_move (buffer, source_file, file);
 
-	uri = g_file_get_uri (file);
-	source_uri = g_file_get_uri (source_file);
-
-	path = g_file_get_path (file);
-	basename = g_filename_display_basename (path);
-	display_name = tracker_sparql_escape_string (basename);
-	g_free (basename);
-	g_free (path);
-
-	/* Get new parent information */
-	new_parent = g_file_get_parent (file);
-	if (new_parent) {
-		const gchar *new_parent_id;
-
-		new_parent_id = tracker_miner_fs_get_identifier (fs, new_parent);
-
-		if (new_parent_id) {
-			container_clause =
-				g_strdup_printf ("; nfo:belongsToContainer <%s>",
-				                 new_parent_id);
-		}
-	}
-
-#define FS_PROPERTIES \
-	"  nfo:fileSize ?fileSize ;" \
-	"  nfo:fileLastModified ?fileLastModified ;" \
-	"  nfo:fileLastAccessed ?fileLastAccessed ;" \
-	"  nfo:fileCreated ?fileCreated ;" \
-	"  nie:dataSource ?dataSource ;" \
-	"  nie:interpretedAs ?interpretedAs ;" \
-	"  tracker:extractorHash ?extractorHash ."
-#define FS_WHERE \
-	"  ?f a nfo:FileDataObject ;" \
-	"    nfo:fileSize ?fileSize ;" \
-	"    nfo:fileLastModified ?fileLastModified ;" \
-	"    nfo:fileLastAccessed ?fileLastAccessed ." \
-	"  OPTIONAL { ?f nfo:fileCreated ?fileCreated } ." \
-	"  OPTIONAL { ?f nie:dataSource ?dataSource } ." \
-	"  OPTIONAL { ?f nie:interpretedAs ?interpretedAs } ." \
-	"  OPTIONAL { ?f tracker:extractorHash ?extractorHash } ."
-
-#define GRAPH_PROPERTIES \
-	"  nfo:fileSize ?fileSize ;" \
-	"  nfo:fileLastModified ?fileLastModified ;" \
-	"  nie:dataSource ?dataSource ;" \
-	"  nie:interpretedAs ?interpretedAs ."
-#define GRAPH_WHERE \
-	"  ?f a nfo:FileDataObject ; " \
-	"    nfo:fileSize ?fileSize ;" \
-	"    nfo:fileLastModified ?fileLastModified ;" \
-	"  OPTIONAL { ?f nie:dataSource ?dataSource } ." \
-	"  OPTIONAL { ?f nie:interpretedAs ?interpretedAs } ."
-
-	/* Update nie:isStoredAs in the nie:InformationElement */
-	g_string_append_printf (sparql,
-	                        "DELETE { "
-	                        "  GRAPH ?g {"
-	                        "    ?ie nie:isStoredAs <%s> "
-	                        "  }"
-	                        "} INSERT {"
-	                        "  GRAPH ?g {"
-	                        "    ?ie nie:isStoredAs <%s> "
-	                        "  }"
-	                        "} WHERE {"
-	                        "  GRAPH ?g {"
-	                        "    ?ie nie:isStoredAs <%s> "
-	                        "  }"
-	                        "}; ",
-	                        source_uri, uri, source_uri);
-	/* Update tracker:FileSystem nfo:FileDataObject information */
-	g_string_append_printf (sparql,
-	                        "WITH " DEFAULT_GRAPH " "
-	                        "DELETE { "
-	                        "  <%s> a rdfs:Resource . "
-	                        "} INSERT { "
-	                        "  <%s> a nfo:FileDataObject ; "
-	                        "       nfo:fileName \"%s\" ; "
-	                        "       nie:url \"%s\" "
-	                        "       %s ; "
-	                        FS_PROPERTIES
-	                        "} WHERE { "
-	                        "  BIND (<%s> AS ?f) ."
-	                        FS_WHERE
-	                        "} ",
-	                        source_uri,
-	                        uri, display_name, uri, container_clause,
-	                        source_uri);
-	/* Update nfo:FileDataObject in data graphs */
-	g_string_append_printf (sparql,
-	                        "DELETE { "
-	                        "  GRAPH ?g {"
-	                        "    <%s> a rdfs:Resource "
-	                        "  }"
-	                        "} INSERT {"
-	                        "  GRAPH ?g {"
-	                        "    <%s> a nfo:FileDataObject ; "
-	                        "      nfo:fileName \"%s\" ; "
-	                        GRAPH_PROPERTIES
-	                        "  }"
-	                        "} WHERE {"
-	                        "  GRAPH ?g {"
-	                        "    BIND (<%s> AS ?f) ."
-	                        GRAPH_WHERE
-	                        "  }"
-	                        "}",
-	                        source_uri, uri, display_name, source_uri);
-	g_free (container_clause);
-
-	if (recursive) {
-		/* Update nie:isStoredAs in the nie:InformationElement */
-		g_string_append_printf (sparql,
-		                        "DELETE { "
-		                        "  GRAPH ?g {"
-		                        "    ?ie nie:isStoredAs ?f "
-		                        "  }"
-		                        "} INSERT {"
-		                        "  GRAPH ?g {"
-		                        "    ?ie nie:isStoredAs ?new_url "
-		                        "  }"
-		                        "} WHERE {"
-		                        "  GRAPH ?g {"
-		                        "    ?f a nfo:FileDataObject ."
-		                        "    ?ie nie:isStoredAs ?f ."
-		                        "    BIND (CONCAT (\"%s/\", SUBSTR (STR (?f), STRLEN (\"%s/\") + 1)) AS ?new_url) ."
-		                        "    FILTER (STRSTARTS (STR (?f), \"%s/\")) . "
-		                        "  }"
-		                        "}; ",
-		                        uri, source_uri, source_uri);
-		/* Update tracker:FileSystem nfo:FileDataObject information */
-		g_string_append_printf (sparql,
-		                        "WITH " DEFAULT_GRAPH " "
-		                        "DELETE { "
-		                        "  ?f a rdfs:Resource . "
-		                        "} INSERT { "
-		                        "  ?new_url a nfo:FileDataObject ; "
-		                        "       nie:url ?new_url ; "
-					"       nfo:belongsToContainer ?belongsToContainer ;"
-					"       nfo:fileName ?fileName ;"
-		                        FS_PROPERTIES
-		                        "} WHERE { "
-		                        FS_WHERE
-					"  ?f nfo:fileName ?fileName ;"
-					"  OPTIONAL { ?f nfo:belongsToContainer ?belongsToContainer } ."
-		                        "  BIND (CONCAT (\"%s/\", SUBSTR (STR (?f), STRLEN (\"%s/\") + 1)) AS ?new_url) ."
-		                        "  FILTER (STRSTARTS (STR (?f), \"%s/\")) . "
-		                        "} ",
-		                        uri, source_uri, source_uri);
-		/* Update nfo:FileDataObject in data graphs */
-		g_string_append_printf (sparql,
-		                        "DELETE { "
-		                        "  GRAPH ?g {"
-		                        "    ?f a rdfs:Resource "
-		                        "  }"
-		                        "} INSERT {"
-		                        "  GRAPH ?g {"
-		                        "    ?new_url a nfo:FileDataObject ; "
-					"      nfo:fileName ?fileName ;"
-		                        GRAPH_PROPERTIES
-		                        "  }"
-		                        "} WHERE {"
-		                        "  GRAPH ?g {"
-		                        GRAPH_WHERE
-					"    ?f nfo:fileName ?fileName ."
-		                        "    BIND (CONCAT (\"%s/\", SUBSTR (STR (?f), STRLEN (\"%s/\") + 1)) AS ?new_url) ."
-		                        "    FILTER (STRSTARTS (STR (?f), \"%s/\")) . "
-		                        "  }"
-		                        "}",
-		                        uri, source_uri, source_uri);
-	}
-
-#undef FS_PROPERTIES
-#undef FS_WHERE
-#undef GRAPH_PROPERTIES
-#undef GRAPH_WHERE
-
-	tracker_sparql_buffer_push_sparql (buffer, file, sparql->str);
-
-	g_free (uri);
-	g_free (source_uri);
-	g_free (display_name);
-	g_clear_object (&new_parent);
-	g_string_free (sparql, TRUE);
+	if (recursive)
+		tracker_sparql_buffer_log_move_content (buffer, source_file, file);
 }
 
 TrackerMiner *
@@ -2326,20 +2017,21 @@ remove_files_in_removable_media_cb (GObject      *object,
                                     GAsyncResult *result,
                                     gpointer      user_data)
 {
-	GError *error = NULL;
+	g_autofree GError *error = NULL;
 
-	tracker_sparql_connection_update_finish (TRACKER_SPARQL_CONNECTION (object), result, &error);
+	tracker_sparql_statement_update_finish (TRACKER_SPARQL_STATEMENT (object),
+	                                        result, &error);
 
-	if (error) {
+	if (error)
 		g_critical ("Could not remove files in volumes: %s", error->message);
-		g_error_free (error);
-	}
 }
 
 static gboolean
 miner_files_in_removable_media_remove_by_type (TrackerMinerFiles  *miner,
                                                TrackerStorageType  type)
 {
+	TrackerSparqlConnection *conn;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
 	gboolean removable;
 	gboolean optical;
 
@@ -2347,92 +2039,42 @@ miner_files_in_removable_media_remove_by_type (TrackerMinerFiles  *miner,
 	optical = TRACKER_STORAGE_TYPE_IS_OPTICAL (type);
 
 	/* Only remove if any of the flags was TRUE */
-	if (removable || optical) {
-		GString *queries;
+	if (!removable && !optical)
+		return FALSE;
 
-		g_debug ("  Removing all resources in store from %s ",
-		         optical ? "optical discs" : "removable devices");
+	g_debug ("  Removing all resources in store from %s ",
+	         optical ? "optical discs" : "removable devices");
 
-		queries = g_string_new ("");
+	conn = tracker_miner_get_connection (TRACKER_MINER (miner));
+	stmt = tracker_load_statement (conn, "delete-mountpoints-by-type.rq", NULL);
 
-		/* Delete all resources where nie:dataSource is a volume
-		 * of the given type */
-		g_string_append_printf (queries,
-		                        "DELETE { "
-		                        "  ?f a rdfs:Resource . "
-		                        "  GRAPH ?g {"
-		                        "    ?ie a rdfs:Resource "
-		                        "  }"
-		                        "} WHERE { "
-		                        "  ?v a tracker:IndexedFolder ; "
-		                        "     tracker:isRemovable %s ; "
-		                        "     tracker:isOptical %s . "
-		                        "  ?f nie:dataSource ?v . "
-		                        "  GRAPH ?g {"
-		                        "    ?ie nie:isStoredAs ?f "
-		                        "  }"
-		                        "}",
-		                        removable ? "true" : "false",
-		                        optical ? "true" : "false");
+	tracker_sparql_statement_bind_boolean (stmt, "isRemovable", removable);
+	tracker_sparql_statement_bind_boolean (stmt, "isOptical", optical);
+	tracker_sparql_statement_update_async (stmt, NULL,
+	                                       remove_files_in_removable_media_cb,
+	                                       NULL);
 
-		tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (miner)),
-		                                        queries->str,
-		                                        NULL,
-		                                        remove_files_in_removable_media_cb,
-		                                        NULL);
-
-		g_string_free (queries, TRUE);
-
-		return TRUE;
-	}
-
-	return FALSE;
+	return TRUE;
 }
 
 static void
 miner_files_in_removable_media_remove_by_date (TrackerMinerFiles  *miner,
                                                const gchar        *date)
 {
-	GString *queries;
+	TrackerSparqlConnection *conn;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
 
 	g_debug ("  Removing all resources in store from removable or "
 	         "optical devices not mounted after '%s'",
 	         date);
 
-	queries = g_string_new ("");
+	conn = tracker_miner_get_connection (TRACKER_MINER (miner));
+	stmt = tracker_load_statement (conn, "delete-mountpoints-by-date.rq", NULL);
 
-	/* Delete all resources where nie:dataSource is a volume
-	 * which was last unmounted before the given date */
-	g_string_append_printf (queries,
-	                        "DELETE { "
-				"  GRAPH " DEFAULT_GRAPH " {"
-	                        "    ?f a rdfs:Resource . "
-				"  }"
-	                        "  GRAPH ?g {"
-	                        "    ?ie a rdfs:Resource "
-	                        "  }"
-	                        "} WHERE { "
-				"  GRAPH " DEFAULT_GRAPH " {"
-	                        "    ?v a tracker:IndexedFolder ; "
-	                        "       tracker:isRemovable true ; "
-	                        "       tracker:available false ; "
-	                        "       tracker:unmountDate ?d . "
-	                        "    ?f nie:dataSource ?v . "
-	                        "    FILTER ( ?d < \"%s\"^^xsd:dateTime) "
-				"  }"
-	                        "  GRAPH ?g {"
-	                        "    ?ie nie:isStoredAs ?f "
-	                        "  }"
-	                        "}",
-	                        date);
-
-	tracker_sparql_connection_update_async (tracker_miner_get_connection (TRACKER_MINER (miner)),
-	                                        queries->str,
-	                                        NULL,
-	                                        remove_files_in_removable_media_cb,
-	                                        NULL);
-
-	g_string_free (queries, TRUE);
+	tracker_sparql_statement_bind_string (stmt, "unmountDate", date);
+	tracker_sparql_statement_update_async (stmt, NULL,
+	                                       remove_files_in_removable_media_cb,
+	                                       NULL);
 }
 
 static void

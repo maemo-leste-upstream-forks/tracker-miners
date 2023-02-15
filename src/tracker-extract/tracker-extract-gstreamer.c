@@ -693,7 +693,7 @@ extractor_apply_audio_metadata (MetadataExtractor     *extractor,
 			tracker_resource_set_gvalue (hash_resource, "nfo:hashValue", &acoustid_fingerprint);
 			tracker_resource_set_string (hash_resource, "nfo:hashAlgorithm", "chromaprint");
 
-			tracker_resource_add_take_relation (file_resource, "nfo:hasHash", hash_resource);
+			tracker_resource_set_take_relation (file_resource, "nfo:hasHash", hash_resource);
 			g_value_unset (&acoustid_fingerprint);
 		}
 	#endif
@@ -1475,7 +1475,7 @@ tracker_extract_module_init (GError **error)
 	for (i = 0; i < G_N_ELEMENTS (blocklisted); i++) {
 		GstPlugin *plugin =
 			gst_registry_find_plugin (registry,
-						  blocklisted[i]);
+			                          blocklisted[i]);
 		if (plugin) {
 			g_debug ("Removing GStreamer plugin '%s' from registry",
 			         blocklisted[i]);

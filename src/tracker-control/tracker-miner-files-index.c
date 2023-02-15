@@ -19,11 +19,8 @@
 
 #include "config-miners.h"
 
-#include <libtracker-miners-common/tracker-dbus.h>
-#include <libtracker-miners-common/tracker-enums.h>
-#include <libtracker-miners-common/tracker-miners-enum-types.h>
+#include <libtracker-miners-common/tracker-common.h>
 #include <libtracker-sparql/tracker-sparql.h>
-#include <libtracker-miner/tracker-miner.h>
 
 #include "tracker-dbus-files-index.h"
 #include "tracker-dbus-files-proxy.h"

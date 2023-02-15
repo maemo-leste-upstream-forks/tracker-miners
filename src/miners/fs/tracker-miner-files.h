@@ -20,10 +20,11 @@
 #ifndef __TRACKER_MINER_FS_FILES_H__
 #define __TRACKER_MINER_FS_FILES_H__
 
-#include <libtracker-miner/tracker-miner.h>
+#include <gio/gio.h>
 
 #include "tracker-config.h"
 
+#include "tracker-miner-fs.h"
 #include "tracker-storage.h"
 
 G_BEGIN_DECLS
