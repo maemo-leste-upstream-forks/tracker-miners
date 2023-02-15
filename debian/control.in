@@ -14,7 +14,7 @@ Build-Depends: debhelper-compat (= 13),
                libgstreamer1.0-dev (>= 1.20.0),
                libgstreamer-plugins-base1.0-dev (>= 1.20.0),
                libstemmer-dev,
-               libtracker-sparql-3.0-dev (>= 3.4.0~),
+               libtracker-sparql-3.0-dev (>= 3.5.0~),
                libpoppler-glib-dev (>= 0.16.0),
                libgsf-1-dev (>= 1.14.24),
                libexif-dev (>= 0.6),
@@ -30,7 +30,7 @@ Build-Depends: debhelper-compat (= 13),
                libupower-glib-dev (>= 0.9.0),
                libicu-dev (>= 4.8.1.1),
                libiptcdata0-dev,
-               tracker (>= 3.4.0~),
+               tracker (>= 3.5.0~),
                libgif-dev,
                libgxps-dev,
                libosinfo-1.0-dev (>= 0.2.9),
@@ -60,7 +60,7 @@ Package: tracker-extract
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         tracker (>= 3.4.0~)
+         tracker (>= 3.5.0~)
 Breaks: tracker (<< 1.99.2)
 Replaces: tracker (<< 1.99.2)
 Description: metadata database, indexer and search tool - metadata extractors
@@ -74,7 +74,7 @@ Package: tracker-miner-fs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         tracker (>= 3.4.0~),
+         tracker (>= 3.5.0~),
          tracker-extract (= ${binary:Version}),
          procps
 Breaks: bijiben (<< 40),
