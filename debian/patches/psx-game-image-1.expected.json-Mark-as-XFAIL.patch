@@ -7,13 +7,13 @@ bug.
 
 Bug-Upstream: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/162
 ---
- .../test-extraction-data/disc-images/psx-game-image-1.expected.json    | 3 ++-
+ .../data/extractor-content/disc-images/psx-game-image-1.expected.json  | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json b/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
-index 6f01116..1d57b5a 100644
---- a/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
-+++ b/tests/functional-tests/test-extraction-data/disc-images/psx-game-image-1.expected.json
+diff --git a/tests/functional-tests/data/extractor-content/disc-images/psx-game-image-1.expected.json b/tests/functional-tests/data/extractor-content/disc-images/psx-game-image-1.expected.json
+index 85cb10c..2e2dd43 100644
+--- a/tests/functional-tests/data/extractor-content/disc-images/psx-game-image-1.expected.json
++++ b/tests/functional-tests/data/extractor-content/disc-images/psx-game-image-1.expected.json
 @@ -1,7 +1,8 @@
  {
      "test": {
@@ -23,4 +23,4 @@ index 6f01116..1d57b5a 100644
 +        "ExpectedFailure": true
      },
      "metadata": {
-         "@type": [ "nfo:GameImage" ],
+         "@graph": [

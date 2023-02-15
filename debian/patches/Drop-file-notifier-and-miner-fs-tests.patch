@@ -6,13 +6,13 @@ There are flakiness problems here.
 
 Bug-Upstream: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/174
 ---
- tests/libtracker-miner/meson.build | 2 --
+ tests/tracker-miner-fs/meson.build | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/tests/libtracker-miner/meson.build b/tests/libtracker-miner/meson.build
-index ed88f10..311b8a6 100644
---- a/tests/libtracker-miner/meson.build
-+++ b/tests/libtracker-miner/meson.build
+diff --git a/tests/tracker-miner-fs/meson.build b/tests/tracker-miner-fs/meson.build
+index 80f6b71..f8dd7a7 100644
+--- a/tests/tracker-miner-fs/meson.build
++++ b/tests/tracker-miner-fs/meson.build
 @@ -7,8 +7,6 @@ libtracker_miner_tests = [
  ]
  
