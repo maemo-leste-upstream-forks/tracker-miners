@@ -5,7 +5,8 @@
 Source: tracker-miners
 Section: utils
 Priority: optional
-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
 Uploaders: Jeremy Bicha <jbicha@ubuntu.com>
 Build-Depends: debhelper-compat (= 13),
                dh-sequence-gnome,

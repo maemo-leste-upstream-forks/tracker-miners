@@ -1,3 +1,18 @@
+tracker-miners (3.4.3-1ubuntu1) lunar; urgency=medium
+
+  [ Denison Barbosa ]
+  * debian/patches/ubuntu-fix-tracker-extract-start-order.patch:
+    Fix tracker-extract.service WantedBy target so that gvfsd has
+    access to KRB5CCNAME. (LP: #1779890)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Mar 2023 15:04:35 +0100
+
+tracker-miners (3.4.3-1build1) lunar; urgency=medium
+
+  * Rebuild against latest tiff
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Sat, 04 Feb 2023 21:45:11 -0500
+
 tracker-miners (3.4.3-1) unstable; urgency=medium
 
   * New upstream release
