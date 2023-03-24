@@ -1,3 +1,12 @@
+tracker-miners (3.4.3-1ubuntu2) lunar; urgency=medium
+
+  * d/p/git_remove-install-section-from-tracker-extract-service.patch:
+    Cherry-pick patch to remove [Install] section from
+    tracker-extract.service. This patch replaces the previous
+    ubuntu-fix-tracker-extract-start-order.patch.
+
+ -- Denison Barbosa <denison.barbosa@canonical.com>  Fri, 24 Mar 2023 07:58:41 -0400
+
 tracker-miners (3.4.3-1ubuntu1) lunar; urgency=medium
 
   [ Denison Barbosa ]
