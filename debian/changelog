@@ -1,3 +1,10 @@
+tracker-miners (3.4.3-1ubuntu3) lunar; urgency=medium
+
+  * Add tracker-extract-Add-missing-break-to-remove-a-single.patch
+    to fix SIGSEGV in decorator_item_cache_remove (LP: #2012638)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Thu, 13 Apr 2023 17:34:18 +0800
+
 tracker-miners (3.4.3-1ubuntu2) lunar; urgency=medium
 
   * d/p/git_remove-install-section-from-tracker-extract-service.patch:
