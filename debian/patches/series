@@ -2,3 +2,4 @@ Drop-file-notifier-and-miner-fs-tests.patch
 psx-game-image-1.expected.json-Mark-as-XFAIL.patch
 Removing-Install-section-from-tracker-extract-3.service.patch
 Don-t-start-the-daemons-for-non-root-system-users-either.patch
+tracker-extract-Add-missing-break-to-remove-a-single.patch
