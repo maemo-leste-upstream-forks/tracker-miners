@@ -1,0 +1,33 @@
+From 3c64d70d67eeedf41f2295499a3594aa75ebff64 Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Thu, 13 Apr 2023 10:37:36 +0200
+Subject: [PATCH] tracker-extract: Add missing break to remove a single element
+
+The extractor process listens to notifier events in order to a)
+know there's missing elements, in order to build its small cache
+(nowadays: 200) of elements to extract, or b) notice files being
+deleted, which might be part of the currently cached items.
+
+The loop doing the latter was somewhat broken, trying to remove
+elements from a GQueue while iterating it. Since cached elements
+must be just once in the list at most, this is just missing a
+break.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/265
+Origin: https://gitlab.gnome.org/GNOME/tracker-miners/-/merge_requests/448
+Bug-Ubuntu: https://launchpad.net/bugs/2012638
+Forwarded: not-needed
+Last-Update: 2023-04-13
+
+Index: tracker-miners-3.4.3-1ubuntu3/src/libtracker-miner/tracker-decorator.c
+===================================================================
+--- tracker-miners-3.4.3-1ubuntu3.orig/src/libtracker-miner/tracker-decorator.c
++++ tracker-miners-3.4.3-1ubuntu3/src/libtracker-miner/tracker-decorator.c
+@@ -731,6 +731,7 @@ decorator_item_cache_remove (TrackerDeco
+ 
+ 		g_queue_remove (&priv->item_cache, info);
+ 		tracker_decorator_info_unref (info);
++		break;
+ 	}
+ }
+ 
