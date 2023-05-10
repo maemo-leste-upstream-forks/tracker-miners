@@ -129,23 +129,22 @@ foreach module : modules
   enabled_rule_files += rules
 endforeach
 
-tracker_extract_priority_dbus = gnome.gdbus_codegen(
-  'tracker-extract-priority-dbus',
-  'tracker-extract-priority.xml',
-  interface_prefix: 'org.freedesktop.Tracker3.Extract.',
-  namespace: 'TrackerExtractDBus')
+extract_resources = gnome.compile_resources(
+    'extract-resources',
+    'org.freedesktop.Tracker3.Extract.gresource.xml',
+    c_name: 'tracker_extract',
+)
 
 tracker_extract_sources = [
   'tracker-config.c',
   'tracker-decorator.c',
-  'tracker-decorator-fs.c',
   'tracker-extract.c',
   'tracker-extract-controller.c',
   'tracker-extract-decorator.c',
   'tracker-extract-persistence.c',
   'tracker-read.c',
   'tracker-main.c',
-  tracker_extract_priority_dbus
+  extract_resources,
 ]
 
 tracker_extract_dependencies = [

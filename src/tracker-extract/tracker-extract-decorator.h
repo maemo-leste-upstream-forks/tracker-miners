@@ -23,7 +23,7 @@
 #include <gio/gio.h>
 
 #include "tracker-extract.h"
-#include "tracker-decorator-fs.h"
+#include "tracker-decorator.h"
 
 G_BEGIN_DECLS
 
@@ -38,11 +38,11 @@ typedef struct TrackerExtractDecorator TrackerExtractDecorator;
 typedef struct TrackerExtractDecoratorClass TrackerExtractDecoratorClass;
 
 struct TrackerExtractDecorator {
-	TrackerDecoratorFS parent_instance;
+	TrackerDecorator parent_instance;
 };
 
 struct TrackerExtractDecoratorClass {
-        TrackerDecoratorFSClass parent_class;
+	TrackerDecoratorClass parent_class;
 };
 
 GType              tracker_extract_decorator_get_type (void) G_GNUC_CONST;

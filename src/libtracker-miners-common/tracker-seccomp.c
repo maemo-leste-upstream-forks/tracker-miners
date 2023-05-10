@@ -36,6 +36,10 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 
+#ifdef HAVE_BTRFS_IOCTL
+#include <linux/btrfs.h>
+#endif
+
 #include <seccomp.h>
 
 #ifndef SYS_SECCOMP
@@ -111,6 +115,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (mprotect);
 	ALLOW_RULE (madvise);
 	ALLOW_RULE (mbind);
+	ALLOW_RULE (membarrier);
 	ERROR_RULE (mlock, EPERM);
 	ERROR_RULE (mlock2, EPERM);
 	ERROR_RULE (munlock, EPERM);
@@ -237,6 +242,13 @@ tracker_seccomp_init (void)
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(socketpair), 1,
 	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL)) < 0)
 		goto out;
+
+#ifdef HAVE_BTRFS_IOCTL
+	/* Special requirements for btrfs, allowed for BTRFS_IOC_INO_LOOKUP */
+	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 1,
+	                      SCMP_CMP(1, SCMP_CMP_EQ, BTRFS_IOC_INO_LOOKUP)) < 0)
+		goto out;
+#endif
 
 	/* Special requirements for ioctl, allowed on stdout/stderr */
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 1,

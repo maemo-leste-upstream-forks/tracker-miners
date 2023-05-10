@@ -94,6 +94,7 @@ class TrackerMinerTest(ut.TestCase):
 
         self.workdir = cfg.create_monitored_test_dir()
         self.indexed_dir = os.path.join(self.workdir, "test-monitored")
+        self.non_recursive_dir = os.path.join(self.workdir, "test-non-recursive")
 
     def config(self):
         settings = {
@@ -101,7 +102,9 @@ class TrackerMinerTest(ut.TestCase):
                 "index-recursive-directories": GLib.Variant.new_strv(
                     [self.indexed_dir]
                 ),
-                "index-single-directories": GLib.Variant.new_strv([]),
+                "index-single-directories": GLib.Variant.new_strv(
+                    [self.non_recursive_dir]
+                ),
                 "index-optical-discs": GLib.Variant.new_boolean(False),
                 "index-removable-devices": GLib.Variant.new_boolean(False),
                 "index-applications": GLib.Variant.new_boolean(False),

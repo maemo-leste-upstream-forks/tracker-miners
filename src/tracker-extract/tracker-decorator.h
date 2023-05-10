@@ -26,6 +26,8 @@
 
 #include "tracker-miner-object.h"
 
+#include <libtracker-extract/tracker-extract.h>
+
 G_BEGIN_DECLS
 
 #define TRACKER_TYPE_DECORATOR         (tracker_decorator_get_type())
@@ -47,7 +49,6 @@ typedef struct _TrackerDecoratorInfo TrackerDecoratorInfo;
  **/
 struct _TrackerDecorator {
 	TrackerMiner parent_instance;
-	gpointer priv;
 };
 
 /**
@@ -67,31 +68,19 @@ struct _TrackerDecoratorClass {
 
 	void (* items_available) (TrackerDecorator *decorator);
 	void (* finished)        (TrackerDecorator *decorator);
-	void (* error)           (TrackerDecorator *decorator,
-	                          const gchar      *url,
-	                          const gchar      *error_message,
-	                          const gchar      *sparql);
-	/* <Private> */
-	gpointer padding[10];
+
+	void (* error) (TrackerDecorator   *decorator,
+	                TrackerExtractInfo *extract_info,
+	                const gchar        *error_message);
+
+	void (* update) (TrackerDecorator   *decorator,
+	                 TrackerExtractInfo *extract_info,
+	                 TrackerBatch       *batch);
 };
 
+#define TRACKER_DECORATOR_ERROR (tracker_decorator_error_quark ())
 
-/**
- * TrackerDecoratorError:
- * @TRACKER_DECORATOR_ERROR_EMPTY: There is no item to be processed
- * next. It is entirely possible to have a ::items_available signal
- * emitted and then have this error when calling
- * tracker_decorator_next_finish() because the signal may apply to a
- * class which we're not interested in. For example, a new nmo:Email
- * might have been added to Tracker, but we might only be interested
- * in nfo:Document. This case would give this error.
- * @TRACKER_DECORATOR_ERROR_PAUSED: No work was done or will be done
- * because the miner is currently paused.
- *
- * Possible errors returned when calling tracker_decorator_next_finish().
- **/
 typedef enum {
-	TRACKER_DECORATOR_ERROR_EMPTY,
 	TRACKER_DECORATOR_ERROR_PAUSED
 } TrackerDecoratorError;
 
@@ -99,33 +88,25 @@ typedef enum {
 GType         tracker_decorator_get_type          (void) G_GNUC_CONST;
 GQuark        tracker_decorator_error_quark       (void);
 
-const gchar** tracker_decorator_get_class_names   (TrackerDecorator     *decorator);
 guint         tracker_decorator_get_n_items       (TrackerDecorator     *decorator);
 
-void          tracker_decorator_next              (TrackerDecorator     *decorator,
-                                                   GCancellable         *cancellable,
-                                                   GAsyncReadyCallback   callback,
-                                                   gpointer              user_data);
-
-TrackerDecoratorInfo *
-              tracker_decorator_next_finish       (TrackerDecorator     *decorator,
-                                                   GAsyncResult         *result,
-                                                   GError              **error);
+TrackerDecoratorInfo * tracker_decorator_next (TrackerDecorator  *decorator,
+                                               GError           **error);
 
 void          tracker_decorator_set_priority_graphs (TrackerDecorator    *decorator,
                                                      const gchar * const *graphs);
+
+void tracker_decorator_invalidate_cache (TrackerDecorator *decorator);
 
 GType         tracker_decorator_info_get_type     (void) G_GNUC_CONST;
 
 TrackerDecoratorInfo *
               tracker_decorator_info_ref          (TrackerDecoratorInfo *info);
 void          tracker_decorator_info_unref        (TrackerDecoratorInfo *info);
-const gchar * tracker_decorator_info_get_urn      (TrackerDecoratorInfo *info);
 const gchar * tracker_decorator_info_get_url      (TrackerDecoratorInfo *info);
-const gchar * tracker_decorator_info_get_mimetype (TrackerDecoratorInfo *info);
-GTask       * tracker_decorator_info_get_task     (TrackerDecoratorInfo *info);
+GCancellable * tracker_decorator_info_get_cancellable (TrackerDecoratorInfo *info);
 void          tracker_decorator_info_complete     (TrackerDecoratorInfo *info,
-                                                   gchar                *sparql);
+                                                   TrackerExtractInfo   *extract_info);
 void          tracker_decorator_info_complete_error (TrackerDecoratorInfo *info,
                                                      GError               *error);
 

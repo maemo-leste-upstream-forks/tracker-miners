@@ -1,4 +1,4 @@
-# Inputs: sourceUri, destUri, newFilename, newParent
+# Inputs: sourceUri, destUri, newFilename, newParent, newDataSource
 
 # Update nie:isStoredAs in the nie:InformationElement
 DELETE {
@@ -28,7 +28,7 @@ DELETE {
        nfo:fileLastModified ?fileLastModified ;
        nfo:fileLastAccessed ?fileLastAccessed ;
        nfo:fileCreated ?fileCreated ;
-       nie:dataSource ?dataSource ;
+       nie:dataSource ~newDataSource ;
        nie:interpretedAs ?interpretedAs ;
        tracker:extractorHash ?extractorHash .
 } WHERE {
@@ -38,7 +38,6 @@ DELETE {
     nfo:fileLastAccessed ?fileLastAccessed .
 
   OPTIONAL { ~sourceUri nfo:fileCreated ?fileCreated } .
-  OPTIONAL { ~sourceUri nie:dataSource ?dataSource } .
   OPTIONAL { ~sourceUri nie:interpretedAs ?interpretedAs } .
   OPTIONAL { ~sourceUri tracker:extractorHash ?extractorHash } .
   OPTIONAL { ?newContainer a nfo:Folder ; nie:isStoredAs ~newParent } .
@@ -55,7 +54,7 @@ DELETE {
       nfo:fileName ~newFilename ;
       nfo:fileSize ?fileSize ;
       nfo:fileLastModified ?fileLastModified ;
-      nie:dataSource ?dataSource ;
+      nie:dataSource ~newDataSource ;
       nie:interpretedAs ?interpretedAs .
   }
 } WHERE {
@@ -63,7 +62,6 @@ DELETE {
     ~sourceUri a nfo:FileDataObject ;
       nfo:fileSize ?fileSize ;
       nfo:fileLastModified ?fileLastModified ;
-    OPTIONAL { ~sourceUri nie:dataSource ?dataSource } .
     OPTIONAL { ~sourceUri nie:interpretedAs ?interpretedAs } .
   }
   FILTER (?g != tracker:FileSystem)

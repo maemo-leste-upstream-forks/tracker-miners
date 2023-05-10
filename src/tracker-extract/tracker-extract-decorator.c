@@ -29,10 +29,6 @@ enum {
 	PROP_EXTRACTOR = 1
 };
 
-#define MAX_EXTRACTING_FILES 1
-
-#define TRACKER_EXTRACT_DECORATOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TRACKER_TYPE_EXTRACT_DECORATOR, TrackerExtractDecoratorPrivate))
-
 typedef struct _TrackerExtractDecoratorPrivate TrackerExtractDecoratorPrivate;
 typedef struct _ExtractData ExtractData;
 
@@ -47,31 +43,24 @@ struct _ExtractData {
 struct _TrackerExtractDecoratorPrivate {
 	TrackerExtract *extractor;
 	GTimer *timer;
-	guint n_extracting_files;
+	gboolean extracting;
+
+	TrackerSparqlStatement *update_hash;
+	TrackerSparqlStatement *delete_file;
 
 	TrackerExtractPersistence *persistence;
-	GDBusProxy *index_proxy;
+	GVolumeMonitor *volume_monitor;
 };
 
-typedef struct {
-	guint watch_id;
-	gchar **rdf_types;
-} AppData;
-
-static GInitableIface *parent_initable_iface;
-
 static void decorator_get_next_file (TrackerDecorator *decorator);
-static void tracker_extract_decorator_initable_iface_init (GInitableIface *iface);
 
 static void decorator_ignore_file (GFile                   *file,
                                    TrackerExtractDecorator *decorator,
                                    const gchar             *error_message,
                                    const gchar             *extra_info);
 
-G_DEFINE_TYPE_WITH_CODE (TrackerExtractDecorator, tracker_extract_decorator,
-                        TRACKER_TYPE_DECORATOR_FS,
-                        G_ADD_PRIVATE (TrackerExtractDecorator)
-                        G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, tracker_extract_decorator_initable_iface_init))
+G_DEFINE_TYPE_WITH_PRIVATE (TrackerExtractDecorator, tracker_extract_decorator,
+                            TRACKER_TYPE_DECORATOR)
 
 static void
 tracker_extract_decorator_get_property (GObject    *object,
@@ -107,6 +96,51 @@ tracker_extract_decorator_set_property (GObject      *object,
 	}
 }
 
+static TrackerSparqlStatement *
+load_statement (TrackerExtractDecorator *decorator,
+                const gchar             *query_filename)
+{
+	g_autofree gchar *resource_path = NULL;
+	TrackerSparqlConnection *conn;
+
+	resource_path =
+		g_strconcat ("/org/freedesktop/Tracker3/Extract/queries/",
+		             query_filename, NULL);
+
+	conn = tracker_miner_get_connection (TRACKER_MINER (decorator));
+
+	return tracker_sparql_connection_load_statement_from_gresource (conn,
+	                                                                resource_path,
+	                                                                NULL,
+	                                                                NULL);
+}
+
+static void
+persistence_ignore_file (GFile    *file,
+                         gpointer  user_data)
+{
+	TrackerExtractDecorator *decorator = user_data;
+
+	decorator_ignore_file (file, decorator, "Crash/hang handling file", NULL);
+}
+
+static void
+tracker_extract_decorator_constructed (GObject *object)
+{
+	TrackerExtractDecorator *decorator = TRACKER_EXTRACT_DECORATOR (object);
+	TrackerExtractDecoratorPrivate *priv;
+
+	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (object));
+
+	G_OBJECT_CLASS (tracker_extract_decorator_parent_class)->constructed (object);
+
+	priv->update_hash = load_statement (decorator, "update-hash.rq");
+	priv->delete_file = load_statement (decorator, "delete-file.rq");
+
+	priv->persistence = tracker_extract_persistence_initialize (persistence_ignore_file,
+	                                                            decorator);
+}
+
 static void
 tracker_extract_decorator_finalize (GObject *object)
 {
@@ -120,21 +154,30 @@ tracker_extract_decorator_finalize (GObject *object)
 	if (priv->timer)
 		g_timer_destroy (priv->timer);
 
-	g_clear_object (&priv->index_proxy);
+	g_clear_object (&priv->volume_monitor);
+
+	g_clear_object (&priv->update_hash);
+	g_clear_object (&priv->delete_file);
 
 	G_OBJECT_CLASS (tracker_extract_decorator_parent_class)->finalize (object);
 }
 
 static void
-fill_data (TrackerResource *resource,
-           const gchar     *url,
-           const gchar     *mimetype)
+ensure_data (TrackerExtractInfo *info)
 {
-	TrackerResource *dataobject;
+	TrackerResource *resource, *dataobject;
 	GStrv rdf_types;
+	const gchar *mimetype;
+	g_autofree gchar *uri = NULL;
+	GFile *file;
 	gint i;
 
-	dataobject = tracker_resource_new (url);
+	resource = tracker_extract_info_get_resource (info);
+	mimetype = tracker_extract_info_get_mimetype (info);
+	file = tracker_extract_info_get_file (info);
+	uri = g_file_get_uri (file);
+
+	dataobject = tracker_resource_new (uri);
 	tracker_resource_set_string (resource, "nie:mimeType", mimetype);
 	tracker_resource_add_take_relation (resource, "nie:isStoredAs", dataobject);
 	tracker_resource_add_uri (dataobject, "nie:interpretedAs",
@@ -149,16 +192,42 @@ fill_data (TrackerResource *resource,
 }
 
 static void
+tracker_extract_decorator_update (TrackerDecorator   *decorator,
+                                  TrackerExtractInfo *info,
+                                  TrackerBatch       *batch)
+{
+	TrackerExtractDecoratorPrivate *priv;
+	TrackerResource *resource;
+	const gchar *graph, *mime_type, *hash;
+	g_autofree gchar *uri = NULL;
+	GFile *file;
+
+	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (decorator));
+
+	mime_type = tracker_extract_info_get_mimetype (info);
+	hash = tracker_extract_module_manager_get_hash (mime_type);
+	graph = tracker_extract_info_get_graph (info);
+	resource = tracker_extract_info_get_resource (info);
+	file = tracker_extract_info_get_file (info);
+	uri = g_file_get_uri (file);
+
+	tracker_batch_add_statement (batch, priv->update_hash,
+	                             "file", G_TYPE_STRING, uri,
+	                             "hash", G_TYPE_STRING, hash,
+	                             NULL);
+
+	if (resource)
+		tracker_batch_add_resource (batch, graph, resource);
+}
+
+static void
 get_metadata_cb (TrackerExtract *extract,
                  GAsyncResult   *result,
                  ExtractData    *data)
 {
 	TrackerExtractDecoratorPrivate *priv;
 	TrackerExtractInfo *info;
-	TrackerResource *resource;
 	GError *error = NULL;
-	const gchar *graph, *mime_type, *hash;
-	gchar *update_hash_sparql;
 
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (data->decorator));
 	info = tracker_extract_file_finish (extract, result, &error);
@@ -175,44 +244,12 @@ get_metadata_cb (TrackerExtract *extract,
 		                       error->message, NULL);
 		tracker_decorator_info_complete_error (data->decorator_info, error);
 	} else {
-		gchar *resource_sparql, *sparql;
-
-		mime_type = tracker_extract_info_get_mimetype (info);
-		hash = tracker_extract_module_manager_get_hash (mime_type);
-		graph = tracker_extract_info_get_graph (info);
-		resource = tracker_extract_info_get_resource (info);
-
-		update_hash_sparql =
-			g_strdup_printf ("INSERT DATA {"
-			                 "  GRAPH tracker:FileSystem {"
-			                 "    <%s> tracker:extractorHash \"%s\" ."
-			                 "  }"
-			                 "}",
-			                 tracker_decorator_info_get_url (data->decorator_info),
-			                 hash);
-
-		if (resource) {
-			fill_data (resource,
-			           tracker_decorator_info_get_url (data->decorator_info),
-			           mime_type);
-
-			resource_sparql = tracker_resource_print_sparql_update (resource, NULL, graph);
-
-			sparql = g_strdup_printf ("%s; %s",
-			                          update_hash_sparql,
-			                          resource_sparql);
-			g_free (resource_sparql);
-			g_free (update_hash_sparql);
-
-			tracker_decorator_info_complete (data->decorator_info, sparql);
-		} else {
-			tracker_decorator_info_complete (data->decorator_info, update_hash_sparql);
-		}
-
+		ensure_data (info);
+		tracker_decorator_info_complete (data->decorator_info, info);
 		tracker_extract_info_unref (info);
 	}
 
-	priv->n_extracting_files--;
+	priv->extracting = FALSE;
 	decorator_get_next_file (data->decorator);
 
 	tracker_decorator_info_unref (data->decorator_info);
@@ -244,32 +281,32 @@ task_cancellable_cancelled_cb (GCancellable *cancellable,
 }
 
 static void
-decorator_next_item_cb (TrackerDecorator *decorator,
-                        GAsyncResult     *result,
-                        gpointer          user_data)
+decorator_get_next_file (TrackerDecorator *decorator)
 {
 	TrackerExtractDecoratorPrivate *priv;
 	TrackerDecoratorInfo *info;
-	GError *error = NULL;
+	g_autoptr (GError) error = NULL;
 	ExtractData *data;
-	GTask *task;
+	GCancellable *cancellable;
 	GFile *file;
 
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (decorator));
-	info = tracker_decorator_next_finish (decorator, result, &error);
+
+	if (!tracker_miner_is_started (TRACKER_MINER (decorator)) ||
+	    tracker_miner_is_paused (TRACKER_MINER (decorator)))
+		return;
+
+	if (priv->extracting)
+		return;
+
+	info = tracker_decorator_next (decorator, &error);
 
 	if (!info) {
-		priv->n_extracting_files--;
-
 		if (error &&
-		    error->domain == tracker_decorator_error_quark ()) {
-			switch (error->code) {
-			case TRACKER_DECORATOR_ERROR_EMPTY:
-				g_debug ("There are no further items to extract");
-				break;
-			case TRACKER_DECORATOR_ERROR_PAUSED:
-				g_debug ("Next item is on hold because miner is paused");
-			}
+		    g_error_matches (error,
+		                     TRACKER_DECORATOR_ERROR,
+		                     TRACKER_DECORATOR_ERROR_PAUSED)) {
+			g_debug ("Next item is on hold because miner is paused");
 		} else if (error) {
 			g_warning ("Next item could not be processed, %s", error->message);
 		}
@@ -278,7 +315,6 @@ decorator_next_item_cb (TrackerDecorator *decorator,
 		return;
 	} else if (!tracker_decorator_info_get_url (info)) {
 		/* Skip virtual elements with no real file representation */
-		priv->n_extracting_files--;
 		tracker_decorator_info_unref (info);
 		decorator_get_next_file (decorator);
 		return;
@@ -289,23 +325,26 @@ decorator_next_item_cb (TrackerDecorator *decorator,
 	if (!g_file_is_native (file)) {
 		g_warning ("URI '%s' is not native",
 		           tracker_decorator_info_get_url (info));
-		priv->n_extracting_files--;
 		tracker_decorator_info_unref (info);
 		decorator_get_next_file (decorator);
 		return;
 	}
 
+	priv->extracting = TRUE;
+
 	data = g_new0 (ExtractData, 1);
 	data->decorator = decorator;
 	data->decorator_info = info;
 	data->file = file;
-	task = tracker_decorator_info_get_task (info);
+	cancellable = tracker_decorator_info_get_cancellable (info);
 
-	g_debug ("Extracting metadata for '%s'", tracker_decorator_info_get_url (info));
+	TRACKER_NOTE (DECORATOR,
+	              g_message ("[Decorator] Extracting metadata for '%s'",
+	                         tracker_decorator_info_get_url (info)));
 
 	tracker_extract_persistence_add_file (priv->persistence, data->file);
 
-	g_set_object (&data->cancellable, g_task_get_cancellable (task));
+	g_set_object (&data->cancellable, cancellable);
 
 	if (data->cancellable) {
 		data->signal_id = g_cancellable_connect (data->cancellable,
@@ -315,28 +354,9 @@ decorator_next_item_cb (TrackerDecorator *decorator,
 
 	tracker_extract_file (priv->extractor,
 	                      tracker_decorator_info_get_url (info),
-	                      tracker_decorator_info_get_mimetype (info),
-	                      g_task_get_cancellable (task),
+	                      NULL,
+	                      cancellable,
 	                      (GAsyncReadyCallback) get_metadata_cb, data);
-}
-
-static void
-decorator_get_next_file (TrackerDecorator *decorator)
-{
-	TrackerExtractDecoratorPrivate *priv;
-
-	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (decorator));
-
-	if (!tracker_miner_is_started (TRACKER_MINER (decorator)) ||
-	    tracker_miner_is_paused (TRACKER_MINER (decorator)))
-		return;
-
-	while (priv->n_extracting_files < MAX_EXTRACTING_FILES) {
-		priv->n_extracting_files++;
-		tracker_decorator_next (decorator, NULL,
-		                        (GAsyncReadyCallback) decorator_next_item_cb,
-		                        NULL);
-	}
 }
 
 static void
@@ -401,16 +421,24 @@ tracker_extract_decorator_finished (TrackerDecorator *decorator)
 }
 
 static void
-tracker_extract_decorator_error (TrackerDecorator *decorator,
-                                 const gchar      *url,
-                                 const gchar      *error_message,
-                                 const gchar      *sparql)
+tracker_extract_decorator_error (TrackerDecorator   *decorator,
+                                 TrackerExtractInfo *extract_info,
+                                 const gchar        *error_message)
 {
+	g_autofree gchar *sparql = NULL;
+	TrackerResource *resource;
+	const gchar *graph;
 	GFile *file;
 
-	file = g_file_new_for_uri (url);
+	file = tracker_extract_info_get_file (extract_info);
+	graph = tracker_extract_info_get_graph (extract_info);
+	resource = tracker_extract_info_get_resource (extract_info);
+
+	sparql = tracker_resource_print_sparql_update (resource,
+	                                               NULL,
+	                                               graph);
+
 	decorator_ignore_file (file, TRACKER_EXTRACT_DECORATOR (decorator), error_message, sparql);
-	g_object_unref (file);
 }
 
 static void
@@ -420,6 +448,7 @@ tracker_extract_decorator_class_init (TrackerExtractDecoratorClass *klass)
 	TrackerMinerClass *miner_class = TRACKER_MINER_CLASS (klass);
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+	object_class->constructed = tracker_extract_decorator_constructed;
 	object_class->finalize = tracker_extract_decorator_finalize;
 	object_class->get_property = tracker_extract_decorator_get_property;
 	object_class->set_property = tracker_extract_decorator_set_property;
@@ -430,6 +459,7 @@ tracker_extract_decorator_class_init (TrackerExtractDecoratorClass *klass)
 	decorator_class->items_available = tracker_extract_decorator_items_available;
 	decorator_class->finished = tracker_extract_decorator_finished;
 	decorator_class->error = tracker_extract_decorator_error;
+	decorator_class->update = tracker_extract_decorator_update;
 
 	g_object_class_install_property (object_class,
 	                                 PROP_EXTRACTOR,
@@ -448,11 +478,14 @@ decorator_ignore_file (GFile                   *file,
                        const gchar             *error_message,
                        const gchar             *extra_info)
 {
-	TrackerSparqlConnection *conn;
-	GError *error = NULL;
-	gchar *uri, *query;
-	const gchar *mimetype, *hash;
-	GFileInfo *info;
+	TrackerExtractDecoratorPrivate *priv;
+	g_autoptr (GError) error = NULL, info_error = NULL;
+	g_autofree gchar *uri = NULL;
+	g_autoptr (GFileInfo) info = NULL;
+	const gchar *hash = NULL;
+	gboolean removed_hash = FALSE;
+
+	priv = tracker_extract_decorator_get_instance_private (decorator);
 
 	uri = g_file_get_uri (file);
 	g_debug ("Extraction on file '%s' failed in previous execution, ignoring", uri);
@@ -460,146 +493,70 @@ decorator_ignore_file (GFile                   *file,
 	info = g_file_query_info (file,
 	                          G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
 	                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-	                          NULL, &error);
+	                          NULL, &info_error);
 
 	if (info) {
-		tracker_error_report (file, error_message, extra_info);
+		const gchar *mimetype;
 
 		mimetype = g_file_info_get_attribute_string (info,
 		                                             G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 		hash = tracker_extract_module_manager_get_hash (mimetype);
-		g_object_unref (info);
-
-		query = g_strdup_printf ("INSERT DATA { GRAPH tracker:FileSystem {"
-		                         "  <%s> tracker:extractorHash \"%s\" ;"
-		                         "}}",
-		                         uri, hash);
-	} else {
-		g_debug ("Could not get mimetype: %s", error->message);
-
-		if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-			tracker_error_report_delete (file);
-		else
-			tracker_error_report (file, error->message, NULL);
-
-		g_clear_error (&error);
-		query = g_strdup_printf ("DELETE {"
-		                         "  GRAPH ?g { <%s> a rdfs:Resource }"
-		                         "} WHERE {"
-		                         "  GRAPH ?g { <%s> a nfo:FileDataObject }"
-		                         "  FILTER (?g != tracker:FileSystem)"
-		                         "}",
-		                         uri, uri);
 	}
 
-	conn = tracker_miner_get_connection (TRACKER_MINER (decorator));
-	tracker_sparql_connection_update (conn, query, NULL, &error);
+	if (hash) {
+		tracker_error_report (file, error_message, extra_info);
+
+		tracker_sparql_statement_bind_string (priv->update_hash, "file", uri);
+		tracker_sparql_statement_bind_string (priv->update_hash, "hash", hash);
+
+		removed_hash = tracker_sparql_statement_update (priv->update_hash, NULL, &error);
+	}
+
+	if (!removed_hash) {
+		if (!info_error || g_error_matches (info_error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+			tracker_error_report_delete (file);
+		else
+			tracker_error_report (file, info_error->message, NULL);
+
+		g_clear_error (&error);
+		tracker_sparql_statement_bind_string (priv->delete_file, "file", uri);
+		tracker_sparql_statement_update (priv->delete_file, NULL, &error);
+	}
 
 	if (error) {
 		g_warning ("Failed to update ignored file '%s': %s",
 		           uri, error->message);
-		g_error_free (error);
 	}
-
-	g_free (query);
-	g_free (uri);
 }
 
 static void
-persistence_ignore_file (GFile    *file,
-                         gpointer  user_data)
+mount_points_changed_cb (GVolumeMonitor *monitor,
+                         GMount         *mount,
+                         gpointer        user_data)
 {
-	TrackerExtractDecorator *decorator = user_data;
+	GDrive *drive = g_mount_get_drive (mount);
 
-	decorator_ignore_file (file, decorator, "Crash/hang handling file", NULL);
+	if (drive) {
+		if (g_drive_is_media_removable (drive))
+			tracker_decorator_invalidate_cache (user_data);
+		g_object_unref (drive);
+	}
 }
 
 static void
 tracker_extract_decorator_init (TrackerExtractDecorator *decorator)
 {
-}
-
-static void
-update_graphs_from_proxy (TrackerExtractDecorator *decorator,
-                          GDBusProxy              *proxy)
-{
-	const gchar **graphs = NULL;
-	GVariant *v;
-
-	v = g_dbus_proxy_get_cached_property (proxy, "Graphs");
-	if (v)
-		graphs = g_variant_get_strv (v, NULL);
-
-	tracker_decorator_set_priority_graphs (TRACKER_DECORATOR (decorator),
-	                                       graphs);
-	g_free (graphs);
-}
-
-static void
-proxy_properties_changed_cb (GDBusProxy *proxy,
-                             GVariant   *changed_properties,
-                             GStrv       invalidated_properties,
-                             gpointer    user_data)
-{
-	update_graphs_from_proxy (user_data, proxy);
-}
-
-static gboolean
-tracker_extract_decorator_initable_init (GInitable     *initable,
-                                         GCancellable  *cancellable,
-                                         GError       **error)
-{
-	TrackerExtractDecorator        *decorator;
 	TrackerExtractDecoratorPrivate *priv;
-	GDBusConnection                *conn;
-	gboolean                        ret = TRUE;
 
-	decorator = TRACKER_EXTRACT_DECORATOR (initable);
-	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (decorator));
+	priv = tracker_extract_decorator_get_instance_private (decorator);
 
-	conn = g_bus_get_sync (TRACKER_IPC_BUS, NULL, error);
-	if (conn == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-
-	priv->index_proxy = g_dbus_proxy_new_sync (conn,
-	                                           G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
-	                                           NULL,
-	                                           "org.freedesktop.Tracker3.Miner.Files.Control",
-	                                           "/org/freedesktop/Tracker3/Miner/Files/Proxy",
-	                                           "org.freedesktop.Tracker3.Miner.Files.Proxy",
-	                                           cancellable,
-	                                           error);
-	if (!priv->index_proxy) {
-		ret = FALSE;
-		goto out;
-	}
-
-	g_signal_connect (priv->index_proxy, "g-properties-changed",
-	                  G_CALLBACK (proxy_properties_changed_cb), decorator);
-	update_graphs_from_proxy (decorator, priv->index_proxy);
-
-	/* Chainup to parent's init last, to have a chance to export our
-	 * DBus interface before RequestName returns. Otherwise our iface
-	 * won't be ready by the time the tracker-extract appear on the bus. */
-	if (!parent_initable_iface->init (initable, cancellable, error)) {
-		ret = FALSE;
-	}
-
-	priv->persistence = tracker_extract_persistence_initialize (persistence_ignore_file,
-	                                                            decorator);
-out:
-	g_clear_object (&conn);
-
-	return ret;
-}
-
-static void
-tracker_extract_decorator_initable_iface_init (GInitableIface *iface)
-{
-	parent_initable_iface = g_type_interface_peek_parent (iface);
-	iface->init = tracker_extract_decorator_initable_init;
+	priv->volume_monitor = g_volume_monitor_get ();
+	g_signal_connect_object (priv->volume_monitor, "mount-added",
+	                         G_CALLBACK (mount_points_changed_cb), decorator, 0);
+	g_signal_connect_object (priv->volume_monitor, "mount-pre-unmount",
+	                         G_CALLBACK (mount_points_changed_cb), decorator, 0);
+	g_signal_connect_object (priv->volume_monitor, "mount-removed",
+	                         G_CALLBACK (mount_points_changed_cb), decorator, 0);
 }
 
 TrackerDecorator *

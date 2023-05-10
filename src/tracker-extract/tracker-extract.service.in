@@ -1,6 +1,7 @@
 [Unit]
 Description=Tracker metadata extractor
 ConditionUser=!root
+After=gnome-session.target
 
 [Service]
 Type=dbus
@@ -11,5 +12,5 @@ Restart=on-failure
 RestartPreventExitStatus=SIGKILL
 Slice=background.slice
 
-[Install]
-WantedBy=default.target
+# This is a helper service that is controlled by "tracker-miner-fs-3.service".
+# It's not supposed to be enabled or started manually.
