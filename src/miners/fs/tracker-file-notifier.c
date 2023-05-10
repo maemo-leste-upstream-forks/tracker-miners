@@ -1420,10 +1420,10 @@ static void
 check_disable_monitor (TrackerFileNotifier *notifier)
 {
 	TrackerFileNotifierPrivate *priv;
-	TrackerSparqlStatement *stmt;
-	TrackerSparqlCursor *cursor = NULL;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
+	g_autoptr (TrackerSparqlCursor) cursor = NULL;
 	gint64 folder_count = 0;
-	GError *error = NULL;
+	g_autoptr (GError) error = NULL;
 
 	priv = tracker_file_notifier_get_instance_private (notifier);
 	stmt = tracker_load_statement (priv->connection, "get-folder-count.rq", &error);
@@ -1439,7 +1439,6 @@ check_disable_monitor (TrackerFileNotifier *notifier)
 
 	if (error) {
 		g_warning ("Could not get folder count: %s\n", error->message);
-		g_error_free (error);
 	} else if (folder_count > tracker_monitor_get_limit (priv->monitor)) {
 		/* If the folder count exceeds the monitor limit, there's
 		 * nothing we can do anyway to prevent possibly out of date
@@ -1452,8 +1451,6 @@ check_disable_monitor (TrackerFileNotifier *notifier)
 		        "completed. Too many folders to monitor anyway");
 		tracker_monitor_set_enabled (priv->monitor, FALSE);
 	}
-
-	g_clear_object (&cursor);
 }
 
 static gboolean

@@ -389,11 +389,20 @@ directory_root_info_new (GFile                 *file,
 
 	if (!file_info && allow_stat && file_attributes) {
 		GFileQueryInfoFlags file_flags;
+		g_autofree gchar *attrs = NULL;
 
 		file_flags = G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS;
 
+		if (file_attributes) {
+			attrs = g_strconcat (FILE_ATTRIBUTES ",",
+					     file_attributes,
+					     NULL);
+		} else {
+			attrs = g_strdup (FILE_ATTRIBUTES);
+		}
+
 		file_info = g_file_query_info (file,
-		                               file_attributes,
+		                               attrs,
 		                               file_flags,
 		                               NULL,
 		                               NULL);

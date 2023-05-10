@@ -35,11 +35,9 @@ G_BEGIN_DECLS
 
 typedef struct TrackerExtractController TrackerExtractController;
 typedef struct TrackerExtractControllerClass TrackerExtractControllerClass;
-typedef struct TrackerExtractControllerPrivate TrackerExtractControllerPrivate;
 
 struct TrackerExtractController {
 	GObject parent_instance;
-	TrackerExtractControllerPrivate *priv;
 };
 
 struct TrackerExtractControllerClass {
@@ -47,8 +45,9 @@ struct TrackerExtractControllerClass {
 };
 
 GType                      tracker_extract_controller_get_type (void) G_GNUC_CONST;
-TrackerExtractController * tracker_extract_controller_new      (TrackerDecorator *decorator,
-                                                                GDBusConnection  *connection);
+TrackerExtractController * tracker_extract_controller_new (TrackerDecorator  *decorator,
+                                                           GDBusConnection   *connection,
+                                                           GError           **error);
 
 G_END_DECLS
 

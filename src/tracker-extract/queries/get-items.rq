@@ -1,0 +1,48 @@
+# Inputs: graph1, graph2, graph3, graph4, graph5
+# Outputs: urn
+SELECT
+  ?urn
+  tracker:id(?urn)
+{
+  # We want to query graphs in a specific order
+  {
+    GRAPH ?g {
+      ?urn a nfo:FileDataObject
+    }
+    FILTER (STR (?g) = ~graph1)
+  }
+  UNION
+  {
+    GRAPH ?g {
+      ?urn a nfo:FileDataObject
+    }
+    FILTER (STR (?g) = ~graph2)
+  }
+  UNION
+  {
+    GRAPH ?g {
+      ?urn a nfo:FileDataObject
+    }
+    FILTER (STR (?g) = ~graph3)
+  }
+  UNION
+  {
+    GRAPH ?g {
+      ?urn a nfo:FileDataObject
+    }
+    FILTER (STR (?g) = ~graph4)
+  }
+  UNION
+  {
+    GRAPH ?g {
+      ?urn a nfo:FileDataObject
+    }
+    FILTER (STR (?g) = ~graph5)
+  }
+
+  FILTER (NOT EXISTS {
+    GRAPH tracker:FileSystem { ?urn tracker:extractorHash ?hash }
+  })
+}
+OFFSET ~offset
+LIMIT ~limit

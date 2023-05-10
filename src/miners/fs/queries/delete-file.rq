@@ -11,8 +11,9 @@ DELETE {
   GRAPH tracker:FileSystem {
     ?f a rdfs:Resource ;
       nie:url ~uri
-    OPTIONAL {
-      GRAPH ?g {
+    GRAPH ?g {
+      ?f a rdfs:Resource .
+      OPTIONAL {
         ?ie nie:isStoredAs ?f
       }
     }

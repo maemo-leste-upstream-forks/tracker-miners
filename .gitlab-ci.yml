@@ -23,6 +23,7 @@ stages:
   - test
   - seccomp
   - analysis
+  - docs
 
 .check-template: &check
   extends:
@@ -296,6 +297,21 @@ test-ubuntu@x86_64:
     - build-ubuntu-rolling@x86_64
   <<: *test
 
+test-docs:
+  extends:
+    - .fdo.distribution-image@fedora
+    - .tracker-miners.fedora:36@x86_64
+  stage: test
+  script:
+    - ./docs/reference/build.py --output=website --man-pages ./docs/manpages/tracker3-*.txt
+  artifacts:
+    expose_as: 'Documentation'
+    paths:
+      - website
+      - website/index.html
+  needs:
+    - build-fedora-container@x86_64
+
 .seccomp_template: &seccomp
   stage: seccomp
 
@@ -407,6 +423,21 @@ coverity:
       --form token=$COVERITY_TOKEN --form email=carlosg@gnome.org
       --form file=@coverity-build/cov-int.tar.gz --form version="`git describe --tags`"
       --form description="gitlab CI build"
+  only:
+    - master
+
+pages:
+  extends:
+    - .fdo.distribution-image@fedora
+    - .tracker-miners.fedora:36@x86_64
+  stage: docs
+  script:
+    - mv website public
+  artifacts:
+    paths:
+      - public
+  needs:
+    - test-docs
   only:
     - master
 

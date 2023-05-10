@@ -875,14 +875,14 @@ init_mount_points (TrackerMinerFiles *miner_files)
 {
 	TrackerMiner *miner = TRACKER_MINER (miner_files);
 	TrackerSparqlConnection *conn;
-	TrackerSparqlStatement *stmt;
+	g_autoptr (TrackerSparqlStatement) stmt = NULL;
 	TrackerMinerFilesPrivate *priv;
 	GHashTable *volumes;
 	GHashTableIter iter;
 	gpointer key, value;
 	g_autoptr (TrackerBatch) batch = NULL;
-	GError *error = NULL;
-	TrackerSparqlCursor *cursor = NULL;
+	g_autoptr (GError) error = NULL;
+	g_autoptr (TrackerSparqlCursor) cursor = NULL;
 	GSList *mounts, *l;
 	GFile *file;
 
@@ -898,7 +898,6 @@ init_mount_points (TrackerMinerFiles *miner_files)
 
 	if (error) {
 		g_critical ("Could not obtain the mounted volumes: %s", error->message);
-		g_error_free (error);
 		return;
 	}
 
@@ -927,8 +926,6 @@ init_mount_points (TrackerMinerFiles *miner_files)
 		file = g_file_new_for_uri (urn);
 		g_hash_table_replace (volumes, file, GINT_TO_POINTER (state));
 	}
-
-	g_object_unref (cursor);
 
 	/* Then, get all currently mounted non-REMOVABLE volumes, according to GIO */
 	mounts = tracker_storage_get_device_roots (priv->storage, 0, TRUE);
@@ -1987,7 +1984,11 @@ miner_files_move_file (TrackerMinerFS      *fs,
                        TrackerSparqlBuffer *buffer,
                        gboolean             recursive)
 {
-	tracker_sparql_buffer_log_move (buffer, source_file, file);
+	const gchar *data_source;
+
+	data_source = tracker_miner_fs_get_identifier (fs, file);
+	tracker_sparql_buffer_log_move (buffer, source_file, file,
+	                                data_source);
 
 	if (recursive)
 		tracker_sparql_buffer_log_move_content (buffer, source_file, file);

@@ -1,0 +1,11 @@
+# Input: file
+DELETE {
+  GRAPH ?g {
+   ~file a rdfs:Resource
+  }
+} WHERE {
+  GRAPH ?g {
+    ~file a nfo:FileDataObject
+  }
+  FILTER (?g != tracker:FileSystem)
+}

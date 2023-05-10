@@ -28,28 +28,105 @@ enum {
 	PROP_CONNECTION,
 };
 
-struct TrackerExtractControllerPrivate {
+typedef struct _TrackerExtractControllerPrivate TrackerExtractControllerPrivate;
+
+struct _TrackerExtractControllerPrivate {
 	TrackerDecorator *decorator;
 	TrackerConfig *config;
 	GCancellable *cancellable;
 	GDBusConnection *connection;
+	GDBusProxy *index_proxy;
 	guint watch_id;
 	guint progress_signal_id;
 	gint paused;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE (TrackerExtractController, tracker_extract_controller, G_TYPE_OBJECT)
+static void tracker_extract_controller_initable_iface_init (GInitableIface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (TrackerExtractController,
+                         tracker_extract_controller,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (TrackerExtractController)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, tracker_extract_controller_initable_iface_init))
+
+static void
+update_graphs_from_proxy (TrackerExtractController *controller,
+                          GDBusProxy               *proxy)
+{
+	TrackerExtractControllerPrivate *priv;
+	const gchar **graphs = NULL;
+	GVariant *v;
+
+	priv = tracker_extract_controller_get_instance_private (controller);
+
+	v = g_dbus_proxy_get_cached_property (proxy, "Graphs");
+	if (v)
+		graphs = g_variant_get_strv (v, NULL);
+
+	tracker_decorator_set_priority_graphs (priv->decorator, graphs);
+	g_free (graphs);
+}
+
+static void
+proxy_properties_changed_cb (GDBusProxy *proxy,
+                             GVariant   *changed_properties,
+                             GStrv       invalidated_properties,
+                             gpointer    user_data)
+{
+	update_graphs_from_proxy (user_data, proxy);
+}
+
+static gboolean
+tracker_extract_controller_initable_init (GInitable     *initable,
+                                          GCancellable  *cancellable,
+                                          GError       **error)
+{
+	TrackerExtractController *controller;
+	TrackerExtractControllerPrivate *priv;
+	GDBusConnection *conn;
+
+	controller = TRACKER_EXTRACT_CONTROLLER (initable);
+	priv = tracker_extract_controller_get_instance_private (controller);
+	conn = priv->connection;
+
+	priv->index_proxy = g_dbus_proxy_new_sync (conn,
+	                                           G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
+	                                           NULL,
+	                                           "org.freedesktop.Tracker3.Miner.Files.Control",
+	                                           "/org/freedesktop/Tracker3/Miner/Files/Proxy",
+	                                           "org.freedesktop.Tracker3.Miner.Files.Proxy",
+	                                           NULL,
+	                                           error);
+	if (!priv->index_proxy)
+		return FALSE;
+
+	g_signal_connect (priv->index_proxy, "g-properties-changed",
+	                  G_CALLBACK (proxy_properties_changed_cb), controller);
+	update_graphs_from_proxy (controller, priv->index_proxy);
+
+	return TRUE;
+}
+
+static void
+tracker_extract_controller_initable_iface_init (GInitableIface *iface)
+{
+	iface->init = tracker_extract_controller_initable_init;
+}
 
 static void
 files_miner_idleness_changed (TrackerExtractController *self,
                               gboolean                  idle)
 {
-	if (idle && self->priv->paused) {
-		tracker_miner_resume (TRACKER_MINER (self->priv->decorator));
-		self->priv->paused = FALSE;
-	} else if (!idle && !self->priv->paused) {
-		self->priv->paused = FALSE;
-		tracker_miner_pause (TRACKER_MINER (self->priv->decorator));
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
+
+	if (idle && priv->paused) {
+		tracker_miner_resume (TRACKER_MINER (priv->decorator));
+		priv->paused = FALSE;
+	} else if (!idle && !priv->paused) {
+		priv->paused = FALSE;
+		tracker_miner_pause (TRACKER_MINER (priv->decorator));
 	}
 }
 
@@ -66,10 +143,13 @@ files_miner_get_status_cb (GObject      *source,
                            gpointer      user_data)
 {
 	TrackerExtractController *self = user_data;
+	TrackerExtractControllerPrivate *priv;
 	GDBusConnection *conn = (GDBusConnection *) source;
 	GVariant *reply;
 	const gchar *status;
 	GError *error = NULL;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	reply = g_dbus_connection_call_finish (conn, result, &error);
 	if (!reply) {
@@ -82,7 +162,7 @@ files_miner_get_status_cb (GObject      *source,
 		g_variant_unref (reply);
 	}
 
-	g_clear_object (&self->priv->cancellable);
+	g_clear_object (&priv->cancellable);
 	g_object_unref (self);
 }
 
@@ -93,9 +173,12 @@ appeared_cb (GDBusConnection *connection,
              gpointer         user_data)
 {
 	TrackerExtractController *self = user_data;
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	/* Get initial status */
-	self->priv->cancellable = g_cancellable_new ();
+	priv->cancellable = g_cancellable_new ();
 	g_dbus_connection_call (connection,
 	                        "org.freedesktop.Tracker3.Miner.Files",
 	                        "/org/freedesktop/Tracker3/Miner/Files",
@@ -105,7 +188,7 @@ appeared_cb (GDBusConnection *connection,
 	                        G_VARIANT_TYPE ("(s)"),
 	                        G_DBUS_CALL_FLAGS_NO_AUTO_START,
 	                        -1,
-	                        self->priv->cancellable,
+	                        priv->cancellable,
 	                        files_miner_get_status_cb,
 	                        g_object_ref (self));
 }
@@ -132,12 +215,15 @@ files_miner_progress_cb (GDBusConnection *connection,
                          gpointer         user_data)
 {
 	TrackerExtractController *self = user_data;
+	TrackerExtractControllerPrivate *priv;
 	const gchar *status;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	g_return_if_fail (g_variant_is_of_type (parameters, G_VARIANT_TYPE ("(sdi)")));
 
 	/* If we didn't get the initial status yet, ignore Progress signals */
-	if (self->priv->cancellable)
+	if (priv->cancellable)
 		return;
 
 	g_variant_get (parameters, "(&sdi)", &status, NULL, NULL);
@@ -147,29 +233,37 @@ files_miner_progress_cb (GDBusConnection *connection,
 static void
 disconnect_all (TrackerExtractController *self)
 {
-	GDBusConnection *conn = self->priv->connection;
+	TrackerExtractControllerPrivate *priv;
+	GDBusConnection *conn;
 
-	if (self->priv->watch_id != 0)
-		g_bus_unwatch_name (self->priv->watch_id);
-	self->priv->watch_id = 0;
+	priv = tracker_extract_controller_get_instance_private (self);
+	conn = priv->connection;
 
-	if (self->priv->progress_signal_id != 0)
+	if (priv->watch_id != 0)
+		g_bus_unwatch_name (priv->watch_id);
+	priv->watch_id = 0;
+
+	if (priv->progress_signal_id != 0)
 		g_dbus_connection_signal_unsubscribe (conn,
-		                                      self->priv->progress_signal_id);
-	self->priv->progress_signal_id = 0;
+		                                      priv->progress_signal_id);
+	priv->progress_signal_id = 0;
 
-	if (self->priv->cancellable)
-		g_cancellable_cancel (self->priv->cancellable);
-	g_clear_object (&self->priv->cancellable);
+	if (priv->cancellable)
+		g_cancellable_cancel (priv->cancellable);
+	g_clear_object (&priv->cancellable);
 }
 
 static void
 update_wait_for_miner_fs (TrackerExtractController *self)
 {
-	GDBusConnection *conn = self->priv->connection;
+	TrackerExtractControllerPrivate *priv;
+	GDBusConnection *conn;
 
-	if (tracker_config_get_wait_for_miner_fs (self->priv->config)) {
-		self->priv->progress_signal_id =
+	priv = tracker_extract_controller_get_instance_private (self);
+	conn = priv->connection;
+
+	if (tracker_config_get_wait_for_miner_fs (priv->config)) {
+		priv->progress_signal_id =
 			g_dbus_connection_signal_subscribe (conn,
 			                                    "org.freedesktop.Tracker3.Miner.Files",
 			                                    "org.freedesktop.Tracker3.Miner",
@@ -182,12 +276,12 @@ update_wait_for_miner_fs (TrackerExtractController *self)
 
 		/* appeared_cb is guaranteed to be called even if the service
 		 * was already running, so we'll start the miner from there. */
-		self->priv->watch_id = g_bus_watch_name_on_connection (conn,
-		                                                       "org.freedesktop.Tracker3.Miner.Files",
-		                                                       G_BUS_NAME_WATCHER_FLAGS_NONE,
-		                                                       appeared_cb,
-		                                                       vanished_cb,
-		                                                       self, NULL);
+		priv->watch_id = g_bus_watch_name_on_connection (conn,
+		                                                 "org.freedesktop.Tracker3.Miner.Files",
+		                                                 G_BUS_NAME_WATCHER_FLAGS_NONE,
+		                                                 appeared_cb,
+		                                                 vanished_cb,
+		                                                 self, NULL);
 	} else {
 		disconnect_all (self);
 		files_miner_idleness_changed (self, TRUE);
@@ -198,13 +292,16 @@ static void
 tracker_extract_controller_constructed (GObject *object)
 {
 	TrackerExtractController *self = (TrackerExtractController *) object;
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	G_OBJECT_CLASS (tracker_extract_controller_parent_class)->constructed (object);
 
-	g_assert (self->priv->decorator != NULL);
+	g_assert (priv->decorator != NULL);
 
-	self->priv->config = g_object_ref (tracker_main_get_config ());
-	g_signal_connect_object (self->priv->config,
+	priv->config = g_object_ref (tracker_main_get_config ());
+	g_signal_connect_object (priv->config,
 	                         "notify::wait-for-miner-fs",
 	                         G_CALLBACK (update_wait_for_miner_fs),
 	                         self, G_CONNECT_SWAPPED);
@@ -218,32 +315,38 @@ tracker_extract_controller_get_property (GObject    *object,
                                          GParamSpec *pspec)
 {
 	TrackerExtractController *self = (TrackerExtractController *) object;
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	switch (param_id) {
 	case PROP_DECORATOR:
-		g_value_set_object (value, self->priv->decorator);
+		g_value_set_object (value, priv->decorator);
 		break;
 	case PROP_CONNECTION:
-		g_value_set_object (value, self->priv->connection);
+		g_value_set_object (value, priv->connection);
 		break;
 	}
 }
 
 static void
 tracker_extract_controller_set_property (GObject      *object,
-                                        guint         param_id,
-                                        const GValue *value,
-                                        GParamSpec   *pspec)
+                                         guint         param_id,
+                                         const GValue *value,
+                                         GParamSpec   *pspec)
 {
 	TrackerExtractController *self = (TrackerExtractController *) object;
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	switch (param_id) {
 	case PROP_DECORATOR:
-		g_assert (self->priv->decorator == NULL);
-		self->priv->decorator = g_value_dup_object (value);
+		g_assert (priv->decorator == NULL);
+		priv->decorator = g_value_dup_object (value);
 		break;
 	case PROP_CONNECTION:
-		self->priv->connection = g_value_dup_object (value);
+		priv->connection = g_value_dup_object (value);
 		break;
 	}
 }
@@ -252,10 +355,14 @@ static void
 tracker_extract_controller_dispose (GObject *object)
 {
 	TrackerExtractController *self = (TrackerExtractController *) object;
+	TrackerExtractControllerPrivate *priv;
+
+	priv = tracker_extract_controller_get_instance_private (self);
 
 	disconnect_all (self);
-	g_clear_object (&self->priv->decorator);
-	g_clear_object (&self->priv->config);
+	g_clear_object (&priv->decorator);
+	g_clear_object (&priv->config);
+	g_clear_object (&priv->index_proxy);
 
 	G_OBJECT_CLASS (tracker_extract_controller_parent_class)->dispose (object);
 }
@@ -293,17 +400,18 @@ tracker_extract_controller_class_init (TrackerExtractControllerClass *klass)
 static void
 tracker_extract_controller_init (TrackerExtractController *self)
 {
-	self->priv = tracker_extract_controller_get_instance_private (self);
 }
 
 TrackerExtractController *
-tracker_extract_controller_new (TrackerDecorator *decorator,
-                                GDBusConnection  *connection)
+tracker_extract_controller_new (TrackerDecorator  *decorator,
+                                GDBusConnection   *connection,
+                                GError           **error)
 {
 	g_return_val_if_fail (TRACKER_IS_DECORATOR (decorator), NULL);
 
-	return g_object_new (TRACKER_TYPE_EXTRACT_CONTROLLER,
-	                     "decorator", decorator,
-	                     "connection", connection,
-	                     NULL);
+	return g_initable_new (TRACKER_TYPE_EXTRACT_CONTROLLER,
+	                       NULL, error,
+	                       "decorator", decorator,
+	                       "connection", connection,
+	                       NULL);
 }

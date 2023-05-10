@@ -1,0 +1,20 @@
+site_name: Tracker Miners
+site_description: Tracker Miners API reference
+docs_dir: ./reference
+site_url: https://gnome.pages.gitlab.gnome.org/tracker-miners/
+repo_url: https://gitlab.gnome.org/GNOME/tracker-miners/
+edit_uri: blob/master/docs/reference
+use_directory_urls: false
+
+nav:
+  - Overview: 'index.md'
+  - SPARQL Endpoint: 'endpoint.md'
+  - Miscellaneous D-Bus API: 'dbus-api.md'
+  - Command Line: 'commandline.md'
+
+theme:
+  name: readthedocs
+
+markdown_extensions:
+  - toc:
+      permalink: true

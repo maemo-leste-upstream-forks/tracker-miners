@@ -837,9 +837,9 @@ endpoint_thread_func (gpointer user_data)
 	                                      &data->error);
 
 	data->main_loop = g_main_loop_new (main_context, FALSE);
-	data->initialized = TRUE;
 
 	g_mutex_lock (&data->mutex);
+	data->initialized = TRUE;
 	g_cond_signal (&data->cond);
 	g_mutex_unlock (&data->mutex);
 
@@ -867,8 +867,6 @@ start_endpoint_thread (TrackerSparqlConnection  *conn,
 	endpoint_thread_data->sparql_conn = conn;
 	endpoint_thread_data->dbus_conn = dbus_conn;
 
-	g_mutex_lock (&endpoint_thread_data->mutex);
-
 	endpoint_thread_data->thread =
 		g_thread_try_new ("SPARQL endpoint",
 		                  endpoint_thread_func,
@@ -878,10 +876,14 @@ start_endpoint_thread (TrackerSparqlConnection  *conn,
 	if (!endpoint_thread_data->thread)
 		return FALSE;
 
+	g_mutex_lock (&endpoint_thread_data->mutex);
+
 	while (!endpoint_thread_data->initialized) {
 		g_cond_wait (&endpoint_thread_data->cond,
 		             &endpoint_thread_data->mutex);
 	}
+
+	g_mutex_unlock (&endpoint_thread_data->mutex);
 
 	if (endpoint_thread_data->error) {
 		g_propagate_error (error, endpoint_thread_data->error);

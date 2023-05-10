@@ -76,7 +76,8 @@ void tracker_sparql_buffer_log_delete_content (TrackerSparqlBuffer *buffer,
 
 void tracker_sparql_buffer_log_move (TrackerSparqlBuffer *buffer,
                                      GFile               *source,
-                                     GFile               *dest);
+                                     GFile               *dest,
+                                     const gchar         *dest_data_source);
 
 void tracker_sparql_buffer_log_move_content (TrackerSparqlBuffer *buffer,
                                              GFile               *source,

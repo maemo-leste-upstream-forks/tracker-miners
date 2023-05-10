@@ -454,5 +454,106 @@ class MinerCrawlTest(fixtures.TrackerMinerTest):
         self.assertIn(self.uri("test-monitored/dir1/visible.txt"), unpacked_result)
 
 
+class IndexedFolderTest(fixtures.TrackerMinerTest):
+    """
+    Tests handling of data across multiple data sources
+    """
+
+    def setUp(self):
+        # We must create the test data before the miner does its
+        # initial crawl, or it may miss some files due
+        # https://gitlab.gnome.org/GNOME/tracker-miners/issues/79.
+        monitored_files = self.create_test_data()
+
+        try:
+            # Start the miner.
+            fixtures.TrackerMinerTest.setUp(self)
+
+            for tf in monitored_files:
+                url = self.uri(tf)
+                self.tracker.ensure_resource(
+                    fixtures.DOCUMENTS_GRAPH,
+                    f"a nfo:Document ; nie:isStoredAs <{url}>",
+                    timeout=cfg.AWAIT_TIMEOUT,
+                )
+        except Exception:
+            cfg.remove_monitored_test_dir(self.workdir)
+            raise
+
+        logging.info("%s.setUp(): complete", self)
+
+    def create_test_data(self):
+        monitored_files = [
+            "test-monitored/file1.txt",
+            "test-non-recursive/file2.txt",
+        ]
+
+        unmonitored_files = ["test-no-monitored/file0.txt"]
+
+        for tf in monitored_files:
+            testfile = self.path(tf)
+            os.makedirs(os.path.dirname(testfile), exist_ok=True)
+            with open(testfile, "w") as f:
+                f.write(DEFAULT_TEXT)
+
+        return monitored_files
+
+    def __get_text_documents(self):
+        return self.tracker.query(
+            """
+          SELECT DISTINCT ?url WHERE {
+              ?u a nfo:TextDocument ;
+                 nie:isStoredAs/nie:url ?url.
+          }
+          """
+        )
+
+    def __get_index_folder(self, filepath):
+        result = self.tracker.query(
+            """
+          SELECT DISTINCT ?p WHERE {
+              ?u a nfo:FileDataObject ;
+                 nie:url \"%s\" ;
+                 nie:dataSource/nie:isStoredAs ?p
+          }
+          """
+            % (self.uri(filepath))
+        )
+        self.assertEqual(len(result), 1)
+        return result[0][0]
+
+    """
+    Move a file between indexed folders and check the data source changed
+    """
+    def test_01_move_between_indexed_folders(self):
+        """
+        The precreated files and folders should be there
+        """
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 2)
+        unpacked_result = [r[0] for r in result]
+        self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+        self.assertIn(self.uri("test-non-recursive/file2.txt"), unpacked_result)
+
+        source = os.path.join(self.workdir, "test-non-recursive", "file2.txt")
+        dest = os.path.join(self.workdir, "test-monitored", "file2.txt")
+
+        datasource1 = self.__get_index_folder(source);
+        self.assertEqual(datasource1, self.uri("test-non-recursive"))
+
+        with self.await_document_inserted(dest) as resource:
+            shutil.move(source, dest)
+
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 2)
+        unpacked_result = [r[0] for r in result]
+        self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+        self.assertIn(self.uri("test-monitored/file2.txt"), unpacked_result)
+
+        datasource2 = self.__get_index_folder(dest);
+        self.assertNotEqual(datasource2, self.uri("test-monitored"))
+        self.assertNotEqual(datasource1, datasource2)
+
+
 if __name__ == "__main__":
     fixtures.tracker_test_main()

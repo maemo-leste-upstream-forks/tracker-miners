@@ -82,5 +82,51 @@ class ExtractorDecoratorTest(fixtures.TrackerMinerTest):
             os.remove(file_path)
 
 
+    def test_unknown_hash(self):
+        """Tests whether unknown files are deleted from content graphs."""
+        # This test simulates the conditions that might happen if a file
+        # changes in a way that it might look like a candidate for extraction,
+        # but then somehow this changed by the time tracker-extract-3 opens
+        # it.
+        miner_fs = self.miner_fs
+        store = self.tracker
+
+        expected = f'a nfo:FileDataObject ; nie:url ?url . FILTER (STRENDS (?url, "/unknown.nfo"))'
+        file_path = os.path.join(self.indexed_dir, "unknown.nfo")
+
+        # Unchecked in this test, just here to trigger tracker-extract
+        audio_file_path = os.path.join(self.indexed_dir, os.path.basename(VALID_FILE))
+        shutil.copy(VALID_FILE, audio_file_path)
+
+        # Insert a file with unhandled mimetype
+        with self.tracker.await_insert(
+            fixtures.FILESYSTEM_GRAPH, expected, timeout=cfg.AWAIT_TIMEOUT
+        ) as resource:
+            fd = open(file_path, 'a')
+            fd.write('foo')
+            fd.close()
+
+        file_urn = resource.urn
+        file_id = resource.id
+
+        try:
+            store.update(
+                "INSERT DATA { GRAPH tracker:Audio { <%s> a rdfs:Resource } }" % (file_urn)
+            )
+            # Forcibly insert unrelated file into the audio graph, and check it is removed
+            with self.tracker.await_delete(
+                fixtures.AUDIO_GRAPH, file_id,
+                timeout=cfg.AWAIT_TIMEOUT,
+            ):
+                store.update(
+                    "INSERT DATA { GRAPH tracker:Audio { <%s> a nfo:FileDataObject ; nie:url '%s' } }" % (file_urn, file_urn)
+                )
+
+            # Assert that the file does not exist in the audio graph
+            assert not store.ask("ASK { GRAPH tracker:Audio { <%s> a nfo:FileDataObject } }" % file_urn)
+        finally:
+            os.remove(file_path)
+
+
 if __name__ == "__main__":
     fixtures.tracker_test_main()

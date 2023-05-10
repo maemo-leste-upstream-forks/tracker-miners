@@ -498,7 +498,8 @@ tracker_sparql_buffer_log_delete_content (TrackerSparqlBuffer *buffer,
 void
 tracker_sparql_buffer_log_move (TrackerSparqlBuffer *buffer,
                                 GFile               *source,
-                                GFile               *dest)
+                                GFile               *dest,
+                                const gchar         *dest_data_source)
 {
 	TrackerSparqlBufferPrivate *priv;
 	TrackerBatch *batch;
@@ -525,6 +526,7 @@ tracker_sparql_buffer_log_move (TrackerSparqlBuffer *buffer,
 	                             "destUri", G_TYPE_STRING, dest_uri,
 	                             "newFilename", G_TYPE_STRING, basename,
 	                             "newParent", G_TYPE_STRING, new_parent_uri,
+	                             "newDataSource", G_TYPE_STRING, dest_data_source,
 	                             NULL);
 
 	push_stmt_task (buffer, priv->move_file, dest);

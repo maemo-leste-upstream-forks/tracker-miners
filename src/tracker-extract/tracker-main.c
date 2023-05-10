@@ -452,7 +452,14 @@ main (int argc, char *argv[])
 
 	tracker_locale_sanity_check ();
 
-	controller = tracker_extract_controller_new (decorator, connection);
+	controller = tracker_extract_controller_new (decorator, connection, &error);
+	if (error) {
+		g_critical ("Could not create extraction controller: %s", error->message);
+		g_error_free (error);
+		g_object_unref (decorator);
+		g_object_unref (config);
+		return EXIT_FAILURE;
+	}
 
 	/* Request DBus name */
 	dbus_name = tracker_domain_ontology_get_domain (domain_ontology, DBUS_NAME_SUFFIX);

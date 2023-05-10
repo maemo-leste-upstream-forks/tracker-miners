@@ -300,17 +300,9 @@ find_local_cue_sheets (TrackerSparqlConnection *conn,
 	g_autofree gchar *parent_uri = NULL;
 	GList *result = NULL;
 
-	stmt = tracker_sparql_connection_query_statement (conn,
-	                                                  "SELECT ?u {"
-	                                                  "  GRAPH tracker:FileSystem {"
-	                                                  "    ?u a nfo:FileDataObject ;"
-	                                                  "      nfo:fileName ?fn ;"
-	                                                  "      nfo:belongsToContainer/nie:isStoredAs ?c ."
-	                                                  "    FILTER (?c = ~parent) ."
-	                                                  "    FILTER (STRENDS (?fn, \".cue\")) ."
-	                                                  "  }"
-	                                                  "}",
-	                                                  NULL, NULL);
+	stmt = tracker_sparql_connection_load_statement_from_gresource (conn,
+	                                                                "/org/freedesktop/Tracker3/Extract/queries/get-cue-sheets.rq",
+	                                                                NULL, NULL);
 	if (!stmt)
 		return NULL;
 

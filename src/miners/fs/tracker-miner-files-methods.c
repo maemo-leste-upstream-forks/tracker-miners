@@ -194,9 +194,9 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 	if (is_directory) {
 		folder_resource =
 			miner_files_create_folder_information_element (TRACKER_MINER_FILES (fs),
-								       file,
-								       mime_type,
-								       create);
+			                                               file,
+			                                               mime_type,
+			                                               create);
 
 		/* Always use inode/directory here, we don't really care if it's a symlink */
 		tracker_resource_set_string (resource, "tracker:extractorHash",
