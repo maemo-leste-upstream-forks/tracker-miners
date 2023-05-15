@@ -345,12 +345,16 @@ fanotify_events_cb (int          fd,
 		}
 
 		/* We expect data as FID, not as a file descriptor */
-		g_assert (event->fd == FAN_NOFD);
+		if (event->fd != FAN_NOFD) {
+			TRACKER_NOTE (MONITORS, g_message ("Received a file descriptor unexpectedly"));
+			continue;
+		}
 
 		fid = (struct fanotify_event_info_fid *) (event + 1);
 
 		/* Ensure that the event info is of the correct type. */
-		g_assert (fid->hdr.info_type == FAN_EVENT_INFO_TYPE_DFID_NAME);
+		if (fid->hdr.info_type != FAN_EVENT_INFO_TYPE_DFID_NAME)
+			continue;
 
 		/* fsid/handle portions are compatible with HandleData */
 		handle = (HandleData *) &fid->fsid;

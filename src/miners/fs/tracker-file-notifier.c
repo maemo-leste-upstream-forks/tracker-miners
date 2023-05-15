@@ -735,10 +735,11 @@ query_execute_cb (TrackerSparqlStatement *statement,
 				    uri, error->message);
 			g_free (uri);
 			g_error_free (error);
+
+			/* Move on to next root */
+			finish_current_directory (notifier, TRUE);
 		}
 
-		/* Move on to next root */
-		finish_current_directory (notifier, TRUE);
 		return;
 	}
 
@@ -1739,7 +1740,13 @@ tracker_file_notifier_start (TrackerFileNotifier *notifier)
 
 	if (priv->stopped) {
 		priv->stopped = FALSE;
-		notifier_check_next_root (notifier);
+
+		if (priv->current_index_root) {
+			if (!crawl_directory_in_current_root (notifier))
+				finish_current_directory (notifier, FALSE);
+		} else {
+			notifier_check_next_root (notifier);
+		}
 	}
 
 	return TRUE;
