@@ -1,43 +1,36 @@
-# Inputs: graph1, graph2, graph3, graph4, graph5
-# Outputs: urn
+# Inputs: documentsHigh, documentsLow, picturesHigh, picturesLow,
+#   audioHigh, audioLow, videoHigh, videoLow, softwareHigh, softwareLow
+# Outputs: urn, id
 SELECT
   ?urn
-  tracker:id(?urn)
+  tracker:id(?urn) ?AS ?id
 {
-  # We want to query graphs in a specific order
   {
-    GRAPH ?g {
-      ?urn a nfo:FileDataObject
+    # Data from high priority graphs
+    {
+      SELECT ?urn { GRAPH tracker:Documents { ?urn a nfo:FileDataObject } } LIMIT ~documentsHigh
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Pictures { ?urn a nfo:FileDataObject } } LIMIT ~picturesHigh
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Audio { ?urn a nfo:FileDataObject } } LIMIT ~audioHigh
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Video { ?urn a nfo:FileDataObject } } LIMIT ~videoHigh
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Software { ?urn a nfo:FileDataObject } } LIMIT ~softwareHigh
     }
-    FILTER (STR (?g) = ~graph1)
-  }
-  UNION
-  {
-    GRAPH ?g {
-      ?urn a nfo:FileDataObject
+  } UNION {
+    # Data from regular priority graphs
+    {
+      SELECT ?urn { GRAPH tracker:Documents { ?urn a nfo:FileDataObject } } LIMIT ~documentsLow
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Pictures { ?urn a nfo:FileDataObject } } LIMIT ~picturesLow
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Audio { ?urn a nfo:FileDataObject } } LIMIT ~audioLow
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Video { ?urn a nfo:FileDataObject } } LIMIT ~videoLow
+    } UNION {
+      SELECT ?urn { GRAPH tracker:Software { ?urn a nfo:FileDataObject } } LIMIT ~softwareLow
     }
-    FILTER (STR (?g) = ~graph2)
-  }
-  UNION
-  {
-    GRAPH ?g {
-      ?urn a nfo:FileDataObject
-    }
-    FILTER (STR (?g) = ~graph3)
-  }
-  UNION
-  {
-    GRAPH ?g {
-      ?urn a nfo:FileDataObject
-    }
-    FILTER (STR (?g) = ~graph4)
-  }
-  UNION
-  {
-    GRAPH ?g {
-      ?urn a nfo:FileDataObject
-    }
-    FILTER (STR (?g) = ~graph5)
   }
 
   FILTER (NOT EXISTS {

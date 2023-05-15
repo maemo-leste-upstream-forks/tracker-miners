@@ -97,6 +97,7 @@ typedef struct {
 	GFile *dest_file;
 	GFileInfo *info;
 	GList *root_node;
+	GList *queue_node;
 } QueueEvent;
 
 typedef struct {
@@ -441,8 +442,9 @@ tracker_miner_fs_init (TrackerMinerFS *object)
 	priv->extraction_timer_stopped = TRUE;
 
 	priv->items = tracker_priority_queue_new ();
-	priv->items_by_file = g_hash_table_new (g_file_hash,
-	                                        (GEqualFunc) g_file_equal);
+	priv->items_by_file = g_hash_table_new_full (g_file_hash,
+	                                             (GEqualFunc) g_file_equal,
+	                                             g_object_unref, NULL);
 
 	priv->roots_to_notify = g_hash_table_new_full (g_file_hash,
 	                                               (GEqualFunc) g_file_equal,
@@ -1169,11 +1171,11 @@ static gboolean
 maybe_remove_file_event_node (TrackerMinerFS *fs,
                               QueueEvent     *event)
 {
-	GList *link;
+	QueueEvent *item_event;
 
-	link = g_hash_table_lookup (fs->priv->items_by_file, event->file);
+	item_event = g_hash_table_lookup (fs->priv->items_by_file, event->file);
 
-	if (link && link->data == event) {
+	if (item_event == event) {
 		g_hash_table_remove (fs->priv->items_by_file, event->file);
 		return TRUE;
 	}
@@ -1186,10 +1188,11 @@ remove_items_by_file_foreach (gpointer key,
                               gpointer value,
                               gpointer user_data)
 {
-	GList *link = value;
-	GFile *file = user_data;
+	GFile *file = key;
+	GFile *prefix = user_data;
 
-	return queue_event_is_equal_or_descendant (link->data, file);
+	return (g_file_equal (file, prefix) ||
+	        g_file_has_prefix (file, prefix));
 }
 
 static void
@@ -1206,7 +1209,7 @@ item_queue_get_next_file (TrackerMinerFS           *fs,
 	*file = NULL;
 	*source_file = NULL;
 
-	event = tracker_priority_queue_peek (fs->priv->items, NULL);
+	event = tracker_priority_queue_pop (fs->priv->items, NULL);
 
 	if (event) {
 		if (event->type == TRACKER_MINER_FS_EVENT_MOVED) {
@@ -1223,7 +1226,6 @@ item_queue_get_next_file (TrackerMinerFS           *fs,
 
 		maybe_remove_file_event_node (fs, event);
 		queue_event_free (event);
-		tracker_priority_queue_pop (fs->priv->items, NULL);
 	}
 }
 
@@ -1556,7 +1558,7 @@ miner_fs_queue_event (TrackerMinerFS *fs,
 		      QueueEvent     *event,
 		      guint           priority)
 {
-	GList *old = NULL, *link = NULL;
+	QueueEvent *old = NULL;
 
 	if (event->type == TRACKER_MINER_FS_EVENT_MOVED) {
 		/* Remove all children of the dest location from being processed. */
@@ -1575,13 +1577,13 @@ miner_fs_queue_event (TrackerMinerFS *fs,
 		QueueCoalesceAction action;
 		QueueEvent *replacement = NULL;
 
-		action = queue_event_coalesce (old->data, event, &replacement);
+		action = queue_event_coalesce (old, event, &replacement);
 
 		if (action & QUEUE_ACTION_DELETE_FIRST) {
-			maybe_remove_file_event_node (fs, old->data);
-			queue_event_free (old->data);
+			g_hash_table_remove (fs->priv->items_by_file, old->file);
 			tracker_priority_queue_remove_node (fs->priv->items,
-							    old);
+							    old->queue_node);
+			queue_event_free (old);
 		}
 
 		if (action & QUEUE_ACTION_DELETE_SECOND) {
@@ -1612,8 +1614,10 @@ miner_fs_queue_event (TrackerMinerFS *fs,
 		trace_eq_event (event);
 
 		assign_root_node (fs, event);
-		link = tracker_priority_queue_add (fs->priv->items, event, priority);
-		g_hash_table_replace (fs->priv->items_by_file, event->file, link);
+		event->queue_node =
+			tracker_priority_queue_add (fs->priv->items, event, priority);
+		g_hash_table_replace (fs->priv->items_by_file,
+		                      g_object_ref (event->file), event);
 		item_queue_handlers_set_up (fs);
 		check_notifier_high_water (fs);
 	}

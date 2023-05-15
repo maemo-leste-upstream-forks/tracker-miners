@@ -60,9 +60,10 @@ tracker_error_report (GFile       *file,
                       const gchar *error_message,
                       const gchar *sparql)
 {
-	GKeyFile *key_file;
-	gchar *report_path, *uri;
-	GError *error = NULL;
+	g_autoptr (GKeyFile) key_file = NULL;
+	g_autofree gchar *report_path = NULL, *uri = NULL, *data = NULL;
+	g_autoptr (GError) error = NULL;
+	gssize len;
 
 	if (!report_dir)
 		return;
@@ -78,14 +79,19 @@ tracker_error_report (GFile       *file,
 	if (sparql)
 		g_key_file_set_string (key_file, GROUP, KEY_SPARQL, sparql);
 
-	if (!g_key_file_save_to_file (key_file, report_path, &error)) {
-		g_warning ("Could not save error report: %s\n", error->message);
-		g_error_free (error);
-	}
+	data = g_key_file_to_data (key_file, &len, NULL);
 
-	g_key_file_unref (key_file);
-	g_free (report_path);
-	g_free (uri);
+#if GLIB_CHECK_VERSION (2, 66, 0)
+	if (!g_file_set_contents_full (report_path, data, len,
+	                               G_FILE_SET_CONTENTS_CONSISTENT |
+	                               G_FILE_SET_CONTENTS_DURABLE,
+	                               0666, &error))
+#else
+	if (!g_file_set_contents (report_path, data, len, &error))
+#endif
+	{
+		g_warning ("Could not save error report: %s\n", error->message);
+	}
 }
 
 void
