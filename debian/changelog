@@ -1,3 +1,19 @@
+tracker-miners (3.4.3-2) unstable; urgency=medium
+
+  [ Jeremy Bícha ]
+  * debian/gbp.conf: Branch for trixie
+  * Cherry-pick 2 patches to improve tracker systemd services
+    - Fix tracker-extract.service WantedBy target so that gvfsd has
+      access to KRB5CCNAME. Thanks Denison Barbosa (LP: #1779890)
+    - Don't start the daemons for non-root system users like gdm
+      and lightdm (LP: #2007755) (Closes: #981089)
+
+  [ Daniel van Vugt ]
+  * Add tracker-extract-Add-missing-break-to-remove-a-single.patch
+    to fix SIGSEGV in decorator_item_cache_remove (LP: #2012638)
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Mon, 21 Aug 2023 08:32:05 -0400
+
 tracker-miners (3.4.3-1) unstable; urgency=medium
 
   * New upstream release
