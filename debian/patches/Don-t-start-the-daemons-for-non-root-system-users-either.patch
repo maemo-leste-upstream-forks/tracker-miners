@@ -1,0 +1,41 @@
+From: =?utf-8?q?Jeremy_B=C3=ADcha?= <jeremy.bicha@canonical.com>
+Date: Fri, 18 Aug 2023 08:34:37 -0400
+Subject: Don't start the daemons for non-root system users either
+
+Such as gdm and lightdm
+
+See https://gitlab.gnome.org/GNOME/tracker-miners/-/merge_requests/170
+and https://bugs.debian.org/981089
+
+(cherry picked from commit 2ce0d760967b81c7959fd1c508a279623d2c583a)
+
+Origin: tracker-miners 3.6.rc
+---
+ src/tracker-control/tracker-control.service.in | 2 +-
+ src/tracker-extract/tracker-extract.service.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/tracker-control/tracker-control.service.in b/src/tracker-control/tracker-control.service.in
+index 78be91b..cdcc3c2 100644
+--- a/src/tracker-control/tracker-control.service.in
++++ b/src/tracker-control/tracker-control.service.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=Tracker Filesystem Indexing Proxy
+-ConditionUser=!root
++ConditionUser=!@system
+ 
+ [Service]
+ Type=dbus
+diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
+index 4856741..7682343 100644
+--- a/src/tracker-extract/tracker-extract.service.in
++++ b/src/tracker-extract/tracker-extract.service.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=Tracker metadata extractor
+-ConditionUser=!root
++ConditionUser=!@system
+ After=gnome-session.target
+ 
+ [Service]

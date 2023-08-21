@@ -1,0 +1,48 @@
+From: Denison Barbosa <denison.barbosa@canonical.com>
+Date: Tue, 21 Mar 2023 15:04:28 +0000
+Subject: Removing [Install] section from tracker-extract-3.service
+
+Having WantedBy=default.target was triggering the service before the session
+environment variable are set in gnome-session.
+
+This service relies on gvfs-daemon.service and by starting it before the
+environment variables are set, some important variables like KRB5CCNAME are
+missing.
+
+This means that the daemon won't have access to it when trying to
+mount shared folders through the network, creating problems like requesting
+credentials when trying to gio mount a samba share, despite having a valid
+kerberos ticket on the machine.
+
+Since this is a helper service that is meant to be controlled by
+"tracker-miner-fs", the install section shouldn't exist, as it allows
+the service to enabled, meaning that its execution would be
+controlled by systemd.
+
+(cherry picked from commit 29a2320c1e4f0f7ced3c3e9d4d1c06c51518c1f3)
+
+Origin: tracker-miners 3.5.1
+---
+ src/tracker-extract/tracker-extract.service.in | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/tracker-extract/tracker-extract.service.in b/src/tracker-extract/tracker-extract.service.in
+index 20ab256..4856741 100644
+--- a/src/tracker-extract/tracker-extract.service.in
++++ b/src/tracker-extract/tracker-extract.service.in
+@@ -1,6 +1,7 @@
+ [Unit]
+ Description=Tracker metadata extractor
+ ConditionUser=!root
++After=gnome-session.target
+ 
+ [Service]
+ Type=dbus
+@@ -11,5 +12,5 @@ Restart=on-failure
+ RestartPreventExitStatus=SIGKILL
+ Slice=background.slice
+ 
+-[Install]
+-WantedBy=default.target
++# This is a helper service that is controlled by "tracker-miner-fs-3.service".
++# It's not supposed to be enabled or started manually.
