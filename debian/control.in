@@ -61,8 +61,6 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          tracker (>= 3.6~)
-Breaks: tracker (<< 1.99.2)
-Replaces: tracker (<< 1.99.2)
 Description: metadata database, indexer and search tool - metadata extractors
  This package contains the metadata extractors.
  .
