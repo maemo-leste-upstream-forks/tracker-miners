@@ -1,8 +1,9 @@
-tracker-miners (3.6~rc-1) UNRELEASED; urgency=medium
+tracker-miners (3.6~rc-1) experimental; urgency=medium
 
   * New upstream release
+  * debian/control.in: Bump minimum tracker to 3.6
 
- -- Jeremy Bícha <jbicha@ubuntu.com>  Fri, 08 Sep 2023 11:13:34 -0400
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Fri, 08 Sep 2023 11:39:07 -0400
 
 tracker-miners (3.5.2-1) experimental; urgency=medium
 
