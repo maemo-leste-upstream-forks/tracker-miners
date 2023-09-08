@@ -8,9 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracker\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2021-06-10 12:02+0000\n"
-"PO-Revision-Date: 2021-07-05 22:31+0300\n"
-"Last-Translator: Florentina Mușat <florentina.musat.28@gmail.com>\n"
+"POT-Creation-Date: 2023-07-14 09:05+0000\n"
+"PO-Revision-Date: 2023-07-29 13:15+0300\n"
+"Last-Translator: Florentina Mușat <florentina [dot] musat [dot] 28 [at] "
+"gmail [dot] com>\n"
 "Language-Team: Romanian Gnome Team <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.3.2\n"
 "X-Launchpad-Export-Date: 2009-10-03 17:40+0000\n"
 "X-Project-Style: gnome\n"
 
@@ -87,18 +88,6 @@ msgstr "Ignoră numerele"
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:37
 msgid "If enabled, numbers will not be indexed."
 msgstr "Dacă este activat, numerele nu vor fi indexate."
-
-#: data/org.freedesktop.Tracker.FTS.gschema.xml:42
-msgid "Ignore stop words"
-msgstr "Ignoră cuvintele de oprire"
-
-#: data/org.freedesktop.Tracker.FTS.gschema.xml:43
-msgid ""
-"If enabled, the words listed in the stop-words list are ignored. E.g. common "
-"words like “the”, “yes”, “no”, etc."
-msgstr ""
-"Dacă este activat, cuvintele din lista cuvintelor de oprire vor fi ignorate. "
-"De ex. cuvinte obișnuite precum „da”, „nu”, etc."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:23
 msgid "Initial sleep"
@@ -242,41 +231,38 @@ msgstr ""
 "și $HOME/.config/user-dirs.default"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:127
-msgid "Index applications installed on the system"
-msgstr "Indexează aplicațiile instalate pe sistem"
-
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:128
-msgid ""
-"If this option is enabled, the filesystem miner will look for .desktop files "
-"in the standard XDG system and user data directories."
-msgstr ""
-"Dacă această opțiune este activată, minerul sistemului de fișiere va căuta "
-"după fișiere .desktop în sistemul standard XDG și directoarele de date ale "
-"utilizatorului."
-
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:136
 msgid "Ignored files"
 msgstr "Fișiere ignorate"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:137
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:128
 msgid "List of file patterns to avoid"
 msgstr "Lista modelelor de evitat"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:142
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:133
 msgid "Ignored directories"
 msgstr "Dosare ignorate"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:143
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:134
 msgid "List of directories to avoid"
 msgstr "Lista dosarelor de evitat"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:148
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:139
 msgid "Ignored directories with content"
 msgstr "Au fost ignorate dosarele cu conținut"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:149
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:140
 msgid "Avoid any directory containing a file blocklisted here"
 msgstr "Evită orice director care conține un fișier blocat la listare aici"
+
+#: src/libtracker-miners-common/tracker-miner-proxy.c:349
+msgid "Cookie not recognized to resume paused miner"
+msgstr "Cookie-ul nu este recunoscut pentru a relua un miner de date suspendat"
+
+#: src/libtracker-miners-common/tracker-miner-proxy.c:406
+msgid "Pause application and reason match an already existing pause request"
+msgstr ""
+"Suspendarea aplicației și motivul se potrivesc cu o cerere de suspendare "
+"existentă"
 
 #: src/libtracker-miners-common/tracker-utils.c:101
 #: src/libtracker-miners-common/tracker-utils.c:152
@@ -339,37 +325,27 @@ msgstr[0] " %2.2d secundă"
 msgstr[1] " %2.2d secunde"
 msgstr[2] " %2.2d de secunde"
 
-#: src/libtracker-miner/tracker-data-provider.c:108
-#: src/libtracker-miner/tracker-data-provider.c:168
+#: src/miners/fs/tracker-data-provider.c:108
+#: src/miners/fs/tracker-data-provider.c:168
 msgid "Operation not supported"
 msgstr "Operația nu este suportată"
 
-#: src/libtracker-miner/tracker-miner-proxy.c:349
-msgid "Cookie not recognized to resume paused miner"
-msgstr "Cookie-ul nu este recunoscut pentru a relua un miner de date suspendat"
-
-#: src/libtracker-miner/tracker-miner-proxy.c:406
-msgid "Pause application and reason match an already existing pause request"
-msgstr ""
-"Suspendarea aplicației și motivul se potrivesc cu o cerere de suspendare "
-"existentă"
-
-#: src/miners/fs/tracker-main.c:81
+#: src/miners/fs/tracker-main.c:80
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr "Timp inițial de așteptare, 0->1000 (implicit=15)"
 
-#: src/miners/fs/tracker-main.c:86
+#: src/miners/fs/tracker-main.c:85
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 "Rulează până când toate locațiile configurate sunt indexate iar apoi se "
 "închide"
 
-#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
+#: src/miners/fs/tracker-main.c:89 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 "Verifică dacă FIȘIER este eligibil pentru a fi minerit conform configurației"
 
-#: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
+#: src/miners/fs/tracker-main.c:90 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
 #: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
@@ -377,62 +353,62 @@ msgstr ""
 msgid "FILE"
 msgstr "FIȘIER"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:93 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr "Rulează pentru o ontologie de domeniu specifică"
 
-#: src/miners/fs/tracker-main.c:98
+#: src/miners/fs/tracker-main.c:97
 msgid "Avoids changes in the filesystem"
 msgstr "Evită modificările în sistemul de fișiere"
 
-#: src/miners/fs/tracker-main.c:102 src/tracker-control/tracker-main.c:61
+#: src/miners/fs/tracker-main.c:101 src/tracker-control/tracker-main.c:61
 #: src/tracker-extract/tracker-main.c:101
-#: src/tracker-writeback/tracker-main.c:48
+#: src/tracker-writeback/tracker-main.c:50
 msgid "Displays version information"
 msgstr "Afișează informații despre versiune"
 
-#: src/miners/fs/tracker-main.c:624
+#: src/miners/fs/tracker-main.c:638
 #, c-format
 msgid "Data object “%s” currently exists"
 msgstr "Obiectul de date „%s” există deja"
 
-#: src/miners/fs/tracker-main.c:625
+#: src/miners/fs/tracker-main.c:639
 #, c-format
 msgid "Data object “%s” currently does not exist"
 msgstr "Obiectul de date „%s” nu există în mod curent"
 
-#: src/miners/fs/tracker-main.c:661
+#: src/miners/fs/tracker-main.c:677
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr "Directorul NU este eligibil pentru a fi indexat (bazat pe filtre)"
 
-#: src/miners/fs/tracker-main.c:665
+#: src/miners/fs/tracker-main.c:681
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr "Fișierul NU este eligibil pentru a fi indexat (bazat pe filtre)"
 
-#: src/miners/fs/tracker-main.c:668
+#: src/miners/fs/tracker-main.c:684
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr "Fișierul NU este eligibil pentru a fi indexat (fișier ascuns)"
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:686
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr ""
 "Fișierul NU este eligibil pentru a fi indexat (nu este un dosar indexat)"
 
-#: src/miners/fs/tracker-main.c:694
+#: src/miners/fs/tracker-main.c:710
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 "Directorul superior „%s” NU este eligibil pentru a fi indexat (bazat pe "
 "filtre)"
 
-#: src/miners/fs/tracker-main.c:700
+#: src/miners/fs/tracker-main.c:716
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr ""
 "Directorul superior „%s” NU este eligibil pentru a fi indexat (fișier ascuns)"
 
-#: src/miners/fs/tracker-main.c:708
+#: src/miners/fs/tracker-main.c:724
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
@@ -441,62 +417,82 @@ msgstr ""
 "Directorul superior „%s” NU este eligibil pentru a fi indexat (bazat pe "
 "filtre de conținut)"
 
-#: src/miners/fs/tracker-main.c:729
+#: src/miners/fs/tracker-main.c:745
 msgid "Directory is eligible to be indexed"
 msgstr "Directorul este eligibil pentru a fi indexat"
 
-#: src/miners/fs/tracker-main.c:730
+#: src/miners/fs/tracker-main.c:746
 msgid "File is eligible to be indexed"
 msgstr "Fișierul este eligibil pentru a fi indexat"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:988
+#: src/miners/fs/tracker-main.c:1073
 msgid "— start the tracker indexer"
 msgstr "— pornește indexatorul de tracker"
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
 msgstr "Adaugă un flux"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "URL"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
 msgstr "Titlu de utilizat (trebuie folosit cu --add-feed)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr "— pornește indexatorul de fluxuri"
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "Listează fluxurile"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:447
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:89
-#: src/tracker/tracker-status.c:202 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "Șterge fluxul"
+
+#: src/miners/rss/tracker-main.c:162 src/miners/rss/tracker-main.c:214
+#: src/miners/rss/tracker-main.c:251 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1371 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:946
 msgid "Could not establish a connection to Tracker"
 msgstr "Nu s-a putut stabili o conexiune la Tracker"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:163 src/miners/rss/tracker-main.c:215
+#: src/miners/rss/tracker-main.c:252 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
-#: src/tracker/tracker-info.c:448 src/tracker/tracker-process.c:193
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:90
-#: src/tracker/tracker-status.c:203 src/tracker/tracker-status.c:249
-#: src/tracker/tracker-status.c:278 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
+#: src/tracker/tracker-search.c:1372 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:947
 msgid "No error given"
 msgstr "Nu s-a primit nicio"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:188
 msgid "Could not add feed"
 msgstr "Nu s-a putut adăuga fluxul"
+
+#: src/miners/rss/tracker-main.c:226
+msgid "Could not remove feed"
+msgstr "Nu s-a putut elimina fluxul"
+
+#: src/miners/rss/tracker-main.c:294
+msgid "Could not list feeds"
+msgstr "Nu s-au putut lista fluxurile"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:422
+msgid "— start the feeds indexer"
+msgstr "— pornește indexatorul de fluxuri"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -505,11 +501,11 @@ msgstr "Nu s-a putut adăuga fluxul"
 msgid "— start the tracker index proxy"
 msgstr "— pornește proxy-ul de index de urmăritor"
 
-#: src/tracker-extract/tracker-extract.c:687
+#: src/tracker-extract/tracker-extract.c:697
 msgid "Metadata extraction failed"
 msgstr "Extragerea de metadate a eșuat"
 
-#: src/tracker-extract/tracker-extract.c:762
+#: src/tracker-extract/tracker-extract.c:776
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 "Nu s-au găsit module de metadate sau extractor pentru a gestiona acest fișier"
@@ -551,11 +547,11 @@ msgstr "Format de serializare nesuportat „%s”\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: src/tracker-extract/tracker-main.c:319
+#: src/tracker-extract/tracker-main.c:342
 msgid "— Extract file meta data"
 msgstr "— Extrage metadate de fișier"
 
-#: src/tracker-extract/tracker-main.c:334
+#: src/tracker-extract/tracker-main.c:357
 msgid "Filename and mime type must be provided together"
 msgstr "Numele fișierului și tipul MIME trebuie specificate împreună"
 
@@ -815,7 +811,7 @@ msgstr "Toate proprietățile nie:plainTextContent sunt omise"
 msgid "Common statuses include"
 msgstr "Stările comune includ"
 
-#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:277
+#: src/tracker/tracker-daemon.c:758 src/tracker/tracker-status.c:280
 #, c-format
 msgid "Could not get status, manager could not be created, %s"
 msgstr ""
@@ -842,7 +838,7 @@ msgstr "Trebuie să furnizați o comandă de întrerupere sau reluare pentru min
 msgid "You can not use the --kill and --terminate arguments together"
 msgstr "Nu puteți folosi --kill și --terminate împreună"
 
-#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:171
+#: src/tracker/tracker-daemon.c:938 src/tracker/tracker-process.c:197
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
@@ -873,9 +869,9 @@ msgid "If no arguments are given, the status of the data miners is shown"
 msgstr "Dacă nu sunt date argumente, starea minerilor de date este arătată"
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
-#: src/tracker/tracker-index.c:389 src/tracker/tracker-info.c:646
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:527 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1547
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1055
 msgid "Unrecognized options"
 msgstr "Opțiuni nerecunoscute"
 
@@ -923,15 +919,15 @@ msgstr "--add și --remove se exclud reciproc"
 msgid "--recursive requires --add"
 msgstr "--recursive necesită --add"
 
-#: src/tracker/tracker-index.c:351 src/tracker/tracker-status.c:328
+#: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
 msgstr "Cale"
 
-#: src/tracker/tracker-index.c:352
+#: src/tracker/tracker-index.c:357
 msgid "Recursive"
 msgstr "Recursivă"
 
-#: src/tracker/tracker-index.c:402
+#: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
 msgstr "Specificați una sau mai multe locații de indexat."
 
@@ -975,40 +971,40 @@ msgstr "Imposibil de găsit prefixele spațiilor de nume"
 msgid "No namespace prefixes were returned"
 msgstr "Nu s-a returnat niciun prefix de spațiu de nume"
 
-#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1301
 msgid "Results"
 msgstr "Rezultate"
 
-#: src/tracker/tracker-info.c:416
+#: src/tracker/tracker-info.c:414
 msgid "Error message"
 msgstr "Mesaj de eroare"
 
-#: src/tracker/tracker-info.c:472
+#: src/tracker/tracker-info.c:471
 msgid "Querying information for entity"
 msgstr "Se cer informații despre entitate"
 
-#: src/tracker/tracker-info.c:496
+#: src/tracker/tracker-info.c:495
 msgid "Unable to retrieve URN for URI"
 msgstr "Nu s-a putut obține URN-ul corespunzător URI-ului"
 
-#: src/tracker/tracker-info.c:506 src/tracker/tracker-info.c:540
+#: src/tracker/tracker-info.c:505 src/tracker/tracker-info.c:539
 msgid "Unable to retrieve data for URI"
 msgstr "Nu s-au putut obține date pentru URI"
 
-#: src/tracker/tracker-info.c:563
+#: src/tracker/tracker-info.c:562
 msgid "No metadata available for that URI"
 msgstr "Nu sunt disponibile metadate pentru acel URI"
 
-#: src/tracker/tracker-info.c:568 src/tracker/tracker-info.c:602
+#: src/tracker/tracker-info.c:567 src/tracker/tracker-info.c:601
 msgid "Could not get eligible status: "
 msgstr "Nu s-a putut obține o stare eligibilă: "
 
-#: src/tracker/tracker-process.c:190
+#: src/tracker/tracker-process.c:216
 #, c-format
 msgid "Could not kill process %d — “%s”"
 msgstr "Nu s-a putut omorî procesul %d — „%s”"
 
-#: src/tracker/tracker-process.c:196
+#: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
 msgstr "S-a omorât procesul %d — „%s”"
@@ -1136,10 +1132,10 @@ msgstr "termeni de căutare"
 msgid "EXPRESSION"
 msgstr "EXPRESIE"
 
-#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
-#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
-#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
-#: src/tracker/tracker-search.c:1171
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:635
+#: src/tracker/tracker-search.c:731 src/tracker/tracker-search.c:823
+#: src/tracker/tracker-search.c:912 src/tracker/tracker-search.c:1001
+#: src/tracker/tracker-search.c:1288
 msgid "Could not get search results"
 msgstr "Nu s-au putut primi rezultatele căutării"
 
@@ -1147,51 +1143,51 @@ msgstr "Nu s-au putut primi rezultatele căutării"
 msgid "No files were found"
 msgstr "Nici un fișier găsit"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:437
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:426
 msgid "Files"
 msgstr "Fișiere"
 
-#: src/tracker/tracker-search.c:600
+#: src/tracker/tracker-search.c:644
 msgid "No artists were found"
 msgstr "Nu s-a găsit niciun artist"
 
-#: src/tracker/tracker-search.c:604
+#: src/tracker/tracker-search.c:648
 msgid "Artists"
 msgstr "Artiști"
 
-#: src/tracker/tracker-search.c:692
+#: src/tracker/tracker-search.c:740
 msgid "No music was found"
 msgstr "Nu s-a găsit muzică"
 
-#: src/tracker/tracker-search.c:696
+#: src/tracker/tracker-search.c:744
 msgid "Albums"
 msgstr "Albume"
 
-#: src/tracker/tracker-search.c:784
+#: src/tracker/tracker-search.c:832
 msgid "No feeds were found"
 msgstr "Nu s-a găsit niciun flux"
 
-#: src/tracker/tracker-search.c:788
+#: src/tracker/tracker-search.c:836
 msgid "Feeds"
 msgstr "Fluxuri"
 
-#: src/tracker/tracker-search.c:871
+#: src/tracker/tracker-search.c:921
 msgid "No software was found"
 msgstr "Nu a fost găsit niciun software"
 
-#: src/tracker/tracker-search.c:875
+#: src/tracker/tracker-search.c:925
 msgid "Software"
 msgstr "Software"
 
-#: src/tracker/tracker-search.c:956
+#: src/tracker/tracker-search.c:1010
 msgid "No software categories were found"
 msgstr "Nu s-a găsit nicio categorie de software"
 
-#: src/tracker/tracker-search.c:960
+#: src/tracker/tracker-search.c:1014
 msgid "Software Categories"
 msgstr "Categorii de software"
 
-#: src/tracker/tracker-search.c:1180
+#: src/tracker/tracker-search.c:1297
 msgid "No results were found matching your query"
 msgstr "Pentru căutarea dumneavoastră nu s-a găsit niciun rezultat"
 
@@ -1199,18 +1195,18 @@ msgstr "Pentru căutarea dumneavoastră nu s-a găsit niciun rezultat"
 msgid "Show statistics for current index / data set"
 msgstr "Arată statistici pentru indexul / setul de date curent"
 
-#: src/tracker/tracker-status.c:103
+#: src/tracker/tracker-status.c:106
 msgid "Could not get Tracker statistics"
 msgstr "Nu s-au putut obține statistici pentru Tracker"
 
-#: src/tracker/tracker-status.c:110
+#: src/tracker/tracker-status.c:113
 msgid "No statistics available"
 msgstr "Statisticile nu sunt disponibile"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
 #. * None" with multiple print statements
-#: src/tracker/tracker-status.c:151
+#: src/tracker/tracker-status.c:154
 msgid "Statistics:"
 msgstr "Statistici:"
 
@@ -1237,25 +1233,25 @@ msgstr "Statistici:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:154 src/tracker/tracker-tag.c:321
-#: src/tracker/tracker-tag.c:453 src/tracker/tracker-tag.c:575
-#: src/tracker/tracker-tag.c:953
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:310
+#: src/tracker/tracker-tag.c:442 src/tracker/tracker-tag.c:564
+#: src/tracker/tracker-tag.c:924
 msgid "None"
 msgstr "Nimic"
 
-#: src/tracker/tracker-status.c:223 src/tracker/tracker-status.c:248
+#: src/tracker/tracker-status.c:226 src/tracker/tracker-status.c:251
 msgid "Could not get basic status for Tracker"
 msgstr "Nu s-a putut obține starea de bază pentru Tracker"
 
-#: src/tracker/tracker-status.c:329 src/tracker/tracker-status.c:474
+#: src/tracker/tracker-status.c:332 src/tracker/tracker-status.c:499
 msgid "Message"
 msgstr "Mesaj"
 
-#: src/tracker/tracker-status.c:382
+#: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
 msgstr "Indexat acum"
 
-#: src/tracker/tracker-status.c:385 src/tracker/tracker-tag.c:557
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:546
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1263,7 +1259,7 @@ msgstr[0] "%d dosar"
 msgstr[1] "%d dosare"
 msgstr[2] "%d de dosare"
 
-#: src/tracker/tracker-status.c:391
+#: src/tracker/tracker-status.c:400
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1271,24 +1267,24 @@ msgstr[0] "%d dosar"
 msgstr[1] "%d dosare"
 msgstr[2] "%d de dosare"
 
-#: src/tracker/tracker-status.c:405
+#: src/tracker/tracker-status.c:414
 msgid "Remaining space on database partition"
 msgstr "Spațiu rămas pe partiția bazei de date"
 
-#: src/tracker/tracker-status.c:417
+#: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
 msgstr "Datele se indexează încă"
 
-#: src/tracker/tracker-status.c:418
+#: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
 msgstr "Estimat %s rămas"
 
-#: src/tracker/tracker-status.c:422
+#: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
 msgstr "Toți minerii de date sunt în așteptare, indexarea este completă"
 
-#: src/tracker/tracker-status.c:429
+#: src/tracker/tracker-status.c:438
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
@@ -1296,7 +1292,7 @@ msgstr[0] "%d eșec înregistrat"
 msgstr[1] "%d eșecuri înregistrate"
 msgstr[2] "%d de eșecuri înregistrate"
 
-#: src/tracker/tracker-status.c:490
+#: src/tracker/tracker-status.c:524
 msgid "No reports found"
 msgstr "Nu au fost găsite rapoarte"
 
@@ -1364,99 +1360,99 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr "Nu sa putut obține URN-urile fișierului"
 
-#: src/tracker/tracker-tag.c:312
+#: src/tracker/tracker-tag.c:301
 msgid "Could not get files related to tag"
 msgstr "Nu s-au putut obține fișierele legate de etichetă"
 
-#: src/tracker/tracker-tag.c:379
+#: src/tracker/tracker-tag.c:368
 msgid "Could not get all tags in the database"
 msgstr "Nu s-au putut obține toate etichetele din baza de date"
 
-#: src/tracker/tracker-tag.c:389
+#: src/tracker/tracker-tag.c:378
 msgid "No files have been tagged"
 msgstr "Nu s-a etichetat niciun fișier"
 
-#: src/tracker/tracker-tag.c:424
+#: src/tracker/tracker-tag.c:413
 msgid "Could not get files for matching tags"
 msgstr "Nu s-a putut obține fișiere pentru etichetele potrivite"
 
-#: src/tracker/tracker-tag.c:433
+#: src/tracker/tracker-tag.c:422
 msgid "No files were found matching ALL of those tags"
 msgstr "Nu s-au găsit fișiere care să se potrivească cu TOATE acele etichete"
 
-#: src/tracker/tracker-tag.c:512 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:501 src/tracker/tracker-tag.c:898
 msgid "Could not get all tags"
 msgstr "Nu s-au putut obține toate etichetele"
 
-#: src/tracker/tracker-tag.c:521 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:510 src/tracker/tracker-tag.c:907
 msgid "No tags were found"
 msgstr "Nu s-a găsit nicio etichetă"
 
-#: src/tracker/tracker-tag.c:525
+#: src/tracker/tracker-tag.c:514
 msgid "Tags (shown by name)"
 msgstr "Etichete (arătate după nume)"
 
-#: src/tracker/tracker-tag.c:599
+#: src/tracker/tracker-tag.c:589
 msgid "No files were modified"
 msgstr "Niciun fișier nu a fost modificat"
 
-#: src/tracker/tracker-tag.c:649 src/tracker/tracker-tag.c:657
+#: src/tracker/tracker-tag.c:633 src/tracker/tracker-tag.c:641
 msgid "Files do not exist or aren’t indexed"
 msgstr "Fișierele nu există sau nu sunt indexate"
 
-#: src/tracker/tracker-tag.c:707
+#: src/tracker/tracker-tag.c:682
 msgid "Could not add tag"
 msgstr "Nu s-a putut adăuga eticheta"
 
-#: src/tracker/tracker-tag.c:723
+#: src/tracker/tracker-tag.c:694
 msgid "Tag was added successfully"
 msgstr "Eticheta a fost adăugată cu succes"
 
-#: src/tracker/tracker-tag.c:752
+#: src/tracker/tracker-tag.c:724
 msgid "Could not add tag to files"
 msgstr "Nu s-a putut adăuga eticheta la fișiere"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:735
 msgid "Tagged"
 msgstr "Etichetat"
 
-#: src/tracker/tracker-tag.c:763
+#: src/tracker/tracker-tag.c:736
 msgid "Not tagged, file is not indexed"
 msgstr "Nu a fost etichetat, fișierul nu este indexat"
 
-#: src/tracker/tracker-tag.c:809
+#: src/tracker/tracker-tag.c:778
 msgid "Could not get tag by label"
 msgstr "Nu s-a putut obține eticheta după inscripție"
 
-#: src/tracker/tracker-tag.c:820
+#: src/tracker/tracker-tag.c:789
 msgid "No tags were found by that name"
 msgstr "Nu a fost găsită nicio etichetă după acel nume"
 
-#: src/tracker/tracker-tag.c:837
+#: src/tracker/tracker-tag.c:807
 msgid "None of the files had this tag set"
 msgstr "Niciunul dintre fișiere nu a avut această etichetă stabilită"
 
-#: src/tracker/tracker-tag.c:883
+#: src/tracker/tracker-tag.c:854
 msgid "Could not remove tag"
 msgstr "Nu s-a putut elimina eticheta"
 
-#: src/tracker/tracker-tag.c:890
+#: src/tracker/tracker-tag.c:862
 msgid "Tag was removed successfully"
 msgstr "Eticheta a fost eliminată cu succes"
 
-#: src/tracker/tracker-tag.c:894
+#: src/tracker/tracker-tag.c:866
 msgid "Untagged"
 msgstr "Neetichetat"
 
-#: src/tracker/tracker-tag.c:895
+#: src/tracker/tracker-tag.c:867
 msgid "File not indexed or already untagged"
 msgstr "Fișierul nu este indexat sau deja neetichetat"
 
-#: src/tracker/tracker-tag.c:1093
+#: src/tracker/tracker-tag.c:1064
 msgid "The --list option is required for --show-files"
 msgstr "Opțiunea --list este necesară pentru --show-files"
 
-#: src/tracker/tracker-tag.c:1095
+#: src/tracker/tracker-tag.c:1066
 msgid ""
 "The --and-operator option can only be used with --list and tag label "
 "arguments"
@@ -1464,31 +1460,52 @@ msgstr ""
 "Opțiunea --and-operator poate fi utilizată doar cu argumentele de etichetă --"
 "list și etichetă"
 
-#: src/tracker/tracker-tag.c:1097
+#: src/tracker/tracker-tag.c:1068
 msgid "Add and delete actions can not be used together"
 msgstr "Acțiunile adaugă și șterge nu pot fi folosite împreună"
 
-#: src/tracker/tracker-tag.c:1099
+#: src/tracker/tracker-tag.c:1070
 msgid "The --description option can only be used with --add"
 msgstr "Opțiunea --description poate fi folosită numai cu --add"
 
-#: src/tracker-writeback/tracker-main.c:52
+#: src/tracker-writeback/tracker-main.c:54
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
 msgstr ""
 "Jurnalizare, 0 = doar erori, 1 = minimal, 2 = detaliat și 3 = depanare "
 "(implicit=0)"
 
-#: src/tracker-writeback/tracker-main.c:59
+#: src/tracker-writeback/tracker-main.c:61
 msgid "Disable shutting down after 30 seconds of inactivity"
 msgstr "Dezactivează oprirea după 30 de secunde de inactivitate"
 
 #. Translators: this message will appear immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-writeback/tracker-main.c:85
+#: src/tracker-writeback/tracker-main.c:93
 msgid "— start the tracker writeback service"
 msgstr "— pornește serviciul de scriere înapoi de tracker"
+
+#~ msgid "Ignore stop words"
+#~ msgstr "Ignoră cuvintele de oprire"
+
+#~ msgid ""
+#~ "If enabled, the words listed in the stop-words list are ignored. E.g. "
+#~ "common words like “the”, “yes”, “no”, etc."
+#~ msgstr ""
+#~ "Dacă este activat, cuvintele din lista cuvintelor de oprire vor fi "
+#~ "ignorate. De ex. cuvinte obișnuite precum „da”, „nu”, etc."
+
+#~ msgid "Index applications installed on the system"
+#~ msgstr "Indexează aplicațiile instalate pe sistem"
+
+#~ msgid ""
+#~ "If this option is enabled, the filesystem miner will look for .desktop "
+#~ "files in the standard XDG system and user data directories."
+#~ msgstr ""
+#~ "Dacă această opțiune este activată, minerul sistemului de fișiere va "
+#~ "căuta după fișiere .desktop în sistemul standard XDG și directoarele de "
+#~ "date ale utilizatorului."
 
 #~ msgid "unknown time"
 #~ msgstr "timp necunoscut"
@@ -2701,9 +2718,6 @@ msgstr "— pornește serviciul de scriere înapoi de tracker"
 
 #~ msgid "File and query can not be used together"
 #~ msgstr "Fișierul și cererea nu pot fi utilizate împreună"
-
-#~ msgid "Could not list classes"
-#~ msgstr "Nu s-au putut lista clasele"
 
 #~ msgid "No classes were found"
 #~ msgstr "Nu au fost găsite clase"

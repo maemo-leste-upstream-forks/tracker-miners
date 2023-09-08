@@ -20,8 +20,6 @@
 
 #include "config-miners.h"
 
-#ifdef HAVE_HAL
-
 #include <string.h>
 
 #include <libhal.h>
@@ -545,5 +543,3 @@ tracker_power_get_on_low_battery (TrackerPower *power)
 
 	return (priv->battery_percentage < BATTERY_LOW_THRESHOLD);
 }
-
-#endif /* HAVE_HAL */

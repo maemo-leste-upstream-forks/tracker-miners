@@ -11,9 +11,6 @@ miner_fs_resources = gnome.compile_resources(
 )
 
 private_sources = [
-    'tracker-crawler.c',
-    'tracker-data-provider.c',
-    'tracker-file-data-provider.c',
     'tracker-file-notifier.c',
     'tracker-indexing-tree.c',
     'tracker-lru.c',
@@ -47,6 +44,7 @@ tracker_miner_dep = declare_dependency(
 
 sources = [
     'tracker-config.c',
+    'tracker-controller.c',
     'tracker-extract-watchdog.c',
     'tracker-main.c',
     'tracker-miner-files.c',
@@ -59,14 +57,6 @@ tracker_miner_fs_deps = [
      tracker_miner_dep,
      tracker_extract_dep
 ]
-
-if battery_detection_library_name == 'upower'
-  sources += 'tracker-power-upower.c'
-  tracker_miner_fs_deps += upower
-elif battery_detection_library_name == 'hal'
-  sources += 'tracker-power-hal.c'
-  tracker_miner_fs_deps += hal
-endif
 
 executable('tracker-miner-fs-@0@'.format(tracker_api_major),
     sources,

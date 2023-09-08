@@ -30,19 +30,10 @@
 #include <libtracker-sparql/tracker-sparql.h>
 
 #include "tracker-miner-object.h"
-#include "tracker-data-provider.h"
 #include "tracker-indexing-tree.h"
 #include "tracker-sparql-buffer.h"
 
 G_BEGIN_DECLS
-
-#define TRACKER_PREFIX_DATASOURCE_URN \
-       "urn:nepomuk:datasource:"
-
-#define TRACKER_DATASOURCE_URN_NON_REMOVABLE_MEDIA \
-        TRACKER_PREFIX_DATASOURCE_URN "9291a450-1d49-11de-8c30-0800200c9a66"
-
-#define TRACKER_OWN_GRAPH_URN "urn:uuid:472ed0cc-40ff-4e37-9c0c-062d78656540"
 
 #define TRACKER_TYPE_MINER_FS         (tracker_miner_fs_get_type())
 #define TRACKER_MINER_FS(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), TRACKER_TYPE_MINER_FS, TrackerMinerFS))
@@ -147,22 +138,9 @@ GQuark                tracker_miner_fs_error_quark           (void);
 
 /* Properties */
 TrackerIndexingTree * tracker_miner_fs_get_indexing_tree     (TrackerMinerFS  *fs);
-TrackerDataProvider * tracker_miner_fs_get_data_provider     (TrackerMinerFS  *fs);
 gdouble               tracker_miner_fs_get_throttle          (TrackerMinerFS  *fs);
 void                  tracker_miner_fs_set_throttle          (TrackerMinerFS  *fs,
                                                               gdouble          throttle);
-
-/* Queueing files to be processed AFTER checking rules in IndexingTree */
-void                  tracker_miner_fs_check_file            (TrackerMinerFS  *fs,
-                                                              GFile           *file,
-                                                              gint             priority,
-                                                              gboolean         check_parents);
-
-/* Continuation for async vmethods */
-void                  tracker_miner_fs_notify_finish         (TrackerMinerFS  *fs,
-							      GTask           *task,
-							      const gchar     *sparql,
-							      GError          *error);
 
 /* URNs */
 const gchar * tracker_miner_fs_get_identifier (TrackerMinerFS *miner,

@@ -106,3 +106,15 @@ tracker_cli_get_error_keyfiles (void)
 
 	return keyfiles;
 }
+
+gboolean
+tracker_cli_check_inside_build_tree (const gchar* argv0)
+{
+	g_autoptr (GFile) build_root = NULL;
+	g_autoptr (GFile) path = NULL;
+
+	build_root = g_file_new_for_path (BUILDROOT);
+	path = g_file_new_for_path (argv0);
+
+	return g_file_has_prefix (path, build_root);
+}

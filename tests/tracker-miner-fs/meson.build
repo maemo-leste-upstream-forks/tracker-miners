@@ -1,6 +1,4 @@
 libtracker_miner_tests = [
-    'crawler',
-    'file-enumerator',
     'indexing-tree',
     'priority-queue',
     'task-pool',
@@ -21,7 +19,6 @@ libtracker_miner_test_c_args = [
 ]
 
 libtracker_miner_test_environment = environment()
-libtracker_miner_test_environment.set('TRACKER_LANGUAGE_STOP_WORDS_DIR', tracker_uninstalled_stop_words_dir)
 libtracker_miner_test_environment.set('GSETTINGS_SCHEMA_DIR', join_paths(meson.build_root(), 'data'))
 
 libtracker_miner_test_deps = [tracker_miners_common_dep, tracker_miner_dep, tracker_sparql]

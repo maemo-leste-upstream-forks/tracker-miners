@@ -23,6 +23,7 @@ foreach m: modules
         c_args: tracker_c_args + [
             '-DLIBEXECDIR="@0@"'.format(join_paths(get_option('prefix'), get_option('libexecdir'))),
             '-DMANDIR="@0@"'.format(join_paths(get_option('prefix'), get_option('datadir'), 'man')),
+            '-DBUILDROOT="@0@"'.format(build_root),
         ],
         install: true,
         install_dir: join_paths(get_option('libexecdir'), 'tracker@0@'.format(tracker_api_major)),

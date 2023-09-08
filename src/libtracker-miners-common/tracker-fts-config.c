@@ -36,7 +36,6 @@
 
 /* Default values */
 #define DEFAULT_IGNORE_NUMBERS       TRUE
-#define DEFAULT_IGNORE_STOP_WORDS    TRUE
 #define DEFAULT_ENABLE_STEMMER       FALSE  /* As per GB#526346, disabled */
 #define DEFAULT_ENABLE_UNACCENT      TRUE
 
@@ -58,7 +57,6 @@ enum {
 	PROP_ENABLE_STEMMER,
 	PROP_ENABLE_UNACCENT,
 	PROP_IGNORE_NUMBERS,
-	PROP_IGNORE_STOP_WORDS,
 };
 
 G_DEFINE_TYPE (TrackerFTSConfig, tracker_fts_config, G_TYPE_SETTINGS);
@@ -95,13 +93,6 @@ tracker_fts_config_class_init (TrackerFTSConfigClass *klass)
 	                                                       " Flag to ignore numbers in FTS (default=TRUE)",
 	                                                       DEFAULT_IGNORE_NUMBERS,
 	                                                       G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-	                                 PROP_IGNORE_STOP_WORDS,
-	                                 g_param_spec_boolean ("ignore-stop-words",
-	                                                       "Ignore stop words",
-	                                                       " Flag to ignore stop words in FTS (default=TRUE)",
-	                                                       DEFAULT_IGNORE_STOP_WORDS,
-	                                                       G_PARAM_READWRITE));
 }
 
 static void
@@ -129,10 +120,6 @@ config_set_property (GObject      *object,
 		tracker_fts_config_set_ignore_numbers (TRACKER_FTS_CONFIG (object),
 		                                       g_value_get_boolean (value));
 		break;
-	case PROP_IGNORE_STOP_WORDS:
-		tracker_fts_config_set_ignore_stop_words (TRACKER_FTS_CONFIG (object),
-		                                          g_value_get_boolean (value));
-		break;
 
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -158,9 +145,6 @@ config_get_property (GObject    *object,
 		break;
 	case PROP_IGNORE_NUMBERS:
 		g_value_set_boolean (value, tracker_fts_config_get_ignore_numbers (config));
-		break;
-	case PROP_IGNORE_STOP_WORDS:
-		g_value_set_boolean (value, tracker_fts_config_get_ignore_stop_words (config));
 		break;
 
 	default:
@@ -195,7 +179,6 @@ config_constructed (GObject *object)
 	g_settings_bind (settings, "enable-stemmer", object, "enable-stemmer", G_SETTINGS_BIND_GET | G_SETTINGS_BIND_GET_NO_CHANGES);
 	g_settings_bind (settings, "enable-unaccent", object, "enable-unaccent", G_SETTINGS_BIND_GET | G_SETTINGS_BIND_GET_NO_CHANGES);
 	g_settings_bind (settings, "ignore-numbers", object, "ignore-numbers", G_SETTINGS_BIND_GET | G_SETTINGS_BIND_GET_NO_CHANGES);
-	g_settings_bind (settings, "ignore-stop-words", object, "ignore-stop-words", G_SETTINGS_BIND_GET | G_SETTINGS_BIND_GET_NO_CHANGES);
 }
 
 TrackerFTSConfig *
@@ -272,14 +255,6 @@ tracker_fts_config_get_ignore_numbers (TrackerFTSConfig *config)
 	return g_settings_get_boolean (G_SETTINGS (config), "ignore-numbers");
 }
 
-gboolean
-tracker_fts_config_get_ignore_stop_words (TrackerFTSConfig *config)
-{
-	g_return_val_if_fail (TRACKER_IS_FTS_CONFIG (config), DEFAULT_IGNORE_STOP_WORDS);
-
-	return g_settings_get_boolean (G_SETTINGS (config),  "ignore-stop-words");
-}
-
 void
 tracker_fts_config_set_enable_stemmer (TrackerFTSConfig *config,
                                        gboolean          value)
@@ -308,14 +283,4 @@ tracker_fts_config_set_ignore_numbers (TrackerFTSConfig *config,
 
         g_settings_set_boolean (G_SETTINGS (config), "ignore-numbers", value);
 	g_object_notify (G_OBJECT (config), "ignore-numbers");
-}
-
-void
-tracker_fts_config_set_ignore_stop_words (TrackerFTSConfig *config,
-                                          gboolean          value)
-{
-	g_return_if_fail (TRACKER_IS_FTS_CONFIG (config));
-
-        g_settings_set_boolean (G_SETTINGS (config), "ignore-stop-words", value);
-	g_object_notify (G_OBJECT (config), "ignore-stop-words");
 }

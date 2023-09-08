@@ -50,14 +50,11 @@ gboolean          tracker_fts_config_save                   (TrackerFTSConfig *c
 gboolean          tracker_fts_config_get_enable_stemmer     (TrackerFTSConfig *config);
 gboolean          tracker_fts_config_get_enable_unaccent    (TrackerFTSConfig *config);
 gboolean          tracker_fts_config_get_ignore_numbers     (TrackerFTSConfig *config);
-gboolean          tracker_fts_config_get_ignore_stop_words  (TrackerFTSConfig *config);
 void              tracker_fts_config_set_enable_stemmer     (TrackerFTSConfig *config,
                                                              gboolean          value);
 void              tracker_fts_config_set_enable_unaccent    (TrackerFTSConfig *config,
                                                              gboolean          value);
 void              tracker_fts_config_set_ignore_numbers     (TrackerFTSConfig *config,
-                                                             gboolean          value);
-void              tracker_fts_config_set_ignore_stop_words  (TrackerFTSConfig *config,
                                                              gboolean          value);
 
 G_END_DECLS

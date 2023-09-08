@@ -4,8 +4,8 @@
     <file>queries/delete-file.rq</file>
     <file>queries/delete-file-content.rq</file>
     <file>queries/delete-folder-contents.rq</file>
+    <file>queries/delete-index-root.rq</file>
     <file>queries/delete-mountpoints-by-date.rq</file>
-    <file>queries/delete-mountpoints-by-type.rq</file>
     <file>queries/get-index-root-content.rq</file>
     <file>queries/get-index-roots.rq</file>
     <file>queries/get-file-mimetype.rq</file>

@@ -1,7 +1,7 @@
 # Inputs: root
 # Outputs: uri, folderUrn, lastModified, hash, mimeType
 SELECT
-  ?uri
+  ?url
   ?folderUrn
   ?lastModified
   ?hash
@@ -10,6 +10,7 @@ SELECT
   GRAPH tracker:FileSystem {
     ?uri a nfo:FileDataObject ;
          nfo:fileLastModified ?lastModified ;
+         nie:url ?url ;
          nie:dataSource ?s .
 
     ~root nie:interpretedAs / nie:rootElementOf ?s .
@@ -26,4 +27,4 @@ SELECT
     ?uri nie:interpretedAs ?ie
   }
 }
-ORDER BY ?uri
+ORDER BY ?url

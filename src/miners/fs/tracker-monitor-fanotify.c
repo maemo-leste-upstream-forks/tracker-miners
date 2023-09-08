@@ -347,14 +347,14 @@ fanotify_events_cb (int          fd,
 		/* We expect data as FID, not as a file descriptor */
 		if (event->fd != FAN_NOFD) {
 			TRACKER_NOTE (MONITORS, g_message ("Received a file descriptor unexpectedly"));
-			continue;
+			goto cont;
 		}
 
 		fid = (struct fanotify_event_info_fid *) (event + 1);
 
 		/* Ensure that the event info is of the correct type. */
 		if (fid->hdr.info_type != FAN_EVENT_INFO_TYPE_DFID_NAME)
-			continue;
+			goto cont;
 
 		/* fsid/handle portions are compatible with HandleData */
 		handle = (HandleData *) &fid->fsid;
@@ -368,8 +368,7 @@ fanotify_events_cb (int          fd,
 			 * ignored, presumably will be fixed by events that
 			 * are yet to be handled.
 			 */
-			event = FAN_EVENT_NEXT (event, len);
-			continue;
+			goto cont;
 		}
 
 		/* File name comes after the file handle data */
@@ -388,8 +387,10 @@ fanotify_events_cb (int          fd,
 			flush_moved_file_event (monitor);
 
 		handle_monitor_events (monitor, child, event->mask);
-		event = FAN_EVENT_NEXT (event, len);
 		g_object_unref (child);
+
+	cont:
+		event = FAN_EVENT_NEXT (event, len);
 	}
 
 	flush_moved_file_event (monitor);

@@ -236,17 +236,19 @@ fixture_setup (TrackerMinerFSTestFixture *fixture,
                gconstpointer              data)
 {
 	GError *error = NULL;
-	GFile *ontology;
+	GFile *ontology, *db;
 	gchar *path;
 
 	path = g_build_filename (g_get_tmp_dir (), "tracker-miner-fs-test-XXXXXX", NULL);
 	fixture->test_root_path = g_mkdtemp_full (path, 0700);
 	fixture->test_root = g_file_new_for_path (fixture->test_root_path);
 
+	db = g_file_get_child (fixture->test_root, ".db");
 	ontology = g_file_new_for_path (TEST_ONTOLOGIES_DIR);
-	fixture->connection = tracker_sparql_connection_new (0, NULL, ontology, NULL, &error);
+	fixture->connection = tracker_sparql_connection_new (0, db, ontology, NULL, &error);
 	g_assert_no_error (error);
 	g_object_unref (ontology);
+	g_object_unref (db);
 
 	tracker_sparql_connection_update (fixture->connection,
 					  "CREATE SILENT GRAPH tracker:FileSystem; "
@@ -685,8 +687,8 @@ test_index_hidden_files (TrackerMinerFSTestFixture *fixture,
 }
 
 static void
-test_file_filter_default_accept (TrackerMinerFSTestFixture *fixture,
-                                 gconstpointer              data)
+test_file_filter (TrackerMinerFSTestFixture *fixture,
+                  gconstpointer              data)
 {
 	TrackerIndexingTree *indexing_tree;
 	gchar *content;
@@ -700,9 +702,6 @@ test_file_filter_default_accept (TrackerMinerFSTestFixture *fixture,
 	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
 
 	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_FILE,
-	                                          TRACKER_FILTER_POLICY_ACCEPT);
 	tracker_indexing_tree_add_filter (indexing_tree, TRACKER_FILTER_FILE, "a*");
 
 	fixture_add_indexed_folder (fixture, "recursive",
@@ -724,8 +723,8 @@ test_file_filter_default_accept (TrackerMinerFSTestFixture *fixture,
 }
 
 static void
-test_file_filter_default_deny (TrackerMinerFSTestFixture *fixture,
-                               gconstpointer              data)
+test_directory_filter (TrackerMinerFSTestFixture *fixture,
+                       gconstpointer              data)
 {
 	TrackerIndexingTree *indexing_tree;
 	gchar *content;
@@ -739,48 +738,6 @@ test_file_filter_default_deny (TrackerMinerFSTestFixture *fixture,
 	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
 
 	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_FILE,
-	                                          TRACKER_FILTER_POLICY_DENY);
-	tracker_indexing_tree_add_filter (indexing_tree, TRACKER_FILTER_FILE, "a*");
-
-	fixture_add_indexed_folder (fixture, "recursive",
-	                            TRACKER_DIRECTORY_FLAG_CHECK_MTIME |
-	                            TRACKER_DIRECTORY_FLAG_RECURSE);
-
-	tracker_miner_start (TRACKER_MINER (fixture->miner));
-
-	fixture_iterate (fixture);
-
-	content = fixture_get_content (fixture);
-	g_assert_cmpstr (content, ==,
-	                 "recursive,"
-	                 "recursive/aa,"
-	                 "recursive/aa/a1,"
-	                 "recursive/bb,"
-	                 "recursive/bb/ab");
-	g_free (content);
-}
-
-static void
-test_directory_filter_default_accept (TrackerMinerFSTestFixture *fixture,
-                                      gconstpointer              data)
-{
-	TrackerIndexingTree *indexing_tree;
-	gchar *content;
-
-	CREATE_FOLDER (fixture, "recursive");
-	CREATE_FOLDER (fixture, "recursive/aa");
-	CREATE_FOLDER (fixture, "recursive/bb");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/a1");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/b2");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/ab");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
-
-	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_DIRECTORY,
-	                                          TRACKER_FILTER_POLICY_ACCEPT);
 	tracker_indexing_tree_add_filter (indexing_tree, TRACKER_FILTER_DIRECTORY, "a*");
 
 	fixture_add_indexed_folder (fixture, "recursive",
@@ -801,49 +758,8 @@ test_directory_filter_default_accept (TrackerMinerFSTestFixture *fixture,
 }
 
 static void
-test_directory_filter_default_deny (TrackerMinerFSTestFixture *fixture,
-                                      gconstpointer              data)
-{
-	TrackerIndexingTree *indexing_tree;
-	gchar *content;
-
-	CREATE_FOLDER (fixture, "recursive");
-	CREATE_FOLDER (fixture, "recursive/aa");
-	CREATE_FOLDER (fixture, "recursive/bb");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/a1");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/b2");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/ab");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
-
-	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_DIRECTORY,
-	                                          TRACKER_FILTER_POLICY_DENY);
-	tracker_indexing_tree_add_filter (indexing_tree, TRACKER_FILTER_DIRECTORY, "a*");
-
-	/* Guess what, the folder gets filtered otherwise */
-	tracker_indexing_tree_add_filter (indexing_tree, TRACKER_FILTER_DIRECTORY, "recursive");
-
-	fixture_add_indexed_folder (fixture, "recursive",
-	                            TRACKER_DIRECTORY_FLAG_CHECK_MTIME |
-	                            TRACKER_DIRECTORY_FLAG_RECURSE);
-
-	tracker_miner_start (TRACKER_MINER (fixture->miner));
-
-	fixture_iterate (fixture);
-
-	content = fixture_get_content (fixture);
-	g_assert_cmpstr (content, ==,
-	                 "recursive,"
-	                 "recursive/aa,"
-	                 "recursive/aa/a1,"
-	                 "recursive/aa/b2");
-	g_free (content);
-}
-
-static void
-test_content_filter_default_accept (TrackerMinerFSTestFixture *fixture,
-                                    gconstpointer              data)
+test_content_filter (TrackerMinerFSTestFixture *fixture,
+                     gconstpointer              data)
 {
 	TrackerIndexingTree *indexing_tree;
 	gchar *content;
@@ -858,9 +774,6 @@ test_content_filter_default_accept (TrackerMinerFSTestFixture *fixture,
 	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
 
 	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_PARENT_DIRECTORY,
-	                                          TRACKER_FILTER_POLICY_ACCEPT);
 	tracker_indexing_tree_add_filter (indexing_tree,
 	                                  TRACKER_FILTER_PARENT_DIRECTORY, "ignore");
 
@@ -879,50 +792,6 @@ test_content_filter_default_accept (TrackerMinerFSTestFixture *fixture,
 	                 "recursive/bb,"
 	                 "recursive/bb/ab,"
 	                 "recursive/bb/bb");
-	g_free (content);
-}
-
-static void
-test_content_filter_default_deny (TrackerMinerFSTestFixture *fixture,
-                                  gconstpointer              data)
-{
-	TrackerIndexingTree *indexing_tree;
-	gchar *content;
-
-	CREATE_FOLDER (fixture, "recursive");
-	CREATE_FOLDER (fixture, "recursive/aa");
-	CREATE_FOLDER (fixture, "recursive/bb");
-	CREATE_UPDATE_FILE (fixture, "recursive/allow");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/a1");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/b2");
-	CREATE_UPDATE_FILE (fixture, "recursive/aa/allow");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/ab");
-	CREATE_UPDATE_FILE (fixture, "recursive/bb/bb");
-
-	indexing_tree = tracker_miner_fs_get_indexing_tree (fixture->miner);
-	tracker_indexing_tree_set_default_policy (indexing_tree,
-	                                          TRACKER_FILTER_PARENT_DIRECTORY,
-	                                          TRACKER_FILTER_POLICY_DENY);
-	tracker_indexing_tree_add_filter (indexing_tree,
-	                                  TRACKER_FILTER_PARENT_DIRECTORY, "allow");
-
-	fixture_add_indexed_folder (fixture, "recursive",
-	                            TRACKER_DIRECTORY_FLAG_CHECK_MTIME |
-	                            TRACKER_DIRECTORY_FLAG_RECURSE);
-
-	tracker_miner_start (TRACKER_MINER (fixture->miner));
-
-	fixture_iterate (fixture);
-
-	content = fixture_get_content (fixture);
-	g_assert_cmpstr (content, ==,
-	                 "recursive,"
-	                 "recursive/aa,"
-	                 "recursive/aa/a1,"
-	                 "recursive/aa/allow,"
-	                 "recursive/aa/b2,"
-	                 "recursive/allow,"
-	                 "recursive/bb");
 	g_free (content);
 }
 
@@ -1949,60 +1818,6 @@ test_event_queue_move_and_move_back (TrackerMinerFSTestFixture *fixture,
 	g_free (content);
 }
 
-static void
-test_api_check_file (TrackerMinerFSTestFixture *fixture,
-                     gconstpointer              data)
-{
-	GFile *file;
-	gchar *content;
-
-	CREATE_FOLDER (fixture, "recursive");
-	CREATE_FOLDER (fixture, "not-indexed");
-	CREATE_UPDATE_FILE (fixture, "recursive/a");
-	CREATE_UPDATE_FILE (fixture, "not-indexed/b");
-	CREATE_UPDATE_FILE (fixture, "not-indexed/c");
-
-	fixture_add_indexed_folder (fixture, "recursive",
-	                            TRACKER_DIRECTORY_FLAG_MONITOR |
-	                            TRACKER_DIRECTORY_FLAG_CHECK_MTIME |
-	                            TRACKER_DIRECTORY_FLAG_RECURSE);
-
-	tracker_miner_start (TRACKER_MINER (fixture->miner));
-
-	fixture_iterate (fixture);
-
-	content = fixture_get_content (fixture);
-	g_assert_cmpstr (content, ==,
-	                 "recursive,"
-	                 "recursive/a");
-	g_free (content);
-
-	test_miner_reset_counters ((TestMiner *) fixture->miner);
-
-	file = fixture_get_relative_file (fixture, "recursive/a");
-	tracker_miner_fs_check_file (fixture->miner, file, G_PRIORITY_DEFAULT, FALSE);
-	g_object_unref (file);
-
-	file = fixture_get_relative_file (fixture, "not-indexed/b");
-	tracker_miner_fs_check_file (fixture->miner, file, G_PRIORITY_DEFAULT, FALSE);
-	g_object_unref (file);
-
-	file = fixture_get_relative_file (fixture, "not-indexed/c");
-	tracker_miner_fs_check_file (fixture->miner, file, G_PRIORITY_DEFAULT, TRUE);
-	g_object_unref (file);
-
-	fixture_iterate (fixture);
-
-	g_assert_cmpint (((TestMiner *) fixture->miner)->n_process_file, ==, 2);
-
-	content = fixture_get_content (fixture);
-	g_assert_cmpstr (content, ==,
-	                 "not-indexed/b,"
-	                 "recursive,"
-	                 "recursive/a");
-	g_free (content);
-}
-
 gint
 main (gint    argc,
       gchar **argv)
@@ -2030,18 +1845,12 @@ main (gint    argc,
 	          test_skip_hidden_files);
 	ADD_TEST ("/indexing-tree/index-hidden-files",
 	          test_index_hidden_files);
-	ADD_TEST ("/indexing-tree/file-filter-default-accept",
-	          test_file_filter_default_accept);
-	ADD_TEST ("/indexing-tree/file-filter-default-deny",
-	          test_file_filter_default_deny);
-	ADD_TEST ("/indexing-tree/directory-filter-default-accept",
-	          test_directory_filter_default_accept);
-	ADD_TEST ("/indexing-tree/directory-filter-default-deny",
-	          test_directory_filter_default_deny);
-	ADD_TEST ("/indexing-tree/content-filter-default-accept",
-	          test_content_filter_default_accept);
-	ADD_TEST ("/indexing-tree/content-filter-default-deny",
-	          test_content_filter_default_deny);
+	ADD_TEST ("/indexing-tree/file-filter",
+	          test_file_filter);
+	ADD_TEST ("/indexing-tree/directory-filter",
+	          test_directory_filter);
+	ADD_TEST ("/indexing-tree/content-filter",
+	          test_content_filter);
 	ADD_TEST ("/indexing-tree/content-filter-on-parent-root",
 		  test_content_filter_on_parent_root);
 
@@ -2092,10 +1901,6 @@ main (gint    argc,
 	          test_event_queue_move_and_move);
 	ADD_TEST ("event-queue/move-and-move-back",
 	          test_event_queue_move_and_move_back);
-
-	/* API tests */
-	ADD_TEST ("api/check_file",
-	          test_api_check_file);
 
 	return g_test_run ();
 }

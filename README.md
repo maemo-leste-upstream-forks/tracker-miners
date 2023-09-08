@@ -15,10 +15,9 @@ The Tracker project is divided into two main repositories:
     the indexer daemon (*tracker-miner-fs-3*) and tools to extract metadata
     from many different filetypes.
 
-More information on Tracker can be found at:
+Documentation on Tracker Miners can be found here:
 
-  * <https://gnome.pages.gitlab.gnome.org/tracker/>
-  * <https://wiki.gnome.org/Projects/Tracker>
+  * <https://gnome.pages.gitlab.gnome.org/tracker-miners>
 
 Source code and issue tracking:
 

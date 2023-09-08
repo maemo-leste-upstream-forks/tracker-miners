@@ -28,6 +28,9 @@
 
 #include <libtracker-miners-common/tracker-common.h>
 
+#include "tracker-cli-utils.h"
+
+static gboolean inside_build_tree = FALSE;
 static gchar *output_format = "turtle";
 static gchar **filenames;
 
@@ -54,7 +57,12 @@ extract_files (char *output_format)
 
 	tracker_term_pipe_to_pager ();
 
-	tracker_extract_path = g_build_filename(LIBEXECDIR, "tracker-extract-3", NULL);
+	if (inside_build_tree) {
+		/* Developer convienence - use uninstalled version if running from build tree */
+		tracker_extract_path = g_build_filename(BUILDROOT, "src", "tracker-extract", "tracker-extract-3", NULL);
+	} else {
+		tracker_extract_path = g_build_filename(LIBEXECDIR, "tracker-extract-3", NULL);
+	}
 
 	for (p = filenames; *p; p++) {
 		char *argv[] = {tracker_extract_path,
@@ -121,6 +129,8 @@ main (int argc, const char **argv)
 
 	context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, entries, NULL);
+
+	inside_build_tree = tracker_cli_check_inside_build_tree (argv[0]);
 
 	argv[0] = "tracker extract";
 
