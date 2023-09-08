@@ -1,6 +1,6 @@
 [Unit]
 Description=Tracker Filesystem Indexing Proxy
-ConditionUser=!root
+ConditionUser=!@system
 
 [Service]
 Type=dbus

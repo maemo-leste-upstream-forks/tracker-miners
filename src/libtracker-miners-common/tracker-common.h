@@ -28,6 +28,10 @@
 
 #define __LIBTRACKER_COMMON_INSIDE__
 
+#ifdef HAVE_POWER
+#include "tracker-power.h"
+#endif
+
 #include "tracker-date-time.h"
 #include "tracker-dbus.h"
 #include "tracker-debug.h"

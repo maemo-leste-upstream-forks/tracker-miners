@@ -44,6 +44,8 @@
 #define KEY_SPARQL "Sparql"
 #define ERROR_MESSAGE "Extraction failed for this file. Some metadata will be missing."
 
+static gboolean inside_build_tree = FALSE;
+
 static gchar **filenames;
 static gboolean full_namespaces;
 static gboolean plain_text_content;
@@ -376,7 +378,12 @@ output_eligible_status_for_file (gchar   *path,
 {
 	g_autofree char *tracker_miner_fs_path = NULL;
 
-	tracker_miner_fs_path = g_build_filename (LIBEXECDIR, "tracker-miner-fs-3", NULL);
+	if (inside_build_tree) {
+		/* Developer convienence - use uninstalled version if running from build tree */
+		tracker_miner_fs_path = g_build_filename (BUILDROOT, "src", "miners", "fs", "tracker-miner-fs-3", NULL);
+	} else {
+		tracker_miner_fs_path = g_build_filename (LIBEXECDIR, "tracker-miner-fs-3", NULL);
+	}
 
 	{
 		char *argv[] = {tracker_miner_fs_path, "--eligible", path, NULL };
@@ -638,6 +645,8 @@ main (int argc, const char **argv)
 
 	context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, entries, NULL);
+
+	inside_build_tree = tracker_cli_check_inside_build_tree (argv[0]);
 
 	argv[0] = "tracker info";
 

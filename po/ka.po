@@ -1,42 +1,42 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Georgian translation for tracker-miners.
+# Copyright (C) 2023 tracker-miners's authors
+# This file is distributed under the same license as the tracker-miners package.
+# Ekaterine Papava <papava.e@gtu.ge>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: tracker-miners\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/tracker-miners/issues\n"
-"POT-Creation-Date: 2022-06-18 22:57+0000\n"
-"PO-Revision-Date: 2022-07-08 06:13+0200\n"
-"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
-"Language-Team: \n"
+"POT-Creation-Date: 2023-09-02 10:55+0000\n"
+"PO-Revision-Date: 2023-09-04 15:24+0200\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
+"Language-Team: Georgian <(nothing)>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:23
 msgid "Max bytes to extract"
-msgstr ""
+msgstr "მაქს. გამოსატანი ბაიტები"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:24
 msgid "Maximum number of UTF-8 bytes to extract."
-msgstr ""
+msgstr "მაქსიმალური UTF-8-ის ბაიტები, გამოსატანად."
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:30
 msgid "Text file allowlist"
-msgstr ""
+msgstr "ტექსტური ფაილი, დაშვების სია"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:31
 msgid "Filename patterns for plain text documents that should be indexed"
-msgstr ""
+msgstr "უბრალო ტექსტური ფაილის სახელის ნიმუშები, რომლის დაინდექსებაც გნებავთ"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:37
 msgid "Wait for FS miner to be done before extracting"
-msgstr ""
+msgstr "დაელოდეთ FS miner-ის დასრულებას, სანამ გამოტანას დაიწყებთ"
 
 #: data/org.freedesktop.Tracker.Extract.gschema.xml:38
 msgid ""
@@ -48,7 +48,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:24
 msgid "Enable stemmer"
-msgstr ""
+msgstr "„stemmer“-ის ჩართვა"
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:25
 msgid ""
@@ -58,7 +58,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:30
 msgid "Enable unaccent"
-msgstr ""
+msgstr "„unaccent“-ის ჩართვა"
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:31
 msgid ""
@@ -68,41 +68,31 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:36
 msgid "Ignore numbers"
-msgstr ""
+msgstr "რიცხვების გამოტოვება"
 
 #: data/org.freedesktop.Tracker.FTS.gschema.xml:37
 msgid "If enabled, numbers will not be indexed."
-msgstr ""
-
-#: data/org.freedesktop.Tracker.FTS.gschema.xml:42
-msgid "Ignore stop words"
-msgstr ""
-
-#: data/org.freedesktop.Tracker.FTS.gschema.xml:43
-msgid ""
-"If enabled, the words listed in the stop-words list are ignored. E.g. common "
-"words like “the”, “yes”, “no”, etc."
-msgstr ""
+msgstr "თუ ჩართულია რიცხვები არ დაინდექსდება."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:23
 msgid "Initial sleep"
-msgstr ""
+msgstr "საწყისი ძილი"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:24
 msgid "Initial sleep time, in seconds."
-msgstr ""
+msgstr "საწყისი ძილის დრო, წამებში."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:30
 msgid "Throttle"
-msgstr ""
+msgstr "შეზღუდვა"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:31
 msgid "Indexing speed, the higher the slower."
-msgstr ""
+msgstr "დაინდექსების სიჩქარე. მაღლიდან დაბლამდე."
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:37
 msgid "Low disk space limit"
-msgstr ""
+msgstr "დისკის ადგილის მინიმუმის ზღვარი"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:38
 msgid ""
@@ -111,7 +101,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:44
 msgid "Crawling interval"
-msgstr ""
+msgstr "სკანირების ინტერვალი"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:45
 msgid ""
@@ -132,7 +122,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:66
 msgid "Enable monitors"
-msgstr ""
+msgstr "მონიტორების ჩართვა"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:67
 msgid "Set to false to completely disable any file monitoring"
@@ -140,7 +130,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:72
 msgid "Index removable devices"
-msgstr ""
+msgstr "მოხსნადი მოწყობილობების დანდექსება"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:73
 msgid ""
@@ -149,7 +139,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:78
 msgid "Index optical discs"
-msgstr ""
+msgstr "ოპტიკური დისკების დანდექსება"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:79
 msgid ""
@@ -159,7 +149,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:87
 msgid "Index when running on battery"
-msgstr ""
+msgstr "დაინდექსება ელემენტის მოხმარების დროს"
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:88
 msgid "Set to true to index while running on battery"
@@ -175,7 +165,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:99
 msgid "Directories to index recursively"
-msgstr ""
+msgstr "საქაღალდეები რეკურსიული სკანირებისთვის"
 
 #. Translators: Do NOT translate the directories names in capital. Those
 #. are keys used by Tracker.
@@ -189,7 +179,7 @@ msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:113
 msgid "Directories to index non-recursively"
-msgstr ""
+msgstr "საქაღალდეების არარეკურსიული სკანირებისთვის"
 
 #. Translators: Do NOT translate the directories names in capital. Those
 #. are keys used by Tracker.
@@ -202,37 +192,35 @@ msgid ""
 msgstr ""
 
 #: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:127
-msgid "Index applications installed on the system"
-msgstr ""
-
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:128
-msgid ""
-"If this option is enabled, the filesystem miner will look for .desktop files "
-"in the standard XDG system and user data directories."
-msgstr ""
-
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:136
 msgid "Ignored files"
 msgstr "იგნორირებული ფაილები"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:137
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:128
 msgid "List of file patterns to avoid"
-msgstr ""
+msgstr "თავიდან ასაცილებელი ფაილის სახელის ნიმუშები"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:142
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:133
 msgid "Ignored directories"
 msgstr "იგნორირებული საქაღალდეები"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:143
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:134
 msgid "List of directories to avoid"
-msgstr ""
+msgstr "თავიდან ასაცილებელი საქაღალდის სახელის ნიმუშები"
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:148
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:139
 msgid "Ignored directories with content"
+msgstr "შემცველობის მქონე საქაღალდეების იგნორ"
+
+#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:140
+msgid "Avoid any directory containing a file blocklisted here"
+msgstr "აქ შავ სიაში არსებული ყველა საქაღალდის გამოტოვება"
+
+#: src/libtracker-miners-common/tracker-miner-proxy.c:349
+msgid "Cookie not recognized to resume paused miner"
 msgstr ""
 
-#: data/org.freedesktop.Tracker.Miner.Files.gschema.xml:149
-msgid "Avoid any directory containing a file blocklisted here"
+#: src/libtracker-miners-common/tracker-miner-proxy.c:406
+msgid "Pause application and reason match an already existing pause request"
 msgstr ""
 
 #: src/libtracker-miners-common/tracker-utils.c:101
@@ -292,32 +280,19 @@ msgid_plural " %2.2d seconds"
 msgstr[0] " %2.2d წამი"
 msgstr[1] " %2.2d წამი"
 
-#: src/libtracker-miner/tracker-data-provider.c:108
-#: src/libtracker-miner/tracker-data-provider.c:168
-msgid "Operation not supported"
-msgstr "ოპერაცია მხარდაუჭერელია"
-
-#: src/libtracker-miner/tracker-miner-proxy.c:349
-msgid "Cookie not recognized to resume paused miner"
-msgstr ""
-
-#: src/libtracker-miner/tracker-miner-proxy.c:406
-msgid "Pause application and reason match an already existing pause request"
-msgstr ""
-
-#: src/miners/fs/tracker-main.c:81
+#: src/miners/fs/tracker-main.c:80
 msgid "Initial sleep time in seconds, 0->1000 (default=15)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:86
+#: src/miners/fs/tracker-main.c:85
 msgid "Runs until all configured locations are indexed and then exits"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:90 src/tracker/tracker-info.c:83
+#: src/miners/fs/tracker-main.c:89 src/tracker/tracker-info.c:83
 msgid "Checks if FILE is eligible for being mined based on configuration"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:91 src/tracker-extract/tracker-main.c:83
+#: src/miners/fs/tracker-main.c:90 src/tracker-extract/tracker-main.c:83
 #: src/tracker/tracker-extract.c:42 src/tracker/tracker-extract.c:43
 #: src/tracker/tracker-index.c:59 src/tracker/tracker-index.c:60
 #: src/tracker/tracker-info.c:86 src/tracker/tracker-info.c:87
@@ -325,119 +300,139 @@ msgstr ""
 msgid "FILE"
 msgstr "ფაილი"
 
-#: src/miners/fs/tracker-main.c:94 src/miners/rss/tracker-main.c:51
+#: src/miners/fs/tracker-main.c:93 src/miners/rss/tracker-main.c:63
 #: src/tracker-extract/tracker-main.c:97
 msgid "Runs for a specific domain ontology"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:98
+#: src/miners/fs/tracker-main.c:97
 msgid "Avoids changes in the filesystem"
-msgstr ""
+msgstr "ფაილური სისტემის ცვლილებების თავიდან არიდება"
 
-#: src/miners/fs/tracker-main.c:102 src/tracker-control/tracker-main.c:61
+#: src/miners/fs/tracker-main.c:101 src/tracker-control/tracker-main.c:61
 #: src/tracker-extract/tracker-main.c:101
-#: src/tracker-writeback/tracker-main.c:48
+#: src/tracker-writeback/tracker-main.c:50
 msgid "Displays version information"
 msgstr "ვერსიის ჩვენება"
 
-#: src/miners/fs/tracker-main.c:624
+#: src/miners/fs/tracker-main.c:623
 #, c-format
 msgid "Data object “%s” currently exists"
-msgstr ""
+msgstr "მონაცემს ობიექტი \"%s\" უკვე არსებობს"
 
-#: src/miners/fs/tracker-main.c:625
+#: src/miners/fs/tracker-main.c:624
 #, c-format
 msgid "Data object “%s” currently does not exist"
-msgstr ""
+msgstr "მონაცემის ობიექტი \"%s\" ამჟამად არ არსებობს"
 
-#: src/miners/fs/tracker-main.c:663
+#: src/miners/fs/tracker-main.c:662
 msgid "Directory is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:667
+#: src/miners/fs/tracker-main.c:666
 msgid "File is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:670
+#: src/miners/fs/tracker-main.c:669
 msgid "File is NOT eligible to be indexed (hidden file)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:672
+#: src/miners/fs/tracker-main.c:671
 msgid "File is NOT eligible to be indexed (not an indexed folder)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:696
+#: src/miners/fs/tracker-main.c:695
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (based on filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:702
+#: src/miners/fs/tracker-main.c:701
 #, c-format
 msgid "Parent directory “%s” is NOT eligible to be indexed (hidden file)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:710
+#: src/miners/fs/tracker-main.c:707
 #, c-format
 msgid ""
 "Parent directory “%s” is NOT eligible to be indexed (based on content "
 "filters)"
 msgstr ""
 
-#: src/miners/fs/tracker-main.c:731
+#: src/miners/fs/tracker-main.c:726
 msgid "Directory is eligible to be indexed"
-msgstr ""
+msgstr "საქაღალდის დაინდექსება შესაძლებელია"
 
-#: src/miners/fs/tracker-main.c:732
+#: src/miners/fs/tracker-main.c:727
 msgid "File is eligible to be indexed"
-msgstr ""
+msgstr "ფაილის დაინდექსება შეუძლებელია"
 
 #. Translators: this messagge will apper immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/miners/fs/tracker-main.c:988
+#: src/miners/fs/tracker-main.c:950
 msgid "— start the tracker indexer"
 msgstr ""
 
 #. Translators: this is a "feed" as in RSS
-#: src/miners/rss/tracker-main.c:43
+#: src/miners/rss/tracker-main.c:45
 msgid "Add feed"
-msgstr ""
+msgstr "ლენტის დამატება"
 
-#: src/miners/rss/tracker-main.c:44
+#: src/miners/rss/tracker-main.c:46 src/miners/rss/tracker-main.c:60
 msgid "URL"
 msgstr "ბმული"
 
-#: src/miners/rss/tracker-main.c:47
+#: src/miners/rss/tracker-main.c:49
 msgid "Title to use (must be used with --add-feed)"
-msgstr ""
+msgstr "სათაური (აუცილებლად გამოიყენეთ --add-feed თან ერთად)"
 
-#. Translators: this messagge will apper immediately after the
-#. * usage string - Usage: COMMAND <THIS_MESSAGE>
-#.
-#: src/miners/rss/tracker-main.c:145
-msgid "— start the feeds indexer"
-msgstr ""
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:54
+msgid "List feeds"
+msgstr "ლენტების სია"
 
-#: src/miners/rss/tracker-main.c:178 src/tracker/tracker-info.c:446
-#: src/tracker/tracker-search.c:1254 src/tracker/tracker-status.c:92
-#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:975
+#. Translators: this is a "feed" as in RSS
+#: src/miners/rss/tracker-main.c:59
+msgid "Delete feed"
+msgstr "ლენტის წაშლა"
+
+#: src/miners/rss/tracker-main.c:162 src/miners/rss/tracker-main.c:214
+#: src/miners/rss/tracker-main.c:251 src/tracker/tracker-info.c:446
+#: src/tracker/tracker-search.c:1371 src/tracker/tracker-status.c:92
+#: src/tracker/tracker-status.c:205 src/tracker/tracker-tag.c:946
 msgid "Could not establish a connection to Tracker"
 msgstr "Tracker-თან დაკავშირება შეუძლებელია"
 
-#: src/miners/rss/tracker-main.c:179 src/tracker/tracker-daemon.c:448
+#: src/miners/rss/tracker-main.c:163 src/miners/rss/tracker-main.c:215
+#: src/miners/rss/tracker-main.c:252 src/tracker/tracker-daemon.c:448
 #: src/tracker/tracker-daemon.c:509 src/tracker/tracker-daemon.c:544
 #: src/tracker/tracker-daemon.c:613 src/tracker/tracker-daemon.c:712
 #: src/tracker/tracker-daemon.c:759 src/tracker/tracker-daemon.c:980
 #: src/tracker/tracker-dbus.c:45 src/tracker/tracker-dbus.c:63
 #: src/tracker/tracker-info.c:447 src/tracker/tracker-process.c:219
-#: src/tracker/tracker-search.c:1255 src/tracker/tracker-status.c:93
+#: src/tracker/tracker-search.c:1372 src/tracker/tracker-status.c:93
 #: src/tracker/tracker-status.c:206 src/tracker/tracker-status.c:252
-#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:976
+#: src/tracker/tracker-status.c:281 src/tracker/tracker-tag.c:947
 msgid "No error given"
 msgstr "შეცდომის გარეშე"
 
-#: src/miners/rss/tracker-main.c:205
+#: src/miners/rss/tracker-main.c:188
 msgid "Could not add feed"
+msgstr "ლენტის დამატების შეცდომა"
+
+#: src/miners/rss/tracker-main.c:226
+msgid "Could not remove feed"
+msgstr "ლენტის წაშლის შეცდომა"
+
+#: src/miners/rss/tracker-main.c:294
+msgid "Could not list feeds"
+msgstr "ლენტები სიის გამოტანის შეცდომა"
+
+#. Translators: this messagge will apper immediately after the
+#. * usage string - Usage: COMMAND <THIS_MESSAGE>
+#.
+#: src/miners/rss/tracker-main.c:422
+msgid "— start the feeds indexer"
 msgstr ""
 
 #. Translators: this messagge will apper immediately after the
@@ -447,25 +442,25 @@ msgstr ""
 msgid "— start the tracker index proxy"
 msgstr ""
 
-#: src/tracker-extract/tracker-extract.c:695
+#: src/tracker-extract/tracker-extract.c:697
 msgid "Metadata extraction failed"
-msgstr ""
+msgstr "მეტამონაცემების გამოღება ჩავარდა"
 
-#: src/tracker-extract/tracker-extract.c:770
+#: src/tracker-extract/tracker-extract.c:776
 msgid "No metadata or extractor modules found to handle this file"
 msgstr ""
 
 #: src/tracker-extract/tracker-main.c:82
 msgid "File to extract metadata for"
-msgstr ""
+msgstr "ფაილი, რომლის მეტამონაცემების მიღებაც გსურთ"
 
 #: src/tracker-extract/tracker-main.c:86
 msgid "MIME type for file (if not provided, this will be guessed)"
-msgstr ""
+msgstr "ფაილის MIME ტიპი (თუ მითითებული არაა, ვცდი, მივხვდე)"
 
 #: src/tracker-extract/tracker-main.c:87
 msgid "MIME"
-msgstr ""
+msgstr "MIME"
 
 #: src/tracker-extract/tracker-main.c:90
 msgid "Force a module to be used for extraction (e.g. “foo” for “foo.so”)"
@@ -477,7 +472,7 @@ msgstr "მოდული"
 
 #: src/tracker-extract/tracker-main.c:93 src/tracker/tracker-extract.c:39
 msgid "Output results format: “sparql”, “turtle” or “json-ld”"
-msgstr ""
+msgstr "გამოტანის შედეგი ფორმატებია: “sparql”, “turtle” ან “json-ld”"
 
 #: src/tracker-extract/tracker-main.c:94 src/tracker/tracker-extract.c:40
 msgid "FORMAT"
@@ -486,15 +481,15 @@ msgstr "ფორმატი"
 #: src/tracker-extract/tracker-main.c:212
 #, c-format
 msgid "Unsupported serialization format “%s”\n"
-msgstr ""
+msgstr "მხარდაუჭერელი სერიალიზაციის ფორმატი \"%s\"\n"
 
 #. Translators: this message will appear immediately after the
 #. usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>
-#: src/tracker-extract/tracker-main.c:319
+#: src/tracker-extract/tracker-main.c:342
 msgid "— Extract file meta data"
-msgstr ""
+msgstr "— ფაილის მეტამონაცემების გამოღება"
 
-#: src/tracker-extract/tracker-main.c:334
+#: src/tracker-extract/tracker-main.c:357
 msgid "Filename and mime type must be provided together"
 msgstr ""
 
@@ -554,7 +549,7 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:125 src/tracker/tracker-daemon.c:129
 msgid "REASON"
-msgstr ""
+msgstr "REASON"
 
 #: src/tracker/tracker-daemon.c:128
 msgid ""
@@ -568,7 +563,7 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:133
 msgid "COOKIE"
-msgstr ""
+msgstr "ქუქი"
 
 #: src/tracker/tracker-daemon.c:136
 msgid ""
@@ -578,44 +573,44 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:137
 msgid "MINER"
-msgstr ""
+msgstr "დამანდექსებელი"
 
 #: src/tracker/tracker-daemon.c:140
 msgid "List all miners currently running"
-msgstr ""
+msgstr "ყველა გაშვებული დამაინდექსებლის სია"
 
 #: src/tracker/tracker-daemon.c:144
 msgid "List all miners installed"
-msgstr ""
+msgstr "ყველა დაყენებული დამაინდექსებლის სია"
 
 #: src/tracker/tracker-daemon.c:148
 msgid "List pause reasons"
-msgstr ""
+msgstr "შეჩერების მიზეზების სია"
 
 #: src/tracker/tracker-daemon.c:153
 msgid "List all Tracker processes"
-msgstr ""
+msgstr "ყველა ტრეკერის პროცესის სა"
 
 #: src/tracker/tracker-daemon.c:155
 msgid "Use SIGKILL to stop all miners"
-msgstr ""
+msgstr "დამაინდექსებლებს გასაჩერებლად SIGKILL სიგნალის გამოყენება"
 
 #: src/tracker/tracker-daemon.c:156 src/tracker/tracker-daemon.c:159
 msgid "APPS"
-msgstr ""
+msgstr "აპები"
 
 #: src/tracker/tracker-daemon.c:158
 msgid "Use SIGTERM to stop all miners"
-msgstr ""
+msgstr "დამაინდექსებლებს გასაჩერებლად SIGTERM სიგნალის გამოყენება"
 
 #: src/tracker/tracker-daemon.c:161
 msgid "Starts miners"
-msgstr ""
+msgstr "გაუშვებს დამანდექსებლებს"
 
 #: src/tracker/tracker-daemon.c:213
 #, c-format
 msgid "Could not get status from miner: %s"
-msgstr ""
+msgstr "დამაინდექსებლისგან სტატუსის მიღება შეუძლებელია: %s"
 
 #. Translators: %s is a time string
 #: src/tracker/tracker-daemon.c:275
@@ -625,16 +620,16 @@ msgstr "დარჩენილია %s"
 
 #: src/tracker/tracker-daemon.c:278
 msgid "unknown time left"
-msgstr ""
+msgstr "დარჩენილი დრო უცნობია"
 
 #. Work out lengths for output spacing
 #: src/tracker/tracker-daemon.c:291 src/tracker/tracker-daemon.c:769
 msgid "PAUSED"
-msgstr ""
+msgstr "შეჩერებულია"
 
 #: src/tracker/tracker-daemon.c:308
 msgid "Not running or is a disabled plugin"
-msgstr ""
+msgstr "არა-გაშვებული ან გათიშული დამატება"
 
 #: src/tracker/tracker-daemon.c:447
 #, c-format
@@ -649,17 +644,17 @@ msgstr ""
 #: src/tracker/tracker-daemon.c:462 src/tracker/tracker-daemon.c:468
 #, c-format
 msgid "Could not pause miner: %s"
-msgstr ""
+msgstr "დამანდექსებლს შეჩერება შეუძლებელია: %s"
 
 #: src/tracker/tracker-daemon.c:474
 #, c-format
 msgid "Cookie is %d"
-msgstr ""
+msgstr "ქუქის მდგომარეობაა %d"
 
 #: src/tracker/tracker-daemon.c:481 src/tracker/tracker-daemon.c:724
 #: src/tracker/tracker-daemon.c:841
 msgid "Press Ctrl+C to stop"
-msgstr ""
+msgstr "გასაჩერებლად დააწექით Ctrl+C"
 
 #: src/tracker/tracker-daemon.c:508
 #, c-format
@@ -674,7 +669,7 @@ msgstr ""
 #: src/tracker/tracker-daemon.c:522
 #, c-format
 msgid "Could not resume miner: %s"
-msgstr ""
+msgstr "დამანდექსებლს გაგრძელება შეუძლებელია: %s"
 
 #: src/tracker/tracker-daemon.c:526
 msgid "Done"
@@ -689,15 +684,15 @@ msgstr ""
 #, c-format
 msgid "Found %d miner installed"
 msgid_plural "Found %d miners installed"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "აღმოჩენილია %d დაყენებული დამაინდექსებელი"
+msgstr[1] "აღმოჩენილია %d დაყენებული დამაინდექსებელი"
 
 #: src/tracker/tracker-daemon.c:580
 #, c-format
 msgid "Found %d miner running"
 msgid_plural "Found %d miners running"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "აღმოჩენილია %d გაშვებული დამაინდექსებელი"
+msgstr[1] "აღმოჩენილია %d გაშვებული დამაინდექსებელი"
 
 #: src/tracker/tracker-daemon.c:612
 #, c-format
@@ -706,12 +701,12 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:622
 msgid "No miners are running"
-msgstr ""
+msgstr "დამაინდექსებები გაშვებული არაა"
 
 #. Display states
 #: src/tracker/tracker-daemon.c:662 src/tracker/tracker-daemon.c:779
 msgid "Miners"
-msgstr ""
+msgstr "დამაინდექსებლები"
 
 #: src/tracker/tracker-daemon.c:669
 msgid "Application"
@@ -723,7 +718,7 @@ msgstr "მიზეზი"
 
 #: src/tracker/tracker-daemon.c:680
 msgid "No miners are paused"
-msgstr ""
+msgstr "შეჩერებული დამაინდექსებლების გარეშე"
 
 #: src/tracker/tracker-daemon.c:711
 msgid "Could not get SPARQL connection"
@@ -771,8 +766,8 @@ msgstr ""
 #, c-format
 msgid "Found %d PID…"
 msgid_plural "Found %d PIDs…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "აღმოჩენილია %d PID…"
+msgstr[1] "აღმოჩენილია %d PID…"
 
 #: src/tracker/tracker-daemon.c:948
 #, c-format
@@ -781,7 +776,7 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:974
 msgid "Starting miners…"
-msgstr ""
+msgstr "დამაინდექსებლების გაშვება…"
 
 #: src/tracker/tracker-daemon.c:979
 #, c-format
@@ -790,7 +785,7 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:1004
 msgid "perhaps a disabled plugin?"
-msgstr ""
+msgstr "ალბათ დამატება გათიშულა?"
 
 #: src/tracker/tracker-daemon.c:1054
 msgid "If no arguments are given, the status of the data miners is shown"
@@ -798,8 +793,8 @@ msgstr ""
 
 #: src/tracker/tracker-daemon.c:1059 src/tracker/tracker-extract.c:128
 #: src/tracker/tracker-index.c:394 src/tracker/tracker-info.c:645
-#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1430
-#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1084
+#: src/tracker/tracker-reset.c:263 src/tracker/tracker-search.c:1547
+#: src/tracker/tracker-status.c:560 src/tracker/tracker-tag.c:1055
 msgid "Unrecognized options"
 msgstr "უცნობი პარამეტრები"
 
@@ -813,7 +808,7 @@ msgstr ""
 
 #: src/tracker/tracker-extract.c:68
 msgid "Could not run tracker-extract: "
-msgstr ""
+msgstr "შეცდომა tracker-extract-ის გაშვებისას: "
 
 #: src/tracker/tracker-index.c:50
 msgid "Adds FILE as an indexed location"
@@ -825,7 +820,7 @@ msgstr ""
 
 #: src/tracker/tracker-index.c:56
 msgid "Makes indexing recursive"
-msgstr ""
+msgstr "რეკურსიული დაინდექსება"
 
 #: src/tracker/tracker-index.c:192
 #, c-format
@@ -845,7 +840,7 @@ msgstr ""
 #. TRANSLATORS: These are commandline options
 #: src/tracker/tracker-index.c:296
 msgid "--recursive requires --add"
-msgstr ""
+msgstr "--recursive-ს --add ესაჭიროება"
 
 #: src/tracker/tracker-index.c:356 src/tracker/tracker-status.c:331
 msgid "Path"
@@ -857,7 +852,7 @@ msgstr "რეკურსიული"
 
 #: src/tracker/tracker-index.c:407
 msgid "Please specify one or more locations to index."
-msgstr ""
+msgstr "დასაინდექსებლად მიუთითეთ ერთი ან მეტი მდებარეობა."
 
 #: src/tracker/tracker-info.c:57
 msgid "Show full namespaces (i.e. don’t use nie:title, use full URLs)"
@@ -895,7 +890,7 @@ msgstr "სახელების სივრცის პრეფიქს�
 msgid "No namespace prefixes were returned"
 msgstr "სახელების სივრცის პრეფიქსი ნაპოვნი არაა"
 
-#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1184
+#: src/tracker/tracker-info.c:230 src/tracker/tracker-search.c:1301
 msgid "Results"
 msgstr "შედეგები"
 
@@ -931,15 +926,15 @@ msgstr ""
 #: src/tracker/tracker-process.c:222
 #, c-format
 msgid "Killed process %d — “%s”"
-msgstr ""
+msgstr "მოვკალი პროცესი %d — “%s”"
 
 #: src/tracker/tracker-reset.c:49
 msgid "Remove filesystem indexer database"
-msgstr ""
+msgstr "ფაილური სისტემის დამაიინდექსებლის ბაზს წაშლა"
 
 #: src/tracker/tracker-reset.c:52
 msgid "Remove RSS indexer database"
-msgstr ""
+msgstr "RSS დამაინდექსებლის ბაზის წაშლა"
 
 #: src/tracker/tracker-reset.c:55
 msgid ""
@@ -966,7 +961,7 @@ msgstr "საქაღალდეებში ძებნა"
 
 #: src/tracker/tracker-search.c:81
 msgid "Search for music files"
-msgstr ""
+msgstr "მუსიკის ფაილების ძებნა"
 
 #: src/tracker/tracker-search.c:85
 msgid "Search for music albums (--all has no effect on this)"
@@ -978,15 +973,15 @@ msgstr ""
 
 #: src/tracker/tracker-search.c:93
 msgid "Search for image files"
-msgstr ""
+msgstr "გამოსახულებს ფაილების ძებნა"
 
 #: src/tracker/tracker-search.c:97
 msgid "Search for video files"
-msgstr ""
+msgstr "ვიდეოფაილების ძებნა"
 
 #: src/tracker/tracker-search.c:101
 msgid "Search for document files"
-msgstr ""
+msgstr "დოკუმენტის ფალების ძებნა"
 
 #: src/tracker/tracker-search.c:105
 msgid "Search for software (--all has no effect on this)"
@@ -1002,11 +997,11 @@ msgstr ""
 
 #: src/tracker/tracker-search.c:119 src/tracker/tracker-tag.c:71
 msgid "Limit the number of results shown"
-msgstr ""
+msgstr "ნაჩვენები შედეგების რაოდენობის შეზღუდვა"
 
 #: src/tracker/tracker-search.c:123 src/tracker/tracker-tag.c:75
 msgid "Offset the results"
-msgstr ""
+msgstr "შედეგების წანაცვლება"
 
 #: src/tracker/tracker-search.c:127
 msgid "Use OR for search terms instead of AND (the default)"
@@ -1038,68 +1033,68 @@ msgstr ""
 
 #: src/tracker/tracker-search.c:154 src/tracker/tracker-status.c:58
 msgid "search terms"
-msgstr ""
+msgstr "ძებნის პირობები"
 
 #: src/tracker/tracker-search.c:155 src/tracker/tracker-status.c:59
 msgid "EXPRESSION"
 msgstr "გამოსახულება"
 
-#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:591
-#: src/tracker/tracker-search.c:683 src/tracker/tracker-search.c:775
-#: src/tracker/tracker-search.c:862 src/tracker/tracker-search.c:947
-#: src/tracker/tracker-search.c:1171
+#: src/tracker/tracker-search.c:245 src/tracker/tracker-search.c:635
+#: src/tracker/tracker-search.c:731 src/tracker/tracker-search.c:823
+#: src/tracker/tracker-search.c:912 src/tracker/tracker-search.c:1001
+#: src/tracker/tracker-search.c:1288
 msgid "Could not get search results"
-msgstr ""
+msgstr "ძებნის შედეგების მიღება შეუძლებელია"
 
 #: src/tracker/tracker-search.c:254
 msgid "No files were found"
-msgstr ""
+msgstr "ფაილები ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:436
+#: src/tracker/tracker-search.c:258 src/tracker/tracker-tag.c:426
 msgid "Files"
 msgstr "ფაილები"
 
-#: src/tracker/tracker-search.c:600
+#: src/tracker/tracker-search.c:644
 msgid "No artists were found"
-msgstr ""
+msgstr "შემსრულებელი ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:604
+#: src/tracker/tracker-search.c:648
 msgid "Artists"
 msgstr "შემსრულებლები"
 
-#: src/tracker/tracker-search.c:692
+#: src/tracker/tracker-search.c:740
 msgid "No music was found"
-msgstr ""
+msgstr "მუსიკა ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:696
+#: src/tracker/tracker-search.c:744
 msgid "Albums"
 msgstr "ალბომები"
 
-#: src/tracker/tracker-search.c:784
+#: src/tracker/tracker-search.c:832
 msgid "No feeds were found"
-msgstr ""
+msgstr "ლენტა ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:788
+#: src/tracker/tracker-search.c:836
 msgid "Feeds"
 msgstr "ლენტები"
 
-#: src/tracker/tracker-search.c:871
+#: src/tracker/tracker-search.c:921
 msgid "No software was found"
-msgstr ""
+msgstr "პროგრამა ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:875
+#: src/tracker/tracker-search.c:925
 msgid "Software"
 msgstr "პროგრამები"
 
-#: src/tracker/tracker-search.c:956
+#: src/tracker/tracker-search.c:1010
 msgid "No software categories were found"
-msgstr ""
+msgstr "პროგრამის კატეგორია ვერ ვიპოვე"
 
-#: src/tracker/tracker-search.c:960
+#: src/tracker/tracker-search.c:1014
 msgid "Software Categories"
-msgstr ""
+msgstr "პროგრამის კატეგორიები"
 
-#: src/tracker/tracker-search.c:1180
+#: src/tracker/tracker-search.c:1297
 msgid "No results were found matching your query"
 msgstr ""
 
@@ -1113,7 +1108,7 @@ msgstr ""
 
 #: src/tracker/tracker-status.c:113
 msgid "No statistics available"
-msgstr ""
+msgstr "სტატისტიკა ხელმისაწვდომი არაა"
 
 #. To translators: This is to say there are no
 #. * statistics found. We use a "Statistics:
@@ -1145,9 +1140,9 @@ msgstr "სტატისტიკა:"
 #. *     None
 #. *
 #.
-#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:320
-#: src/tracker/tracker-tag.c:452 src/tracker/tracker-tag.c:574
-#: src/tracker/tracker-tag.c:953
+#: src/tracker/tracker-status.c:157 src/tracker/tracker-tag.c:310
+#: src/tracker/tracker-tag.c:442 src/tracker/tracker-tag.c:564
+#: src/tracker/tracker-tag.c:924
 msgid "None"
 msgstr "არაფერი"
 
@@ -1161,9 +1156,9 @@ msgstr "შეტყობინება"
 
 #: src/tracker/tracker-status.c:391
 msgid "Currently indexed"
-msgstr ""
+msgstr "ამჟამად დაინდექსებულია"
 
-#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:556
+#: src/tracker/tracker-status.c:394 src/tracker/tracker-tag.c:546
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1183,12 +1178,12 @@ msgstr ""
 
 #: src/tracker/tracker-status.c:426
 msgid "Data is still being indexed"
-msgstr ""
+msgstr "მონაცემების დაინდექსება ჯერ კიდევ მიმდინარეობს"
 
 #: src/tracker/tracker-status.c:427
 #, c-format
 msgid "Estimated %s left"
-msgstr ""
+msgstr "დარჩენილია დაახლ %s"
 
 #: src/tracker/tracker-status.c:431
 msgid "All data miners are idle, indexing complete"
@@ -1198,12 +1193,12 @@ msgstr ""
 #, c-format
 msgid "%d recorded failure"
 msgid_plural "%d recorded failures"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d ჩაწერილი ჩავარდნა"
+msgstr[1] "%d ჩაწერილი ჩავარდნა"
 
 #: src/tracker/tracker-status.c:524
 msgid "No reports found"
-msgstr ""
+msgstr "ანგარიშები ვერ ვიპოვე"
 
 #: src/tracker/tracker-tag.c:51
 msgid ""
@@ -1244,11 +1239,11 @@ msgstr ""
 
 #: src/tracker/tracker-tag.c:84
 msgid "FILE…"
-msgstr ""
+msgstr "FILE…"
 
 #: src/tracker/tracker-tag.c:85
 msgid "FILE [FILE…]"
-msgstr ""
+msgstr "ფაილი [ფაილი…]"
 
 #: src/tracker/tracker-tag.c:101
 msgid ""
@@ -1259,124 +1254,127 @@ msgstr ""
 msgid "Could not get file URNs"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:311
+#: src/tracker/tracker-tag.c:301
 msgid "Could not get files related to tag"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:378
+#: src/tracker/tracker-tag.c:368
 msgid "Could not get all tags in the database"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:388
+#: src/tracker/tracker-tag.c:378
 msgid "No files have been tagged"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:423
+#: src/tracker/tracker-tag.c:413
 msgid "Could not get files for matching tags"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:432
+#: src/tracker/tracker-tag.c:422
 msgid "No files were found matching ALL of those tags"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:511 src/tracker/tracker-tag.c:927
+#: src/tracker/tracker-tag.c:501 src/tracker/tracker-tag.c:898
 msgid "Could not get all tags"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:520 src/tracker/tracker-tag.c:936
+#: src/tracker/tracker-tag.c:510 src/tracker/tracker-tag.c:907
 msgid "No tags were found"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:524
+#: src/tracker/tracker-tag.c:514
 msgid "Tags (shown by name)"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:598
+#: src/tracker/tracker-tag.c:589
 msgid "No files were modified"
-msgstr ""
+msgstr "ფაილები არ შეცვლილა"
 
-#: src/tracker/tracker-tag.c:648 src/tracker/tracker-tag.c:656
+#: src/tracker/tracker-tag.c:633 src/tracker/tracker-tag.c:641
 msgid "Files do not exist or aren’t indexed"
-msgstr ""
+msgstr "ფაილი არ არსებობს ან დაინდექსებული არაა"
 
-#: src/tracker/tracker-tag.c:706
+#: src/tracker/tracker-tag.c:682
 msgid "Could not add tag"
-msgstr ""
+msgstr "ჭდის დამატება შეუძლებელია"
 
-#: src/tracker/tracker-tag.c:722
+#: src/tracker/tracker-tag.c:694
 msgid "Tag was added successfully"
-msgstr ""
+msgstr "ჭდის დამატების შეცდომა"
 
-#: src/tracker/tracker-tag.c:751
+#: src/tracker/tracker-tag.c:724
 msgid "Could not add tag to files"
-msgstr ""
+msgstr "ფაილებისთვის ჭდის დამატება შეუძლებელია"
 
-#: src/tracker/tracker-tag.c:761
+#: src/tracker/tracker-tag.c:735
 msgid "Tagged"
-msgstr ""
+msgstr "ჭდეებიანი"
 
-#: src/tracker/tracker-tag.c:762
+#: src/tracker/tracker-tag.c:736
 msgid "Not tagged, file is not indexed"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:808
+#: src/tracker/tracker-tag.c:778
 msgid "Could not get tag by label"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:819
+#: src/tracker/tracker-tag.c:789
 msgid "No tags were found by that name"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:836
+#: src/tracker/tracker-tag.c:807
 msgid "None of the files had this tag set"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:882
+#: src/tracker/tracker-tag.c:854
 msgid "Could not remove tag"
-msgstr ""
+msgstr "ჭდის წაშლის შეცდომა"
 
-#: src/tracker/tracker-tag.c:890
+#: src/tracker/tracker-tag.c:862
 msgid "Tag was removed successfully"
-msgstr ""
+msgstr "ჭდის წაშლა წარმატებულია"
 
-#: src/tracker/tracker-tag.c:894
+#: src/tracker/tracker-tag.c:866
 msgid "Untagged"
 msgstr "ჭდის გარეშე"
 
-#: src/tracker/tracker-tag.c:895
+#: src/tracker/tracker-tag.c:867
 msgid "File not indexed or already untagged"
-msgstr ""
+msgstr "ფაილი დაინდექსებული არაა ან ჭდე უკვე მოხსნილია"
 
-#: src/tracker/tracker-tag.c:1093
+#: src/tracker/tracker-tag.c:1064
 msgid "The --list option is required for --show-files"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:1095
+#: src/tracker/tracker-tag.c:1066
 msgid ""
 "The --and-operator option can only be used with --list and tag label "
 "arguments"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:1097
+#: src/tracker/tracker-tag.c:1068
 msgid "Add and delete actions can not be used together"
 msgstr ""
 
-#: src/tracker/tracker-tag.c:1099
+#: src/tracker/tracker-tag.c:1070
 msgid "The --description option can only be used with --add"
 msgstr ""
 
-#: src/tracker-writeback/tracker-main.c:52
+#: src/tracker-writeback/tracker-main.c:54
 msgid ""
 "Logging, 0 = errors only, 1 = minimal, 2 = detailed and 3 = debug (default=0)"
 msgstr ""
 
-#: src/tracker-writeback/tracker-main.c:59
+#: src/tracker-writeback/tracker-main.c:61
 msgid "Disable shutting down after 30 seconds of inactivity"
 msgstr ""
 
 #. Translators: this message will appear immediately after the
 #. * usage string - Usage: COMMAND <THIS_MESSAGE>
 #.
-#: src/tracker-writeback/tracker-main.c:85
+#: src/tracker-writeback/tracker-main.c:93
 msgid "— start the tracker writeback service"
 msgstr ""
+
+#~ msgid "Operation not supported"
+#~ msgstr "ოპერაცია მხარდაუჭერელია"

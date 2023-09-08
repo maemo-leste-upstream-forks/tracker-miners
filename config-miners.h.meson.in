@@ -35,8 +35,8 @@
 /* Define if we have Gstreamer version 1.20.0 or up */
 #mesondefine HAVE_GSTREAMER_1_20
 
-/* Define if we have HAL */
-#mesondefine HAVE_HAL
+/* Define if we have battery detection (HAL/upower) */
+#mesondefine HAVE_POWER
 
 /* Define if we have libcue */
 #mesondefine HAVE_LIBCUE
@@ -67,9 +67,6 @@
 
 /* Define to 1 if you have the `strnlen' function. */
 #mesondefine HAVE_STRNLEN
-
-/* Define if we have UPOWER */
-#mesondefine HAVE_UPOWER
 
 /* Define to 1 if you have the `up_client_get_on_low_battery' function. */
 #mesondefine HAVE_UP_CLIENT_GET_ON_LOW_BATTERY

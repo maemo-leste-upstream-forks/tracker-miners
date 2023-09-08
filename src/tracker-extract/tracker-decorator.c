@@ -25,6 +25,10 @@
 
 #include "tracker-decorator.h"
 
+#ifdef HAVE_POSIX_FADVISE
+#include <fcntl.h>
+#endif
+
 #define QUERY_BATCH_SIZE 200
 #define DEFAULT_BATCH_SIZE 200
 
@@ -176,6 +180,48 @@ G_DEFINE_BOXED_TYPE (TrackerDecoratorInfo,
                      tracker_decorator_info,
                      tracker_decorator_info_ref,
                      tracker_decorator_info_unref)
+
+static void
+hint_file_needed (GFile    *file,
+                  gboolean  needed)
+{
+#ifdef HAVE_POSIX_FADVISE
+	g_autofree gchar *path = NULL;
+	int fd;
+
+	path = g_file_get_path (file);
+	if (!path)
+		return;
+
+	fd = tracker_file_open_fd (path);
+	posix_fadvise (fd, 0, 0,
+	               needed ? POSIX_FADV_WILLNEED : POSIX_FADV_DONTNEED);
+	close (fd);
+#endif /* HAVE_POSIX_FADVISE */
+}
+
+static void
+tracker_decorator_info_hint_needed (TrackerDecoratorInfo *info,
+                                    gboolean              needed)
+{
+	g_autoptr (GFile) file = NULL;
+
+	file = g_file_new_for_uri (info->url);
+	hint_file_needed (file, needed);
+}
+
+static void
+decorator_hint_next_file_needed (TrackerDecorator *decorator)
+{
+	TrackerDecoratorPrivate *priv =
+		tracker_decorator_get_instance_private (decorator);
+	TrackerDecoratorInfo *next_info;
+	g_autoptr (GFile) file = NULL;
+
+	next_info = g_queue_peek_head (&priv->item_cache);
+	if (next_info)
+		tracker_decorator_info_hint_needed (next_info, TRUE);
+}
 
 static void
 decorator_update_state (TrackerDecorator *decorator,
@@ -407,6 +453,8 @@ decorator_task_done (GObject      *object,
 	priv = tracker_decorator_get_instance_private (decorator);
 	extract_info = g_task_propagate_pointer (G_TASK (result), &error);
 
+	tracker_decorator_info_hint_needed (info, FALSE);
+
 	if (!extract_info) {
 		if (error) {
 			g_warning ("Task for '%s' finished with error: %s\n",
@@ -563,6 +611,7 @@ decorator_cache_items_cb (GObject      *object,
 	} else if (g_queue_is_empty (&priv->item_cache) && priv->processing) {
 		decorator_finish (decorator);
 	} else if (queue_was_empty) {
+		decorator_hint_next_file_needed (decorator);
 		g_signal_emit (decorator, signals[ITEMS_AVAILABLE], 0);
 	}
 }
@@ -959,6 +1008,7 @@ tracker_decorator_next (TrackerDecorator  *decorator,
 		return NULL;
 
 	TRACKER_NOTE (DECORATOR, g_message ("[Decorator] Next item %s", info->url));
+	decorator_hint_next_file_needed (decorator);
 
 	return info;
 }

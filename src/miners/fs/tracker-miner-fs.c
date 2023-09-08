@@ -21,7 +21,6 @@
 
 #include <libtracker-miners-common/tracker-common.h>
 
-#include "tracker-crawler.h"
 #include "tracker-miner-fs.h"
 #include "tracker-monitor.h"
 #include "tracker-utils.h"
@@ -45,6 +44,8 @@
 #define TRACKER_TASK_PRIORITY G_PRIORITY_DEFAULT_IDLE + 10
 
 #define MAX_SIMULTANEOUS_ITEMS 64
+
+#define TRACKER_CRAWLER_MAX_TIMEOUT_INTERVAL 1000
 
 /**
  * SECTION:tracker-miner-fs
@@ -82,7 +83,6 @@
  *                         error,
  *                         "name", "MyMinerFiles",
  *                         "root", root,
- *                         "data-provider", data_provider,
  *                         "processing-pool-wait-limit", 10,
  *                         "processing-pool-ready-limit", 100,
  *                         NULL);
@@ -119,7 +119,6 @@ struct _TrackerMinerFSPrivate {
 	GFile *root;
 	TrackerIndexingTree *indexing_tree;
 	TrackerFileNotifier *file_notifier;
-	TrackerDataProvider *data_provider;
 
 	/* Sparql insertion tasks */
 	TrackerTaskPool *task_pool;
@@ -190,7 +189,6 @@ enum {
 	PROP_ROOT,
 	PROP_WAIT_POOL_LIMIT,
 	PROP_READY_POOL_LIMIT,
-	PROP_DATA_PROVIDER,
 	PROP_FILE_ATTRIBUTES,
 };
 
@@ -350,13 +348,6 @@ tracker_miner_fs_class_init (TrackerMinerFSClass *klass)
 	                                                    1, G_MAXUINT, DEFAULT_READY_POOL_LIMIT,
 	                                                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
-	                                 PROP_DATA_PROVIDER,
-	                                 g_param_spec_object ("data-provider",
-	                                                      "Data provider",
-	                                                      "Data provider populating data, e.g. like GFileEnumerator",
-	                                                      TRACKER_TYPE_DATA_PROVIDER,
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
-	g_object_class_install_property (object_class,
 	                                 PROP_FILE_ATTRIBUTES,
 	                                 g_param_spec_string ("file-attributes",
 	                                                      "File attributes",
@@ -501,7 +492,6 @@ miner_fs_initable_init (GInitable     *initable,
 
 	/* Create the file notifier */
 	priv->file_notifier = tracker_file_notifier_new (priv->indexing_tree,
-	                                                 priv->data_provider,
 	                                                 tracker_miner_get_connection (TRACKER_MINER (initable)),
 	                                                 priv->file_attributes);
 
@@ -765,9 +755,6 @@ fs_set_property (GObject      *object,
 			                             fs->priv->sparql_buffer_limit);
 		}
 		break;
-	case PROP_DATA_PROVIDER:
-		fs->priv->data_provider = g_value_dup_object (value);
-		break;
 	case PROP_FILE_ATTRIBUTES:
 		fs->priv->file_attributes = g_value_dup_string (value);
 		break;
@@ -798,9 +785,6 @@ fs_get_property (GObject    *object,
 		break;
 	case PROP_READY_POOL_LIMIT:
 		g_value_set_uint (value, fs->priv->sparql_buffer_limit);
-		break;
-	case PROP_DATA_PROVIDER:
-		g_value_set_object (value, fs->priv->data_provider);
 		break;
 	case PROP_FILE_ATTRIBUTES:
 		g_value_set_string (value, fs->priv->file_attributes);
@@ -1782,134 +1766,6 @@ indexing_tree_directory_removed (TrackerIndexingTree *indexing_tree,
 	g_timer_destroy (timer);
 }
 
-static gboolean
-check_file_parents (TrackerMinerFS *fs,
-                    GFile          *file)
-{
-	GFile *parent, *root;
-	GList *parents = NULL, *p;
-	QueueEvent *event;
-
-	parent = g_file_get_parent (file);
-
-	if (!parent) {
-		return FALSE;
-	}
-
-	root = tracker_indexing_tree_get_root (fs->priv->indexing_tree,
-	                                       parent, NULL);
-	if (!root) {
-		g_object_unref (parent);
-		return FALSE;
-	}
-
-	/* Add parent directories until we're past the config dir */
-	while (parent &&
-	       !g_file_has_prefix (root, parent)) {
-		parents = g_list_prepend (parents, parent);
-		parent = g_file_get_parent (parent);
-	}
-
-	/* Last parent fetched is not added to the list */
-	if (parent) {
-		g_object_unref (parent);
-	}
-
-	for (p = parents; p; p = p->next) {
-		event = queue_event_new (TRACKER_MINER_FS_EVENT_UPDATED, p->data, NULL);
-		miner_fs_queue_event (fs, event, miner_fs_get_queue_priority (fs, p->data));
-		g_object_unref (p->data);
-	}
-
-	g_list_free (parents);
-
-	return TRUE;
-}
-
-/**
- * tracker_miner_fs_check_file:
- * @fs: a #TrackerMinerFS
- * @file: #GFile for the file to check
- * @priority: the priority of the check task
- * @check_parents: whether to check parents and eligibility or not
- *
- * Tells the filesystem miner to check and index a file at
- * a given priority, this file must be part of the usual
- * crawling directories of #TrackerMinerFS. See
- * tracker_indexing_tree_add().
- *
- * Since: 0.10
- **/
-void
-tracker_miner_fs_check_file (TrackerMinerFS *fs,
-                             GFile          *file,
-                             gint            priority,
-                             gboolean        check_parents)
-{
-	gboolean should_process = TRUE;
-	QueueEvent *event;
-	gchar *uri;
-
-	g_return_if_fail (TRACKER_IS_MINER_FS (fs));
-	g_return_if_fail (G_IS_FILE (file));
-
-	if (check_parents) {
-		should_process =
-			tracker_indexing_tree_file_is_indexable (fs->priv->indexing_tree,
-			                                         file, NULL);
-	}
-
-	uri = g_file_get_uri (file);
-
-	TRACKER_NOTE (MINER_FS_EVENTS,
-	              g_message ("%s:'%s' (FILE) (requested by application)",
-	                         should_process ? "Found " : "Ignored",
-	                         uri));
-
-	if (should_process) {
-		if (check_parents && !check_file_parents (fs, file)) {
-			return;
-		}
-
-		event = queue_event_new (TRACKER_MINER_FS_EVENT_UPDATED, file, NULL);
-		miner_fs_queue_event (fs, event, priority);
-	}
-
-	g_free (uri);
-}
-
-/**
- * tracker_miner_fs_notify_finish:
- * @fs: a #TrackerMinerFS
- * @task: a #GTask obtained in a #TrackerMinerFS signal/vmethod
- * @sparql: (nullable): Resulting sparql for the given operation, or %NULL if
- *   there is an error
- * @error: a #GError with the error that happened during processing, or %NULL.
- *
- * Notifies @fs that all processing on @file has been finished, if any error
- * happened during file data processing, it should be passed in @error, else
- * @sparql should contain correct SPARQL representing the operation in
- * particular.
- *
- * This function is expected to be called in reaction to all #TrackerMinerFS
- * signals
- **/
-void
-tracker_miner_fs_notify_finish (TrackerMinerFS *fs,
-                                GTask          *task,
-                                const gchar    *sparql,
-                                GError         *error)
-{
-	g_return_if_fail (TRACKER_IS_MINER_FS (fs));
-	g_return_if_fail (G_IS_TASK (task));
-	g_return_if_fail (sparql || error);
-
-	if (error)
-		g_task_return_error (task, error);
-	else
-		g_task_return_pointer (task, g_strdup (sparql), g_free);
-}
-
 /**
  * tracker_miner_fs_set_throttle:
  * @fs: a #TrackerMinerFS
@@ -2046,25 +1902,6 @@ tracker_miner_fs_get_indexing_tree (TrackerMinerFS *fs)
 	g_return_val_if_fail (TRACKER_IS_MINER_FS (fs), NULL);
 
 	return fs->priv->indexing_tree;
-}
-
-/**
- * tracker_miner_fs_get_data_provider:
- * @fs: a #TrackerMinerFS
- *
- * Returns the #TrackerDataProvider implementation, which is being used
- * to supply #GFile and #GFileInfo content to Tracker.
- *
- * Returns: (transfer none): The #TrackerDataProvider supplying content
- *
- * Since: 1.2
- **/
-TrackerDataProvider *
-tracker_miner_fs_get_data_provider (TrackerMinerFS *fs)
-{
-	g_return_val_if_fail (TRACKER_IS_MINER_FS (fs), NULL);
-
-	return fs->priv->data_provider;
 }
 
 const gchar *

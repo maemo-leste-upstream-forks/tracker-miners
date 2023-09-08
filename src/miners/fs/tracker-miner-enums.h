@@ -86,18 +86,6 @@ typedef enum {
 	TRACKER_FILTER_PARENT_DIRECTORY
 } TrackerFilterType;
 
-/**
- * TrackerFilterPolicy:
- * @TRACKER_FILTER_POLICY_DENY: Items matching the filter will be skipped.
- * @TRACKER_FILTER_POLICY_ACCEPT: Items matching the filter will be accepted.
- *
- * Flags used when defining default filter policy in the #TrackerIndexingTree.
- */
-typedef enum {
-	TRACKER_FILTER_POLICY_DENY,
-	TRACKER_FILTER_POLICY_ACCEPT
-} TrackerFilterPolicy;
-
 G_END_DECLS
 
 #endif /* __TRACKER_MINER_ENUMS_H__ */

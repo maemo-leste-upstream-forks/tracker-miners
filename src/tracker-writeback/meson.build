@@ -43,6 +43,7 @@ executable('tracker-writeback-@0@'.format(tracker_api_major),
     '-DWRITEBACK_MODULES_DIR="@0@"'.format(tracker_writeback_modules_dir),
   ],
   dependencies: [gmodule, tracker_sparql, tracker_miners_common_dep],
+  export_dynamic: true,
   install: true,
   install_dir: join_paths(get_option('prefix'), get_option('libexecdir')),
   install_rpath: tracker_internal_libs_dir)

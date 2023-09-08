@@ -811,10 +811,10 @@ TrackerXmpData *
 tracker_xmp_new_from_sidecar (GFile  *orig_file,
                               gchar **sidecar_uri)
 {
-	GMappedFile *mapped_file;
+	g_autoptr (GMappedFile) mapped_file = NULL;
 	TrackerXmpData *xmp_data;
-	gchar *path, *xmp_path, *uri;
-	GBytes *bytes;
+	g_autofree gchar *path = NULL, *xmp_path = NULL, *uri = NULL;
+	g_autoptr (GBytes) bytes = NULL;
 
 	if (sidecar_uri)
 		*sidecar_uri = NULL;
@@ -824,30 +824,21 @@ tracker_xmp_new_from_sidecar (GFile  *orig_file,
 	if (!xmp_path)
 		return NULL;
 
-	if (!g_file_test (xmp_path, G_FILE_TEST_IS_REGULAR)) {
-		g_free (xmp_path);
+	if (!g_file_test (xmp_path, G_FILE_TEST_IS_REGULAR))
 		return NULL;
-	}
 
 	mapped_file = g_mapped_file_new (xmp_path, FALSE, NULL);
-	if (!mapped_file) {
-		g_free (xmp_path);
+	if (!mapped_file)
 		return NULL;
-	}
 
 	bytes = g_mapped_file_get_bytes (mapped_file);
 	uri = g_file_get_uri (orig_file);
 	xmp_data = tracker_xmp_new (g_bytes_get_data (bytes, NULL),
 	                            g_bytes_get_size (bytes),
 	                            uri);
-	g_bytes_unref (bytes);
-	g_mapped_file_unref (mapped_file);
-	g_free (uri);
 
 	if (sidecar_uri)
 		*sidecar_uri = g_filename_to_uri (xmp_path, NULL, NULL);
-
-	g_free (xmp_path);
 
 	return xmp_data;
 }

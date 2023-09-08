@@ -453,6 +453,57 @@ class MinerCrawlTest(fixtures.TrackerMinerTest):
         self.assertIn(self.uri("test-monitored/dir1/file2.txt"), unpacked_result)
         self.assertIn(self.uri("test-monitored/dir1/visible.txt"), unpacked_result)
 
+    def test_13_move_directory_from_visible_to_hidden_and_back(self):
+        """
+        Move a directory from monitored to unmonitored
+        """
+        file = self.path("test-monitored/dir1/file2.txt")
+        source = self.path("test-monitored/dir1")
+        dest = self.path("test-monitored/.dir1")
+
+        file_id = self.tracker.get_content_resource_id(self.uri(file))
+        with self.tracker.await_delete(
+            fixtures.DOCUMENTS_GRAPH, file_id, timeout=cfg.AWAIT_TIMEOUT
+        ):
+            os.rename(source, dest)
+
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 1)
+        unpacked_result = [r[0] for r in result]
+        self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+
+        """
+        And move it back to the same place
+        """
+        with self.await_document_inserted(file) as resource:
+            shutil.move(dest, source)
+
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 3)
+        unpacked_result = [r[0] for r in result]
+        self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+        self.assertIn(self.uri("test-monitored/dir1/dir2/file3.txt"), unpacked_result)
+        self.assertIn(self.uri("test-monitored/dir1/file2.txt"), unpacked_result)
+
+    def test_14_trigger_parent_hidden(self):
+        """
+        Insert a file triggering parent to be hidden
+        """
+        file = self.path("test-monitored/dir1/.nomedia")
+        doc = self.path("test-monitored/dir1/file2.txt")
+
+        doc_id = self.tracker.get_content_resource_id(self.uri(doc))
+        with self.tracker.await_delete(
+            fixtures.DOCUMENTS_GRAPH, doc_id, timeout=cfg.AWAIT_TIMEOUT
+        ):
+            with open(file, "w") as f:
+                f.write(DEFAULT_TEXT)
+
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 1)
+        unpacked_result = [r[0] for r in result]
+        self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+
 
 class IndexedFolderTest(fixtures.TrackerMinerTest):
     """
@@ -485,6 +536,7 @@ class IndexedFolderTest(fixtures.TrackerMinerTest):
     def create_test_data(self):
         monitored_files = [
             "test-monitored/file1.txt",
+            "test-monitored/dir1/file3.txt",
             "test-non-recursive/file2.txt",
         ]
 
@@ -530,9 +582,10 @@ class IndexedFolderTest(fixtures.TrackerMinerTest):
         The precreated files and folders should be there
         """
         result = self.__get_text_documents()
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 3)
         unpacked_result = [r[0] for r in result]
         self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
+        self.assertIn(self.uri("test-monitored/dir1/file3.txt"), unpacked_result)
         self.assertIn(self.uri("test-non-recursive/file2.txt"), unpacked_result)
 
         source = os.path.join(self.workdir, "test-non-recursive", "file2.txt")
@@ -545,10 +598,11 @@ class IndexedFolderTest(fixtures.TrackerMinerTest):
             shutil.move(source, dest)
 
         result = self.__get_text_documents()
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 3)
         unpacked_result = [r[0] for r in result]
         self.assertIn(self.uri("test-monitored/file1.txt"), unpacked_result)
         self.assertIn(self.uri("test-monitored/file2.txt"), unpacked_result)
+        self.assertIn(self.uri("test-monitored/dir1/file3.txt"), unpacked_result)
 
         datasource2 = self.__get_index_folder(dest);
         self.assertNotEqual(datasource2, self.uri("test-monitored"))

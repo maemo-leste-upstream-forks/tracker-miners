@@ -38,11 +38,5 @@ Boston, MA  02110-1301, USA.
       <default>true</default>
     </key>
 
-    <key name="ignore-stop-words" type="b">
-      <summary>Ignore stop words</summary>
-      <description>If enabled, the words listed in the stop-words list are ignored. E.g. common words like “the”, “yes”, “no”, etc.</description>
-      <default>true</default>
-    </key>
-
   </schema>
 </schemalist>

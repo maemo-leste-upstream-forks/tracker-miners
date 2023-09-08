@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.5.2',
+        version: '3.6.rc',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -15,7 +15,7 @@ libdir = join_paths(get_option('prefix'), get_option('libdir'))
 datadir = join_paths(get_option('prefix'), get_option('datadir'))
 
 glib_required = '2.62.0'
-tracker_required = '3.5.0'
+tracker_required = '3.6'
 
 if get_option('tracker_core') == 'system'
   tracker_sparql = dependency('tracker-sparql-3.0', version: '>=' + tracker_required, required: false)
@@ -32,7 +32,6 @@ if get_option('tracker_core') == 'system'
   # installed locations.
   tracker_uninstalled_cli_dir = join_paths (tracker_sparql.get_variable(pkgconfig: 'exec_prefix'), 'bin')
   tracker_uninstalled_nepomuk_ontologies_dir = join_paths(tracker_sparql.get_variable(pkgconfig: 'ontologies_dir'), 'nepomuk')
-  tracker_uninstalled_stop_words_dir = join_paths(tracker_sparql.get_variable(pkgconfig: 'tracker_datadir'), 'stop-words')
   tracker_uninstalled_testutils_dir = tracker_testutils.get_variable(pkgconfig: 'python_path')
   tracker_ontologies_dir = tracker_sparql.get_variable(pkgconfig: 'ontologies_dir')
 
@@ -44,7 +43,6 @@ else
 
   tracker_uninstalled_cli_dir = tracker_subproject.get_variable('tracker_uninstalled_cli_dir')
   tracker_uninstalled_nepomuk_ontologies_dir = tracker_subproject.get_variable('tracker_uninstalled_nepomuk_ontologies_dir')
-  tracker_uninstalled_stop_words_dir = tracker_subproject.get_variable('tracker_uninstalled_stop_words_dir')
   tracker_uninstalled_testutils_dir = tracker_subproject.get_variable('tracker_uninstalled_testutils_dir')
   tracker_ontologies_dir = tracker_subproject.get_variable('tracker_ontologies_dir')
 
@@ -181,22 +179,7 @@ endif
 # Check for btrfs ioctls
 ##########################################
 
-result = cc.run('''
-    #include <errno.h>
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-    #include <linux/btrfs.h>
-
-    int main (int argc, char *argv[]) {
-      struct btrfs_ioctl_ino_lookup_args args = { 0, };
-      int fd = open ("/", O_RDONLY);
-      int ret = ioctl (fd, BTRFS_IOC_INO_LOOKUP, &args);
-      return (ret < 0 && errno != ENOTTY) ? 1 : 0;
-    }
-  ''',
-  name: 'BTRFS_IOC_INO_LOOKUP ioctl is available')
-
-if result.compiled() and result.returncode() == 0
+if cc.has_header_symbol('linux/btrfs.h', 'BTRFS_IOC_INO_LOOKUP')
   have_btrfs_ioctl = true
 else
   have_btrfs_ioctl = false
@@ -357,14 +340,13 @@ conf.set('HAVE_GSTREAMER', generic_media_handler_name == 'gstreamer')
 conf.set('HAVE_GSTREAMER_1_20', gstreamer.version() >= '1.20.0')
 conf.set('GSTREAMER_BACKEND_DISCOVERER', gstreamer_backend_name == 'Discoverer')
 conf.set('GSTREAMER_BACKEND_GUPNP_DLNA', gstreamer_backend_name == 'GUPnP-DLNA')
-conf.set('HAVE_HAL', battery_detection_library_name == 'hal')
+conf.set('HAVE_POWER', battery_detection_library_name != 'none')
 conf.set('HAVE_LIBCUE', libcue.found())
 conf.set('HAVE_LIBICU_CHARSET_DETECTION', charset_library_name == 'icu')
 conf.set('HAVE_LIBEXIF', libexif.found())
 conf.set('HAVE_LIBIPTCDATA', libiptcdata.found())
 conf.set('HAVE_LIBSECCOMP', seccomp_required and libseccomp.found())
 conf.set('HAVE_MALLOC_TRIM', have_malloc_trim)
-conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 conf.set('HAVE_NETWORK_MANAGER', have_network_manager)
 conf.set('HAVE_FANOTIFY', have_fanotify)
 conf.set('HAVE_BTRFS_IOCTL', have_btrfs_ioctl)
@@ -389,8 +371,8 @@ conf.set('HAVE_POSIX_FADVISE', cc.has_function('posix_fadvise', prefix : '#inclu
 conf.set('HAVE_STATVFS64', cc.has_header_symbol('sys/statvfs.h', 'statvfs64', args: '-D_LARGEFILE64_SOURCE'))
 conf.set('HAVE_STRNLEN', cc.has_function('strnlen', prefix : '#include <string.h>'))
 
-conf.set('LOCALEDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('localedir')))
-conf.set('SHAREDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('datadir')))
+conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
+conf.set_quoted('SHAREDIR', get_option('prefix') / get_option('datadir'))
 conf.set('TRACKER_MINERS_DIR', '"@0@"'.format(join_paths(get_option('prefix'), get_option('datadir'), tracker_versioned_name, 'miners')))
 
 conf.set('GETTEXT_PACKAGE', '"@0@"'.format(tracker_versioned_name))
@@ -476,7 +458,6 @@ run_uninstalled_conf.set('tracker_uninstalled_domain_rule', meson.current_build_
 run_uninstalled_conf.set('tracker_uninstalled_extract_rules_dir', tracker_uninstalled_extract_rules_dir)
 run_uninstalled_conf.set('tracker_uninstalled_extractors_dir', meson.current_build_dir() / 'src' / 'tracker-extract')
 run_uninstalled_conf.set('tracker_uninstalled_miner_services_dir', tracker_uninstalled_miner_services_dir)
-run_uninstalled_conf.set('tracker_uninstalled_stop_words_dir', tracker_uninstalled_stop_words_dir)
 run_uninstalled_conf.set('tracker_uninstalled_testutils_dir', tracker_uninstalled_testutils_dir)
 run_uninstalled_conf.set('tracker_uninstalled_writeback_modules_dir', tracker_uninstalled_writeback_modules_dir)
 run_uninstalled_conf.set('uninstalled_gsettings_schema_dir', tracker_miners_uninstalled_gsettings_schema_dir)

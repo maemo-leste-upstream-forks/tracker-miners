@@ -1,0 +1,16 @@
+# Inputs: ~rootFolder
+DELETE {
+  GRAPH ?g {
+    ?f a rdfs:Resource .
+    ?ie a rdfs:Resource
+  }
+} WHERE {
+  GRAPH tracker:FileSystem {
+    ?root a tracker:IndexedFolder ;
+      nie:isStoredAs ~rootFolder .
+    ?f nie:dataSource ?root .
+  }
+  GRAPH ?g {
+    ?ie nie:isStoredAs ?f
+  }
+}

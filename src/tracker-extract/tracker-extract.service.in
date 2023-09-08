@@ -1,6 +1,6 @@
 [Unit]
 Description=Tracker metadata extractor
-ConditionUser=!root
+ConditionUser=!@system
 After=gnome-session.target
 
 [Service]

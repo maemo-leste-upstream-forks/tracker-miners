@@ -23,6 +23,8 @@ import pathlib
 
 import fixtures
 
+from gi.repository import GLib
+
 log = logging.getLogger(__name__)
 
 
@@ -34,16 +36,6 @@ class MinerRemovableMediaTest(fixtures.TrackerMinerRemovableMediaTest):
 
         self.device_path = pathlib.Path(self.workdir).joinpath("removable-device-1")
         self.device_path.mkdir()
-
-    def __get_text_documents(self):
-        return self.tracker.query(
-            """
-          SELECT DISTINCT ?url WHERE {
-              ?u a nfo:TextDocument ;
-                 nie:isStoredAs/nie:url ?url.
-          }
-          """
-        )
 
     def data_source_available(self, uri):
         """Check tracker:available set on the datasource containing `uri`"""
@@ -86,6 +78,48 @@ class MinerRemovableMediaTest(fixtures.TrackerMinerRemovableMediaTest):
             assert not self.data_source_available(path.as_uri()), (
                 "Path %s should be marked unavailable" % path.as_uri()
             )
+
+class MinerRemovableMediaTestNoPreserve(MinerRemovableMediaTest):
+    """Tests for tracker-miner-fs with index-removable-devices feature."""
+
+    def config(self):
+        # The settings of this class command the indexer to delete
+        # removable devices immediately after unmount.
+        settings = super(MinerRemovableMediaTest, self).config()
+        settings["org.freedesktop.Tracker3.Miner.Files"][
+            "removable-days-threshold"
+        ] = GLib.Variant.new_int32(0)
+        return settings
+
+    def __get_text_documents(self):
+        return self.tracker.query(
+            """
+          SELECT DISTINCT ?url WHERE {
+              ?u a nfo:TextDocument ;
+                 nie:isStoredAs/nie:url ?url.
+          }
+          """
+        )
+
+    def test_add_remove_device(self):
+        """Device should be indexed, then deleted."""
+
+        files = self.create_test_data()
+
+        self.add_removable_device(self.device_path)
+
+        for f in files:
+            path = self.device_path.joinpath(f)
+            self.ensure_document_inserted(path)
+            assert self.data_source_available(path.as_uri())
+
+        id = self.tracker.get_resource_id_by_uri(self.device_path.as_uri())
+        with self.tracker.await_delete(fixtures.FILESYSTEM_GRAPH, id):
+            self.remove_removable_device(self.device_path)
+
+        # Ensure that all elements were deleted
+        result = self.__get_text_documents()
+        self.assertEqual(len(result), 0)
 
 
 if __name__ == "__main__":

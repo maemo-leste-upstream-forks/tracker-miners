@@ -88,8 +88,6 @@ get_fts_connection_flags (void)
 		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_ENABLE_UNACCENT;
 	if (tracker_fts_config_get_ignore_numbers (fts_config))
 		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_IGNORE_NUMBERS;
-	if (tracker_fts_config_get_ignore_stop_words (fts_config))
-		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_ENABLE_STOP_WORDS;
 
 	g_object_unref (fts_config);
 

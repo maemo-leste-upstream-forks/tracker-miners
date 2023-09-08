@@ -305,7 +305,7 @@ get_file_metadata (TrackerExtractTask  *task,
 
 		task->success = (task->func) (info, error);
 	} else {
-		TrackerResource *resource;
+		g_autoptr (TrackerResource) resource = NULL;
 
 		/* Dummy extractor */
 		resource = tracker_resource_new (NULL);

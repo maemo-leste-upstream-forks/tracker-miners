@@ -1,11 +1,12 @@
-# Output: file
+# Output: file, isRemovable, isOptical, available
 SELECT
-  ?file
+  ?file ?isRemovable ?isOptical ?available
 {
-  ?vol a tracker:IndexedFolder ;
-     tracker:isRemovable true;
-     tracker:available true .
-
-  ?file a nfo:FileDataObject ;
-     nie:interpretedAs / nie:rootElementOf ?vol .
+  GRAPH tracker:FileSystem {
+    ?vol a tracker:IndexedFolder ;
+       nie:isStoredAs ?file ;
+    BIND (tracker:isRemovable(?vol) AS ?isRemovable) .
+    BIND (tracker:isOptical(?bol) AS ?isOptical) .
+    BIND (tracker:available(?vol) AS ?available) .
+  }
 }

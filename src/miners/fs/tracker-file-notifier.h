@@ -80,7 +80,6 @@ GType         tracker_file_notifier_get_type     (void) G_GNUC_CONST;
 
 TrackerFileNotifier *
               tracker_file_notifier_new          (TrackerIndexingTree     *indexing_tree,
-                                                  TrackerDataProvider     *data_provider,
                                                   TrackerSparqlConnection *connection,
                                                   const gchar             *file_attributes);
 

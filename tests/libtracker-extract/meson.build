@@ -18,9 +18,6 @@ libtracker_extract_test_deps = [
     tracker_miners_common_dep, tracker_extract_dep
 ]
 
-extract_test_environment = environment()
-extract_test_environment.set('TRACKER_LANGUAGE_STOP_WORDS_DIR', tracker_uninstalled_stop_words_dir)
-
 foreach base_name: libtracker_extract_tests
     source = 'tracker-@0@-test.c'.format(base_name)
     binary_name = 'tracker-@0@-test'.format(base_name)
@@ -30,7 +27,6 @@ foreach base_name: libtracker_extract_tests
       c_args: test_c_args)
 
     test(base_name, binary,
-      env: extract_test_environment,
       protocol: test_protocol,
       suite: 'extract')
 endforeach
@@ -42,7 +38,6 @@ if libiptcdata.found() and libjpeg.found()
     c_args: test_c_args,
   )
   test('extract-iptc', iptc_test,
-    env: extract_test_environment,
     protocol: test_protocol,
     suite: 'extract')
 endif

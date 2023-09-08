@@ -24,6 +24,7 @@
 #include <locale.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/resource.h>
 #include <unistd.h>
 
 #ifdef HAVE_MALLOC_TRIM
@@ -39,6 +40,7 @@
 #include <libtracker-sparql/tracker-sparql.h>
 
 #include "tracker-config.h"
+#include "tracker-controller.h"
 #include "tracker-miner-files.h"
 
 #define ABOUT	  \
@@ -58,8 +60,6 @@
 #define LOCALE_FILENAME "locale-for-miner-apps.txt"
 
 static GMainLoop *main_loop;
-static GDBusProxy *index_proxy;
-static GPtrArray *proxy_folders;
 static guint cleanup_id;
 
 static gint initial_sleep = -1;
@@ -339,6 +339,19 @@ initialize_priority_and_scheduling (void)
 	}
 }
 
+static void
+raise_file_descriptor_limit (void)
+{
+	struct rlimit rl;
+
+	if (getrlimit (RLIMIT_NOFILE, &rl) != 0)
+		return;
+
+	rl.rlim_cur = rl.rlim_max;
+	if (setrlimit(RLIMIT_NOFILE, &rl) != 0)
+		g_warning ("Failed to increase file descriptor limit: %m");
+}
+
 static gboolean
 should_crawl (TrackerMinerFiles *miner_files,
               TrackerConfig     *config,
@@ -529,34 +542,6 @@ miner_finished_cb (TrackerMinerFS *fs,
 	}
 }
 
-static GList *
-get_dir_children_as_gfiles (const gchar *path)
-{
-	GList *children = NULL;
-	GDir *dir;
-
-	dir = g_dir_open (path, 0, NULL);
-
-	if (dir) {
-		const gchar *basename;
-
-		while ((basename = g_dir_read_name (dir)) != NULL) {
-			GFile *child;
-			gchar *str;
-
-			str = g_build_filename (path, basename, NULL);
-			child = g_file_new_for_path (str);
-			g_free (str);
-
-			children = g_list_prepend (children, child);
-		}
-
-		g_dir_close (dir);
-	}
-
-	return children;
-}
-
 static void
 dummy_log_handler (const gchar    *domain,
                    GLogLevelFlags  log_level,
@@ -718,16 +703,12 @@ check_eligible (void)
 				g_print ("\n");
 				parents_indexable = FALSE;
 			} else {
-				GList *children = get_dir_children_as_gfiles (dir_path);
-
-				if (!tracker_indexing_tree_parent_is_indexable (indexing_tree, l->data, children)) {
+				if (!tracker_indexing_tree_parent_is_indexable (indexing_tree, l->data)) {
 					g_print (_("Parent directory “%s” is NOT eligible to be indexed (based on content filters)"),
 					         dir_path);
 					g_print ("\n");
 					parents_indexable = FALSE;
 				}
-
-				g_list_free_full (children, g_object_unref);
 			}
 
 			g_free (dir_path);
@@ -812,8 +793,6 @@ get_fts_connection_flags (void)
 		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_ENABLE_UNACCENT;
 	if (tracker_fts_config_get_ignore_numbers (fts_config))
 		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_IGNORE_NUMBERS;
-	if (tracker_fts_config_get_ignore_stop_words (fts_config))
-		flags |= TRACKER_SPARQL_CONNECTION_FLAGS_FTS_ENABLE_STOP_WORDS;
 
 	g_object_unref (fts_config);
 
@@ -927,115 +906,6 @@ setup_connection (TrackerDomainOntology  *domain,
 	return sparql_conn;
 }
 
-static void
-update_indexed_files_from_proxy (TrackerMinerFiles *miner,
-                                 GDBusProxy        *proxy)
-{
-	TrackerIndexingTree *indexing_tree;
-	const gchar **indexed_uris = NULL;
-	GVariant *v;
-	gint i;
-
-	v = g_dbus_proxy_get_cached_property (proxy, "IndexedLocations");
-	if (v)
-		indexed_uris = g_variant_get_strv (v, NULL);
-
-	indexing_tree = tracker_miner_fs_get_indexing_tree (TRACKER_MINER_FS (miner));
-
-	/* Remove folders no longer there */
-	for (i = 0; i < proxy_folders->len; i++) {
-		GFile *file;
-		gchar *uri;
-
-		file = g_ptr_array_index (proxy_folders, i);
-		uri = g_file_get_uri (file);
-
-		if (!indexed_uris || !g_strv_contains (indexed_uris, uri)) {
-			tracker_indexing_tree_remove (indexing_tree,
-			                              file);
-		}
-
-		g_free (uri);
-	}
-
-	for (i = 0; indexed_uris && indexed_uris[i]; i++) {
-		GFileInfo *file_info;
-		GFile *file;
-
-		file = g_file_new_for_uri (indexed_uris[i]);
-		if (g_ptr_array_find_with_equal_func (proxy_folders,
-		                                      file,
-		                                      (GEqualFunc) g_file_equal,
-		                                      NULL)) {
-			g_object_unref (file);
-			continue;
-		}
-
-		file_info = g_file_query_info (file,
-		                               G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-		                               G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN,
-		                               G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-		                               NULL, NULL);
-
-		if (!file_info) {
-			g_object_unref (file);
-			continue;
-		}
-
-		if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_DIRECTORY) {
-			if (!tracker_indexing_tree_file_is_indexable (indexing_tree,
-			                                              file, file_info)) {
-				tracker_indexing_tree_add (indexing_tree,
-				                           file,
-				                           TRACKER_DIRECTORY_FLAG_RECURSE |
-				                           TRACKER_DIRECTORY_FLAG_CHECK_MTIME |
-				                           TRACKER_DIRECTORY_FLAG_MONITOR);
-				g_ptr_array_add (proxy_folders, g_object_ref (file));
-			} else {
-				tracker_indexing_tree_notify_update (indexing_tree,
-				                                     file, TRUE);
-			}
-		} else {
-			tracker_miner_fs_check_file (TRACKER_MINER_FS (miner),
-			                             file, G_PRIORITY_HIGH, TRUE);
-		}
-
-		g_object_unref (file_info);
-		g_object_unref (file);
-	}
-
-	g_free (indexed_uris);
-}
-
-static void
-proxy_properties_changed_cb (GDBusProxy *proxy,
-                             GVariant   *changed_properties,
-                             GStrv       invalidated_properties,
-                             gpointer    user_data)
-{
-	update_indexed_files_from_proxy (user_data, proxy);
-}
-
-static void
-on_tracker_index_proxy_ready (GObject      *source,
-                              GAsyncResult *res,
-                              gpointer      user_data)
-{
-	TrackerMinerFiles *miner = user_data;
-	GError *error = NULL;
-
-	index_proxy = g_dbus_proxy_new_finish (res, &error);
-	if (error) {
-		g_critical ("Could not set up proxy: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	g_signal_connect (index_proxy, "g-properties-changed",
-	                  G_CALLBACK (proxy_properties_changed_cb), miner);
-	update_indexed_files_from_proxy (miner, index_proxy);
-}
-
 int
 main (gint argc, gchar *argv[])
 {
@@ -1049,7 +919,7 @@ main (gint argc, gchar *argv[])
 	GDBusConnection *connection;
 	TrackerSparqlConnection *sparql_conn;
 	TrackerDomainOntology *domain_ontology;
-	GCancellable *cancellable;
+	TrackerController *controller;
 #if GLIB_CHECK_VERSION (2, 64, 0)
 	GMemoryMonitor *memory_monitor;
 #endif
@@ -1068,6 +938,11 @@ main (gint argc, gchar *argv[])
 
 	/* This makes sure we don't steal all the system's resources */
 	initialize_priority_and_scheduling ();
+
+	/* This makes it harder to run out of file descriptors while there
+	 * are many concurrently running queries through the endpoint.
+	 */
+	raise_file_descriptor_limit ();
 
 	/* Translators: this messagge will apper immediately after the
 	 * usage string - Usage: COMMAND <THIS_MESSAGE>
@@ -1172,17 +1047,8 @@ main (gint argc, gchar *argv[])
 		return EXIT_FAILURE;
 	}
 
-	proxy_folders = g_ptr_array_new_with_free_func (g_object_unref);
-	cancellable = g_cancellable_new ();
-	g_dbus_proxy_new (connection,
-	                  G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
-	                  NULL,
-	                  "org.freedesktop.Tracker3.Miner.Files.Control",
-	                  "/org/freedesktop/Tracker3/Miner/Files/Proxy",
-	                  "org.freedesktop.Tracker3.Miner.Files.Proxy",
-	                  cancellable,
-	                  on_tracker_index_proxy_ready,
-	                  miner_files);
+	controller = tracker_controller_new (tracker_miner_fs_get_indexing_tree (TRACKER_MINER_FS (miner_files)),
+	                                     tracker_miner_files_get_storage (TRACKER_MINER_FILES (miner_files)));
 
 	/* If the locales changed, we need to reset some things first */
 	detect_locale_changed (TRACKER_MINER (miner_files), domain_ontology);
@@ -1285,10 +1151,7 @@ main (gint argc, gchar *argv[])
 	g_main_loop_unref (main_loop);
 	g_object_unref (config);
 
-	g_cancellable_cancel (cancellable);
-	g_object_unref (cancellable);
-	g_clear_object (&index_proxy);
-	g_clear_pointer (&proxy_folders, g_ptr_array_unref);
+	g_object_unref (controller);
 
 	g_object_unref (miner_files);
 

@@ -20,8 +20,6 @@
 
 #include "config-miners.h"
 
-#ifdef HAVE_UPOWER
-
 #include <upower.h>
 
 #include "tracker-power.h"
@@ -292,5 +290,3 @@ tracker_power_get_on_low_battery (TrackerPower *power)
 
 	return priv->on_low_battery;
 }
-
-#endif /* HAVE_UPOWER */

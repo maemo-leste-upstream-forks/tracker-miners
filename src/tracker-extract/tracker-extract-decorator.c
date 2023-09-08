@@ -25,6 +25,8 @@
 #include "tracker-extract-decorator.h"
 #include "tracker-extract-persistence.h"
 
+#define THROTTLED_TIMEOUT_MS 10
+
 enum {
 	PROP_EXTRACTOR = 1
 };
@@ -44,12 +46,19 @@ struct _TrackerExtractDecoratorPrivate {
 	TrackerExtract *extractor;
 	GTimer *timer;
 	gboolean extracting;
+	gboolean paused_on_low_battery;
 
 	TrackerSparqlStatement *update_hash;
 	TrackerSparqlStatement *delete_file;
 
 	TrackerExtractPersistence *persistence;
 	GVolumeMonitor *volume_monitor;
+
+	guint throttle_id;
+
+#ifdef HAVE_POWER
+	TrackerPower *power;
+#endif /* HAVE_POWER */
 };
 
 static void decorator_get_next_file (TrackerDecorator *decorator);
@@ -124,6 +133,26 @@ persistence_ignore_file (GFile    *file,
 	decorator_ignore_file (file, decorator, "Crash/hang handling file", NULL);
 }
 
+#ifdef HAVE_POWER
+static void
+low_battery_cb (TrackerExtractDecorator *extract_decorator)
+{
+	TrackerExtractDecoratorPrivate *priv =
+		tracker_extract_decorator_get_instance_private (extract_decorator);
+	gboolean on_low_battery;
+
+	on_low_battery = tracker_power_get_on_low_battery (priv->power);
+
+	if (on_low_battery && !priv->paused_on_low_battery) {
+		tracker_miner_pause (TRACKER_MINER (extract_decorator));
+		priv->paused_on_low_battery = TRUE;
+	} else if (!on_low_battery && priv->paused_on_low_battery) {
+		tracker_miner_resume (TRACKER_MINER (extract_decorator));
+		priv->paused_on_low_battery = FALSE;
+	}
+}
+#endif /* HAVE_POWER */
+
 static void
 tracker_extract_decorator_constructed (GObject *object)
 {
@@ -139,6 +168,15 @@ tracker_extract_decorator_constructed (GObject *object)
 
 	priv->persistence = tracker_extract_persistence_initialize (persistence_ignore_file,
 	                                                            decorator);
+
+#ifdef HAVE_POWER
+	priv->power = tracker_power_new ();
+	if (priv->power) {
+		g_signal_connect_swapped (priv->power, "notify::on-low-battery",
+		                          G_CALLBACK (low_battery_cb),
+		                          object);
+	}
+#endif /* HAVE_POWER */
 }
 
 static void
@@ -147,6 +185,9 @@ tracker_extract_decorator_finalize (GObject *object)
 	TrackerExtractDecoratorPrivate *priv;
 
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (object));
+
+	if (priv->throttle_id)
+		g_source_remove (priv->throttle_id);
 
 	if (priv->extractor)
 		g_object_unref (priv->extractor);
@@ -158,6 +199,10 @@ tracker_extract_decorator_finalize (GObject *object)
 
 	g_clear_object (&priv->update_hash);
 	g_clear_object (&priv->delete_file);
+
+#ifdef HAVE_POWER
+	g_clear_object (&priv->power);
+#endif /* HAVE_POWER */
 
 	G_OBJECT_CLASS (tracker_extract_decorator_parent_class)->finalize (object);
 }
@@ -173,6 +218,9 @@ ensure_data (TrackerExtractInfo *info)
 	gint i;
 
 	resource = tracker_extract_info_get_resource (info);
+	if (!resource)
+		return;
+
 	mimetype = tracker_extract_info_get_mimetype (info);
 	file = tracker_extract_info_get_file (info);
 	uri = g_file_get_uri (file);
@@ -220,6 +268,40 @@ tracker_extract_decorator_update (TrackerDecorator   *decorator,
 		tracker_batch_add_resource (batch, graph, resource);
 }
 
+static gboolean
+throttle_next_item_cb (gpointer user_data)
+{
+	TrackerExtractDecoratorPrivate *priv =
+		tracker_extract_decorator_get_instance_private (user_data);
+
+	priv->throttle_id = 0;
+	decorator_get_next_file (user_data);
+	return G_SOURCE_REMOVE;
+}
+
+static void
+throttle_next_item (TrackerDecorator *decorator)
+{
+	TrackerExtractDecorator *extract_decorator =
+		TRACKER_EXTRACT_DECORATOR (decorator);
+	TrackerExtractDecoratorPrivate *priv =
+		tracker_extract_decorator_get_instance_private (extract_decorator);
+
+#ifdef HAVE_POWER
+	if (priv->power && tracker_power_get_on_battery (priv->power)) {
+		priv->throttle_id =
+			g_timeout_add (THROTTLED_TIMEOUT_MS,
+				       throttle_next_item_cb,
+				       decorator);
+	} else
+#endif
+	{
+		priv->throttle_id =
+			g_idle_add (throttle_next_item_cb,
+				    decorator);
+	}
+}
+
 static void
 get_metadata_cb (TrackerExtract *extract,
                  GAsyncResult   *result,
@@ -250,7 +332,8 @@ get_metadata_cb (TrackerExtract *extract,
 	}
 
 	priv->extracting = FALSE;
-	decorator_get_next_file (data->decorator);
+
+	throttle_next_item (data->decorator);
 
 	tracker_decorator_info_unref (data->decorator_info);
 	g_object_unref (data->file);
@@ -366,6 +449,8 @@ tracker_extract_decorator_paused (TrackerMiner *miner)
 
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (miner));
 	g_debug ("Decorator paused");
+
+	g_clear_handle_id (&priv->throttle_id, g_source_remove);
 
 	if (priv->timer)
 		g_timer_stop (priv->timer);

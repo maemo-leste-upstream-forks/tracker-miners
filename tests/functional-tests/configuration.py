@@ -51,7 +51,6 @@ def test_environment(tmpdir):
         "TRACKER_EXTRACTOR_RULES_DIR": config["TEST_EXTRACTOR_RULES_DIR"],
         "TRACKER_EXTRACTORS_DIR": config["TEST_EXTRACTORS_DIR"],
         "GSETTINGS_SCHEMA_DIR": config["TEST_GSETTINGS_SCHEMA_DIR"],
-        "TRACKER_LANGUAGE_STOP_WORDS_DIR": config["TEST_LANGUAGE_STOP_WORDS_DIR"],
         "TRACKER_WRITEBACK_MODULES_DIR": config["TEST_WRITEBACK_MODULES_DIR"],
         "XDG_CACHE_HOME": os.path.join(tmpdir, "cache"),
         "XDG_CONFIG_HOME": os.path.join(tmpdir, "config"),
