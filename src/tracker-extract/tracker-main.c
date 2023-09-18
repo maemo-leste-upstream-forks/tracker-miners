@@ -428,13 +428,7 @@ main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	decorator = tracker_extract_decorator_new (sparql_connection, extract, NULL, &error);
-
-	if (error) {
-		g_critical ("Could not start decorator: %s\n", error->message);
-		g_object_unref (config);
-		return EXIT_FAILURE;
-	}
+	decorator = tracker_extract_decorator_new (sparql_connection, extract);
 
 	proxy = tracker_miner_proxy_new (TRACKER_MINER (decorator), connection, DBUS_PATH, NULL, &error);
 	if (error) {

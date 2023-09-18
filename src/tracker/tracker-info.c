@@ -29,8 +29,10 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gio/gunixoutputstream.h>
 
 #include <libtracker-sparql/tracker-sparql.h>
+#include <libtracker-miners-common/tracker-common.h>
 
 #include "tracker-cli-utils.h"
 #include "tracker-color.h"
@@ -44,6 +46,8 @@
 #define KEY_SPARQL "Sparql"
 #define ERROR_MESSAGE "Extraction failed for this file. Some metadata will be missing."
 
+#define LINK_STR "[🡕]" /* NORTH EAST SANS-SERIF ARROW, in consistence with systemd */
+
 static gboolean inside_build_tree = FALSE;
 
 static gchar **filenames;
@@ -53,6 +57,8 @@ static gboolean resource_is_iri;
 static gboolean turtle;
 static gboolean eligible;
 static gchar *url_property;
+
+static gboolean output_is_tty;
 
 static GOptionEntry entries[] = {
 	{ "full-namespaces", 'f', 0, G_OPTION_ARG_NONE, &full_namespaces,
@@ -108,261 +114,222 @@ has_valid_uri_scheme (const gchar *uri)
 	return (*s == ':');
 }
 
-gchar *
-tracker_sparql_get_shorthand (GHashTable  *prefixes,
-                              const gchar *longhand)
+static TrackerSparqlStatement *
+describe_statement_for_urns (TrackerSparqlConnection *conn,
+                             GList                   *urns)
 {
-	gchar *hash;
+	TrackerSparqlStatement *stmt;
+	g_autoptr (GString) str = NULL;
+	GList *l;
 
-	hash = strrchr (longhand, '#');
+	str = g_string_new ("DESCRIBE");
 
-	if (hash) {
-		gchar *property;
-		const gchar *prefix;
+	for (l = urns; l; l = l->next)
+		g_string_append_printf (str, " <%s>", (gchar*) l->data);
 
-		property = hash + 1;
-		*hash = '\0';
+	stmt = tracker_sparql_connection_query_statement (conn,
+	                                                  str->str,
+	                                                  NULL, NULL);
 
-		prefix = g_hash_table_lookup (prefixes, longhand);
-
-		return g_strdup_printf ("%s:%s", prefix, property);
-	}
-
-	return g_strdup (longhand);
+	return stmt;
 }
 
-GHashTable *
-tracker_sparql_get_prefixes (TrackerSparqlConnection *connection)
-{
-	TrackerSparqlCursor *cursor;
-	GError *error = NULL;
-	GHashTable *retval;
-	const gchar *query;
-
-	retval = g_hash_table_new_full (g_str_hash,
-	                                g_str_equal,
-	                                g_free,
-	                                g_free);
-
-	/* FIXME: Would like to get this in the same SPARQL that we
-	 * use to get the info, but doesn't seem possible at the
-	 * moment with the limited string manipulation features we
-	 * support in SPARQL.
-	 */
-	query = "SELECT ?ns ?prefix "
-	        "WHERE {"
-	        "  ?ns a nrl:Namespace ;"
-	        "  nrl:prefix ?prefix "
-	        "}";
-
-	cursor = tracker_sparql_connection_query (connection, query, NULL, &error);
-
-	if (error) {
-		g_printerr ("%s, %s\n",
-			    _("Unable to retrieve namespace prefixes"),
-			    error->message);
-
-		g_error_free (error);
-		return retval;
-	}
-
-	if (!cursor) {
-		g_printerr ("%s\n", _("No namespace prefixes were returned"));
-		return retval;
-	}
-
-	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
-		const gchar *key, *value;
-
-		key = tracker_sparql_cursor_get_string (cursor, 0, NULL);
-		value = tracker_sparql_cursor_get_string (cursor, 1, NULL);
-
-		if (!key || !value) {
-			continue;
-		}
-
-		g_hash_table_insert (retval,
-		                     g_strndup (key, strlen (key) - 1),
-		                     g_strdup (value));
-	}
-
-	if (cursor) {
-		g_object_unref (cursor);
-	}
-
-	return retval;
-}
-
-static inline void
-print_key_and_value (GHashTable  *prefixes,
-                     const gchar *key,
-                     const gchar *value)
-{
-	if (G_UNLIKELY (full_namespaces)) {
-		g_print ("  '%s' = '%s'\n", key, value);
-	} else {
-		gchar *shorthand;
-
-		shorthand = tracker_sparql_get_shorthand (prefixes, key);
-		g_print ("  '%s' = '%s'\n", shorthand, value);
-		g_free (shorthand);
-	}
-}
-
-static gboolean
-print_plain (gchar               *urn_or_filename,
-             gchar               *urn,
-             TrackerSparqlCursor *cursor,
-             GHashTable          *prefixes,
-             gboolean             full_namespaces)
-{
-	gchar *fts_key = NULL;
-	gchar *fts_value = NULL;
-	gboolean has_output = FALSE;
-
-	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
-		const gchar *key = tracker_sparql_cursor_get_string (cursor, 0, NULL);
-		const gchar *value = tracker_sparql_cursor_get_string (cursor, 1, NULL);
-
-		if (!key || !value) {
-			continue;
-		}
-
-		if (!has_output) {
-			g_print ("%s:\n", _("Results"));
-			has_output = TRUE;
-		}
-
-		/* Don't display nie:plainTextContent */
-		if (strcmp (key, "http://tracker.api.gnome.org/ontology/v3/nie#plainTextContent") == 0) {
-			if (plain_text_content) {
-				fts_key = g_strdup (key);
-				fts_value = g_strdup (value);
-			}
-
-			/* Always print FTS data at the end because of it's length */
-			continue;
-		}
-
-		print_key_and_value (prefixes, key, value);
-	}
-
-	if (fts_key && fts_value) {
-		print_key_and_value (prefixes, fts_key, fts_value);
-	}
-
-	g_free (fts_key);
-	g_free (fts_value);
-
-	return has_output;
-}
-
-/* print a URI prefix in Turtle format */
 static void
-print_prefix (gpointer key,
-              gpointer value,
-              gpointer user_data)
+free_object_list (gpointer data)
 {
-	g_print ("@prefix %s: <%s#> .\n", (gchar *) value, (gchar *) key);
+	g_list_free_full (data, g_free);
 }
 
-/* format a URI for Turtle; if it has a prefix, display uri
- * as prefix:rest_of_uri; if not, display as <uri>
- */
-inline static gchar *
-format_urn (GHashTable  *prefixes,
-            const gchar *urn,
-            gboolean     full_namespaces)
+static void
+accumulate_value (GHashTable  *values,
+                  const gchar *pred,
+                  const gchar *object)
 {
-	gchar *urn_out;
+	GList *list;
 
-	if (full_namespaces) {
-		urn_out = g_strdup_printf ("<%s>", urn);
+	list = g_hash_table_lookup (values, pred);
+
+	if (!g_list_find_custom (list, object, (GCompareFunc) g_strcmp0)) {
+		g_hash_table_steal (values, pred);
+		list = g_list_prepend (list, g_strdup (object));
+		g_hash_table_insert (values, g_strdup (pred), list);
+	}
+}
+
+static void
+print_link (const gchar *url)
+{
+	g_print ("\x1B]8;;%s\a" LINK_STR "\x1B]8;;\a", url);
+}
+
+static void
+print_object (const gchar *object,
+              int          multiline_padding)
+{
+	if (strchr (object, '\n')) {
+		const gchar *p = object;
+		const gchar *end;
+		gboolean first = TRUE;
+
+		while (p && *p) {
+			if (!first)
+				g_print ("%*c", multiline_padding, ' ');
+
+			end = strchr (p, '\n');
+			first = FALSE;
+
+			if (end) {
+				end++;
+				g_print ("%.*s", (int) (end - p), p);
+				p = end;
+			} else {
+				g_print ("%s", p);
+				break;
+			}
+		}
 	} else {
-		gchar *shorthand = tracker_sparql_get_shorthand (prefixes, urn);
+		g_print ("%s", object);
+	}
+}
 
-		/* If the shorthand is the same as the urn passed, we
-		 * assume it is a resource and pass it in as one,
-		 *
-		 *   e.g.: http://purl.org/dc/elements/1.1/date
-		 *     to: http://purl.org/dc/elements/1.1/date
-		 *
-		 * Otherwise, we use the shorthand version instead.
-		 *
-		 *   e.g.: http://www.w3.org/1999/02/22-rdf-syntax-ns
-		 *     to: rdf
-		 */
-		if (g_strcmp0 (shorthand, urn) == 0) {
-			urn_out = g_strdup_printf ("<%s>", urn);
-			g_free (shorthand);
-		} else {
-			urn_out = shorthand;
+static void
+print_plain_values (const gchar             *subject,
+                    GHashTable              *values,
+                    TrackerNamespaceManager *namespaces,
+                    int                      axis_column)
+{
+	GHashTableIter iter;
+	const gchar *pred;
+	GList *objects, *l;
+	int link_padding = 0;
+	gboolean show_links = !full_namespaces && output_is_tty;
+
+	g_hash_table_iter_init (&iter, values);
+
+	if (output_is_tty)
+		g_print (BOLD_BEGIN "%s" BOLD_END ":\n", subject);
+	else
+		g_print ("%s:\n", subject);
+
+	if (!full_namespaces && show_links)
+		link_padding = g_utf8_strlen (LINK_STR, -1);
+
+	while (g_hash_table_iter_next (&iter, (gpointer*) &pred, (gpointer*) &objects)) {
+		int len, padding;
+
+		len = g_utf8_strlen (pred, -1);
+		padding = axis_column - len;
+		g_print ("%*c%s", padding, ' ', pred);
+
+		if (show_links) {
+			g_autofree gchar *expanded = NULL;
+			expanded = tracker_namespace_manager_expand_uri (namespaces, pred);
+			print_link (expanded);
+		}
+
+		g_print (": ");
+
+		for (l = objects; l; l = l->next) {
+			g_autofree gchar *str = NULL;
+
+			if (!full_namespaces && g_str_has_prefix (l->data, "http"))
+				str = tracker_namespace_manager_compress_uri (namespaces, l->data);
+			else
+				str = g_strdup (l->data);
+
+			if (l != objects)
+				g_print ("%*c", axis_column + link_padding + 2, ' ');
+
+			print_object (str, axis_column + link_padding + 2);
+
+			if (show_links && g_strcmp0 (str, l->data) != 0)
+				print_link (l->data);
+
+			g_print ("\n");
 		}
 	}
 
-	return urn_out;
+	g_print ("\n");
 }
 
-/* Print triples for a urn in Turtle format */
-static gboolean
-print_turtle (gchar               *urn,
-              TrackerSparqlCursor *cursor,
-              GHashTable          *prefixes,
-              gboolean             full_namespaces)
+static void
+print_plain_objects (GHashTable              *objects,
+                     TrackerNamespaceManager *namespaces,
+                     int                      axis_column)
 {
-	gchar *predicate;
-	gchar *object;
-	gboolean has_output = FALSE;
+	GHashTableIter iter;
+	gpointer subject, values;
+
+	g_hash_table_iter_init (&iter, objects);
+
+	while (g_hash_table_iter_next (&iter, &subject, &values))
+		print_plain_values (subject, values, namespaces, axis_column);
+}
+
+static void
+print_plain (TrackerSparqlCursor     *cursor,
+             TrackerNamespaceManager *namespaces)
+{
+	g_autoptr (GHashTable) objects = NULL;
+	GHashTable *values = NULL;
+	gchar *last_subject = NULL;
+	int longest_pred = 0;
+
+	objects = g_hash_table_new_full (g_str_hash, g_str_equal, g_free,
+	                                 (GDestroyNotify) g_hash_table_unref);
 
 	while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
-		const gchar *key = tracker_sparql_cursor_get_string (cursor, 0, NULL);
-		const gchar *value = tracker_sparql_cursor_get_string (cursor, 1, NULL);
-		const gchar *subject_value = tracker_sparql_cursor_get_string (cursor, 2, NULL);
-		const gchar *is_resource = tracker_sparql_cursor_get_string (cursor, 3, NULL);
-		gchar *subject_shorthand = NULL;
+		const gchar *subject = tracker_sparql_cursor_get_string (cursor, 0, NULL);
+		const gchar *pred = tracker_sparql_cursor_get_string (cursor, 1, NULL);
+		const gchar *object = tracker_sparql_cursor_get_string (cursor, 2, NULL);
 
-		if (!key || !value || !is_resource) {
-			continue;
+		if (g_strcmp0 (subject, last_subject) != 0) {
+			last_subject = g_strdup (subject);
+			values = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, free_object_list);
+			g_hash_table_insert (objects, last_subject, values);
 		}
 
 		/* Don't display nie:plainTextContent */
-		if (!plain_text_content && strcmp (key, "http://tracker.api.gnome.org/ontology/v3/nie#plainTextContent") == 0) {
+		if (!plain_text_content &&
+		    strcmp (pred, TRACKER_PREFIX_NIE "plainTextContent") == 0)
 			continue;
-		}
 
-		has_output = TRUE;
-
-		predicate = format_urn (prefixes, key, full_namespaces);
-
-		if (g_ascii_strcasecmp (is_resource, "true") == 0) {
-			object = g_strdup_printf ("<%s>", value);
+		if (full_namespaces) {
+			accumulate_value (values, pred, object);
+			longest_pred = MAX (longest_pred, g_utf8_strlen (pred, -1));
 		} else {
-			gchar *escaped_value;
-
-			/* Escape value and make sure it is encapsulated properly */
-			escaped_value = tracker_sparql_escape_string (value);
-			object = g_strdup_printf ("\"%s\"", escaped_value);
-			g_free (escaped_value);
+			g_autofree gchar *compressed = NULL;
+			compressed = tracker_namespace_manager_compress_uri (namespaces, pred);
+			accumulate_value (values, compressed, object);
+			longest_pred = MAX (longest_pred, g_utf8_strlen (compressed, -1));
 		}
-
-		/* Print final statement */
-		if (G_LIKELY (!full_namespaces)) {
-			/* truncate subject */
-			subject_shorthand = tracker_sparql_get_shorthand (prefixes, subject_value);
-		}
-
-		if (subject_shorthand && g_strcmp0 (subject_value, subject_shorthand) != 0) {
-			g_print ("%s %s %s .\n", subject_shorthand, predicate, object);
-		} else {
-			g_print ("<%s> %s %s .\n", subject_value, predicate, object);
-		}
-
-		g_free (subject_shorthand);
-		g_free (predicate);
-		g_free (object);
 	}
 
-	return has_output;
+	print_plain_objects (objects, namespaces, longest_pred + 1);
+}
+
+static void
+serialize_cb (GObject *object,
+              GAsyncResult *res,
+              gpointer      user_data)
+{
+	GMainLoop *main_loop = user_data;
+	g_autoptr (GInputStream) istream = NULL;
+	g_autoptr (GOutputStream) ostream = NULL;
+	g_autoptr (GError) error = NULL;
+
+	istream = tracker_sparql_statement_serialize_finish (TRACKER_SPARQL_STATEMENT (object),
+	                                                     res, &error);
+	if (istream) {
+		ostream = g_unix_output_stream_new (STDOUT_FILENO, FALSE);
+		g_output_stream_splice (ostream, istream, G_OUTPUT_STREAM_SPLICE_NONE, NULL, &error);
+		g_output_stream_close (ostream, NULL, NULL);
+	}
+
+	if (error)
+		g_printerr ("%s\n", error->message);
+
+	g_main_loop_quit (main_loop);
 }
 
 static TrackerSparqlConnection *
@@ -393,8 +360,8 @@ output_eligible_status_for_file (gchar   *path,
 }
 
 static void
-print_errors (GList *keyfiles,
-	      gchar *file_uri)
+print_errors (GList       *keyfiles,
+              const gchar *file_uri)
 {
 	GList *l;
 	GKeyFile *keyfile;
@@ -442,9 +409,10 @@ info_run (void)
 {
 	TrackerSparqlConnection *connection;
 	GError *error = NULL;
-	GHashTable *prefixes;
+	GList *urns = NULL;
 	gchar **p;
-	gboolean has_output = FALSE;
+
+	tracker_term_pipe_to_pager ();
 
 	connection = create_connection (&error);
 
@@ -456,27 +424,13 @@ info_run (void)
 		return EXIT_FAILURE;
 	}
 
-	prefixes = tracker_sparql_get_prefixes (connection);
-
-	/* print all prefixes if using turtle format and not showing full namespaces */
-	if (turtle && !full_namespaces) {
-		g_hash_table_foreach (prefixes, (GHFunc) print_prefix, NULL);
-		g_print ("\n");
-	}
-
-	if (!url_property)
-		url_property = g_strdup ("nie:url");
-
 	for (p = filenames; *p; p++) {
-		TrackerSparqlCursor *cursor = NULL;
+		g_autoptr (TrackerSparqlStatement) stmt = NULL;
+		g_autoptr (TrackerSparqlCursor) cursor = NULL;
 		gchar *uri = NULL;
 		gchar *query;
-		gchar *urn = NULL;
 		GList *keyfiles;
-
-		if (!turtle && !resource_is_iri) {
-			g_print ("%s: '%s'\n", _("Querying information for entity"), *p);
-		}
+		gboolean found = FALSE;
 
 		/* support both, URIs and local file paths */
 		if (has_valid_uri_scheme (*p)) {
@@ -491,11 +445,26 @@ info_run (void)
 			g_object_unref (file);
 		}
 
-		if (!resource_is_iri) {
+		if (url_property) {
+			g_autoptr (TrackerSparqlStatement) stmt = NULL;
+			g_autoptr (TrackerSparqlCursor) cursor = NULL;
+
 			/* First check whether there's some entity with nie:url like this */
-			query = g_strdup_printf ("SELECT ?urn WHERE { ?urn %s \"%s\" }", url_property, uri);
-			cursor = tracker_sparql_connection_query (connection, query, NULL, &error);
+			query = g_strdup_printf ("SELECT ?urn { ?urn %s ~value }", url_property);
+			stmt = tracker_sparql_connection_query_statement (connection, query,
+			                                                  NULL, &error);
 			g_free (query);
+
+			if (stmt) {
+				tracker_sparql_statement_bind_string (stmt, "prop", url_property);
+				tracker_sparql_statement_bind_string (stmt, "value", uri);
+				cursor = tracker_sparql_statement_execute (stmt, NULL, &error);
+			}
+
+			if (cursor && tracker_sparql_cursor_next (cursor, NULL, &error)) {
+				g_clear_pointer (&uri, g_free);
+				uri = g_strdup (tracker_sparql_cursor_get_string (cursor, 0, NULL));
+			}
 
 			if (error) {
 				g_printerr ("  %s, %s\n",
@@ -506,90 +475,94 @@ info_run (void)
 			}
 		}
 
-		if (!cursor || !tracker_sparql_cursor_next (cursor, NULL, &error)) {
-			if (error) {
-				g_printerr ("  %s, %s\n",
-				            _("Unable to retrieve data for URI"),
-				            error->message);
-				g_object_unref (cursor);
-				g_clear_error (&error);
-
-				continue;
-			}
-
-			/* No URN matches, use uri as URN */
-			urn = g_strdup (uri);
-		} else {
-			urn = g_strdup (tracker_sparql_cursor_get_string (cursor, 0, NULL));
-
-			if (!turtle) {
-				g_print ("  '%s'\n", urn);
-			}
-
-			g_object_unref (cursor);
+		stmt = tracker_sparql_connection_query_statement (connection,
+		                                                  "SELECT DISTINCT ?urn {"
+		                                                  "  {"
+		                                                  "    BIND (~uri AS ?urn) . "
+		                                                  "    ?urn a rdfs:Resource . "
+		                                                  "  } UNION {"
+		                                                  "    ~uri nie:interpretedAs ?urn ."
+		                                                  "  }"
+		                                                  "}",
+		                                                  NULL, &error);
+		if (stmt) {
+			tracker_sparql_statement_bind_string (stmt, "uri", uri);
+			cursor = tracker_sparql_statement_execute (stmt, NULL, &error);
 		}
 
-		query = g_strdup_printf ("SELECT DISTINCT ?predicate ?object ?x"
-		                         "  ( EXISTS { ?predicate rdfs:range [ rdfs:subClassOf rdfs:Resource ] } )"
-		                         "WHERE {"
-		                         "  <%s> nie:interpretedAs? ?x . "
-					 "  ?x ?predicate ?object . "
-		                         "} ORDER BY ?x",
-					 urn);
+		if (cursor) {
+			while (tracker_sparql_cursor_next (cursor, NULL, NULL)) {
+				const gchar *str;
 
-		cursor = tracker_sparql_connection_query (connection, query, NULL, &error);
-
-		g_free (query);
+				str = tracker_sparql_cursor_get_string (cursor, 0, NULL);
+				urns = g_list_prepend (urns, g_strdup (str));
+				found = TRUE;
+			}
+		}
 
 		if (error) {
 			g_printerr ("  %s, %s\n",
 			            _("Unable to retrieve data for URI"),
 			            error->message);
-
 			g_clear_error (&error);
-			continue;
 		}
 
-		if (cursor) {
+		if (!found) {
 			if (turtle) {
-				has_output = print_turtle (urn, cursor, prefixes, full_namespaces);
+				g_print ("# No metadata available for <%s>\n", uri);
 			} else {
-				has_output = print_plain (*p, urn, cursor, prefixes, full_namespaces);
-			}
+				g_print ("  %s\n",
+				         _("No metadata available for that URI"));
+				output_eligible_status_for_file (*p, &error);
 
-			g_object_unref (cursor);
-		}
+				if (error) {
+					g_printerr ("%s: %s\n",
+					            _("Could not get eligible status: "),
+					            error->message);
+					g_clear_error (&error);
+				}
 
-		if (has_output) {
-			g_print ("\n");
-		} else if (turtle) {
-			g_print ("# No metadata available for <%s>\n", uri);
-		} else {
-			g_print ("  %s\n",
-			         _("No metadata available for that URI"));
-			output_eligible_status_for_file (*p, &error);
-
-			if (error) {
-				g_printerr ("%s: %s\n",
-				            _("Could not get eligible status: "),
-				            error->message);
-				g_clear_error (&error);
+				keyfiles = tracker_cli_get_error_keyfiles ();
+				if (keyfiles)
+					print_errors (keyfiles, uri);
 			}
 		}
-
-		keyfiles = tracker_cli_get_error_keyfiles ();
-
-		if (keyfiles && !turtle)
-			print_errors (keyfiles, uri);
-
-		g_print ("\n");
-
-		g_free (uri);
-		g_free (urn);
 	}
 
-	g_hash_table_unref (prefixes);
+	if (!urns)
+		goto out;
+
+	if (turtle) {
+		g_autoptr (TrackerSparqlStatement) stmt = NULL;
+		g_autoptr (GMainLoop) main_loop = NULL;
+
+		stmt = describe_statement_for_urns (connection, urns);
+		main_loop = g_main_loop_new (NULL, FALSE);
+		tracker_sparql_statement_serialize_async (stmt,
+		                                          TRACKER_SERIALIZE_FLAGS_NONE,
+		                                          TRACKER_RDF_FORMAT_TURTLE,
+		                                          NULL,
+		                                          serialize_cb,
+		                                          main_loop);
+		g_main_loop_run (main_loop);
+	} else {
+		g_autoptr (TrackerSparqlStatement) stmt = NULL;
+		g_autoptr (TrackerSparqlCursor) cursor = NULL;
+		g_autoptr (GMainLoop) main_loop = NULL;
+		TrackerNamespaceManager *namespaces;
+
+		namespaces = tracker_sparql_connection_get_namespace_manager (connection);
+		stmt = describe_statement_for_urns (connection, urns);
+		cursor = tracker_sparql_statement_execute (stmt, NULL, NULL);
+
+		print_plain (cursor, namespaces);
+	}
+
+ out:
+	g_list_free_full (urns, g_free);
 	g_object_unref (connection);
+
+	tracker_term_pager_close ();
 
 	return EXIT_SUCCESS;
 }
@@ -642,6 +615,14 @@ main (int argc, const char **argv)
 {
 	GOptionContext *context;
 	GError *error = NULL;
+
+	output_is_tty = tracker_term_is_tty ();
+
+	setlocale (LC_ALL, "");
+
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
 	context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, entries, NULL);

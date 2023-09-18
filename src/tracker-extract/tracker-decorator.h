@@ -24,7 +24,7 @@
 #error "Only <libtracker-miner/tracker-miner.h> can be included directly."
 #endif
 
-#include "tracker-miner-object.h"
+#include <libtracker-miners-common/tracker-common.h>
 
 #include <libtracker-extract/tracker-extract.h>
 

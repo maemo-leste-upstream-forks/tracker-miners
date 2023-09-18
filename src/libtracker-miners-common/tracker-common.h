@@ -41,7 +41,7 @@
 #include "tracker-file-utils.h"
 #include "tracker-fts-config.h"
 #include "tracker-ioprio.h"
-#include "tracker-miner-object.h"
+#include "tracker-miner.h"
 #include "tracker-miner-proxy.h"
 #include "tracker-sched.h"
 #include "tracker-seccomp.h"

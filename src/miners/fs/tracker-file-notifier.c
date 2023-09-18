@@ -1261,33 +1261,12 @@ monitor_item_deleted_cb (TrackerMonitor *monitor,
 		g_clear_object (&cursor);
 	}
 
-	if (!is_directory) {
-		TrackerDirectoryFlags flags;
-		gboolean indexable;
-		GFile *parent;
-
-		parent = g_file_get_parent (file);
-
-		indexable = tracker_indexing_tree_parent_is_indexable (priv->indexing_tree,
-		                                                       parent);
-
-		/* note: This supposedly works, but in practice
-		 * won't ever happen as we don't get monitor events
-		 * from directories triggering a filter of type
-		 * TRACKER_FILTER_PARENT_DIRECTORY.
-		 */
-		if (!indexable) {
-			/* New file was triggering a directory content
-			 * filter, reindex parent directory altogether
-			 */
-			tracker_indexing_tree_get_root (priv->indexing_tree,
-							parent, &flags);
-			notifier_queue_root (notifier, parent, flags, FALSE);
-			return;
-		}
-
-		g_object_unref (parent);
-	}
+	/* Note: We might theoretically do live handling of files triggering
+	 * TRACKER_FILTER_PARENT_DIRECTORY filters (e.g. reindexing the full
+	 * folder after the file was removed). This does not work in practice
+	 * since directories affected by that filter do not have a monitor,
+	 * but if it worked, this would be the place to handle this.
+	 */
 
 	if (!tracker_indexing_tree_file_is_indexable (priv->indexing_tree,
 	                                              file, NULL)) {

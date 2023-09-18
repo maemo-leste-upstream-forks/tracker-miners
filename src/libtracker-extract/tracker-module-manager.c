@@ -376,48 +376,6 @@ tracker_extract_module_manager_get_rdf_types (const gchar *mimetype)
 	return types;
 }
 
-GStrv
-tracker_extract_module_manager_get_all_rdf_types (void)
-{
-	GHashTable *rdf_types;
-	gchar **types, *type;
-	GHashTableIter iter;
-	RuleInfo *info;
-	gint i, j;
-
-	if (!initialized &&
-	    !tracker_extract_module_manager_init ()) {
-		return NULL;
-	}
-
-	rdf_types = g_hash_table_new (g_str_hash, g_str_equal);
-
-	for (i = 0; i < rules->len; i++) {
-		info = &g_array_index (rules, RuleInfo, i);
-
-		if (!info->fallback_rdf_types)
-			continue;
-
-		for (j = 0; info->fallback_rdf_types[j]; j++) {
-			g_hash_table_add (rdf_types,
-					  info->fallback_rdf_types[j]);
-		}
-	}
-
-	g_hash_table_iter_init (&iter, rdf_types);
-	types = g_new0 (gchar*, g_hash_table_size (rdf_types) + 1);
-	i = 0;
-
-	while (g_hash_table_iter_next (&iter, (gpointer*) &type, NULL)) {
-		types[i] = g_strdup (type);
-		i++;
-	}
-
-	g_hash_table_unref (rdf_types);
-
-	return types;
-}
-
 static ModuleInfo *
 load_module (RuleInfo *info)
 {

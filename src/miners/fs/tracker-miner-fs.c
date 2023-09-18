@@ -30,9 +30,7 @@
 #include "tracker-file-notifier.h"
 #include "tracker-lru.h"
 
-/* Default processing pool limits to be set */
-#define DEFAULT_WAIT_POOL_LIMIT 1
-#define DEFAULT_READY_POOL_LIMIT 1
+#define BUFFER_POOL_LIMIT 800
 #define DEFAULT_URN_LRU_SIZE 100
 
 #define BIG_QUEUE_THRESHOLD 1000
@@ -59,34 +57,6 @@
  * All the filesystem crawling and monitoring is abstracted away,
  * leaving to implementations the decisions of what directories/files
  * should it process, and the actual data extraction.
- *
- * Example creating a TrackerMinerFS with our own file system root and
- * data provider.
- *
- * First create our class and base it on TrackerMinerFS:
- * |[
- * G_DEFINE_TYPE_WITH_CODE (MyMinerFiles, my_miner_files, TRACKER_TYPE_MINER_FS,
- *                          G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
- *                                                 my_miner_files_initable_iface_init))
- * ]|
- *
- * Later in our class creation function, we are supplying the
- * arguments we want. In this case, the 'root' is a #GFile pointing to
- * a root URI location (for example 'file:///') and 'data_provider' is a
- * #TrackerDataProvider used to enumerate 'root' and return children it
- * finds. If 'data_provider' is %NULL (the default), then a
- * #TrackerFileDataProvider is created automatically.
- * |[
- * // Note that only 'name' is mandatory
- * miner = g_initable_new (MY_TYPE_MINER_FILES,
- *                         NULL,
- *                         error,
- *                         "name", "MyMinerFiles",
- *                         "root", root,
- *                         "processing-pool-wait-limit", 10,
- *                         "processing-pool-ready-limit", 100,
- *                         NULL);
- * ]|
  **/
 
 typedef struct {
@@ -115,15 +85,12 @@ struct _TrackerMinerFSPrivate {
 
 	guint item_queues_handler_id;
 
-	/* Root / tree / index */
-	GFile *root;
 	TrackerIndexingTree *indexing_tree;
 	TrackerFileNotifier *file_notifier;
 
 	/* Sparql insertion tasks */
 	TrackerTaskPool *task_pool;
 	TrackerSparqlBuffer *sparql_buffer;
-	guint sparql_buffer_limit;
 
 	/* Folder URN cache */
 	TrackerLRU *urn_lru;
@@ -136,9 +103,6 @@ struct _TrackerMinerFSPrivate {
 	GTimer *timer;
 	GTimer *extraction_timer;
 
-	guint been_started : 1;     /* TRUE if miner has been started */
-	guint been_crawled : 1;     /* TRUE if initial crawling has been
-	                             * done */
 	guint shown_totals : 1;     /* TRUE if totals have been shown */
 	guint is_paused : 1;        /* TRUE if miner is paused */
 	guint flushing : 1;         /* TRUE if flushing SPARQL */
@@ -172,27 +136,25 @@ typedef enum {
 	QUEUE_ACTION_DELETE_SECOND  = 1 << 1,
 } QueueCoalesceAction;
 
+typedef enum {
+	TRACKER_MINER_FS_EVENT_CREATED,
+	TRACKER_MINER_FS_EVENT_UPDATED,
+	TRACKER_MINER_FS_EVENT_DELETED,
+	TRACKER_MINER_FS_EVENT_MOVED,
+} TrackerMinerFSEventType;
+
 enum {
-	PROCESS_FILE,
-	PROCESS_FILE_ATTRIBUTES,
 	FINISHED,
 	FINISHED_ROOT,
-	REMOVE_FILE,
-	REMOVE_CHILDREN,
-	MOVE_FILE,
 	LAST_SIGNAL
 };
 
 enum {
 	PROP_0,
 	PROP_THROTTLE,
-	PROP_ROOT,
-	PROP_WAIT_POOL_LIMIT,
-	PROP_READY_POOL_LIMIT,
 	PROP_FILE_ATTRIBUTES,
+	PROP_INDEXING_TREE,
 };
-
-static void           miner_fs_initable_iface_init        (GInitableIface       *iface);
 
 static void           fs_finalize                         (GObject              *object);
 static void           fs_constructed                      (GObject              *object);
@@ -251,25 +213,9 @@ static void           task_pool_limit_reached_notify_cb       (GObject        *o
                                                                gpointer        user_data);
 
 static GQuark quark_last_queue_event = 0;
-static GInitableIface* miner_fs_initable_parent_iface;
 static guint signals[LAST_SIGNAL] = { 0, };
 
-/**
- * tracker_miner_fs_error_quark:
- *
- * Gives the caller the #GQuark used to identify #TrackerMinerFS errors
- * in #GError structures. The #GQuark is used as the domain for the error.
- *
- * Returns: the #GQuark used for the domain of a #GError.
- *
- * Since: 1.2
- **/
-G_DEFINE_QUARK (TrackerMinerFSError, tracker_miner_fs_error)
-
-G_DEFINE_ABSTRACT_TYPE_WITH_CODE (TrackerMinerFS, tracker_miner_fs, TRACKER_TYPE_MINER,
-                                  G_ADD_PRIVATE (TrackerMinerFS)
-                                  G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
-                                                         miner_fs_initable_iface_init));
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (TrackerMinerFS, tracker_miner_fs, TRACKER_TYPE_MINER)
 
 /* For TRACKER_DEBUG=miner-fs-events */
 #ifdef G_ENABLE_DEBUG
@@ -325,35 +271,20 @@ tracker_miner_fs_class_init (TrackerMinerFSClass *klass)
 	                                                      0, 1, 0,
 	                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
-	                                 PROP_ROOT,
-	                                 g_param_spec_object ("root",
-	                                                      "Root",
-	                                                      "Top level URI for our indexing tree and file notify clases",
-	                                                      G_TYPE_FILE,
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
-	g_object_class_install_property (object_class,
-	                                 PROP_WAIT_POOL_LIMIT,
-	                                 g_param_spec_uint ("processing-pool-wait-limit",
-	                                                    "Processing pool limit for WAIT tasks",
-	                                                    "Maximum number of files that can be concurrently "
-	                                                    "processed by the upper layer",
-	                                                    1, G_MAXUINT, DEFAULT_WAIT_POOL_LIMIT,
-	                                                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
-	g_object_class_install_property (object_class,
-	                                 PROP_READY_POOL_LIMIT,
-	                                 g_param_spec_uint ("processing-pool-ready-limit",
-	                                                    "Processing pool limit for READY tasks",
-	                                                    "Maximum number of SPARQL updates that can be merged "
-	                                                    "in a single connection to the store",
-	                                                    1, G_MAXUINT, DEFAULT_READY_POOL_LIMIT,
-	                                                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
-	g_object_class_install_property (object_class,
 	                                 PROP_FILE_ATTRIBUTES,
 	                                 g_param_spec_string ("file-attributes",
 	                                                      "File attributes",
 	                                                      "File attributes",
 	                                                      NULL,
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property (object_class,
+	                                 PROP_INDEXING_TREE,
+	                                 g_param_spec_object ("indexing-tree",
+	                                                      NULL, NULL,
+	                                                      TRACKER_TYPE_INDEXING_TREE,
+	                                                      G_PARAM_READWRITE |
+	                                                      G_PARAM_CONSTRUCT_ONLY |
+	                                                      G_PARAM_STATIC_STRINGS));
 
 	/**
 	 * TrackerMinerFS::finished:
@@ -448,93 +379,6 @@ tracker_miner_fs_init (TrackerMinerFS *object)
 	                                 g_free);
 }
 
-static gboolean
-miner_fs_initable_init (GInitable     *initable,
-                        GCancellable  *cancellable,
-                        GError       **error)
-{
-	TrackerMinerFSPrivate *priv;
-	guint limit;
-
-	if (!miner_fs_initable_parent_iface->init (initable, cancellable, error)) {
-		return FALSE;
-	}
-
-	priv = TRACKER_MINER_FS (initable)->priv;
-
-	g_object_get (initable, "processing-pool-ready-limit", &limit, NULL);
-	priv->sparql_buffer = tracker_sparql_buffer_new (tracker_miner_get_connection (TRACKER_MINER (initable)),
-	                                                 limit);
-
-	if (!priv->sparql_buffer) {
-		g_set_error (error,
-		             tracker_miner_fs_error_quark (),
-		             TRACKER_MINER_FS_ERROR_INIT,
-		             "Could not create TrackerSparqlBuffer needed to process resources");
-		return FALSE;
-	}
-
-	g_signal_connect (priv->sparql_buffer, "notify::limit-reached",
-	                  G_CALLBACK (task_pool_limit_reached_notify_cb),
-	                  initable);
-
-	if (!priv->indexing_tree) {
-		g_set_error (error,
-		             tracker_miner_fs_error_quark (),
-		             TRACKER_MINER_FS_ERROR_INIT,
-		             "Could not create TrackerIndexingTree needed to manage content indexed");
-		return FALSE;
-	}
-
-	g_signal_connect (priv->indexing_tree, "directory-removed",
-	                  G_CALLBACK (indexing_tree_directory_removed),
-	                  initable);
-
-	/* Create the file notifier */
-	priv->file_notifier = tracker_file_notifier_new (priv->indexing_tree,
-	                                                 tracker_miner_get_connection (TRACKER_MINER (initable)),
-	                                                 priv->file_attributes);
-
-	if (!priv->file_notifier) {
-		g_set_error (error,
-		             tracker_miner_fs_error_quark (),
-		             TRACKER_MINER_FS_ERROR_INIT,
-		             "Could not create TrackerFileNotifier needed to signal new resources to be indexed");
-		return FALSE;
-	}
-
-	g_signal_connect (priv->file_notifier, "file-created",
-	                  G_CALLBACK (file_notifier_file_created),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "file-updated",
-	                  G_CALLBACK (file_notifier_file_updated),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "file-deleted",
-	                  G_CALLBACK (file_notifier_file_deleted),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "file-moved",
-	                  G_CALLBACK (file_notifier_file_moved),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "directory-started",
-	                  G_CALLBACK (file_notifier_directory_started),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "directory-finished",
-	                  G_CALLBACK (file_notifier_directory_finished),
-	                  initable);
-	g_signal_connect (priv->file_notifier, "finished",
-	                  G_CALLBACK (file_notifier_finished),
-	                  initable);
-
-	return TRUE;
-}
-
-static void
-miner_fs_initable_iface_init (GInitableIface *iface)
-{
-	miner_fs_initable_parent_iface = g_type_interface_peek_parent (iface);
-	iface->init = miner_fs_initable_init;
-}
-
 static QueueEvent *
 queue_event_new (TrackerMinerFSEventType  type,
                  GFile                   *file,
@@ -595,9 +439,10 @@ queue_event_coalesce (const QueueEvent  *first,
 	*replacement = NULL;
 
 	if (first->type == TRACKER_MINER_FS_EVENT_CREATED) {
-		if (second->type == TRACKER_MINER_FS_EVENT_UPDATED ||
-		     second->type == TRACKER_MINER_FS_EVENT_CREATED) {
-			return QUEUE_ACTION_DELETE_SECOND;
+		if (second->type == TRACKER_MINER_FS_EVENT_CREATED ||
+		    (second->type == TRACKER_MINER_FS_EVENT_UPDATED &&
+		     !second->attributes_update)) {
+			return QUEUE_ACTION_DELETE_FIRST;
 		} else if (second->type == TRACKER_MINER_FS_EVENT_MOVED) {
 			*replacement = queue_event_new (TRACKER_MINER_FS_EVENT_CREATED,
 			                                second->dest_file,
@@ -683,8 +528,6 @@ fs_finalize (GObject *object)
 					NULL);
 	tracker_priority_queue_unref (priv->items);
 
-	g_object_unref (priv->root);
-
 	if (priv->indexing_tree) {
 		g_object_unref (priv->indexing_tree);
 	}
@@ -718,14 +561,42 @@ fs_constructed (GObject *object)
 
 	priv = TRACKER_MINER_FS (object)->priv;
 
-	/* Create root if one didn't exist */
-	if (priv->root == NULL) {
-		/* We default to file:/// */
-		priv->root = g_file_new_for_uri ("file:///");
-	}
+	g_signal_connect (priv->indexing_tree, "directory-removed",
+	                  G_CALLBACK (indexing_tree_directory_removed),
+	                  object);
 
-	/* Create indexing tree */
-	priv->indexing_tree = tracker_indexing_tree_new_with_root (priv->root);
+	priv->sparql_buffer = tracker_sparql_buffer_new (tracker_miner_get_connection (TRACKER_MINER (object)),
+	                                                 BUFFER_POOL_LIMIT);
+	g_signal_connect (priv->sparql_buffer, "notify::limit-reached",
+	                  G_CALLBACK (task_pool_limit_reached_notify_cb),
+	                  object);
+
+	/* Create the file notifier */
+	priv->file_notifier = tracker_file_notifier_new (priv->indexing_tree,
+	                                                 tracker_miner_get_connection (TRACKER_MINER (object)),
+	                                                 priv->file_attributes);
+
+	g_signal_connect (priv->file_notifier, "file-created",
+	                  G_CALLBACK (file_notifier_file_created),
+	                  object);
+	g_signal_connect (priv->file_notifier, "file-updated",
+	                  G_CALLBACK (file_notifier_file_updated),
+	                  object);
+	g_signal_connect (priv->file_notifier, "file-deleted",
+	                  G_CALLBACK (file_notifier_file_deleted),
+	                  object);
+	g_signal_connect (priv->file_notifier, "file-moved",
+	                  G_CALLBACK (file_notifier_file_moved),
+	                  object);
+	g_signal_connect (priv->file_notifier, "directory-started",
+	                  G_CALLBACK (file_notifier_directory_started),
+	                  object);
+	g_signal_connect (priv->file_notifier, "directory-finished",
+	                  G_CALLBACK (file_notifier_directory_finished),
+	                  object);
+	g_signal_connect (priv->file_notifier, "finished",
+	                  G_CALLBACK (file_notifier_finished),
+	                  object);
 }
 
 static void
@@ -741,22 +612,11 @@ fs_set_property (GObject      *object,
 		tracker_miner_fs_set_throttle (TRACKER_MINER_FS (object),
 		                               g_value_get_double (value));
 		break;
-	case PROP_ROOT:
-		/* We expect this to only occur once, on object construct */
-		fs->priv->root = g_value_dup_object (value);
-		break;
-	case PROP_WAIT_POOL_LIMIT:
-		break;
-	case PROP_READY_POOL_LIMIT:
-		fs->priv->sparql_buffer_limit = g_value_get_uint (value);
-
-		if (fs->priv->sparql_buffer) {
-			tracker_task_pool_set_limit (TRACKER_TASK_POOL (fs->priv->sparql_buffer),
-			                             fs->priv->sparql_buffer_limit);
-		}
-		break;
 	case PROP_FILE_ATTRIBUTES:
 		fs->priv->file_attributes = g_value_dup_string (value);
+		break;
+	case PROP_INDEXING_TREE:
+		fs->priv->indexing_tree = g_value_dup_object (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -778,16 +638,11 @@ fs_get_property (GObject    *object,
 	case PROP_THROTTLE:
 		g_value_set_double (value, fs->priv->throttle);
 		break;
-	case PROP_ROOT:
-		g_value_set_object (value, fs->priv->root);
-		break;
-	case PROP_WAIT_POOL_LIMIT:
-		break;
-	case PROP_READY_POOL_LIMIT:
-		g_value_set_uint (value, fs->priv->sparql_buffer_limit);
-		break;
 	case PROP_FILE_ATTRIBUTES:
 		g_value_set_string (value, fs->priv->file_attributes);
+		break;
+	case PROP_INDEXING_TREE:
+		g_value_set_object (value, fs->priv->indexing_tree);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -811,8 +666,6 @@ miner_started (TrackerMiner *miner)
 	TrackerMinerFS *fs;
 
 	fs = TRACKER_MINER_FS (miner);
-
-	fs->priv->been_started = TRUE;
 
 	if (fs->priv->timer_stopped) {
 		g_timer_start (fs->priv->timer);
@@ -963,8 +816,6 @@ process_stop (TrackerMinerFS *fs)
 	fs->priv->total_files_ignored = 0;
 	fs->priv->changes_processed = 0;
 	fs->priv->total_files_notified_error = 0;
-
-	fs->priv->been_crawled = TRUE;
 }
 
 static void
@@ -976,7 +827,7 @@ check_notifier_high_water (TrackerMinerFS *fs)
 	 * the notifier to stop a bit.
 	 */
 	high_water = (tracker_priority_queue_get_length (fs->priv->items) >
-	              2 * fs->priv->sparql_buffer_limit);
+	              2 * BUFFER_POOL_LIMIT);
 	tracker_file_notifier_set_high_water (fs->priv->file_notifier, high_water);
 }
 
@@ -1823,8 +1674,8 @@ tracker_miner_fs_get_throttle (TrackerMinerFS *fs)
 	return fs->priv->throttle;
 }
 
-static const gchar *
-tracker_miner_fs_get_folder_urn (TrackerMinerFS *fs,
+const gchar *
+tracker_miner_fs_get_identifier (TrackerMinerFS *fs,
 				 GFile          *file)
 {
 	GFileInfo *info;
@@ -1902,11 +1753,4 @@ tracker_miner_fs_get_indexing_tree (TrackerMinerFS *fs)
 	g_return_val_if_fail (TRACKER_IS_MINER_FS (fs), NULL);
 
 	return fs->priv->indexing_tree;
-}
-
-const gchar *
-tracker_miner_fs_get_identifier (TrackerMinerFS *miner,
-                                 GFile          *file)
-{
-	return tracker_miner_fs_get_folder_urn (miner, file);
 }

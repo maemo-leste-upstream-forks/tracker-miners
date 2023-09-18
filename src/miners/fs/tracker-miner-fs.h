@@ -28,8 +28,8 @@
 #include <gio/gio.h>
 
 #include <libtracker-sparql/tracker-sparql.h>
+#include <libtracker-miners-common/tracker-common.h>
 
-#include "tracker-miner-object.h"
 #include "tracker-indexing-tree.h"
 #include "tracker-sparql-buffer.h"
 
@@ -41,13 +41,6 @@ G_BEGIN_DECLS
 #define TRACKER_IS_MINER_FS(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), TRACKER_TYPE_MINER_FS))
 #define TRACKER_IS_MINER_FS_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),  TRACKER_TYPE_MINER_FS))
 #define TRACKER_MINER_FS_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TRACKER_TYPE_MINER_FS, TrackerMinerFSClass))
-
-typedef enum {
-	TRACKER_MINER_FS_EVENT_CREATED,
-	TRACKER_MINER_FS_EVENT_UPDATED,
-	TRACKER_MINER_FS_EVENT_DELETED,
-	TRACKER_MINER_FS_EVENT_MOVED,
-} TrackerMinerFSEventType;
 
 typedef struct _TrackerMinerFS        TrackerMinerFS;
 typedef struct _TrackerMinerFSPrivate TrackerMinerFSPrivate;
@@ -118,23 +111,7 @@ typedef struct {
 	                                       gboolean              recursive);
 } TrackerMinerFSClass;
 
-/**
- * TrackerMinerFSError:
- * @TRACKER_MINER_FS_ERROR_INIT: There was an error during
- * initialization of the object. The specific details are in the
- * message.
- *
- * Possible errors returned when calling creating new objects based on
- * the #TrackerMinerFS type and other APIs available with this class.
- *
- * Since: 1.2
- **/
-typedef enum {
-	TRACKER_MINER_FS_ERROR_INIT,
-} TrackerMinerFSError;
-
 GType                 tracker_miner_fs_get_type              (void) G_GNUC_CONST;
-GQuark                tracker_miner_fs_error_quark           (void);
 
 /* Properties */
 TrackerIndexingTree * tracker_miner_fs_get_indexing_tree     (TrackerMinerFS  *fs);
