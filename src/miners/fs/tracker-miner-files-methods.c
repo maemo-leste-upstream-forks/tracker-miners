@@ -61,14 +61,12 @@ miner_files_add_mount_info (TrackerMinerFiles *miner,
 {
 	TrackerStorage *storage;
 	TrackerStorageType storage_type;
-	const gchar *uuid;
 
 	storage = tracker_miner_files_get_storage (miner);
-	uuid = tracker_storage_get_uuid_for_file (storage, file);
-	if (!uuid)
-		return;
+	storage_type = tracker_storage_get_type_for_file (storage, file);
 
-	storage_type = tracker_storage_get_type_for_uuid (storage, uuid);
+	if (storage_type == 0)
+		return;
 
 	tracker_resource_set_boolean (resource, "tracker:isRemovable",
 	                              (storage_type & TRACKER_STORAGE_REMOVABLE) != 0);

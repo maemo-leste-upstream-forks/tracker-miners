@@ -31,6 +31,9 @@
 
 typedef struct _TrackerDomainOntology TrackerDomainOntology;
 
+#define TRACKER_TYPE_DOMAIN_ONTOLOGY (tracker_domain_ontology_get_type ())
+GType tracker_domain_ontology_get_type (void) G_GNUC_CONST;
+
 TrackerDomainOntology * tracker_domain_ontology_new      (const gchar   *name,
                                                           GCancellable  *cancellable,
                                                           GError       **error);

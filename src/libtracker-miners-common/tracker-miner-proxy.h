@@ -28,7 +28,7 @@
 
 #include <glib-object.h>
 #include <gio/gio.h>
-#include "tracker-miner-object.h"
+#include "tracker-miner.h"
 
 #define TRACKER_TYPE_MINER_PROXY         (tracker_miner_proxy_get_type())
 #define TRACKER_MINER_PROXY(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), TRACKER_TYPE_MINER_PROXY, TrackerMinerProxy))

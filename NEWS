@@ -1,3 +1,19 @@
+NEW in 3.6.0 - 2023-09-16
+<========================
+  * Fix possible race condition between directory crawling
+    and monitoring.
+  * Improved "tracker3 info" output
+  * Cleanups to tracker-miner-fs-3 code.
+
+Translations: eo
+
+  Highlights since 3.5.0:
+  * The tracker-extract-3 service moved all SPARQL queries and updates to
+    a GResource. Consistently uses TrackerSparqlStatement/TrackerResource
+    for updates.
+  * Many performance improvements.
+  * Desktop files in application folders are not indexed anymore.
+
 NEW in 3.6.rc - 2023-09-05
 ==========================
   * Throttle extractor process on battery conditions

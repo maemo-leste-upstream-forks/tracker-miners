@@ -93,6 +93,11 @@ tracker_domain_ontology_unref (TrackerDomainOntology *domain_ontology)
 	g_free (domain_ontology);
 }
 
+G_DEFINE_BOXED_TYPE (TrackerDomainOntology,
+                     tracker_domain_ontology,
+                     tracker_domain_ontology_ref,
+                     tracker_domain_ontology_unref)
+
 static const gchar *
 lookup_dir (const gchar *variable,
             gsize        variable_len)

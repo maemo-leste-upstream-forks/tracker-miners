@@ -51,10 +51,11 @@ struct TrackerMinerFilesClass {
 
 GType         tracker_miner_files_get_type                 (void) G_GNUC_CONST;
 
-TrackerMiner *tracker_miner_files_new                      (TrackerSparqlConnection  *connection,
-                                                            TrackerConfig            *config,
-                                                            const gchar              *domain,
-                                                            GError                  **error);
+TrackerMiner * tracker_miner_files_new (TrackerSparqlConnection *connection,
+                                        TrackerIndexingTree     *indexing_tree,
+                                        TrackerStorage          *storage,
+                                        TrackerConfig           *config,
+                                        TrackerDomainOntology   *domain);
 
 /* Global functions to handle timestamp files */
 gboolean tracker_miner_files_get_first_index_done (TrackerMinerFiles *mf);
@@ -72,13 +73,6 @@ void     tracker_miner_files_set_need_mtime_check (TrackerMinerFiles *mf,
 void     tracker_miner_files_set_mtime_checking   (TrackerMinerFiles *miner,
                                                    gboolean           mtime_checking);
 
-void     tracker_miner_files_writeback_file       (TrackerMinerFiles *mf,
-                                                   GFile             *file,
-                                                   GStrv              rdf_types,
-                                                   GPtrArray         *results);
-void     tracker_miner_files_writeback_notify     (TrackerMinerFiles *mf,
-                                                   GFile             *file,
-                                                   const GError      *error);
 TrackerStorage * tracker_miner_files_get_storage (TrackerMinerFiles *mf);
 
 G_END_DECLS

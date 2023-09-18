@@ -65,7 +65,6 @@ struct TrackerMinerFilesPrivate {
 	TrackerExtractWatchdog *extract_watchdog;
 	guint grace_period_timeout_id;
 
-	gchar *domain;
 	TrackerDomainOntology *domain_ontology;
 
 	guint disk_space_check_id;
@@ -88,7 +87,8 @@ struct TrackerMinerFilesPrivate {
 enum {
 	PROP_0,
 	PROP_CONFIG,
-	PROP_DOMAIN,
+	PROP_DOMAIN_ONTOLOGY,
+	PROP_STORAGE,
 };
 
 static void        miner_files_set_property             (GObject              *object,
@@ -101,10 +101,6 @@ static void        miner_files_get_property             (GObject              *o
                                                          GParamSpec           *pspec);
 static void        miner_files_constructed              (GObject              *object);
 static void        miner_files_finalize                 (GObject              *object);
-static void        miner_files_initable_iface_init      (GInitableIface       *iface);
-static gboolean    miner_files_initable_init            (GInitable            *initable,
-                                                         GCancellable         *cancellable,
-                                                         GError              **error);
 #ifdef HAVE_POWER
 static void        check_battery_status                 (TrackerMinerFiles    *fs);
 static void        battery_status_cb                    (GObject              *object,
@@ -160,12 +156,7 @@ static void        miner_finished_cb                    (TrackerMinerFS *fs,
 static void        miner_files_in_removable_media_remove_by_date  (TrackerMinerFiles  *miner,
                                                                    const gchar        *date);
 
-static GInitableIface* miner_files_initable_parent_iface;
-
-G_DEFINE_TYPE_WITH_CODE (TrackerMinerFiles, tracker_miner_files, TRACKER_TYPE_MINER_FS,
-                         G_ADD_PRIVATE (TrackerMinerFiles)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
-                                                miner_files_initable_iface_init))
+G_DEFINE_TYPE_WITH_PRIVATE (TrackerMinerFiles, tracker_miner_files, TRACKER_TYPE_MINER_FS)
 
 static void
 miner_files_started (TrackerMiner *miner)
@@ -203,12 +194,19 @@ tracker_miner_files_class_init (TrackerMinerFilesClass *klass)
 	                                                      TRACKER_TYPE_CONFIG,
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
-	                                 PROP_DOMAIN,
-	                                 g_param_spec_string ("domain",
-	                                                      "Domain",
-	                                                      "Domain",
-	                                                      NULL,
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+	                                 PROP_DOMAIN_ONTOLOGY,
+	                                 g_param_spec_boxed ("domain-ontology",
+	                                                     NULL, NULL,
+	                                                     TRACKER_TYPE_DOMAIN_ONTOLOGY,
+	                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property (object_class,
+	                                 PROP_STORAGE,
+	                                 g_param_spec_object ("storage",
+	                                                      NULL, NULL,
+	                                                      TRACKER_TYPE_STORAGE,
+	                                                      G_PARAM_READWRITE |
+	                                                      G_PARAM_CONSTRUCT_ONLY |
+	                                                      G_PARAM_STATIC_STRINGS));
 
 	miner_files_error_quark = g_quark_from_static_string ("TrackerMinerFiles");
 }
@@ -271,8 +269,6 @@ tracker_miner_files_init (TrackerMinerFiles *mf)
 
 	priv = mf->private = TRACKER_MINER_FILES_GET_PRIVATE (mf);
 
-	priv->storage = tracker_storage_new ();
-
 #ifdef HAVE_POWER
 	priv->power = tracker_power_new ();
 
@@ -291,13 +287,6 @@ tracker_miner_files_init (TrackerMinerFiles *mf)
 	                                                 NULL);
 
 	priv->mtime_check = TRUE;
-}
-
-static void
-miner_files_initable_iface_init (GInitableIface *iface)
-{
-	miner_files_initable_parent_iface = g_type_interface_peek_parent (iface);
-	iface->init = miner_files_initable_init;
 }
 
 static void
@@ -320,74 +309,6 @@ removable_days_threshold_changed (TrackerMinerFiles *mf)
 	}
 }
 
-static gboolean
-miner_files_initable_init (GInitable     *initable,
-                           GCancellable  *cancellable,
-                           GError       **error)
-{
-	TrackerMinerFiles *mf;
-	GError *inner_error = NULL;
-	gchar *domain_name;
-
-	/* Chain up parent's initable callback before calling child's one */
-	if (!miner_files_initable_parent_iface->init (initable, cancellable, &inner_error)) {
-		g_propagate_error (error, inner_error);
-		return FALSE;
-	}
-
-	mf = TRACKER_MINER_FILES (initable);
-
-	mf->private->domain_ontology = tracker_domain_ontology_new (mf->private->domain, NULL, &inner_error);
-	if (!mf->private->domain_ontology) {
-		g_propagate_error (error, inner_error);
-		return FALSE;
-	}
-
-	/* We must have a configuration setup here */
-	if (G_UNLIKELY (!mf->private->config)) {
-		g_set_error (error,
-		             TRACKER_MINER_ERROR,
-		             0,
-		             "No config set for miner %s",
-		             G_OBJECT_TYPE_NAME (mf));
-		return FALSE;
-	}
-
-#ifdef HAVE_POWER
-	check_battery_status (mf);
-#endif /* HAVE_POWER */
-
-	/* We want to get notified when config changes */
-	g_signal_connect (mf->private->config, "notify::low-disk-space-limit",
-	                  G_CALLBACK (low_disk_space_limit_cb),
-	                  mf);
-	g_signal_connect_swapped (mf->private->config,
-	                          "notify::removable-days-threshold",
-	                          G_CALLBACK (removable_days_threshold_changed),
-	                          mf);
-
-#ifdef HAVE_POWER
-	g_signal_connect (mf->private->config, "notify::index-on-battery",
-	                  G_CALLBACK (index_on_battery_cb),
-	                  mf);
-	g_signal_connect (mf->private->config, "notify::index-on-battery-first-time",
-	                  G_CALLBACK (index_on_battery_cb),
-	                  mf);
-#endif /* HAVE_POWER */
-
-	disk_space_check_start (mf);
-
-	domain_name = tracker_domain_ontology_get_domain (mf->private->domain_ontology, NULL);
-	mf->private->extract_watchdog = tracker_extract_watchdog_new (domain_name);
-	g_signal_connect (mf->private->extract_watchdog, "lost",
-	                  G_CALLBACK (on_extractor_lost), mf);
-	g_signal_connect (mf->private->extract_watchdog, "status",
-	                  G_CALLBACK (on_extractor_status), mf);
-	g_free (domain_name);
-
-	return TRUE;
-}
-
 static void
 miner_files_set_property (GObject      *object,
                           guint         prop_id,
@@ -402,8 +323,11 @@ miner_files_set_property (GObject      *object,
 	case PROP_CONFIG:
 		priv->config = g_value_dup_object (value);
 		break;
-	case PROP_DOMAIN:
-		priv->domain = g_value_dup_string (value);
+	case PROP_DOMAIN_ONTOLOGY:
+		priv->domain_ontology = g_value_dup_boxed (value);
+		break;
+	case PROP_STORAGE:
+		priv->storage = g_value_dup_object (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -425,8 +349,11 @@ miner_files_get_property (GObject    *object,
 	case PROP_CONFIG:
 		g_value_set_object (value, priv->config);
 		break;
-	case PROP_DOMAIN:
-		g_value_set_string (value, priv->domain);
+	case PROP_DOMAIN_ONTOLOGY:
+		g_value_set_boxed (value, priv->domain_ontology);
+		break;
+	case PROP_STORAGE:
+		g_value_set_object (value, priv->storage);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -443,8 +370,6 @@ miner_files_finalize (GObject *object)
 
 	mf = TRACKER_MINER_FILES (object);
 	priv = mf->private;
-
-	g_free (priv->domain);
 
 	indexing_tree = tracker_miner_fs_get_indexing_tree (TRACKER_MINER_FS (mf));
 	g_signal_handlers_disconnect_by_data (indexing_tree, mf);
@@ -652,17 +577,13 @@ init_index_roots (TrackerMinerFiles *miner_files)
 
 	for (l = roots; l; l = l->next) {
 		TrackerStorage *storage = miner_files->private->storage;
-		TrackerStorageType type = 0;
-		const gchar *uuid;
+		TrackerStorageType type;
 		GFile *file = l->data;
 
 		if (g_hash_table_contains (handled, file))
 			continue;
 
-		uuid = tracker_storage_get_uuid_for_file (storage, file);
-
-		if (uuid)
-			type = tracker_storage_get_type_for_uuid (storage, uuid);
+		type = tracker_storage_get_type_for_file (storage, file);
 
 		if ((type & TRACKER_STORAGE_REMOVABLE) != 0)
 			set_up_mount_point (miner_files, file, TRUE, NULL);
@@ -973,13 +894,9 @@ indexing_tree_directory_added_cb (TrackerIndexingTree *indexing_tree,
 {
 	TrackerMinerFiles *miner_files = user_data;
 	TrackerStorage *storage = miner_files->private->storage;
-	TrackerStorageType type = 0;
-	const gchar *uuid;
+	TrackerStorageType type;
 
-	uuid = tracker_storage_get_uuid_for_file (storage, directory);
-
-	if (uuid)
-		type = tracker_storage_get_type_for_uuid (storage, uuid);
+	type = tracker_storage_get_type_for_file (storage, directory);
 
 	if ((type & TRACKER_STORAGE_REMOVABLE) != 0)
 		set_up_mount_point (miner_files, directory, TRUE, NULL);
@@ -992,17 +909,13 @@ indexing_tree_directory_removed_cb (TrackerIndexingTree *indexing_tree,
 {
 	TrackerMinerFiles *miner_files = user_data;
 	TrackerStorage *storage = miner_files->private->storage;
-	TrackerStorageType type = 0;
+	TrackerStorageType type;
 	TrackerSparqlConnection *conn;
 	g_autoptr (TrackerBatch) batch = NULL;
 	g_autoptr (GError) error = NULL;
-	const gchar *uuid;
 	gboolean delete = FALSE, update_mount = FALSE;
 
-	uuid = tracker_storage_get_uuid_for_file (storage, directory);
-
-	if (uuid)
-		type = tracker_storage_get_type_for_uuid (storage, uuid);
+	type = tracker_storage_get_type_for_file (storage, directory);
 
 	if ((type & TRACKER_STORAGE_REMOVABLE) != 0) {
 		if (!tracker_config_get_index_removable_devices (miner_files->private->config))
@@ -1105,7 +1018,9 @@ miner_files_move_file (TrackerMinerFS      *fs,
 static void
 miner_files_constructed (GObject *object)
 {
+	TrackerMinerFiles *mf = TRACKER_MINER_FILES (object);;
 	TrackerIndexingTree *indexing_tree;
+	g_autofree gchar *domain_name = NULL;
 
 	G_OBJECT_CLASS (tracker_miner_files_parent_class)->constructed (object);
 
@@ -1114,25 +1029,55 @@ miner_files_constructed (GObject *object)
 	                  G_CALLBACK (indexing_tree_directory_added_cb), object);
 	g_signal_connect (indexing_tree, "directory-removed",
 	                  G_CALLBACK (indexing_tree_directory_removed_cb), object);
+
+	/* We want to get notified when config changes */
+	g_signal_connect (mf->private->config, "notify::low-disk-space-limit",
+	                  G_CALLBACK (low_disk_space_limit_cb),
+	                  mf);
+	g_signal_connect_swapped (mf->private->config,
+	                          "notify::removable-days-threshold",
+	                          G_CALLBACK (removable_days_threshold_changed),
+	                          mf);
+
+#ifdef HAVE_POWER
+	g_signal_connect (mf->private->config, "notify::index-on-battery",
+	                  G_CALLBACK (index_on_battery_cb),
+	                  mf);
+	g_signal_connect (mf->private->config, "notify::index-on-battery-first-time",
+	                  G_CALLBACK (index_on_battery_cb),
+	                  mf);
+
+	check_battery_status (mf);
+#endif /* HAVE_POWER */
+
+	disk_space_check_start (mf);
+
+	domain_name = tracker_domain_ontology_get_domain (mf->private->domain_ontology, NULL);
+	mf->private->extract_watchdog = tracker_extract_watchdog_new (domain_name);
+	g_signal_connect (mf->private->extract_watchdog, "lost",
+	                  G_CALLBACK (on_extractor_lost), mf);
+	g_signal_connect (mf->private->extract_watchdog, "status",
+	                  G_CALLBACK (on_extractor_status), mf);
 }
 
 TrackerMiner *
 tracker_miner_files_new (TrackerSparqlConnection  *connection,
+                         TrackerIndexingTree      *indexing_tree,
+                         TrackerStorage           *storage,
                          TrackerConfig            *config,
-                         const gchar              *domain,
-                         GError                  **error)
+                         TrackerDomainOntology    *domain_ontology)
 {
-	return g_initable_new (TRACKER_TYPE_MINER_FILES,
-	                       NULL,
-	                       error,
-	                       "connection", connection,
-	                       "root", NULL,
-	                       "config", config,
-	                       "domain", domain,
-	                       "processing-pool-wait-limit", 1,
-	                       "processing-pool-ready-limit", 800,
-	                       "file-attributes", FILE_ATTRIBUTES,
-	                       NULL);
+	g_return_val_if_fail (TRACKER_IS_SPARQL_CONNECTION (connection), NULL);
+	g_return_val_if_fail (TRACKER_IS_CONFIG (config), NULL);
+
+	return g_object_new (TRACKER_TYPE_MINER_FILES,
+	                     "connection", connection,
+	                     "indexing-tree", indexing_tree,
+	                     "storage", storage,
+	                     "config", config,
+	                     "domain-ontology", domain_ontology,
+	                     "file-attributes", FILE_ATTRIBUTES,
+	                     NULL);
 }
 
 static void

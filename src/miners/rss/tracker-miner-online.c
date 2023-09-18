@@ -69,7 +69,6 @@ enum {
 
 static void       miner_online_initable_iface_init (GInitableIface         *iface);
 
-static GInitableIface* miner_online_initable_parent_iface;
 static guint signals[N_SIGNALS] = { 0 };
 
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (TrackerMinerOnline, tracker_miner_online, TRACKER_TYPE_MINER,
@@ -355,14 +354,6 @@ miner_online_initable_init (GInitable     *initable,
 	miner = TRACKER_MINER_ONLINE (initable);
 
 	priv = tracker_miner_online_get_instance_private (miner);
-#endif /* HAVE_NETWORK_MANAGER */
-
-	if (!miner_online_initable_parent_iface->init (initable,
-	                                               cancellable, error)) {
-		return FALSE;
-	}
-
-#ifdef HAVE_NETWORK_MANAGER
 	priv->client = nm_client_new (NULL, error);
 	if (!priv->client) {
 		g_prefix_error (error, "Couldn't create NetworkManager client: ");
@@ -380,7 +371,6 @@ miner_online_initable_init (GInitable     *initable,
 static void
 miner_online_initable_iface_init (GInitableIface *iface)
 {
-	miner_online_initable_parent_iface = g_type_interface_peek_parent (iface);
 	iface->init = miner_online_initable_init;
 }
 

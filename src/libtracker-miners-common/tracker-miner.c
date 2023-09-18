@@ -27,7 +27,7 @@
 #include <libtracker-miners-common/tracker-debug.h>
 #include <libtracker-miners-common/tracker-type-utils.h>
 
-#include "tracker-miner-object.h"
+#include "tracker-miner.h"
 
 /* Here we use ceil() to eliminate decimal points beyond what we're
  * interested in, which is 2 decimal places for the progress. The
@@ -53,10 +53,6 @@
  * for tracker-store, being an abstract class it doesn't do much by itself,
  * but provides the basic signaling and control over the actual indexing
  * task.
- *
- * #TrackerMiner implements the #GInitable interface, and thus, all objects of
- * types inheriting from #TrackerMiner must be initialized with g_initable_init()
- * just after creation (or directly created with g_initable_new()).
  **/
 
 struct _TrackerMinerPrivate {
@@ -66,7 +62,6 @@ struct _TrackerMinerPrivate {
 	gchar *status;
 	gdouble progress;
 	gint remaining_time;
-	gint availability_cookie;
 	guint update_id;
 };
 
@@ -98,10 +93,6 @@ static void       miner_get_property           (GObject                *object,
                                                 GValue                 *value,
                                                 GParamSpec             *pspec);
 static void       miner_finalize               (GObject                *object);
-static void       miner_initable_iface_init    (GInitableIface         *iface);
-static gboolean   miner_initable_init          (GInitable              *initable,
-                                                GCancellable           *cancellable,
-                                                GError                **error);
 
 /**
  * tracker_miner_error_quark:
@@ -115,10 +106,7 @@ static gboolean   miner_initable_init          (GInitable              *initable
  **/
 G_DEFINE_QUARK (TrackerMinerError, tracker_miner_error)
 
-G_DEFINE_ABSTRACT_TYPE_WITH_CODE (TrackerMiner, tracker_miner, G_TYPE_OBJECT,
-                                  G_ADD_PRIVATE (TrackerMiner)
-                                  G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
-                                                         miner_initable_iface_init));
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (TrackerMiner, tracker_miner, G_TYPE_OBJECT)
 
 static void
 tracker_miner_class_init (TrackerMinerClass *klass)
@@ -281,30 +269,6 @@ tracker_miner_class_init (TrackerMinerClass *klass)
 	                                                      G_PARAM_READWRITE |
 	                                                      G_PARAM_CONSTRUCT_ONLY |
 	                                                      G_PARAM_STATIC_STRINGS));
-}
-
-static void
-miner_initable_iface_init (GInitableIface *iface)
-{
-	iface->init = miner_initable_init;
-}
-
-static gboolean
-miner_initable_init (GInitable     *initable,
-                     GCancellable  *cancellable,
-                     GError       **error)
-{
-	TrackerMiner *miner = TRACKER_MINER (initable);
-
-	if (!miner->priv->connection) {
-		g_set_error (error,
-		             TRACKER_MINER_ERROR,
-		             TRACKER_MINER_ERROR_NAME_MISSING,
-		             "No SPARQL connection");
-		return FALSE;
-	}
-
-	return TRUE;
 }
 
 static void

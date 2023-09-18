@@ -42,8 +42,6 @@ typedef gboolean (* TrackerExtractMetadataFunc) (TrackerExtractInfo  *info,
 
 gboolean  tracker_extract_module_manager_init                (void);
 
-GStrv tracker_extract_module_manager_get_all_rdf_types (void);
-
 GStrv     tracker_extract_module_manager_get_rdf_types (const gchar *mimetype);
 const gchar * tracker_extract_module_manager_get_graph (const gchar *mimetype);
 const gchar * tracker_extract_module_manager_get_hash  (const gchar *mimetype);

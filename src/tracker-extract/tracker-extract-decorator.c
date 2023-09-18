@@ -646,13 +646,10 @@ tracker_extract_decorator_init (TrackerExtractDecorator *decorator)
 
 TrackerDecorator *
 tracker_extract_decorator_new (TrackerSparqlConnection  *connection,
-                               TrackerExtract           *extract,
-                               GCancellable             *cancellable,
-                               GError                  **error)
+                               TrackerExtract           *extract)
 {
-	return g_initable_new (TRACKER_TYPE_EXTRACT_DECORATOR,
-	                       cancellable, error,
-	                       "connection", connection,
-	                       "extractor", extract,
-	                       NULL);
+	return g_object_new (TRACKER_TYPE_EXTRACT_DECORATOR,
+			     "connection", connection,
+			     "extractor", extract,
+			     NULL);
 }
