@@ -1,3 +1,9 @@
+tracker-miners (3.6.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Mon, 18 Sep 2023 15:39:28 -0400
+
 tracker-miners (3.6~rc-1) experimental; urgency=medium
 
   * New upstream release
