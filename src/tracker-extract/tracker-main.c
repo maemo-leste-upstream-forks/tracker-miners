@@ -40,11 +40,11 @@
 
 #include <libtracker-miners-common/tracker-common.h>
 
-#include "tracker-config.h"
 #include "tracker-main.h"
 #include "tracker-extract.h"
 #include "tracker-extract-controller.h"
 #include "tracker-extract-decorator.h"
+#include "tracker-extract-persistence.h"
 
 #ifdef THREAD_ENABLE_TRACE
 #warning Main thread traces enabled
@@ -73,8 +73,6 @@ static gchar *output_format_name;
 static gboolean version;
 static gchar *domain_ontology_name = NULL;
 static guint shutdown_timeout_id = 0;
-
-static TrackerConfig *config;
 
 static GOptionEntry entries[] = {
 	{ "file", 'f', 0,
@@ -129,66 +127,8 @@ initialize_priority_and_scheduling (void)
 	}
 }
 
-static gboolean
-signal_handler (gpointer user_data)
-{
-	int signo = GPOINTER_TO_INT (user_data);
-
-	static gboolean in_loop = FALSE;
-
-	/* Die if we get re-entrant signals handler calls */
-	if (in_loop) {
-		_exit (EXIT_FAILURE);
-	}
-
-	switch (signo) {
-	case SIGTERM:
-	case SIGINT:
-		in_loop = TRUE;
-		g_main_loop_quit (main_loop);
-
-		/* Fall through */
-	default:
-		if (g_strsignal (signo)) {
-			g_debug ("Received signal:%d->'%s'",
-			         signo,
-			         g_strsignal (signo));
-		}
-		break;
-	}
-
-	return G_SOURCE_CONTINUE;
-}
-
-static void
-initialize_signal_handler (void)
-{
-#ifndef G_OS_WIN32
-	g_unix_signal_add (SIGTERM, signal_handler, GINT_TO_POINTER (SIGTERM));
-	g_unix_signal_add (SIGINT, signal_handler, GINT_TO_POINTER (SIGINT));
-#endif /* G_OS_WIN32 */
-}
-
-static void
-log_option_values (TrackerConfig *config)
-{
-#ifdef G_ENABLE_DEBUG
-	if (TRACKER_DEBUG_CHECK (CONFIG)) {
-		g_message ("General options:");
-		g_message ("  Max bytes (per file)  .................  %d",
-		           tracker_config_get_max_bytes (config));
-	}
-#endif
-}
-
-TrackerConfig *
-tracker_main_get_config (void)
-{
-	return config;
-}
-
 static int
-run_standalone (TrackerConfig *config)
+run_standalone (void)
 {
 	TrackerExtract *object;
 	GFile *file;
@@ -200,9 +140,6 @@ run_standalone (TrackerConfig *config)
 	if (!output_format_name) {
 		output_format_name = "turtle";
 	}
-
-	/* This makes sure we don't steal all the system's resources */
-	initialize_priority_and_scheduling ();
 
 	/* Look up the output format by name */
 	enum_class = g_type_class_ref (TRACKER_TYPE_SERIALIZATION_FORMAT);
@@ -314,8 +251,8 @@ tracker_main_get_readonly_connection (GError **error)
 	                                      error);
 }
 
-int
-main (int argc, char *argv[])
+static int
+do_main (int argc, char *argv[])
 {
 	GOptionContext *context;
 	GError *error = NULL;
@@ -325,17 +262,14 @@ main (int argc, char *argv[])
 	GMainLoop *my_main_loop;
 	GDBusConnection *connection;
 	TrackerMinerProxy *proxy;
+	TrackerExtractPersistence *persistence;
 	TrackerSparqlConnection *sparql_connection;
 	TrackerDomainOntology *domain_ontology;
 	gchar *dbus_name, *miner_dbus_name;
-	GFile *cache_dir;
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
-
-	/* This makes sure we don't steal all the system's resources */
-	initialize_priority_and_scheduling ();
 
 	/* Translators: this message will appear immediately after the  */
 	/* usage string - Usage: COMMAND [OPTION]... <THIS_MESSAGE>     */
@@ -393,24 +327,14 @@ main (int argc, char *argv[])
 
 	tracker_content_identifier_cache_init ();
 
-	cache_dir = get_cache_dir (domain_ontology);
-	tracker_error_report_init (cache_dir);
-	g_object_unref (cache_dir);
-
-	config = tracker_config_new ();
-
-	/* Extractor command line arguments */
-	log_option_values (config);
-
 	/* Set conditions when we use stand alone settings */
 	if (filename) {
-		return run_standalone (config);
+		return run_standalone ();
 	}
 
 	extract = tracker_extract_new (TRUE, force_module);
 
 	if (!extract) {
-		g_object_unref (config);
 		return EXIT_FAILURE;
 	}
 
@@ -428,11 +352,12 @@ main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	decorator = tracker_extract_decorator_new (sparql_connection, extract, NULL, &error);
+	persistence = tracker_extract_persistence_new ();
+
+	decorator = tracker_extract_decorator_new (sparql_connection, extract, persistence, NULL, &error);
 
 	if (error) {
 		g_critical ("Could not start decorator: %s\n", error->message);
-		g_object_unref (config);
 		return EXIT_FAILURE;
 	}
 
@@ -441,7 +366,6 @@ main (int argc, char *argv[])
 		g_critical ("Could not create miner DBus proxy: %s\n", error->message);
 		g_error_free (error);
 		g_object_unref (decorator);
-		g_object_unref (config);
 		return EXIT_FAILURE;
 	}
 
@@ -452,7 +376,7 @@ main (int argc, char *argv[])
 
 	tracker_locale_sanity_check ();
 
-	controller = tracker_extract_controller_new (decorator, connection);
+	controller = tracker_extract_controller_new (decorator, connection, persistence);
 
 	/* Request DBus name */
 	dbus_name = tracker_domain_ontology_get_domain (domain_ontology, DBUS_NAME_SUFFIX);
@@ -492,8 +416,6 @@ main (int argc, char *argv[])
 
 	tracker_miner_start (TRACKER_MINER (decorator));
 
-	initialize_signal_handler ();
-
 	g_main_loop_run (main_loop);
 
 	my_main_loop = main_loop;
@@ -506,13 +428,26 @@ main (int argc, char *argv[])
 	g_object_unref (extract);
 	g_object_unref (decorator);
 	g_object_unref (controller);
+	g_object_unref (persistence);
 	g_object_unref (proxy);
 	g_object_unref (connection);
 	tracker_domain_ontology_unref (domain_ontology);
 	tracker_sparql_connection_close (sparql_connection);
 	g_object_unref (sparql_connection);
 
-	g_object_unref (config);
-
 	return EXIT_SUCCESS;
+}
+
+int
+main (int argc, char *argv[])
+{
+	/* This function is untouchable! Add things to do_main() */
+
+	/* This makes sure we don't steal all the system's resources */
+	initialize_priority_and_scheduling ();
+
+	if (!tracker_seccomp_init ())
+		g_assert_not_reached ();
+
+	return do_main (argc, argv);
 }

@@ -36,6 +36,10 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 
+#ifdef HAVE_BTRFS_IOCTL
+#include <linux/btrfs.h>
+#endif
+
 #include <seccomp.h>
 
 #ifndef SYS_SECCOMP
@@ -143,6 +147,7 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (lstat);
 	ALLOW_RULE (lstat64);
 	ALLOW_RULE (statx);
+	ALLOW_RULE (fstatfs);
 	ALLOW_RULE (access);
 	ALLOW_RULE (faccessat);
 	ALLOW_RULE (faccessat2);
@@ -224,6 +229,22 @@ tracker_seccomp_init (void)
 	ALLOW_RULE (getpeername);
 	ALLOW_RULE (shutdown);
 
+	ERROR_RULE (inotify_init1, EINVAL);
+	ERROR_RULE (inotify_init, EINVAL);
+
+	ERROR_RULE (mkdir, EPERM);
+	ERROR_RULE (rename, EPERM);
+	ERROR_RULE (unlink, EPERM);
+	ERROR_RULE (ioctl, EBADF);
+	ERROR_RULE (bind, EACCES);
+	ERROR_RULE (setsockopt, EBADF);
+	ERROR_RULE (sched_getattr, EPERM);
+
+	/* Allow prlimit64, only if no new limits are being set */
+	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(prlimit64), 1,
+	                      SCMP_CMP(2, SCMP_CMP_EQ, 0)) < 0)
+		goto out;
+
 	/* Special requirements for socket/socketpair, only on AF_UNIX/AF_LOCAL */
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(socket), 1,
 	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX)) < 0)
@@ -231,12 +252,22 @@ tracker_seccomp_init (void)
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(socket), 1,
 	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL)) < 0)
 		goto out;
+	if (seccomp_rule_add (ctx, SCMP_ACT_ERRNO (EACCES), SCMP_SYS(socket), 1,
+	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK)) < 0)
+		goto out;
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(socketpair), 1,
 	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX)) < 0)
 		goto out;
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(socketpair), 1,
 	                      SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL)) < 0)
 		goto out;
+
+#ifdef HAVE_BTRFS_IOCTL
+	/* Special requirements for btrfs, allowed for BTRFS_IOC_INO_LOOKUP */
+	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 1,
+	                      SCMP_CMP(1, SCMP_CMP_EQ, BTRFS_IOC_INO_LOOKUP)) < 0)
+		goto out;
+#endif
 
 	/* Special requirements for ioctl, allowed on stdout/stderr */
 	if (seccomp_rule_add (ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 1,

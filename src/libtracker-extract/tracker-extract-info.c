@@ -45,6 +45,8 @@ struct _TrackerExtractInfo
 	gchar *mimetype;
 	gchar *graph;
 
+	gint max_text;
+
 	gint ref_count;
 };
 
@@ -66,7 +68,8 @@ G_DEFINE_BOXED_TYPE (TrackerExtractInfo, tracker_extract_info,
 TrackerExtractInfo *
 tracker_extract_info_new (GFile       *file,
                           const gchar *mimetype,
-                          const gchar *graph)
+                          const gchar *graph,
+                          gint         max_text)
 {
 	TrackerExtractInfo *info;
 
@@ -76,6 +79,7 @@ tracker_extract_info_new (GFile       *file,
 	info->file = g_object_ref (file);
 	info->mimetype = g_strdup (mimetype);
 	info->graph = g_strdup (graph);
+	info->max_text = max_text;
 
 	info->resource = NULL;
 
@@ -230,4 +234,10 @@ tracker_extract_info_set_resource (TrackerExtractInfo *info,
 {
 	g_object_ref (resource);
 	info->resource = resource;
+}
+
+gint
+tracker_extract_info_get_max_text (TrackerExtractInfo *info)
+{
+	return info->max_text;
 }

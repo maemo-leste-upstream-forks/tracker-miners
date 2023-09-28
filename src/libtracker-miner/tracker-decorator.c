@@ -102,6 +102,7 @@ enum {
 	ITEMS_AVAILABLE,
 	FINISHED,
 	ERROR,
+	RAISE_ERROR,
 	LAST_SIGNAL
 };
 
@@ -270,24 +271,6 @@ retry_synchronously (TrackerDecorator *decorator,
 }
 
 static void
-tag_success (TrackerDecorator *decorator,
-             GArray           *commit_buffer)
-{
-	guint i;
-
-	for (i = 0; i < commit_buffer->len; i++) {
-		SparqlUpdate *update;
-		GFile *file;
-
-		update = &g_array_index (commit_buffer, SparqlUpdate, i);
-
-		file = g_file_new_for_uri (update->url);
-		tracker_error_report_delete (file);
-		g_object_unref (file);
-	}
-}
-
-static void
 decorator_commit_cb (GObject      *object,
                      GAsyncResult *result,
                      gpointer      user_data)
@@ -305,8 +288,6 @@ decorator_commit_cb (GObject      *object,
 	if (!tracker_sparql_connection_update_array_finish (conn, result, NULL)) {
 		g_debug ("SPARQL error detected in batch, retrying one by one");
 		retry_synchronously (decorator, priv->commit_buffer);
-	} else {
-		tag_success (decorator, priv->commit_buffer);
 	}
 
 	g_clear_pointer (&priv->commit_buffer, g_array_unref);
@@ -1080,6 +1061,16 @@ tracker_decorator_class_init (TrackerDecoratorClass *klass)
 		              G_TYPE_STRING,
 		              G_TYPE_STRING,
 		              G_TYPE_STRING);
+
+	signals[RAISE_ERROR] =
+		g_signal_new ("raise-error",
+		              G_OBJECT_CLASS_TYPE (object_class),
+		              G_SIGNAL_RUN_LAST,
+		              0, NULL, NULL, NULL,
+		              G_TYPE_NONE, 3,
+			      G_TYPE_FILE,
+			      G_TYPE_STRING,
+			      G_TYPE_STRING);
 }
 
 static void

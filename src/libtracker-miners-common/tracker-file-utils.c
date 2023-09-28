@@ -34,6 +34,13 @@
 #include <sys/statfs.h>
 #endif
 
+#ifdef HAVE_BTRFS_IOCTL
+#include <linux/btrfs.h>
+#include <sys/ioctl.h>
+
+#define BTRFS_ROOT_INODE 256
+#endif
+
 #include <blkid.h>
 
 #include <glib.h>
@@ -756,27 +763,6 @@ clear_mount_info (gpointer user_data)
 	g_free (info->id);
 }
 
-static gchar *
-find_btrfs_subvolume (GUnixMountEntry *entry)
-{
-	const gchar *options, *subvol, *end;
-
-	options = g_unix_mount_get_options (entry);
-	if (!options)
-		return NULL;
-
-	subvol = strstr (options, ",subvol=");
-	if (!subvol)
-		return NULL;
-
-	subvol += strlen (",subvol=");
-	end = strchr (subvol, ',');
-	if (end)
-		return g_strndup (subvol, end - subvol);
-	else
-		return g_strdup (subvol);
-}
-
 static void
 update_mounts (TrackerUnixMountCache *cache)
 {
@@ -797,13 +783,8 @@ update_mounts (TrackerUnixMountCache *cache)
 
 		devname = g_unix_mount_get_device_path (entry);
 		id = blkid_get_tag_value (cache->id_cache, "UUID", devname);
-		if (!id && strchr (devname, G_DIR_SEPARATOR) != NULL) {
-			subvol = find_btrfs_subvolume (entry);
-			if (subvol)
-				id = g_strconcat (devname, ":", subvol, NULL);
-			else
-				id = g_strdup (devname);
-		}
+		if (!id && strchr (devname, G_DIR_SEPARATOR) != NULL)
+			id = g_strdup (devname);
 
 		if (!id)
 			continue;
@@ -888,13 +869,41 @@ tracker_content_identifier_cache_init (void)
 	g_assert (cache != NULL);
 }
 
+#ifdef HAVE_BTRFS_IOCTL
+gchar *
+tracker_file_get_btrfs_subvolume_id (GFile *file)
+{
+	struct btrfs_ioctl_ino_lookup_args args = {
+		.treeid = 0,
+		.objectid = BTRFS_ROOT_INODE,
+	};
+	g_autofree gchar *path = NULL;
+	int fd, ret;
+
+	path = g_file_get_path (file);
+	if (!path)
+		return NULL;
+
+	fd = open (path, O_RDONLY);
+	if (fd < 0)
+		return NULL;
+
+	ret = ioctl (fd, BTRFS_IOC_INO_LOOKUP, &args);
+	close (fd);
+	if (ret < 0)
+		return NULL;
+
+	return g_strdup_printf ("%" G_GUINT64_FORMAT, (guint64) args.treeid);
+}
+#endif
+
 gchar *
 tracker_file_get_content_identifier (GFile       *file,
                                      GFileInfo   *info,
                                      const gchar *suffix)
 {
 	const gchar *id;
-	gchar *inode, *str;
+	g_autofree gchar *inode = NULL, *str = NULL, *subvolume = NULL;
 
 	if (info) {
 		g_object_ref (info);
@@ -918,12 +927,21 @@ tracker_file_get_content_identifier (GFile       *file,
 
 	inode = g_file_info_get_attribute_as_string (info, G_FILE_ATTRIBUTE_UNIX_INODE);
 
-	str = g_strconcat ("urn:fileid:", id, ":", inode,
-			   suffix ? "/" : NULL,
-			   suffix, NULL);
+#ifdef HAVE_BTRFS_IOCTL
+	subvolume = tracker_file_get_btrfs_subvolume_id (file);
+#endif
+
+	/* Format:
+	 * 'urn:fileid:' [fsid] (':' [subvolumeid])? ':' [inode] ('/' [suffix])?
+	 */
+	str = g_strconcat ("urn:fileid:", id,
+	                   subvolume ? ":" : "",
+	                   subvolume ? subvolume : "",
+	                   ":", inode,
+	                   suffix ? "/" : NULL,
+	                   suffix, NULL);
 
 	g_object_unref (info);
-	g_free (inode);
 
-	return str;
+	return g_steal_pointer (&str);
 }

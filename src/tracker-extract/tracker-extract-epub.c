@@ -562,12 +562,12 @@ extract_opf_path (const gchar *uri)
 }
 
 static gchar *
-extract_opf_contents (const gchar *uri,
-                      const gchar *content_prefix,
-                      GList       *content_files)
+extract_opf_contents (TrackerExtractInfo *info,
+                      const gchar        *uri,
+                      const gchar        *content_prefix,
+                      GList              *content_files)
 {
 	OPFContentData content_data = { 0 };
-	TrackerConfig *config;
 	GError *error = NULL;
 	GList *l;
 	GMarkupParser xml_parser = {
@@ -576,10 +576,8 @@ extract_opf_contents (const gchar *uri,
 		NULL, NULL
 	};
 
-	config = tracker_main_get_config ();
-
 	content_data.contents = g_string_new ("");
-	content_data.limit = (gsize) tracker_config_get_max_bytes (config);
+	content_data.limit = (gsize) tracker_extract_info_get_max_text (info);
 
 	g_debug ("Extracting up to %" G_GSIZE_FORMAT " bytes of content", content_data.limit);
 
@@ -612,8 +610,9 @@ extract_opf_contents (const gchar *uri,
 }
 
 static TrackerResource *
-extract_opf (const gchar          *uri,
-             const gchar          *opf_path)
+extract_opf (TrackerExtractInfo *info,
+             const gchar        *uri,
+             const gchar        *opf_path)
 {
 	TrackerResource *ebook;
 	GMarkupParseContext *context;
@@ -658,7 +657,7 @@ extract_opf (const gchar          *uri,
 	}
 
 	dirname = g_path_get_dirname (opf_path);
-	contents = extract_opf_contents (uri, dirname, data->pages);
+	contents = extract_opf_contents (info, uri, dirname, data->pages);
 	g_free (dirname);
 
 	if (contents && *contents) {
@@ -689,7 +688,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 		return FALSE;
 	}
 
-	ebook = extract_opf (uri, opf_path);
+	ebook = extract_opf (info, uri, opf_path);
 	g_free (opf_path);
 	g_free (uri);
 

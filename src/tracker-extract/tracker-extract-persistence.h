@@ -34,9 +34,6 @@ G_BEGIN_DECLS
 typedef struct _TrackerExtractPersistence TrackerExtractPersistence;
 typedef struct _TrackerExtractPersistenceClass TrackerExtractPersistenceClass;
 
-typedef void (* TrackerFileRecoveryFunc) (GFile    *file,
-                                          gpointer  user_data);
-
 struct _TrackerExtractPersistence
 {
 	GObject parent_instance;
@@ -49,14 +46,15 @@ struct _TrackerExtractPersistenceClass
 
 GType tracker_extract_persistence_get_type (void) G_GNUC_CONST;
 
-TrackerExtractPersistence *
-     tracker_extract_persistence_initialize (TrackerFileRecoveryFunc     ignore_func,
-                                             gpointer                    user_data);
+TrackerExtractPersistence * tracker_extract_persistence_new (void);
 
-void tracker_extract_persistence_add_file    (TrackerExtractPersistence *persistence,
-                                              GFile                     *file);
-void tracker_extract_persistence_remove_file (TrackerExtractPersistence *persistence,
-                                              GFile                     *file);
+void tracker_extract_persistence_set_fd (TrackerExtractPersistence *persistence,
+                                         int                        fd);
+
+GFile * tracker_extract_persistence_get_file (TrackerExtractPersistence *persistence);
+
+void tracker_extract_persistence_set_file (TrackerExtractPersistence *persistence,
+                                           GFile                     *file);
 
 G_END_DECLS
 

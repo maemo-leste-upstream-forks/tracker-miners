@@ -38,6 +38,7 @@ struct _TrackerExtractWatchdog {
 	gchar *domain;
 	guint extractor_watchdog_id;
 	guint progress_signal_id;
+	guint error_signal_id;
 	gboolean initializing;
 };
 
@@ -83,6 +84,47 @@ on_extract_progress_cb (GDBusConnection *conn,
 }
 
 static void
+on_extract_error_cb (GDBusConnection *conn,
+                     const gchar     *sender_name,
+                     const gchar     *object_path,
+                     const gchar     *interface_name,
+                     const gchar     *signal_name,
+                     GVariant        *parameters,
+                     gpointer         user_data)
+{
+	g_autoptr (GVariant) uri = NULL, message = NULL, extra = NULL, child = NULL;
+	GVariantIter iter;
+	GVariant *value;
+	gchar *key;
+
+	child = g_variant_get_child_value (parameters, 0);
+	g_variant_iter_init (&iter, child);
+
+	while (g_variant_iter_next (&iter, "{sv}", &key, &value)) {
+		if (g_strcmp0 (key, "uri") == 0)
+			uri = g_variant_ref_sink (value);
+		else if (g_strcmp0 (key, "message") == 0)
+			message = g_variant_ref_sink (value);
+		else if (g_strcmp0 (key, "extra-info") == 0)
+			extra = g_variant_ref_sink (value);
+
+		g_variant_unref (value);
+		g_free (key);
+	}
+
+	if (g_variant_is_of_type (uri, G_VARIANT_TYPE_STRING) &&
+	    g_variant_is_of_type (message, G_VARIANT_TYPE_STRING) &&
+	    (!extra || g_variant_is_of_type (extra, G_VARIANT_TYPE_STRING))) {
+		g_autoptr (GFile) file = NULL;
+
+		file = g_file_new_for_uri (g_variant_get_string (uri, NULL));
+		tracker_error_report (file,
+		                      g_variant_get_string (message, NULL),
+		                      extra ? g_variant_get_string (extra, NULL) : NULL);
+	}
+}
+
+static void
 extract_watchdog_name_appeared (GDBusConnection *conn,
 				const gchar     *name,
 				const gchar     *name_owner,
@@ -103,6 +145,17 @@ extract_watchdog_name_appeared (GDBusConnection *conn,
 		                                    NULL,
 		                                    G_DBUS_SIGNAL_FLAGS_NONE,
 		                                    on_extract_progress_cb,
+		                                    watchdog,
+		                                    NULL);
+	watchdog->error_signal_id =
+		g_dbus_connection_signal_subscribe (watchdog->conn,
+		                                    "org.freedesktop.Tracker3.Miner.Extract",
+		                                    "org.freedesktop.Tracker3.Extract",
+		                                    "Error",
+		                                    "/org/freedesktop/Tracker3/Extract",
+		                                    NULL,
+		                                    G_DBUS_SIGNAL_FLAGS_NONE,
+		                                    on_extract_error_cb,
 		                                    watchdog,
 		                                    NULL);
 }
