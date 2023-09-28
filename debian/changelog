@@ -1,3 +1,9 @@
+tracker-miners (3.4.5-1) unstable; urgency=high
+
+  * New upstream bugfix release
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Thu, 28 Sep 2023 17:58:13 -0400
+
 tracker-miners (3.4.3-2) unstable; urgency=medium
 
   [ Jeremy Bícha ]
