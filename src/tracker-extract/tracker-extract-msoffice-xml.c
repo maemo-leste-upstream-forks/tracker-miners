@@ -807,7 +807,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 	MsOfficeXMLParserInfo info = { 0 };
 	MsOfficeXMLFileType file_type;
 	TrackerResource *metadata;
-	TrackerConfig *config;
 	GMarkupParseContext *context = NULL;
 	GError *inner_error = NULL;
 	GFile *file;
@@ -822,9 +821,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 
 	/* Get current Content Type */
 	file_type = msoffice_xml_get_file_type (uri);
-
-	/* Setup conf */
-	config = tracker_main_get_config ();
 
 	g_debug ("Extracting MsOffice XML format...");
 
@@ -843,7 +839,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 	info.content = NULL;
 	info.title_already_set = FALSE;
 	info.generator_already_set = FALSE;
-	info.bytes_pending = tracker_config_get_max_bytes (config);
+	info.bytes_pending = tracker_extract_info_get_max_text (extract_info);
 
 	/* Create content-type parser context */
 	context = g_markup_parse_context_new (&content_types_parser,

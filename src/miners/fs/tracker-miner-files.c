@@ -84,6 +84,9 @@ struct TrackerMinerFilesPrivate {
 	gchar *domain;
 	TrackerDomainOntology *domain_ontology;
 
+	GSettings *extract_settings;
+	GStrv allowed_text_patterns;
+
 	guint disk_space_check_id;
 	gboolean disk_space_pause;
 
@@ -123,6 +126,8 @@ enum {
 	PROP_CONFIG,
 	PROP_DOMAIN,
 };
+
+#define TEXT_ALLOWLIST "text-allowlist"
 
 static void        miner_files_set_property             (GObject              *object,
                                                          guint                 param_id,
@@ -380,6 +385,15 @@ miner_files_initable_iface_init (GInitableIface *iface)
 {
 	miner_files_initable_parent_iface = g_type_interface_peek_parent (iface);
 	iface->init = miner_files_initable_init;
+}
+
+static void
+text_allowlist_changed_cb (GSettings         *settings,
+                           const gchar       *key,
+                           TrackerMinerFiles *mf)
+{
+	g_clear_pointer (&mf->private->allowed_text_patterns, g_strfreev);
+	mf->private->allowed_text_patterns = g_settings_get_strv (settings, TEXT_ALLOWLIST);
 }
 
 static gboolean
@@ -671,6 +685,12 @@ miner_files_initable_init (GInitable     *initable,
 	                  G_CALLBACK (on_extractor_status), mf);
 	g_free (domain_name);
 
+	mf->private->extract_settings = g_settings_new ("org.freedesktop.Tracker3.Extract");
+	g_signal_connect (mf->private->extract_settings, "changed::" TEXT_ALLOWLIST,
+	                  G_CALLBACK (text_allowlist_changed_cb), mf);
+	mf->private->allowed_text_patterns = g_settings_get_strv (mf->private->extract_settings,
+	                                                          TEXT_ALLOWLIST);
+
 	return TRUE;
 }
 
@@ -735,6 +755,9 @@ miner_files_finalize (GObject *object)
 		g_source_remove (priv->grace_period_timeout_id);
 		priv->grace_period_timeout_id = 0;
 	}
+
+	g_clear_object (&mf->private->extract_settings);
+	g_clear_pointer (&mf->private->allowed_text_patterns, g_strfreev);
 
 	g_signal_handlers_disconnect_by_func (priv->extract_watchdog,
 	                                      on_extractor_lost,
@@ -2746,4 +2769,23 @@ TrackerStorage *
 tracker_miner_files_get_storage (TrackerMinerFiles *mf)
 {
 	return mf->private->storage;
+}
+
+gboolean
+tracker_miner_files_check_allowed_text_file (TrackerMinerFiles *mf,
+                                             GFile             *file)
+{
+	g_autofree gchar *basename = NULL;
+	GStrv text_patterns;
+	int i;
+
+	basename = g_file_get_basename (file);
+	text_patterns = mf->private->allowed_text_patterns;
+
+	for (i = 0; text_patterns && text_patterns[i]; i++) {
+		if (g_pattern_match_simple (text_patterns[i], basename))
+			return TRUE;
+	}
+
+	return FALSE;
 }

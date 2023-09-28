@@ -1,5 +1,5 @@
 project('tracker-miners', 'c',
-        version: '3.4.3',
+        version: '3.4.5',
         meson_version: '>=0.51')
 
 gnome = import('gnome')
@@ -197,6 +197,31 @@ else
   have_fanotify = false
 endif
 
+##########################################
+# Check for btrfs ioctls
+##########################################
+
+result = cc.run('''
+    #include <errno.h>
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
+    #include <linux/btrfs.h>
+
+    int main (int argc, char *argv[]) {
+      struct btrfs_ioctl_ino_lookup_args args = { 0, };
+      int fd = open ("/", O_RDONLY);
+      int ret = ioctl (fd, BTRFS_IOC_INO_LOOKUP, &args);
+      return (ret < 0 && errno != ENOTTY) ? 1 : 0;
+    }
+  ''',
+  name: 'BTRFS_IOC_INO_LOOKUP ioctl is available')
+
+if result.compiled() and result.returncode() == 0
+  have_btrfs_ioctl = true
+else
+  have_btrfs_ioctl = false
+endif
+
 ####################################################################
 # This section is for tracker-extract dependencies
 ####################################################################
@@ -381,6 +406,7 @@ conf.set('HAVE_MALLOC_TRIM', have_malloc_trim)
 conf.set('HAVE_UPOWER', battery_detection_library_name == 'upower')
 conf.set('HAVE_NETWORK_MANAGER', have_network_manager)
 conf.set('HAVE_FANOTIFY', have_fanotify)
+conf.set('HAVE_BTRFS_IOCTL', have_btrfs_ioctl)
 conf.set('DOMAIN_PREFIX', get_option('domain_prefix'))
 if get_option('domain_prefix') != 'org.freedesktop'
   rule_file = get_option('domain_prefix') + '.domain.rule'
@@ -401,6 +427,7 @@ conf.set('HAVE_GETLINE', cc.has_function('getline', prefix : '#include <stdio.h>
 conf.set('HAVE_POSIX_FADVISE', cc.has_function('posix_fadvise', prefix : '#include <fcntl.h>'))
 conf.set('HAVE_STATVFS64', cc.has_header_symbol('sys/statvfs.h', 'statvfs64', args: '-D_LARGEFILE64_SOURCE'))
 conf.set('HAVE_STRNLEN', cc.has_function('strnlen', prefix : '#include <string.h>'))
+conf.set('HAVE_MEMFD_CREATE', cc.has_function('memfd_create', prefix : '#define _GNU_SOURCE\n#include <sys/mman.h>'))
 
 conf.set('LOCALEDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('localedir')))
 conf.set('SHAREDIR', '"@0@/@1@"'.format(get_option('prefix'), get_option('datadir')))
@@ -514,6 +541,7 @@ summary = [
   '    Domain prefix:                          ' + get_option('domain_prefix'),
   '\nFeature Support:',
   '    File monitoring:                        @0@glib'.format(have_fanotify ? 'fanotify ' : ''),
+  '    BTRFS subvolumes:                       ' + have_btrfs_ioctl.to_string(),
   '    Battery/mains power detection:          ' + battery_detection_library_name,
   '    Support for network status detection:   ' + have_network_manager.to_string(),
   '    Releasing heap memory with malloc_trim: ' + have_malloc_trim.to_string(),

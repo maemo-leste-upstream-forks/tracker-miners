@@ -235,7 +235,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 {
 	TrackerResource *metadata;
 	GFile *file;
-	TrackerConfig *config;
 	htmlDocPtr doc;
 	parser_data pd;
 	gchar *filename, *resource_uri;
@@ -287,8 +286,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	pd.plain_text = g_string_new (NULL);
 	pd.title = g_string_new (NULL);
 
-	config = tracker_main_get_config ();
-	pd.n_bytes_remaining = tracker_config_get_max_bytes (config);
+	pd.n_bytes_remaining = tracker_extract_info_get_max_text (info);
 
 	filename = g_file_get_path (file);
 	doc = htmlSAXParseFile (filename, NULL, &handler, &pd);

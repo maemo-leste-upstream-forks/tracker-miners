@@ -1619,7 +1619,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
                               GError             **error)
 {
 	TrackerResource *metadata;
-	TrackerConfig *config;
 	GsfInfile *infile = NULL;
 	gchar *content = NULL, *uri, *resource_uri;
 	gboolean is_encrypted = FALSE;
@@ -1671,8 +1670,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 	extract_summary (metadata, infile, uri);
 
 	/* Set max bytes to read from content */
-	config = tracker_main_get_config ();
-	max_bytes = tracker_config_get_max_bytes (config);
+	max_bytes = tracker_extract_info_get_max_text (info);
 
 	if (g_ascii_strcasecmp (mime_used, "application/msword") == 0) {
 		/* Word file */

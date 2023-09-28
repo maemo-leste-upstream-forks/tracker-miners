@@ -21,14 +21,9 @@
 #ifndef __TRACKER_MAIN_H__
 #define __TRACKER_MAIN_H__
 
-#include "tracker-config.h"
-
 #include <libtracker-sparql/tracker-sparql.h>
 
 G_BEGIN_DECLS
-
-/* Enables getting the config object from extractors */
-TrackerConfig    *tracker_main_get_config         (void);
 
 TrackerSparqlConnection * tracker_main_get_readonly_connection (GError **error);
 

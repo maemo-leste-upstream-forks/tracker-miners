@@ -68,6 +68,9 @@
 /* Define to 1 if you have the `strnlen' function. */
 #mesondefine HAVE_STRNLEN
 
+/* Define to 1 if you have the `memfd_create' function. */
+#mesondefine HAVE_MEMFD_CREATE
+
 /* Define if we have UPOWER */
 #mesondefine HAVE_UPOWER
 
@@ -76,6 +79,9 @@
 
 /* Define if we have fanotify */
 #mesondefine HAVE_FANOTIFY
+
+/* Define if btrfs has the necessary ioctl()s */
+#mesondefine HAVE_BTRFS_IOCTL
 
 /* Define to the address where bug reports for this package should be sent. */
 #mesondefine PACKAGE_BUGREPORT

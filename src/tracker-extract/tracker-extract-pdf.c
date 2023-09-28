@@ -285,7 +285,6 @@ G_MODULE_EXPORT gboolean
 tracker_extract_get_metadata (TrackerExtractInfo  *info,
                               GError             **error)
 {
-	TrackerConfig *config;
 	time_t creation_date;
 	GError *inner_error = NULL;
 	TrackerResource *metadata;
@@ -552,8 +551,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *info,
 
 	tracker_resource_set_int64 (metadata, "nfo:pageCount", poppler_document_get_n_pages(document));
 
-	config = tracker_main_get_config ();
-	n_bytes = tracker_config_get_max_bytes (config);
+	n_bytes = tracker_extract_info_get_max_text (info);
 	content = extract_content_text (document, n_bytes);
 
 	if (content) {

@@ -120,6 +120,30 @@ miner_files_create_folder_information_element (TrackerMinerFiles *miner,
 	return resource;
 }
 
+static TrackerResource *
+miner_files_create_text_file_information_element (TrackerMinerFiles *miner,
+                                                  GFile             *file,
+                                                  const gchar       *mime_type)
+{
+	TrackerResource *resource;
+	GStrv rdf_types;
+	const gchar *urn;
+	int i;
+
+	urn = tracker_miner_fs_get_identifier (TRACKER_MINER_FS (miner),
+	                                       file);
+	resource = tracker_resource_new (urn);
+
+	rdf_types = tracker_extract_module_manager_get_rdf_types (mime_type);
+
+	for (i = 0; rdf_types[i]; i++)
+		tracker_resource_add_uri (resource, "rdf:type", rdf_types[i]);
+
+	g_strfreev (rdf_types);
+
+	return resource;
+}
+
 void
 tracker_miner_files_process_file (TrackerMinerFS      *fs,
                                   GFile               *file,
@@ -242,6 +266,21 @@ tracker_miner_files_process_file (TrackerMinerFS      *fs,
 		tracker_resource_set_int64 (graph_file, "nfo:fileSize",
 		                            g_file_info_get_size (file_info));
 		miner_files_add_to_datasource (TRACKER_MINER_FILES (fs), file, graph_file, NULL);
+
+		if (tracker_extract_module_manager_check_fallback_rdf_type (mime_type,
+		                                                            "nfo:PlainTextDocument") &&
+		    !tracker_miner_files_check_allowed_text_file (TRACKER_MINER_FILES (fs), file)) {
+			TrackerResource *text_file;
+
+			/* We let disallowed text files have a shallow nie:InformationElement */
+			text_file = miner_files_create_text_file_information_element (TRACKER_MINER_FILES (fs),
+			                                                              file, mime_type);
+			tracker_resource_set_take_relation (graph_file, "nie:interpretedAs", text_file);
+			tracker_resource_set_uri (text_file, "nie:isStoredAs", uri);
+
+			tracker_resource_set_string (graph_file, "tracker:extractorHash",
+			                             tracker_extract_module_manager_get_hash (mime_type));
+		}
 	}
 
 	if (graph && !is_directory) {

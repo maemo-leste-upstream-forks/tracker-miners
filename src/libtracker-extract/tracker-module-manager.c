@@ -418,6 +418,41 @@ tracker_extract_module_manager_get_all_rdf_types (void)
 	return types;
 }
 
+gboolean
+tracker_extract_module_manager_check_fallback_rdf_type (const gchar *mimetype,
+                                                        const gchar *rdf_type)
+{
+	GList *l, *list;
+	gint i;
+
+	g_return_val_if_fail (mimetype, FALSE);
+	g_return_val_if_fail (rdf_type, FALSE);
+
+	if (!initialized &&
+	    !tracker_extract_module_manager_init ()) {
+		return FALSE;
+	}
+
+	list = lookup_rules (mimetype);
+
+	for (l = list; l; l = l->next) {
+		RuleInfo *r_info = l->data;
+
+		if (r_info->fallback_rdf_types == NULL)
+			continue;
+
+		for (i = 0; r_info->fallback_rdf_types[i]; i++) {
+			if (g_strcmp0 (r_info->fallback_rdf_types[i], rdf_type) == 0)
+				return TRUE;
+		}
+
+                /* We only want the first RDF types matching */
+                break;
+	}
+
+	return FALSE;
+}
+
 static ModuleInfo *
 load_module (RuleInfo *info)
 {

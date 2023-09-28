@@ -74,6 +74,9 @@ TrackerExtractInfo *
 void            tracker_extract_dbus_start              (TrackerExtract         *extract);
 void            tracker_extract_dbus_stop               (TrackerExtract         *extract);
 
+void            tracker_extract_set_max_text            (TrackerExtract *extract,
+                                                         gint            max_text);
+
 /* Not DBus API */
 void            tracker_extract_get_metadata_by_cmdline (TrackerExtract             *object,
                                                          const gchar                *path,

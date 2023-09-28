@@ -171,7 +171,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
                               GError             **error)
 {
 	TrackerResource *metadata;
-	TrackerConfig *config;
 	ODTMetadataParseInfo info = { 0 };
 	ODTFileType file_type;
 	GFile *file;
@@ -198,9 +197,6 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 	g_free (resource_uri);
 
 	uri = g_file_get_uri (file);
-
-	/* Setup conf */
-	config = tracker_main_get_config ();
 
 	g_debug ("Extracting OASIS metadata and contents from '%s'", uri);
 
@@ -236,7 +232,7 @@ tracker_extract_get_metadata (TrackerExtractInfo  *extract_info,
 
 	/* Extract content with the given limitations */
 	extract_oasis_content (uri,
-	                       tracker_config_get_max_bytes (config),
+	                       tracker_extract_info_get_max_text (extract_info),
 	                       file_type,
 	                       metadata);
 

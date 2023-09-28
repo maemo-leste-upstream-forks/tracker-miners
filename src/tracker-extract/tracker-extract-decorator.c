@@ -26,7 +26,9 @@
 #include "tracker-extract-persistence.h"
 
 enum {
-	PROP_EXTRACTOR = 1
+	PROP_0,
+	PROP_EXTRACTOR,
+	PROP_PERSISTENCE,
 };
 
 #define MAX_EXTRACTING_FILES 1
@@ -87,6 +89,12 @@ tracker_extract_decorator_get_property (GObject    *object,
 	case PROP_EXTRACTOR:
 		g_value_set_object (value, priv->extractor);
 		break;
+	case PROP_PERSISTENCE:
+		g_value_set_object (value, priv->persistence);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
 	}
 }
 
@@ -103,6 +111,12 @@ tracker_extract_decorator_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_EXTRACTOR:
 		priv->extractor = g_value_dup_object (value);
+		break;
+	case PROP_PERSISTENCE:
+		priv->persistence = g_value_dup_object (value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	}
 }
@@ -121,6 +135,7 @@ tracker_extract_decorator_finalize (GObject *object)
 		g_timer_destroy (priv->timer);
 
 	g_clear_object (&priv->index_proxy);
+	g_clear_object (&priv->persistence);
 
 	G_OBJECT_CLASS (tracker_extract_decorator_parent_class)->finalize (object);
 }
@@ -163,7 +178,7 @@ get_metadata_cb (TrackerExtract *extract,
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (data->decorator));
 	info = tracker_extract_file_finish (extract, result, &error);
 
-	tracker_extract_persistence_remove_file (priv->persistence, data->file);
+	tracker_extract_persistence_set_file (priv->persistence, NULL);
 
 	if (data->cancellable && data->signal_id != 0) {
 		g_cancellable_disconnect (data->cancellable, data->signal_id);
@@ -232,7 +247,7 @@ task_cancellable_cancelled_cb (GCancellable *cancellable,
 	 * this as a failed operation.
 	 */
 	priv = tracker_extract_decorator_get_instance_private (TRACKER_EXTRACT_DECORATOR (data->decorator));
-	tracker_extract_persistence_remove_file (priv->persistence, data->file);
+	tracker_extract_persistence_set_file (priv->persistence, NULL);
 	uri = g_file_get_uri (data->file);
 
 	g_debug ("Cancelled task for '%s' was currently being "
@@ -303,7 +318,7 @@ decorator_next_item_cb (TrackerDecorator *decorator,
 
 	g_debug ("Extracting metadata for '%s'", tracker_decorator_info_get_url (info));
 
-	tracker_extract_persistence_add_file (priv->persistence, data->file);
+	tracker_extract_persistence_set_file (priv->persistence, data->file);
 
 	g_set_object (&data->cancellable, g_task_get_cancellable (task));
 
@@ -367,6 +382,22 @@ tracker_extract_decorator_resumed (TrackerMiner *miner)
 }
 
 static void
+tracker_extract_decorator_started (TrackerMiner *miner)
+{
+	TrackerExtractDecorator *decorator = TRACKER_EXTRACT_DECORATOR (miner);
+	TrackerExtractDecoratorPrivate *priv =
+		tracker_extract_decorator_get_instance_private (decorator);
+	GFile *file;
+
+	file = tracker_extract_persistence_get_file (priv->persistence);
+
+	if (file)
+		decorator_ignore_file (file, decorator, "Crash/hang handling file", NULL);
+
+	TRACKER_MINER_CLASS (tracker_extract_decorator_parent_class)->started (miner);
+}
+
+static void
 tracker_extract_decorator_items_available (TrackerDecorator *decorator)
 {
 	TrackerExtractDecoratorPrivate *priv;
@@ -426,6 +457,7 @@ tracker_extract_decorator_class_init (TrackerExtractDecoratorClass *klass)
 
 	miner_class->paused = tracker_extract_decorator_paused;
 	miner_class->resumed = tracker_extract_decorator_resumed;
+	miner_class->started = tracker_extract_decorator_started;
 
 	decorator_class->items_available = tracker_extract_decorator_items_available;
 	decorator_class->finished = tracker_extract_decorator_finished;
@@ -437,6 +469,14 @@ tracker_extract_decorator_class_init (TrackerExtractDecoratorClass *klass)
 	                                                      "Extractor",
 	                                                      "Extractor",
 	                                                      TRACKER_TYPE_EXTRACT,
+	                                                      G_PARAM_READWRITE |
+	                                                      G_PARAM_CONSTRUCT_ONLY |
+	                                                      G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property (object_class,
+	                                 PROP_PERSISTENCE,
+	                                 g_param_spec_object ("persistence",
+	                                                      NULL, NULL,
+	                                                      TRACKER_TYPE_EXTRACT_PERSISTENCE,
 	                                                      G_PARAM_READWRITE |
 	                                                      G_PARAM_CONSTRUCT_ONLY |
 	                                                      G_PARAM_STATIC_STRINGS));
@@ -463,7 +503,7 @@ decorator_ignore_file (GFile                   *file,
 	                          NULL, &error);
 
 	if (info) {
-		tracker_error_report (file, error_message, extra_info);
+		g_signal_emit_by_name (decorator, "raise-error", file, error_message, extra_info);
 
 		mimetype = g_file_info_get_attribute_string (info,
 		                                             G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
@@ -477,10 +517,8 @@ decorator_ignore_file (GFile                   *file,
 	} else {
 		g_debug ("Could not get mimetype: %s", error->message);
 
-		if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-			tracker_error_report_delete (file);
-		else
-			tracker_error_report (file, error->message, NULL);
+		if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+			g_signal_emit_by_name (decorator, "raise-error", file, error_message, extra_info);
 
 		g_clear_error (&error);
 		query = g_strdup_printf ("DELETE {"
@@ -587,8 +625,6 @@ tracker_extract_decorator_initable_init (GInitable     *initable,
 		ret = FALSE;
 	}
 
-	priv->persistence = tracker_extract_persistence_initialize (persistence_ignore_file,
-	                                                            decorator);
 out:
 	g_clear_object (&conn);
 
@@ -603,14 +639,16 @@ tracker_extract_decorator_initable_iface_init (GInitableIface *iface)
 }
 
 TrackerDecorator *
-tracker_extract_decorator_new (TrackerSparqlConnection  *connection,
-                               TrackerExtract           *extract,
-                               GCancellable             *cancellable,
-                               GError                  **error)
+tracker_extract_decorator_new (TrackerSparqlConnection    *connection,
+                               TrackerExtract             *extract,
+			       TrackerExtractPersistence  *persistence,
+                               GCancellable               *cancellable,
+                               GError                    **error)
 {
 	return g_initable_new (TRACKER_TYPE_EXTRACT_DECORATOR,
 	                       cancellable, error,
 	                       "connection", connection,
 	                       "extractor", extract,
+	                       "persistence", persistence,
 	                       NULL);
 }
