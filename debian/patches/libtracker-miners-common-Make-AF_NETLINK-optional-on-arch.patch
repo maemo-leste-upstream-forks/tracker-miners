@@ -1,0 +1,64 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Sat, 7 Oct 2023 23:34:30 +0200
+Subject: libtracker-miners-common: Make AF_NETLINK optional on architecture
+
+As of libseccomp 2.5.4, this library considers the socket() syscall
+a pseudo-syscall implemented over the multiplexed socketcall() syscall
+for some architectures (x86 (32bit), s390x, ppc, and others), even
+though this seems to have changed in the kernel at some point for some
+of those architectures (x86 and s390x, at least).
+
+And a downside of libseccomp wrt multiplexing syscalls is that the
+arguments are entirely opaque, so no filters based on arguments are
+possible. This makes our recently added rule to turn down AF_NETLINK
+requests fail on those architectures, since the rule is seen as
+contradicting with the previous SCMP_ACT_ALLOW rules on socket().
+
+This rule was only added due to the icamerasrc GStreamer plugin
+causing udev access early on gst_init() (i.e. before we can remove
+this plugin from the registry), that requires netlink access, but
+we are uninterested in any HW-related plugin, and don't mind seeing
+it fail.
+
+Since this is the only known path (so far) pulling an AF_NETLINK
+socket, and this GStreamer plugin is only necessary for IPU6 MIPI
+cameras, it seems safe to assume these are not going to be commonplace
+in these stranger architectures.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/280
+(cherry picked from commit 2f1622acc8863abe76bc7e143b841fdd32b9757a)
+
+Origin: upstream, after 3.6.1
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 5afccef..d1a092a 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -257,7 +257,23 @@ tracker_seccomp_init (void)
+ 	/* Special requirements for socket/socketpair, only on AF_UNIX/AF_LOCAL */
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));
+-	CUSTOM_RULE (socket, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK));
++
++	/* Check that the socket syscall is not implemented over the
++	 * multiplexing socketcall() syscall, this happens on some
++	 * architectures (i386, s390, ppc ...).
++	 */
++	if (seccomp_syscall_resolve_name ("socket") > 0) {
++		/* Due to limitations in the syscall interface, libseccomp
++		 * cannot actually check the arguments of pseudo syscalls
++		 * relying on multiplexed syscalls, so the following rule
++		 * will be seen as contradicting and raise an error.
++		 *
++		 * We currently only need this for the icamerasrc gstreamer
++		 * plugin causing udev access on gst_init(), this should
++		 * be moot on those architectures.
++		 */
++		CUSTOM_RULE (socket, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK));
++	}
+ 
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));

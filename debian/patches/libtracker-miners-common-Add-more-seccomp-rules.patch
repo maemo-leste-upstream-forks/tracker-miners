@@ -1,0 +1,34 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Sun, 8 Oct 2023 00:02:30 +0200
+Subject: libtracker-miners-common: Add more seccomp rules
+
+Seen on debian/ubuntu on some arches. Make mkdirat error out
+the same way than mkdir, and allow name_to_handle_at() as
+that should be innocuous.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/281
+(cherry picked from commit 2c45c7024b96dd9f989b0dd0258574e323ce032c)
+
+Origin: upstream, after 3.6.1
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index d1a092a..c718a5a 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -239,11 +239,13 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (getsockname);
+ 	ALLOW_RULE (getpeername);
+ 	ALLOW_RULE (shutdown);
++	ALLOW_RULE (name_to_handle_at);
+ 
+ 	ERROR_RULE (inotify_init1, EINVAL);
+ 	ERROR_RULE (inotify_init, EINVAL);
+ 
+ 	ERROR_RULE (mkdir, EPERM);
++	ERROR_RULE (mkdirat, EPERM);
+ 	ERROR_RULE (rename, EPERM);
+ 	ERROR_RULE (unlink, EPERM);
+ 	ERROR_RULE (ioctl, EBADF);

@@ -1,0 +1,61 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 3 Oct 2023 12:47:57 +0200
+Subject: libtracker-miners-common: Improve "bail out" error loading seccomp
+ rules
+
+We are out in the dark if we happen to add syscalls that do not exist on
+obscure architectures. Keep track of the rules being added, so we can
+provide a more useful error if we fall in this situation.
+
+(cherry picked from commit 73cfd77fd4e47539382cb626b13a4e6677ab2bc8)
+
+Origin: upstream, after 3.6.1
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 3615aea..5afccef 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -48,6 +48,7 @@
+ 
+ #define ALLOW_RULE(call) G_STMT_START { \
+ 	int allow_rule_syscall_number = seccomp_syscall_resolve_name (G_STRINGIFY (call)); \
++	current_syscall = G_STRINGIFY (call); \
+ 	if (allow_rule_syscall_number == __NR_SCMP_ERROR || \
+ 	    seccomp_rule_add (ctx, SCMP_ACT_ALLOW, allow_rule_syscall_number, 0) < 0) \
+ 		goto out; \
+@@ -55,6 +56,7 @@
+ 
+ #define ERROR_RULE(call, error) G_STMT_START { \
+ 	int error_rule_syscall_number = seccomp_syscall_resolve_name (G_STRINGIFY (call)); \
++	current_syscall = G_STRINGIFY (call); \
+ 	if (error_rule_syscall_number == __NR_SCMP_ERROR || \
+ 	    seccomp_rule_add (ctx, SCMP_ACT_ERRNO (error), error_rule_syscall_number, 0) < 0) \
+ 		goto out; \
+@@ -62,6 +64,7 @@
+ 
+ #define CUSTOM_RULE(call, action, arg1) G_STMT_START { \
+ 	int custom_rule_syscall_number = seccomp_syscall_resolve_name (G_STRINGIFY (call)); \
++	current_syscall = G_STRINGIFY (call); \
+ 	if (custom_rule_syscall_number == __NR_SCMP_ERROR || \
+ 	    seccomp_rule_add (ctx, action, custom_rule_syscall_number, 1, arg1) < 0) \
+ 		goto out; \
+@@ -103,6 +106,7 @@ gboolean
+ tracker_seccomp_init (void)
+ {
+ 	scmp_filter_ctx ctx;
++	const gchar *current_syscall = NULL;
+ 
+ 	if (!initialize_sigsys_handler ())
+ 		return FALSE;
+@@ -295,7 +299,7 @@ tracker_seccomp_init (void)
+ 	}
+ 
+ out:
+-	g_critical ("Failed to load seccomp rules.");
++	g_critical ("Failed to load seccomp rule for syscall '%s'", current_syscall);
+ 	seccomp_release (ctx);
+ 	return FALSE;
+ }
