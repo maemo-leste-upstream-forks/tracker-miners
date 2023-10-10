@@ -1,3 +1,9 @@
+tracker-miners (3.4.5-2) unstable; urgency=high
+
+  * Cherry-pick build fixes
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Tue, 10 Oct 2023 07:49:05 -0400
+
 tracker-miners (3.4.5-1) unstable; urgency=high
 
   * New upstream bugfix release
