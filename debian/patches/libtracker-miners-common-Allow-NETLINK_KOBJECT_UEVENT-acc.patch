@@ -1,0 +1,69 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 12:52:32 +0200
+Subject: libtracker-miners-common: Allow NETLINK_KOBJECT_UEVENT access
+
+Sadly, it remains extremely finicky to provide detailed rules with
+differing actions for socket() through libseccomp(), due to the way this
+syscall is (was?) wrapped through the multiplexed socketcall() syscall on
+some architectures.
+
+Since we cannot provide different SCMP_ACT_* values, and we cannot let
+AF_NETLINK/NETLINK_KOBJECT_UEVENT requests fail with SIGSYS (e.g.
+video4linux2 gstreamer plugin wants udev access and will trigger this
+right in gst_init()), go with SCMP_ACT_ALLOW for this specific combination,
+along with AF_LOCAL.
+
+This kind of socket is effectively readonly to unprivileged users and
+local by definition, so it does not seem a big risk to allow, the only
+lingering question being "why should we allow this".
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/283
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 1754c8a..f6be491 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -36,6 +36,8 @@
+ #include <sys/socket.h>
+ #include <fcntl.h>
+ 
++#include <linux/netlink.h>
++
+ #ifdef HAVE_BTRFS_IOCTL
+ #include <linux/btrfs.h>
+ #endif
+@@ -70,6 +72,14 @@
+ 		goto out; \
+ } G_STMT_END
+ 
++#define CUSTOM_RULE_2ARG(call, action, arg1, arg2) G_STMT_START {	  \
++	int custom_rule_syscall_number = seccomp_syscall_resolve_name (#call); \
++	current_syscall = #call; \
++	if (custom_rule_syscall_number == __NR_SCMP_ERROR || \
++	    seccomp_rule_add (ctx, action, custom_rule_syscall_number, 2, arg1, arg2) < 0) \
++		goto out; \
++} G_STMT_END
++
+ static void
+ sigsys_handler (gint       signal,
+                 siginfo_t *info,
+@@ -260,10 +270,14 @@ tracker_seccomp_init (void)
+ 	/* Allow prlimit64, only if no new limits are being set */
+ 	CUSTOM_RULE (prlimit64, SCMP_ACT_ALLOW, SCMP_CMP(2, SCMP_CMP_EQ, 0));
+ 
+-	/* Special requirements for socket/socketpair, only on AF_UNIX/AF_LOCAL */
++	/* Special requirements for socket/socketpair, only on AF_UNIX/AF_LOCAL,
++	 * and AF_NETLINK/NETLINK_KOBJECT_UEVENT for udev.
++	 */
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));
+-	CUSTOM_RULE (socket, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK));
++	CUSTOM_RULE_2ARG (socket, SCMP_ACT_ALLOW,
++	                  SCMP_CMP (0, SCMP_CMP_EQ, AF_NETLINK),
++	                  SCMP_CMP (2, SCMP_CMP_EQ, NETLINK_KOBJECT_UEVENT));
+ 
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));

@@ -1,0 +1,45 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 09:19:20 +0200
+Subject: Revert "libtracker-miners-common: Make AF_NETLINK optional on
+ architecture"
+
+This reverts commit 2f1622acc8863abe76bc7e143b841fdd32b9757a.
+
+We cannot assure that the conditional rule will behave correctly on all
+architectures given the limitations with the socket() syscall on some 32-bit
+architectures where the multiplexing socketcall() syscall is used underneath.
+
+Revert this change in order to address it differently.
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 52ebbfb..1754c8a 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -263,23 +263,7 @@ tracker_seccomp_init (void)
+ 	/* Special requirements for socket/socketpair, only on AF_UNIX/AF_LOCAL */
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socket, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));
+-
+-	/* Check that the socket syscall is not implemented over the
+-	 * multiplexing socketcall() syscall, this happens on some
+-	 * architectures (i386, s390, ppc ...).
+-	 */
+-	if (seccomp_syscall_resolve_name ("socket") > 0) {
+-		/* Due to limitations in the syscall interface, libseccomp
+-		 * cannot actually check the arguments of pseudo syscalls
+-		 * relying on multiplexed syscalls, so the following rule
+-		 * will be seen as contradicting and raise an error.
+-		 *
+-		 * We currently only need this for the icamerasrc gstreamer
+-		 * plugin causing udev access on gst_init(), this should
+-		 * be moot on those architectures.
+-		 */
+-		CUSTOM_RULE (socket, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK));
+-	}
++	CUSTOM_RULE (socket, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(0, SCMP_CMP_EQ, AF_NETLINK));
+ 
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_UNIX));
+ 	CUSTOM_RULE (socketpair, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, AF_LOCAL));

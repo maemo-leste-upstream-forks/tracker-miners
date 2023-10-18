@@ -1,0 +1,34 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 14:28:29 +0200
+Subject: libtracker-miners-common: Disallow close/dup2/dup3 on standard I/O
+ FDs
+
+As an additional measure, forbid these FDs to be replaced by anything.
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index d6abdc1..faf74f9 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -228,7 +228,9 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (gettimeofday);
+ 	ALLOW_RULE (timerfd_create);
+ 	/* Descriptors */
+-	ALLOW_RULE (close);
++	CUSTOM_RULE (close, SCMP_ACT_ALLOW, SCMP_CMP (0, SCMP_CMP_GT, STDERR_FILENO));
++	CUSTOM_RULE (dup2, SCMP_ACT_ALLOW, SCMP_CMP (1, SCMP_CMP_GT, STDERR_FILENO));
++	CUSTOM_RULE (dup3, SCMP_ACT_ALLOW, SCMP_CMP (1, SCMP_CMP_GT, STDERR_FILENO));
+ 	ALLOW_RULE (read);
+ 	ALLOW_RULE (lseek);
+ 	ALLOW_RULE (_llseek);
+@@ -238,8 +240,6 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (write);
+ 	ALLOW_RULE (writev);
+ 	ALLOW_RULE (dup);
+-	ALLOW_RULE (dup2);
+-	ALLOW_RULE (dup3);
+ 	/* Needed by some GStreamer modules doing crazy stuff, less
+ 	 * scary thanks to the restriction below about sockets being
+ 	 * local.

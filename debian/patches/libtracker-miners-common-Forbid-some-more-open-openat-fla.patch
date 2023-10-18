@@ -1,0 +1,33 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 16:10:11 +0200
+Subject: libtracker-miners-common: Forbid some more open()/openat() flags
+
+There are some nasty combinations with O_RDONLY that may already
+trigger unintended results, like O_CREAT and O_TRUNC. Avoid any
+combination that sounds off with O_RDONLY.
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index faf74f9..3586642 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -294,11 +294,15 @@ tracker_seccomp_init (void)
+ 	/* Special requirements for open/openat, allow O_RDONLY calls,
+          * but fail if write permissions are requested.
+ 	 */
+-	CUSTOM_RULE (open, SCMP_ACT_ALLOW, SCMP_CMP(1, SCMP_CMP_MASKED_EQ, O_WRONLY | O_RDWR, 0));
++	CUSTOM_RULE (open, SCMP_ACT_ALLOW,
++	             SCMP_CMP (1, SCMP_CMP_MASKED_EQ,
++	                       O_WRONLY | O_RDWR | O_APPEND | O_CREAT | O_TRUNC | O_EXCL, 0));
+ 	CUSTOM_RULE (open, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(1, SCMP_CMP_MASKED_EQ, O_WRONLY, O_WRONLY));
+ 	CUSTOM_RULE (open, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(1, SCMP_CMP_MASKED_EQ, O_RDWR, O_RDWR));
+ 
+-	CUSTOM_RULE (openat, SCMP_ACT_ALLOW, SCMP_CMP(2, SCMP_CMP_MASKED_EQ, O_WRONLY | O_RDWR, 0));
++	CUSTOM_RULE (openat, SCMP_ACT_ALLOW,
++	             SCMP_CMP (2, SCMP_CMP_MASKED_EQ,
++	                       O_WRONLY | O_RDWR | O_APPEND | O_CREAT | O_TRUNC | O_EXCL, 0));
+ 	CUSTOM_RULE (openat, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(2, SCMP_CMP_MASKED_EQ, O_WRONLY, O_WRONLY));
+ 	CUSTOM_RULE (openat, SCMP_ACT_ERRNO (EACCES), SCMP_CMP(2, SCMP_CMP_MASKED_EQ, O_RDWR, O_RDWR));
+ 

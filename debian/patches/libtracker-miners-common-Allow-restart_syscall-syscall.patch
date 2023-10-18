@@ -1,0 +1,25 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 13:11:07 +0200
+Subject: libtracker-miners-common: Allow restart_syscall syscall
+
+This syscall may happen after SIGCONT if a previous SIGSTOP caught
+the process mid-syscall. This is a plausible situation with gdb, and
+through coredumpd/abrtd/etc.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/288
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index 8936f13..2cfb2bf 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -203,6 +203,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (waitid);
+ 	ALLOW_RULE (waitpid);
+ 	ALLOW_RULE (wait4);
++	ALLOW_RULE (restart_syscall);
+ 	/* Main loops */
+ 	ALLOW_RULE (poll);
+ 	ALLOW_RULE (ppoll);

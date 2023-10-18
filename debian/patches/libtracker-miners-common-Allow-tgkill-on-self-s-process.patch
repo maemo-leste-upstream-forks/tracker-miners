@@ -1,0 +1,27 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Tue, 17 Oct 2023 09:31:33 +0200
+Subject: libtracker-miners-common: Allow tgkill on self's process
+
+This is the syscall underneath abort(), assert(), etc. Let this
+syscall through for the purpose of killing self's process, and
+don't hide the actual errors.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/287
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index f6be491..8936f13 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -267,6 +267,9 @@ tracker_seccomp_init (void)
+ 	ERROR_RULE (setsockopt, EBADF);
+ 	ERROR_RULE (sched_getattr, EPERM);
+ 
++	/* Allow tgkill on self, for abort() and friends */
++	CUSTOM_RULE (tgkill, SCMP_ACT_ALLOW, SCMP_CMP(0, SCMP_CMP_EQ, getpid()));
++
+ 	/* Allow prlimit64, only if no new limits are being set */
+ 	CUSTOM_RULE (prlimit64, SCMP_ACT_ALLOW, SCMP_CMP(2, SCMP_CMP_EQ, 0));
+ 

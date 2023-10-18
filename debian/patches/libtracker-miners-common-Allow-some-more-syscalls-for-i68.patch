@@ -1,0 +1,56 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 16 Oct 2023 11:15:21 +0200
+Subject: libtracker-miners-common: Allow some more syscalls for i686
+
+These are seen on Debian i686 with the default dependencies pulled
+from apt-get build-dep tracker-miners. There's mainly 32-bit syscall
+variants (getgid32, fstatfs64), some fancy stuff so far unseen in 64-bit
+(timerfd_create), and for some unfathomable reason, gstreamer openNI2
+module using chdir() to change the CWD.
+
+Everything is harmless though, so go with that.
+
+Closes: https://gitlab.gnome.org/GNOME/tracker-miners/-/issues/284
+---
+ src/libtracker-miners-common/tracker-seccomp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/libtracker-miners-common/tracker-seccomp.c b/src/libtracker-miners-common/tracker-seccomp.c
+index c718a5a..52ebbfb 100644
+--- a/src/libtracker-miners-common/tracker-seccomp.c
++++ b/src/libtracker-miners-common/tracker-seccomp.c
+@@ -134,8 +134,9 @@ tracker_seccomp_init (void)
+ 	/* Process management */
+ 	ALLOW_RULE (exit_group);
+ 	ALLOW_RULE (getuid);
+-	ALLOW_RULE (getgid);
+ 	ALLOW_RULE (getuid32);
++	ALLOW_RULE (getgid);
++	ALLOW_RULE (getgid32);
+ 	ALLOW_RULE (getegid);
+ 	ALLOW_RULE (getegid32);
+ 	ALLOW_RULE (geteuid);
+@@ -159,6 +160,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (lstat64);
+ 	ALLOW_RULE (statx);
+ 	ALLOW_RULE (fstatfs);
++	ALLOW_RULE (fstatfs64);
+ 	ALLOW_RULE (access);
+ 	ALLOW_RULE (faccessat);
+ 	ALLOW_RULE (faccessat2);
+@@ -171,6 +173,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (time);
+ 	ALLOW_RULE (fsync);
+ 	ALLOW_RULE (umask);
++	ALLOW_RULE (chdir);
+ 	ERROR_RULE (fchown, EPERM);
+ 	/* Processes and threads */
+ 	ALLOW_RULE (clone);
+@@ -212,6 +215,7 @@ tracker_seccomp_init (void)
+ 	ALLOW_RULE (clock_gettime64);
+ 	ALLOW_RULE (clock_getres);
+ 	ALLOW_RULE (gettimeofday);
++	ALLOW_RULE (timerfd_create);
+ 	/* Descriptors */
+ 	ALLOW_RULE (close);
+ 	ALLOW_RULE (read);

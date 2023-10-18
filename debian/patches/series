@@ -7,3 +7,12 @@ libtracker-miners-common-Add-custom-rules-through-a-defin.patch
 libtracker-miners-common-Improve-bail-out-error-loading-s.patch
 libtracker-miners-common-Make-AF_NETLINK-optional-on-arch.patch
 libtracker-miners-common-Add-more-seccomp-rules.patch
+libtracker-miners-common-Allow-some-more-syscalls-for-i68.patch
+Revert-libtracker-miners-common-Make-AF_NETLINK-optional-.patch
+libtracker-miners-common-Allow-NETLINK_KOBJECT_UEVENT-acc.patch
+libtracker-miners-common-Allow-tgkill-on-self-s-process.patch
+tracker-extract-Initialize-modules-also-before-commandlin.patch
+libtracker-miners-common-Allow-restart_syscall-syscall.patch
+libtracker-miners-common-Drop-ioctl-rules-for-stdout-stde.patch
+libtracker-miners-common-Disallow-close-dup2-dup3-on-stan.patch
+libtracker-miners-common-Forbid-some-more-open-openat-fla.patch
