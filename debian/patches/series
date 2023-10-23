@@ -6,3 +6,4 @@ dont_start_for_root.patch
 Don-t-immediately-restart-tracker-extract-on-SIGSYS.patch
 debian/Revert-build-Include-libdir-in-rpath.patch
 libtracker-miners-common-Add-newstatat-statat64-syscalls.patch
+libtracker-miners-common-Add-futex_time64-clock_nanosleep_time64-ppoll_time64-clock_gettime64.patch
